@@ -10,9 +10,6 @@ client = OpenAI(api_key=os.environ.get("ORANGE_LLM_PROXY_KEY"),
 with open('schema.ttl','rt',encoding='utf-8') as TTL:
     TTL_SCHEMA = ','.join(str(x) for x in TTL.readlines())
 
-with open('relation_info.json','rt',encoding='utf-8') as rel:
-    RELATIONS = ','.join(str(x) for x in rel.readlines())
-
 with open('instructions2.txt','rt',encoding='utf-8') as file_instructions:
     INSTRUCTION = ','.join(str(x) for x in file_instructions.readlines())
 
@@ -24,11 +21,11 @@ try:
         top_p=0.1, # reducing model's creativity
         messages = [
             {   "role":"system",
-                "content":"""You are an expert in websemantic technologies and most particulary in knowledge graph"""
+                "content":"""You are an expert in websemantic technologies and most particulary in knowledge graph and ttl format"""
             },
             {   "role": "user",
                 "content": f"""Follow the instruction : {INSTRUCTION} and use the following schema:
-                {TTL_SCHEMA} and relations description {RELATIONS} to provide the description of the knowledge graph in turtle format"""
+                {TTL_SCHEMA} to provide the description of the knowledge graph in turtle format"""
             }
         ]
     )
