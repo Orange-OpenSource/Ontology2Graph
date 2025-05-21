@@ -17,8 +17,8 @@ try:
     response = client.chat.completions.create(
         #model="openai/gpt-3.5-turbo",
         model="vertex_ai/gemini-2.0-flash",
-        temperature=0.1, # reducing model's creativity
-        top_p=0.1, # reducing model's creativity
+        temperature=1, # reduce model's creativity
+        top_p=1, # reduce model's creativity
         messages = [
             {   "role":"system",
                 "content":"""You are an expert in websemantic technologies and most particulary in knowledge graph and ttl format"""
