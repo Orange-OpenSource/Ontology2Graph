@@ -10,15 +10,18 @@ client = OpenAI(api_key=os.environ.get("ORANGE_LLM_PROXY_KEY"),
 with open('schema.ttl','rt',encoding='utf-8') as TTL:
     TTL_SCHEMA = ','.join(str(x) for x in TTL.readlines())
 
-with open('instructions1.txt','rt',encoding='utf-8') as file_instructions:
+with open('Third_instructions.txt','rt',encoding='utf-8') as file_instructions:
     INSTRUCTION = ','.join(str(x) for x in file_instructions.readlines())
+
+with open('full_graph.ttl','rt',encoding='utf-8') as file_instructions:
+    GRAPH = ','.join(str(x) for x in file_instructions.readlines())
 
 try:
     response = client.chat.completions.create(
         #model="openai/gpt-3.5-turbo",
         model="vertex_ai/gemini-2.0-flash",
-        temperature=1, # reduce model's creativity
-        top_p=1, # reduce model's creativity
+        temperature=0.1, # increase model's creativity
+        top_p=0.1, # increase model's creativity
         messages = [
             {   "role":"system",
                 "content":"""You are an expert in websemantic technologies and most particulary in knowledge graph and ttl format"""
@@ -29,7 +32,7 @@ try:
             }
         ]
     )
-    with open('response.txt','w',encoding='utf-8') as f:
+    with open('Second_response2.txt','w',encoding='utf-8') as f:
         f.write(response.choices[0].message.content)
     print(response.choices[0].message.content)
 
