@@ -12,7 +12,7 @@ This python script is dedicated to query LLM models throught the internal Orange
 
 ### Start conversion
 
-To launch the python script just type 'python3 graphgpt.py'.
+To launch the python script just type 'python3 graphllm.py'.
 
 Results are displayed on the screen and recorded in a file called 'response.txt' located in the same folder than the python script.
 
