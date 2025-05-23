@@ -1,6 +1,10 @@
 # GraphGPT-pyth2
 
-This python script is dedicated to query LLM models throught the internal Orange portal [LLM PROXY Portail](https://portal.llmproxy.ai.orange/) in order to generate a knowledge graph in  turtle format based on the ontologies schema also in turtle format
+This python script is dedicated to query LLM models throught the internal Orange portal [LLM PROXY Portail](https://portal.llmproxy.ai.orange/) in order to generate a knowledge graph in  turtle format based on an ontology schema also in turtle format. Three differents prommpts have been created
+
+    * The First one gives the schema and provides some explanantions.
+    * The Second one gives the schema and an extract of a knowledge graph, and provides some explanantions.
+    * The Third one gives the schema and a complete knowledge graph, and provides some explanantions.
 
 ## Getting started
 
