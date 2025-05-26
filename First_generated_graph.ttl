@@ -1,56 +1,104 @@
-```turtle
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix sc: <http://pygraf.t/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+ @prefix ex: <http://example.com/> .
+ @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+ @prefix sc: <http://pygraf.t/> .
 
-sc:entityA a sc:C3 ;
-    rdfs:label "Entity A"@en ;
-    rdfs:comment "An instance of class C3, representing a project."@en ;
-    sc:R2 sc:entityB .
+ ex:entityA a sc:C1 ;
+  rdfs:label "Entity A (C1)" ;
+  rdfs:comment "An instance of class C1, acting as a connector node." ;
+  sc:R3 ex:entityB .
 
-sc:entityB a sc:C1 ;
-    rdfs:label "Entity B"@en ;
-    rdfs:comment "An instance of class C1, representing a task."@en ;
-    sc:R3 sc:entityA .
+ ex:entityB a sc:C3 ;
+  rdfs:label "Entity B (C3)" ;
+  rdfs:comment "An instance of class C3, linked to entityA via R3." ;
+  sc:R2 ex:entityA .
 
-sc:entityC a sc:C5 ;
-    rdfs:label "Entity C"@en ;
-    rdfs:comment "An instance of class C5, representing a developer."@en ;
-    sc:R6 sc:entityD .
+ ex:entityC a sc:C5 ;
+  rdfs:label "Entity C (C5)" ;
+  rdfs:comment "An instance of class C5, linked to entityD via R6." ;
+  sc:R6 ex:entityD .
 
-sc:entityD a sc:C7 ;
-    rdfs:label "Entity D"@en ;
-    rdfs:comment "An instance of class C7, representing a feature."@en ;
-    sc:R8 sc:entityC .
+ ex:entityD a sc:C7 ;
+  rdfs:label "Entity D (C7)" ;
+  rdfs:comment "An instance of class C7, linked to entityC via R8." ;
+  sc:R8 ex:entityC .
 
-sc:entityE a sc:C2 ;
-    rdfs:label "Entity E"@en ;
-    rdfs:comment "An instance of class C2, representing a team."@en ;
-    sc:R9 sc:entityF, sc:entityE .
+ ex:entityE a sc:C2 ;
+  rdfs:label "Entity E (C2)" ;
+  rdfs:comment "An instance of class C2, linked to itself via R9." ;
+  sc:R9 ex:entityE .
 
-sc:entityF a sc:C2 ;
-    rdfs:label "Entity F"@en ;
-    rdfs:comment "Another instance of class C2, representing another team."@en ;
-    sc:R9 sc:entityE, sc:entityF .
+ ex:entityF a sc:C10 ;
+  rdfs:label "Entity F (C10)" ;
+  rdfs:comment "An instance of class C10, linked to entityG via R10." ;
+  sc:R10 ex:entityG .
 
-sc:entityG a sc:C9 ;
-    rdfs:label "Entity G"@en ;
-    rdfs:comment "An instance of class C9, representing a resource."@en ;
-    sc:R4 sc:entityH, sc:entityG .
+ ex:entityG a sc:C4 ;
+  rdfs:label "Entity G (C4)" ;
+  rdfs:comment "An instance of class C4, linked to entityF via R10 (range)." .
 
-sc:entityH a sc:C9 ;
-    rdfs:label "Entity H"@en ;
-    rdfs:comment "Another instance of class C9, representing another resource."@en ;
-    sc:R4 sc:entityG, sc:entityH .
+ ex:entityH a sc:C9 ;
+  rdfs:label "Entity H (C9 - Hub Node)" ;
+  rdfs:comment "A hub node of class C9, connected to multiple other C9 instances via R4." ;
+  sc:R4 ex:entityI, ex:entityJ .
 
-sc:entityI a sc:C10 ;
-    rdfs:label "Entity I"@en ;
-    rdfs:comment "An instance of class C10, representing a department."@en ;
-    sc:R10 sc:entityB .
+ ex:entityI a sc:C9 ;
+  rdfs:label "Entity I (C9)" ;
+  rdfs:comment "An instance of class C9, linked to entityH via R4." ;
+  sc:R4 ex:entityH .
 
-sc:entityJ a sc:C6 ;
-    rdfs:label "Entity J"@en ;
-    rdfs:comment "An instance of class C6, representing a sub feature."@en ;
-    sc:R1 sc:entityJ .
-```
+ ex:entityJ a sc:C9 ;
+  rdfs:label "Entity J (C9)" ;
+  rdfs:comment "An instance of class C9, linked to entityH via R4." ;
+  sc:R4 ex:entityH .
+
+ ex:entityK a sc:C6 ;
+  rdfs:label "Entity K (C6)" ;
+  rdfs:comment "An instance of class C6, which is a subclass of C8." .
+
+ ex:entityL a sc:C8 ;
+  rdfs:label "Entity L (C8 - High-Degree Node)" ;
+  rdfs:comment "A high-degree node of class C8, connected to many other entities." .
+
+ ex:entityM a sc:C1 ;
+  rdfs:label "Entity M (C1 - Central Node)" ;
+  rdfs:comment "A central node of class C1, connected to multiple C3 instances." ;
+  sc:R3 ex:entityN, ex:entityO .
+
+ ex:entityN a sc:C3 ;
+  rdfs:label "Entity N (C3)" ;
+  rdfs:comment "An instance of class C3, linked to entityM via R2." ;
+  sc:R2 ex:entityM .
+
+ ex:entityO a sc:C3 ;
+  rdfs:label "Entity O (C3)" ;
+  rdfs:comment "Another instance of class C3, linked to entityM via R2." ;
+  sc:R2 ex:entityM .
+
+ ex:entityP a sc:C5 ;
+  rdfs:label "Entity P (C5 - Intermediary Node)" ;
+  rdfs:comment "An intermediary node of class C5, connecting C7 instances." ;
+  sc:R6 ex:entityQ .
+
+ ex:entityQ a sc:C7 ;
+  rdfs:label "Entity Q (C7)" ;
+  rdfs:comment "An instance of class C7, linked to entityP via R8." ;
+  sc:R8 ex:entityP .
+
+ ex:entityR a sc:C10 ;
+  rdfs:label "Entity R (C10 - Multiplex Node)" ;
+  rdfs:comment "A multiplex node of class C10, connected to both C4 and other C10 instances." ;
+  sc:R10 ex:entityS .
+
+ ex:entityS a sc:C4 ;
+  rdfs:label "Entity S (C4)" ;
+  rdfs:comment "An instance of class C4, linked to entityR via R10." .
+
+ ex:entityT a sc:C9 ;
+  rdfs:label "Entity T (C9 - Super Node)" ;
+  rdfs:comment "A super node of class C9, with multiple connections and properties." ;
+  sc:R4 ex:entityU .
+
+ ex:entityU a sc:C9 ;
+  rdfs:label "Entity U (C9)" ;
+  rdfs:comment "An instance of class C9, linked to entityT via R4." ;
+  sc:R4 ex:entityT .
