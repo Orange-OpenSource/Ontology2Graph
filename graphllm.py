@@ -4,7 +4,7 @@ portal (https://portal.llmproxy.ai.orange/)"""
 import os
 from openai import OpenAI, OpenAIError
 
-GENERATED_GRAPH = 'Second_generated_graph.ttl'
+GENERATED_GRAPH = 'First_generated_graph.ttl'
 
 
 client = OpenAI(api_key=os.environ.get("ORANGE_LLM_PROXY_KEY"),
@@ -13,7 +13,7 @@ client = OpenAI(api_key=os.environ.get("ORANGE_LLM_PROXY_KEY"),
 with open('schema.ttl','rt',encoding='utf-8') as TTL:
     TTL_SCHEMA = ','.join(str(x) for x in TTL.readlines())
 
-with open('Third_instructions.txt','rt',encoding='utf-8') as file_instructions:
+with open('First_instructions.txt','rt',encoding='utf-8') as file_instructions:
     INSTRUCTION = ','.join(str(x) for x in file_instructions.readlines())
 
 with open('full_graph.ttl','rt',encoding='utf-8') as file_instructions:
@@ -31,7 +31,7 @@ try:
             },
             {   "role": "user",
                 "content": f"""Follow the instructionis : {INSTRUCTION} and use the following schema:
-                {TTL_SCHEMA} and {GRAPH} to provide the description of the knowledge graph in turtle format"""
+                {TTL_SCHEMA} to provide the description of the knowledge graph in turtle format"""
             }
         ]
     )
