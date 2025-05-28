@@ -14,23 +14,22 @@ This python script is dedicated to query LLM models throught the internal Orange
 2. Then once it is done you must setup a local environment variable called ORANGE_LLM_PROXY_KEY with the value of your LLM_PROXY key.
 3. Your turtle files must be placed in the same folder than the python script .
 
-### Settins
+### Settings
 
-You have 3 differents choices to generate a new graph 
+You have 3 differents choices to generate a new graph. 
 
 1. Only with the schema.ttl file provided (First_instruction.txt)  
-2. With schema.ttl and extract of a graph based on this schema (Second_instruction.txt)
+2. With schema.ttl and an extract of a graph based on this schema (Second_instruction.txt)
 3. With schema.ttl and a full graph based on this shcema (Third_instruction.txt)
 
-You have to slightly modify graphllm.py depending on your choice
+You have to slightly modify graphllm.py depending on your choice.
 
-    - Constant GENERATED_GRAPH
-    - Name of the instruction file
-    - For the third choice don't forget top add the constant GRAPH in "messages" as a full example of knowledge graph  
+ - Constant GENERATED_GRAPH
+ - Name of the instruction file
+ - For the third choice don't forget top add the constant GRAPH in "messages" as a full example of knowledge graph  
 
 ### Start conversion
 
 To launch the python script just type 'python3 graphllm.py'.
-
 Results are displayed on the screen and recorded in the results folder.
 
