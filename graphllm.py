@@ -4,7 +4,7 @@ portal (https://portal.llmproxy.ai.orange/)"""
 import os
 from openai import OpenAI, OpenAIError
 
-GENERATED_GRAPH = 'results/Third_generated_graph.ttl'
+GENERATED_GRAPH = 'results/Third_generated_graph2.ttl'
 
 
 client = OpenAI(api_key=os.environ.get("ORANGE_LLM_PROXY_KEY"),
@@ -22,7 +22,8 @@ with open('full_graph.ttl','rt',encoding='utf-8') as file_instructions:
 try:
     response = client.chat.completions.create(
         #model="openai/gpt-3.5-turbo",
-        model="vertex_ai/gemini-2.0-flash",
+        #model="vertex_ai/gemini-2.0-flash",
+        model="openai/o1-mini",
         temperature=0.1, # increase model's creativity
         top_p=0.1, # increase model's creativity
         messages = [
