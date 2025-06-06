@@ -23,7 +23,8 @@ try:
     response = client.chat.completions.create(
         #model="openai/gpt-3.5-turbo",
         #model="vertex_ai/gemini-2.0-flash",
-        model="openai/o1-mini",
+        #model="openai/o1-mini",
+        model="openai/gpt-4.1-nano",
         temperature=0.1, # increase model's creativity
         top_p=0.1, # increase model's creativity
         messages = [
