@@ -8,7 +8,7 @@ It is important to notice that the same LLM doesn't provide always exactly the s
 |Claude-3.7-sonnet      |No, comments + truncated           |                   |                       |                       |                   |               |                       
 |Gemini-1.5-flash       |Yes                                |         10        |          10           |         yes           |       yes         |               |
 |Gemini-1.5-pro         |No,comments + isolated Nodes       |          8        |          18           |         yes           |       yes         |               |
-|Gemini-2.0-flash       |Yes                                |         10        |          27           |         yes           |       yes         |               |
+|Gemini-2.0-flash       |Yes                                |         10        |          14           |         yes           |       yes         |               |
 |gpt-4.1                |Yes                                |          9        |         123           |         yes           |       yes         |               |
 |gpt-4.1-mini           |Yes                                |          8        |          22           |         yes           |       yes         |               |
 |**gpt-4.1-nano**       |Yes                                |          7        |          16           |         yes           |       yes         |               |

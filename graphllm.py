@@ -3,10 +3,12 @@ portal (https://portal.llmproxy.ai.orange/)"""
 
 import os
 from openai import OpenAI, OpenAIError
+from py4j.java_gateway import launch_gateway, JavaGateway
+
 
 #PATH="/mnt/c/Users/piod7321/Downloads/results"
 PATH="/home/piod7321/DIGITAL_TWIN/gengraphllm/results"
-#MODEL="vertex_ai/gemini-2.0-flash" 
+MODEL="vertex_ai/gemini-2.0-flash" 
 #MODEL='openai/gpt-4.1-mini'
 #MODEL='vertex_ai/claude3.7-sonnet'
 #MODEL='openai/o1-preview'
@@ -23,7 +25,7 @@ PATH="/home/piod7321/DIGITAL_TWIN/gengraphllm/results"
 #MODEL="openai/o1"
 #MODEL="vertex_ai/codestral" #no answer
 #MODEL="openai/o1-mini"
-MODEL="openai/gpt-3.5-turbo"
+#MODEL="openai/gpt-3.5-turbo"
 
 client = OpenAI(api_key=os.environ.get("ORANGE_LLM_PROXY_KEY"),
                 base_url="https://llmproxy.ai.orange")
@@ -57,7 +59,7 @@ try:
         f.write(response.choices[0].message.content)
 
 ## remove useless character
-    with open(PATH + f'/Third_graph_{response.model}.ttl', 'r') as file:
+    with open(PATH + f'/Third_graph_{response.model}.ttl', 'r',encoding='utf-8') as file:
         lines = file.readlines()
 
     # Check if the first line starts with the specific character
@@ -68,14 +70,29 @@ try:
         lines = lines[:-1]
 
         # Write the remaining lines back to the file
-        with open(PATH + f'/Third_graph_{response.model}.ttl', 'w') as file:
+        with open(PATH + f'/Third_graph_{response.model}.ttl', 'w',encoding='utf-8') as file:
             file.writelines(lines)
 
 ## print file content
 
-    with open(PATH + f'/Third_graph_{response.model}.ttl', 'r') as file:
+    with open(PATH + f'/Third_graph_{response.model}.ttl', 'r',encoding='utf-8') as file:
         contents = file.read()
         print(contents)
 
 except OpenAIError as e:
     print(f"An error occured: {e}")
+
+#######ROBOT
+
+#launch_gateway(jarpath='/home/piod7321/.local/bin/robot.jar',
+               #classpath='org.obolibrary.robot.PythonOperation',
+               #port=25333,
+               #die_on_exit=True)
+
+#gateway = JavaGateway()
+
+#io_helper = gateway.jvm.org.obolibrary.robot.IOHelper()
+
+#ont = io_helper.loadOntology(PATH + f'/Third_graph_{response.model}.ttl')
+
+#print(ont.getOntologyID().getVersionIRI())
