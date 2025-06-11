@@ -2,12 +2,12 @@ This table compare the results of differents Knowledge Graph build with differen
 It is important to notice that the same LLM doesn't provide always exactly the same result due to the statiscal nature of LLMs
 
 
-|     Model             |   Consistent with the prompt      |  Number of Classes|  Number of Nodes      |  useable in Protégé   | HermiT Consitency | ROBOTS tests |
+|     Model             |   Consistent with the prompt      |  Number of Classes|  Number of Nodes      |  useable in Protégé   | HermiT Consitency | ROBOTS tests  |
 |:---------------------:|:---------------------------------:|:-----------------:|:---------------------:|:---------------------:|:-----------------:|:-------------:|
 |Claude-3.5-sonnet      |Yes except comments                |          9        |           9           |         yes           |       yes         |               |
-|Claude-3.7-sonnet      |No, comments + truncated           |                   |                       |                       |                   |               |                             
+|Claude-3.7-sonnet      |No, comments + truncated           |                   |                       |                       |                   |               |                       
 |Gemini-1.5-flash       |Yes                                |         10        |          10           |         yes           |       yes         |               |
-|Gemini-1.5-pro         |No,comments + isolated Nodes       |          8        |          18           |         yes           |       yes         |               |                                                     
+|Gemini-1.5-pro         |No,comments + isolated Nodes       |          8        |          18           |         yes           |       yes         |               |
 |Gemini-2.0-flash       |Yes                                |         10        |          27           |         yes           |       yes         |               |
 |gpt-4.1                |Yes                                |          9        |         123           |         yes           |       yes         |               |
 |gpt-4.1-mini           |Yes                                |          8        |          22           |         yes           |       yes         |               |
