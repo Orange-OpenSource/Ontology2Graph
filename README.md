@@ -17,7 +17,7 @@ This python script is dedicated to query LLM models throught the internal Orange
 
 You have to set 2 constants
 
-1. You have to set the constant <span style="color:red">PATH</span> in graphllm.py to store the result.
+1. You have to set the constant PATH in graphllm.py to store the result.
 2. You have to set the constant MODEL to choose your LLM.
 
 Then the name of the instruction file (INSTRUCTION) must be change dependign of your choice
