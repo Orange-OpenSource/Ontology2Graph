@@ -3,18 +3,21 @@ portal (https://portal.llmproxy.ai.orange/)"""
 
 import os
 from openai import OpenAI, OpenAIError
-from py4j.java_gateway import launch_gateway, JavaGateway
+#from py4j.java_gateway import launch_gateway
+import datetime
+import os
 
-
+DATE = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+# Set the path where the results will be saved
 #PATH="/mnt/c/Users/piod7321/Downloads/results"
 PATH="/home/piod7321/DIGITAL_TWIN/gengraphllm/results"
-MODEL="vertex_ai/gemini-2.0-flash" 
+#MODEL="vertex_ai/gemini-2.0-flash" 
 #MODEL='openai/gpt-4.1-mini'
 #MODEL='vertex_ai/claude3.7-sonnet'
 #MODEL='openai/o1-preview'
 #MODEL='openai/o3'
 #MODEL='openai/gpt-4.1-nano'
-#MODEL='openai/gpt-4.1'
+MODEL='openai/gpt-4.1'
 #MODEL='vertex_ai/gemini-1.5-flash'
 #MODEL='openai/o4-mini'
 #MODEL='openai/gpt-4o'
@@ -55,29 +58,28 @@ try:
         ]
     )
     
-    with open(PATH + f'/Third_graph_{response.model}.ttl','w',encoding='utf-8') as f:
-        f.write(response.choices[0].message.content)
+    #Write the result in a temporary file
+    with open(PATH + f'/Third_graph_temp_{response.model}.ttl','w',encoding='utf-8') as file:
+        file.write(response.choices[0].message.content)
+        file.close
 
-## remove useless character
-    with open(PATH + f'/Third_graph_{response.model}.ttl', 'r',encoding='utf-8') as file:
+    #Remove lines start with '  
+    with open(PATH + f'/Third_graph_temp_{response.model}.ttl','r',encoding='utf-8') as file:
         lines = file.readlines()
+        filtered_lines = [lines for lines in lines if not lines.startswith('`')]
 
-    # Check if the first line starts with the specific character
-    if lines and lines[0].startswith('`'):
-        # Remove the first line
-        lines = lines[1:]
-        # Remove the last line
-        lines = lines[:-1]
+        with open(PATH + f'/Third_graph_{DATE}_{response.model}.ttl', 'w',encoding='utf-8') as file_final:
+            file_final.writelines(filtered_lines)
+            file_final.close()
 
-        # Write the remaining lines back to the file
-        with open(PATH + f'/Third_graph_{response.model}.ttl', 'w',encoding='utf-8') as file:
-            file.writelines(lines)
-
+        file.close()
+        os.remove(PATH + f'/Third_graph_temp_{response.model}.ttl')
+    
 ## print file content
-
-    with open(PATH + f'/Third_graph_{response.model}.ttl', 'r',encoding='utf-8') as file:
-        contents = file.read()
+    with open(PATH + f'/Third_graph_{DATE}_{response.model}.ttl', 'r',encoding='utf-8') as file_final:
+        contents = file_final.read()
         print(contents)
+        file_final.close()
 
 except OpenAIError as e:
     print(f"An error occured: {e}")
