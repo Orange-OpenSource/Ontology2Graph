@@ -1,0 +1,110 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sc: <http://pygraf.t/> .
+
+sc: a owl:Ontology ;
+    dcterms:license <https://creativecommons.org/publicdomain/zero/1.0/> .
+
+# --- Super Node ---
+sc:EntitySuper a sc:C10 ;
+    rdfs:label "EntitySuper" ;
+    rdfs:comment "A super node with the highest number of connections, acting as a central hub for the graph." ;
+    sc:R1 sc:EntityHub, sc:EntityCentral, sc:EntityConnector, sc:EntityHighDegree, sc:EntityMultiplex, sc:EntityIntermediary ;
+    sc:R4 sc:EntityCentral ;
+    sc:R6 sc:EntityMultiplex, sc:EntityConnector, sc:EntityHighDegree, sc:EntityHub, sc:EntityIntermediary .
+
+# --- Hub Node ---
+sc:EntityHub a sc:C9 ;
+    rdfs:label "EntityHub" ;
+    rdfs:comment "A hub node connecting to many other nodes, facilitating communication across the graph." ;
+    sc:R2 sc:EntityHighDegree, sc:EntityCentral, sc:EntityConnector ;
+    sc:R4 sc:EntityMultiplex ;
+    sc:R9 sc:EntityCentral, sc:EntityHighDegree .
+
+# --- High-Degree Node ---
+sc:EntityHighDegree a sc:C5 ;
+    rdfs:label "EntityHighDegree" ;
+    rdfs:comment "A high-degree node with multiple direct connections, but not as central as the super node." ;
+    sc:R2 sc:EntityIntermediary, sc:EntityMultiplex ;
+    sc:R6 sc:EntityConnector ;
+    sc:R9 sc:EntityHub, sc:EntityCentral .
+
+# --- Central Node ---
+sc:EntityCentral a sc:C9 ;
+    rdfs:label "EntityCentral" ;
+    rdfs:comment "A central node that acts as a bridge between the hub and other specialized nodes." ;
+    sc:R2 sc:EntityMultiplex ;
+    sc:R4 sc:EntityHub ;
+    sc:R9 sc:EntityHighDegree, sc:EntityHub .
+
+# --- Connector Node ---
+sc:EntityConnector a sc:C3 ;
+    rdfs:label "EntityConnector" ;
+    rdfs:comment "A connector node that links different communities or clusters in the graph." ;
+    sc:R1 sc:EntityIntermediary ;
+    sc:R3 sc:EntityMultiplex ;
+    sc:R4 sc:EntityHighDegree ;
+    sc:R6 sc:EntitySuper .
+
+# --- Intermediary Node ---
+sc:EntityIntermediary a sc:C1 ;
+    rdfs:label "EntityIntermediary" ;
+    rdfs:comment "An intermediary node that relays information between connector and high-degree nodes." ;
+    sc:R1 sc:EntityMultiplex ;
+    sc:R3 sc:EntityConnector ;
+    sc:R6 sc:EntityHub .
+
+# --- Multiplex Node ---
+sc:EntityMultiplex a sc:C8 ;
+    rdfs:label "EntityMultiplex" ;
+    rdfs:comment "A multiplex node that participates in multiple types of relationships and communities." ;
+    sc:R3 sc:EntitySuper ;
+    sc:R4 sc:EntityHub ;
+    sc:R9 sc:EntityCentral, sc:EntityHighDegree .
+
+# --- Additional Node for Diversity ---
+sc:EntityPeripheral a sc:C4 ;
+    rdfs:label "EntityPeripheral" ;
+    rdfs:comment "A peripheral node with limited connections, attached to the connector and intermediary nodes." ;
+    sc:R3 sc:EntityConnector ;
+    sc:R6 sc:EntityIntermediary .
+
+# --- Another Multiplex Node ---
+sc:EntityMultiplex2 a sc:C8 ;
+    rdfs:label "EntityMultiplex2" ;
+    rdfs:comment "A second multiplex node, connecting to the super node and the peripheral node." ;
+    sc:R3 sc:EntitySuper ;
+    sc:R4 sc:EntityPeripheral ;
+    sc:R9 sc:EntityMultiplex .
+
+# --- Example of a C6 node (subclass of C8) ---
+sc:EntitySpecial a sc:C6 ;
+    rdfs:label "EntitySpecial" ;
+    rdfs:comment "A special node of class C6, connecting to the super node and multiplex nodes." ;
+    sc:R7 sc:EntitySuper ;
+    sc:R9 sc:EntityMultiplex, sc:EntityMultiplex2 .
+
+# --- Example of a C2 node (disjoint with C8) ---
+sc:EntityDistinct a sc:C2 ;
+    rdfs:label "EntityDistinct" ;
+    rdfs:comment "A distinct node of class C2, connected to the central node and the special node." ;
+    sc:R9 sc:EntityCentral, sc:EntitySpecial .
+
+# --- Example of a C7 node (disjoint with C4) ---
+sc:EntityAlternate a sc:C7 ;
+    rdfs:label "EntityAlternate" ;
+    rdfs:comment "An alternate node of class C7, connected to the high-degree node and the multiplex node." ;
+    sc:R8 sc:EntityHighDegree, sc:EntityMultiplex .
+
+# --- Example of a C3 node (disjoint with C9) ---
+sc:EntityIsolated a sc:C3 ;
+    rdfs:label "EntityIsolated" ;
+    rdfs:comment "An isolated node of class C3, with a single connection to the connector node." ;
+    sc:R1 sc:EntityConnector .
+
+# --- Example of a C1 node (subclass of C4) ---
+sc:EntityLeaf a sc:C1 ;
+    rdfs:label "EntityLeaf" ;
+    rdfs:comment "A leaf node of class C1, connected to the peripheral node." ;
+    sc:R6 sc:EntityPeripheral .

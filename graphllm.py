@@ -10,7 +10,7 @@ import os
 DATE = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 # Set the path where the results will be saved
 #PATH="/mnt/c/Users/piod7321/Downloads/results"
-PATH="/home/piod7321/DIGITAL_TWIN/gengraphllm/results"
+PATH="/home/piod7321/DIGITAL_TWIN/gengraphllm"
 #MODEL="vertex_ai/gemini-2.0-flash" 
 #MODEL='openai/gpt-4.1-mini'
 #MODEL='vertex_ai/claude3.7-sonnet'
@@ -33,14 +33,16 @@ MODEL='openai/gpt-4.1'
 client = OpenAI(api_key=os.environ.get("ORANGE_LLM_PROXY_KEY"),
                 base_url="https://llmproxy.ai.orange")
 
-with open('schema.ttl','rt',encoding='utf-8') as TTL:
+with open(PATH + '/schema.ttl','rt',encoding='utf-8') as TTL:
     TTL_SCHEMA = ','.join(str(x) for x in TTL.readlines())
 
-with open('Third_instructions.txt','rt',encoding='utf-8') as file_instructions:
+with open(PATH + '/Third_instructions.txt','rt',encoding='utf-8') as file_instructions:
     INSTRUCTION = ','.join(str(x) for x in file_instructions.readlines())
 
-with open('full_graph.ttl','rt',encoding='utf-8') as file_instructions:
+with open(PATH + '/full_graph.ttl','rt',encoding='utf-8') as file_instructions:
     GRAPH = ','.join(str(x) for x in file_instructions.readlines())
+
+print ('toto')
 
 try:
     response = client.chat.completions.create(
@@ -59,24 +61,24 @@ try:
     )
     
     #Write the result in a temporary file
-    with open(PATH + f'/Third_graph_temp_{response.model}.ttl','w',encoding='utf-8') as file:
+    with open(PATH + f'/results/Third_graph_temp_{response.model}.ttl','w',encoding='utf-8') as file:
         file.write(response.choices[0].message.content)
         file.close
 
     #Remove lines start with '  
-    with open(PATH + f'/Third_graph_temp_{response.model}.ttl','r',encoding='utf-8') as file:
+    with open(PATH + f'/results/Third_graph_temp_{response.model}.ttl','r',encoding='utf-8') as file:
         lines = file.readlines()
         filtered_lines = [lines for lines in lines if not lines.startswith('`')]
 
-        with open(PATH + f'/Third_graph_{DATE}_{response.model}.ttl', 'w',encoding='utf-8') as file_final:
+        with open(PATH + f'/results/Third_graph_{DATE}_{response.model}.ttl', 'w',encoding='utf-8') as file_final:
             file_final.writelines(filtered_lines)
             file_final.close()
 
         file.close()
-        os.remove(PATH + f'/Third_graph_temp_{response.model}.ttl')
+        os.remove(PATH + f'/results/Third_graph_temp_{response.model}.ttl')
     
 ## print file content
-    with open(PATH + f'/Third_graph_{DATE}_{response.model}.ttl', 'r',encoding='utf-8') as file_final:
+    with open(PATH + f'/results/Third_graph_{DATE}_{response.model}.ttl', 'r',encoding='utf-8') as file_final:
         contents = file_final.read()
         print(contents)
         file_final.close()
