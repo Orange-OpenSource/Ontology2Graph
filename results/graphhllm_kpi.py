@@ -1,30 +1,38 @@
+
+''' This script transfomed data coming from robots measurement as time series and build line chart,
+ it take int account one argument corresponding to the date of the robot measurement file in the 
+ following format : 2025-06-16_16-00-02'''
+
+import sys
+from datetime import datetime,date
 import pandas as pd
 import matplotlib.pyplot as plt
-import sys
-from datetime import datetime,date,time
 
 arg = sys.argv[1:]
 initial_date = arg[0]
 
+# Define the format of the date string
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+PATH='/home/pdooze/DIGITAL_TWIN/GenGraphLLM/results/gpt4.1_10_KG/robot_measurements/measurement/'
+
 def replace_char_at_index(original_string, index_to_replace, new_character):
-    # Replace the character at the specified index
+    '''replacement of characters that doesn't conform to the date format'''
     return original_string[:index_to_replace] + new_character + original_string[index_to_replace+1:]
 
 date_string = replace_char_at_index(initial_date, 10, ' ')
 date_string1 = replace_char_at_index(date_string, 13, ':')
 date_string2 = replace_char_at_index(date_string1, 16, ':')
 
-# Define the format of the date string
-date_format = "%Y-%m-%d %H:%M:%S"
+
 
 # Convert the string to a datetime object
-date = datetime.strptime(date_string2, date_format)
+date = datetime.strptime(date_string2, DATE_FORMAT)
 
 'transposing initila data and concat the result'
 
 # Load the CSV file into a DataFrame
-input_file = '/home/pdooze/DIGITAL_TWIN/GenGraphLLM/results/gpt4.1_10_KG/robot_measurements/measurement/Third_graph_'+initial_date+'_gpt-4.1-robot_measurement.csv'  # Replace with your input file path
-output_file = '/home/pdooze/DIGITAL_TWIN/GenGraphLLM/results/gpt4.1_10_KG/robot_measurements/measurement/Third_graph_'+initial_date+'_gpt-4.1-robot_measurement_transposed.csv'  # Replace with your desired output file path
+input_file = PATH+initial_date+'_gpt-4.1-robot_measurement.csv'
+output_file = PATH+initial_date+'_gpt-4.1-robot_measurement_transposed.csv'
 
 # Read the CSV file
 df = pd.read_csv(input_file)
