@@ -13,12 +13,15 @@ concatenated_file=directory+'concatenate_file.csv'
 matching_files = [file for file in os.listdir(directory) if search_string in file]
 
 concatenated_df = pd.read_csv(matching_files[0])
+print(matching_files[0])
+print(concatenated_df)
 
 # concat the matching files
-for file in matching_files[1:]:
+for file in matching_files:
     df = pd.read_csv(file, header=None, skiprows=1)
+    # print(df)
     # Append the data to the concatenated DataFrame
-    concatenated_df = pd.concat([concatenated_df, df], ignore_index=True)
+    concatenated_df = pd.concat([concatenated_df, df], axis=0, join='outer', ignore_index=True)
 
 # Write the concatenated DataFrame to a new CSV file
 output_file_path = 'concatenated_file.csv'
