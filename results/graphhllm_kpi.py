@@ -13,7 +13,7 @@ initial_date = arg[0]
 
 # Define the format of the date string
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
-PATH='/home/pdooze/DIGITAL_TWIN/GenGraphLLM/results/gpt4.1_10_KG/robot_measurements/measurement/'
+PATH='/home/pdooze/DIGITAL_TWIN/GenGraphLLM/results/gpt4.1_10_KG/robot_measurements/measurement/Third_graph_'
 
 def replace_char_at_index(original_string, index_to_replace, new_character):
     '''replacement of characters that doesn't conform to the date format'''
@@ -22,8 +22,6 @@ def replace_char_at_index(original_string, index_to_replace, new_character):
 date_string = replace_char_at_index(initial_date, 10, ' ')
 date_string1 = replace_char_at_index(date_string, 13, ':')
 date_string2 = replace_char_at_index(date_string1, 16, ':')
-
-
 
 # Convert the string to a datetime object
 date = datetime.strptime(date_string2, DATE_FORMAT)
