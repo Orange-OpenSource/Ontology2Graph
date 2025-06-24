@@ -13,6 +13,6 @@ Y_NAME = sys.argv[1:]
 df = pd.read_csv(FILE_NAME)
 
 df.plot(x='date',y=Y_NAME)
-plt.savefig('mon_graphique.png', dpi=300)
+plt.savefig(Y_NAME[0], dpi=300)
 plt.show()
 
