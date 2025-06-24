@@ -7,7 +7,7 @@ import pandas as pd
 
 # Define Constant
 DIRECTORY=os.path.dirname(os.path.abspath(__file__))
-OUTPUT_FILE_PATH = 'concatenated_file.csv'
+FILE_NAME = 'concatenated_file.csv'
 SEARCH_STRING = 'transposed'
 CONCATENATED_FILE=DIRECTORY+'concatenate_file.csv'
 
@@ -25,5 +25,5 @@ for file in matching_files:
     concatenated_df = pd.concat([concatenated_df, df], axis=0,ignore_index=True)
 
 # Write the concatenated DataFrame to a new CSV file
-concatenated_df.to_csv(OUTPUT_FILE_PATH, index=False)
-print(f"CSV files have been concatenated into {OUTPUT_FILE_PATH} without additional headers.")
+concatenated_df.to_csv(FILE_NAME, index=False)
+print(f"CSV files have been concatenated into {FILE_NAME} without additional headers.")
