@@ -1,7 +1,7 @@
 
-''' This script transfomed data coming from robots measurement as time series and build line chart,
- it take int account one argument corresponding to the date of the robot measurement file in the 
- following format : 2025-06-16_16-00-02'''
+''' This script transfomed data coming from robots measurement as time series, it take int account
+one argument corresponding to the date of the robot measurement file in the following 
+format : 2025-06-16_16-00-02'''
 
 import sys
 from datetime import datetime,date

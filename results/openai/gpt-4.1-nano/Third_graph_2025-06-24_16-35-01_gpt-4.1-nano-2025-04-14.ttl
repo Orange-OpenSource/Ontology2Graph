@@ -1,0 +1,137 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sc: <http://pygraf.t/> .
+
+sc: a owl:Ontology ;
+    dcterms:license <https://creativecommons.org/publicdomain/zero/1.0/> .
+
+# Define Classes
+sc:HubNode a owl:Class ;
+    rdfs:subClassOf sc:SuperNode ;
+    rdfs:label "Hub Node" ;
+    rdfs:comment "A highly connected node acting as a central hub in the network." .
+
+sc:HighDegreeNode a owl:Class ;
+    rdfs:subClassOf sc:CentralNode ;
+    rdfs:label "High-Degree Node" ;
+    rdfs:comment "A node with a high number of connections, but not necessarily a hub." .
+
+sc:CentralNode a owl:Class ;
+    rdfs:subClassOf sc:Node ;
+    rdfs:label "Central Node" ;
+    rdfs:comment "A node that is central within a specific subgraph." .
+
+sc:ConnectorNode a owl:Class ;
+    rdfs:subClassOf sc:Node ;
+    rdfs:label "Connector Node" ;
+    rdfs:comment "A node that connects different parts of the graph, acting as a bridge." .
+
+sc:IntermediaryNode a owl:Class ;
+    rdfs:subClassOf sc:Node ;
+    rdfs:label "Intermediary Node" ;
+    rdfs:comment "A node that mediates interactions between other nodes." .
+
+sc:MultiplexNode a owl:Class ;
+    rdfs:subClassOf sc:Node ;
+    rdfs:label "Multiplex Node" ;
+    rdfs:comment "A node involved in multiple types of relations or layers." .
+
+sc:SuperNode a owl:Class ;
+    rdfs:subClassOf sc:Node ;
+    rdfs:label "Super Node" ;
+    rdfs:comment "An overarching node that encompasses multiple nodes or functions." .
+
+# Define Object Properties
+sc:connectsTo a owl:ObjectProperty ;
+    rdfs:domain sc:Node ;
+    rdfs:range sc:Node ;
+    rdfs:label "connects to" ;
+    rdfs:comment "Indicates a connection between two nodes." .
+
+sc:hasRelation a owl:ObjectProperty ;
+    rdfs:domain sc:Node ;
+    rdfs:range sc:Relation ;
+    rdfs:label "has relation" ;
+    rdfs:comment "Associates a node with a specific relation type." .
+
+sc:linksTo a owl:ObjectProperty ;
+    rdfs:domain sc:Node ;
+    rdfs:range sc:Node ;
+    rdfs:label "links to" ;
+    rdfs:comment "Represents a link from one node to another." .
+
+# Define Nodes (Entities)
+# Hub Node
+sc:Hub1 a sc:HubNode ;
+    rdfs:label "Hub Node 1" ;
+    rdfs:comment "A central hub connecting multiple high-degree nodes." ;
+    sc:connectsTo sc:HighNode1, sc:HighNode2, sc:Connector1 .
+
+# High Degree Nodes
+sc:HighNode1 a sc:HighDegreeNode ;
+    rdfs:label "High-Degree Node 1" ;
+    rdfs:comment "A node with many connections, acting as a key influencer." ;
+    sc:connectsTo sc:Hub1, sc:Intermediary1, sc:SuperNode1 .
+
+sc:HighNode2 a sc:HighDegreeNode ;
+    rdfs:label "High-Degree Node 2" ;
+    sc:connectsTo sc:Hub1, sc:Intermediary2 .
+
+# Central Nodes
+sc:Central1 a sc:CentralNode ;
+    rdfs:label "Central Node 1" ;
+    rdfs:comment "A node central within a specific community." ;
+    sc:connectsTo sc:Intermediary1, sc:Intermediary2 .
+
+# Connector Nodes
+sc:Connector1 a sc:ConnectorNode ;
+    rdfs:label "Connector Node 1" ;
+    rdfs:comment "Connects the hub to other subgraphs." ;
+    sc:connectsTo sc:HighNode1, sc:Intermediary3 .
+
+sc:Connector2 a sc:ConnectorNode ;
+    rdfs:label "Connector Node 2" ;
+    sc:connectsTo sc:HighNode2, sc:Intermediary3 .
+
+# Intermediary Nodes
+sc:Intermediary1 a sc:IntermediaryNode ;
+    rdfs:label "Intermediary Node 1" ;
+    sc:connectsTo sc:HighNode1, sc:Central1 .
+
+sc:Intermediary2 a sc:IntermediaryNode ;
+    rdfs:label "Intermediary Node 2" ;
+    sc:connectsTo sc:HighNode2, sc:Central1 .
+
+sc:Intermediary3 a sc:IntermediaryNode ;
+    rdfs:label "Intermediary Node 3" ;
+    sc:connectsTo sc:Connector1, sc:Connector2 .
+
+# Multiplex Node
+sc:Multiplex1 a sc:MultiplexNode ;
+    rdfs:label "Multiplex Node 1" ;
+    rdfs:comment "Participates in multiple relation types and layers." ;
+    sc:connectsTo sc:HighNode1, sc:HighNode2, sc:SuperNode1 .
+
+# Super Node
+sc:SuperNode1 a sc:SuperNode ;
+    rdfs:label "Super Node 1" ;
+    rdfs:comment "An overarching node representing a superstructure." ;
+    sc:connectsTo sc:Hub1, sc:HighNode1, sc:HighNode2, sc:Multiplex1 .
+
+# Additional relations to illustrate multiplexity and connectivity
+sc:HighNode1 sc:hasRelation sc:RelationType1 .
+sc:HighNode2 sc:hasRelation sc:RelationType2 .
+sc:Intermediary1 sc:linksTo sc:Intermediary2 .
+sc:Intermediary3 sc:linksTo sc:Central1 .
+
+# Relation entities
+sc:RelationType1 a sc:Relation ;
+    rdfs:label "Relation Type 1" ;
+    rdfs:comment "A specific relation type for multiplex nodes." .
+
+sc:RelationType2 a sc:Relation ;
+    rdfs:label "Relation Type 2" ;
+    rdfs:comment "Another relation type for high-degree nodes." .
+
+# End of graph definition
