@@ -1,30 +1,29 @@
 
-''' This script concatenate the transposed file'''
+''' This script concatenate the transposed file, it must be placed in the same 
+directory than the transposed files '''
 
 import os
 import pandas as pd
 
-# Define the directory path and the string to search for
-directory = '/home/pdooze/DIGITAL_TWIN/GenGraphLLM/results/gpt4.1_10_KG/robot_measurements/measurement/'
-search_string = 'transposed'
-concatenated_file=directory+'concatenate_file.csv'
+# Define Constant
+DIRECTORY=os.path.dirname(os.path.abspath(__file__))
+OUTPUT_FILE_PATH = 'concatenated_file.csv'
+SEARCH_STRING = 'transposed'
+CONCATENATED_FILE=DIRECTORY+'concatenate_file.csv'
 
-# List all files in the directory that contain the search string
-matching_files = [file for file in os.listdir(directory) if search_string in file]
+# Retrieve all files transposed file
+matching_files = [file for file in os.listdir(DIRECTORY) if SEARCH_STRING in file]
 
+# initiate the concatenated file and remove the first value of matching file
 concatenated_df = pd.read_csv(matching_files[0])
-print(matching_files[0])
-print(concatenated_df)
+del matching_files[0]
 
-# concat the matching files
+# Concat the matching files
 for file in matching_files:
-    df = pd.read_csv(file, header=None, skiprows=1)
-    # print(df)
+    df = pd.read_csv(file)
     # Append the data to the concatenated DataFrame
-    concatenated_df = pd.concat([concatenated_df, df], axis=0, join='outer', ignore_index=True)
+    concatenated_df = pd.concat([concatenated_df, df], axis=0,ignore_index=True)
 
 # Write the concatenated DataFrame to a new CSV file
-output_file_path = 'concatenated_file.csv'
-concatenated_df.to_csv(output_file_path, index=False)
-
-print(f"CSV files have been concatenated into {output_file_path} without additional headers.")
+concatenated_df.to_csv(OUTPUT_FILE_PATH, index=False)
+print(f"CSV files have been concatenated into {OUTPUT_FILE_PATH} without additional headers.")
