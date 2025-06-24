@@ -1,0 +1,116 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sc: <http://pygraf.t/> .
+
+sc: a owl:Ontology ;
+    dcterms:license <https://creativecommons.org/publicdomain/zero/1.0/> .
+
+# Define Classes
+sc:HubNode a owl:Class ;
+    rdfs:subClassOf sc:SuperNode ;
+    rdfs:label "Hub Node" ;
+    rdfs:comment "A node with high connectivity acting as a central hub in the network." .
+
+sc:HighDegreeNode a owl:Class ;
+    rdfs:subClassOf sc:SuperNode ;
+    rdfs:label "High-Degree Node" ;
+    rdfs:comment "A node with a high number of relations, indicating significant influence." .
+
+sc:CentralNode a owl:Class ;
+    rdfs:subClassOf sc:SuperNode ;
+    rdfs:label "Central Node" ;
+    rdfs:comment "A node positioned at the center of the network, connecting multiple classes." .
+
+sc:ConnectorNode a owl:Class ;
+    rdfs:subClassOf sc:IntermediaryNode ;
+    rdfs:label "Connector Node" ;
+    rdfs:comment "A node that connects different classes or groups, acting as a bridge." .
+
+sc:IntermediaryNode a owl:Class ;
+    rdfs:label "Intermediary Node" ;
+    rdfs:comment "A node that mediates relations between other nodes or classes." .
+
+sc:MultiplexNode a owl:Class ;
+    rdfs:subClassOf sc:SuperNode ;
+    rdfs:label "Multiplex Node" ;
+    rdfs:comment "A node involved in multiple relation types or classes, representing multiplex relationships." .
+
+sc:SuperNode a owl:Class ;
+    rdfs:label "Super Node" ;
+    rdfs:comment "A highly connected node with multiple relations across classes." .
+
+# Define Object Properties
+sc:relatesTo a owl:ObjectProperty ;
+    rdfs:label "relates to" ;
+    rdfs:comment "Generic relation indicating a connection between entities." .
+
+sc:connectsTo a owl:ObjectProperty ;
+    rdfs:label "connects to" ;
+    rdfs:comment "Relation indicating a direct connection between nodes." .
+
+sc:linksTo a owl:ObjectProperty ;
+    rdfs:label "links to" ;
+    rdfs:comment "Relation indicating a link or association between entities." .
+
+# Create Nodes
+# Hub Node
+sc:Hub1 a sc:HubNode ;
+    rdfs:label "Main Hub" ;
+    rdfs:comment "A central hub node connecting multiple high-degree nodes." ;
+    sc:connectsTo sc:HighNode1, sc:HighNode2, sc:Central1 .
+
+# High Degree Nodes
+sc:HighNode1 a sc:HighDegreeNode ;
+    rdfs:label "Influencer A" ;
+    rdfs:comment "A high-degree node with many relations." ;
+    sc:connectsTo sc:Hub1, sc:Super1, sc:Multiplex1 .
+
+sc:HighNode2 a sc:HighDegreeNode ;
+    rdfs:label "Influencer B" ;
+    rdfs:comment "Another high-degree node with multiple relations." ;
+    sc:connectsTo sc:Hub1, sc:Super2 .
+
+# Central Node
+sc:Central1 a sc:CentralNode ;
+    rdfs:label "Central Entity" ;
+    rdfs:comment "A node positioned at the network's center." ;
+    sc:connectsTo sc:Hub1, sc:Intermediary1 .
+
+# Connector Node
+sc:Connector1 a sc:ConnectorNode ;
+    rdfs:label "Bridge Node" ;
+    rdfs:comment "Connects different classes, acting as a bridge." ;
+    sc:connectsTo sc:Intermediary1, sc:Multiplex1 .
+
+# Intermediary Node
+sc:Intermediary1 a sc:IntermediaryNode ;
+    rdfs:label "Mediator Node" ;
+    rdfs:comment "Mediates relations between other nodes." ;
+    sc:connectsTo sc:HighNode1, sc:Connector1 .
+
+# Multiplex Node
+sc:Multiplex1 a sc:MultiplexNode ;
+    rdfs:label "Multi-Relation Node" ;
+    rdfs:comment "Participates in multiple relation types." ;
+    sc:connectsTo sc:HighNode2, sc:SuperNode1 .
+
+# Super Node
+sc:Super1 a sc:SuperNode ;
+    rdfs:label "Super Connector" ;
+    rdfs:comment "A super node with extensive relations." ;
+    sc:connectsTo sc:HighNode1, sc:HighNode2, sc:Central1 .
+
+sc:Super2 a sc:SuperNode ;
+    rdfs:label "Super Influencer" ;
+    rdfs:comment "A super node with high influence." ;
+    sc:connectsTo sc:HighNode2, sc:Hub1 .
+
+# Additional relations to ensure nodes have at least one relation
+sc:HighNode1 sc:relatesTo sc:Super2 .
+sc:HighNode2 sc:linksTo sc:Super1 .
+sc:Central1 sc:connectsTo sc:Multiplex1 .
+sc:Intermediary1 sc:relatesTo sc:HighNode2 .
+sc:Multiplex1 sc:linksTo sc:Super2 .
+
+# End of graph

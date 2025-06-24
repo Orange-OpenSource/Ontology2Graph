@@ -8,12 +8,31 @@ from datetime import datetime,date
 import pandas as pd
 import matplotlib.pyplot as plt
 
+#MODEL="vertex_ai/gemini-2.0-flash"
+#MODEL='openai/gpt-4.1-mini'
+#MODEL='vertex_ai/claude3.7-sonnet'
+#MODEL='openai/o1-preview'
+#MODEL='openai/o3'
+MODEL='openai/gpt-4.1-nano'
+#MODEL='openai/gpt-4.1'
+#MODEL='vertex_ai/gemini-1.5-flash'
+#MODEL='openai/o4-mini'
+#MODEL='openai/gpt-4o'
+#MODEL='vertex_ai/gemini-1.5'
+#MODEL="openai/gpt-4o-mini"
+#MODEL="openai/o3-mini"
+#MODEL="vertex_ai/claude3.5-sonnet-v2"
+#MODEL="openai/o1"
+#MODEL="vertex_ai/codestral" #no answer
+#MODEL="openai/o1-mini"
+#MODEL="openai/gpt-3.5-turbo"
+
 arg = sys.argv[1:]
 initial_date = arg[0]
 
 # Define the format of the date string
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
-PATH='/home/pdooze/DIGITAL_TWIN/GenGraphLLM/results/gpt4.1_10_KG/robot_measurements/measurement/Third_graph_'
+PATH=f'/home/pdooze/DIGITAL_TWIN/GenGraphLLM/results/{MODEL}/robot_measurements/measurement/Third_graph_'
 
 def replace_char_at_index(original_string, index_to_replace, new_character):
     '''replacement of characters that doesn't conform to the date format'''

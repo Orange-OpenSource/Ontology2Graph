@@ -1,0 +1,150 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sc: <http://pygraf.t/> .
+
+sc: a owl:Ontology ;
+    dcterms:license <https://creativecommons.org/publicdomain/zero/1.0/> .
+
+# Define Classes
+sc:HubNode a owl:Class ;
+    rdfs:subClassOf sc:SuperNode ;
+    rdfs:label "Hub Node" ;
+    rdfs:comment "A highly connected node acting as a central hub in the network." .
+
+sc:HighDegreeNode a owl:Class ;
+    rdfs:subClassOf sc:CentralNode ;
+    rdfs:label "High-Degree Node" ;
+    rdfs:comment "A node with a high number of connections, but not necessarily a hub." .
+
+sc:CentralNode a owl:Class ;
+    rdfs:subClassOf sc:IntermediaryNode ;
+    rdfs:label "Central Node" ;
+    rdfs:comment "A node that acts as a central point connecting different parts of the graph." .
+
+sc:ConnectorNode a owl:Class ;
+    rdfs:subClassOf sc:IntermediaryNode ;
+    rdfs:label "Connector Node" ;
+    rdfs:comment "A node that connects different classes or groups within the network." .
+
+sc:IntermediaryNode a owl:Class ;
+    rdfs:subClassOf sc:SuperNode ;
+    rdfs:label "Intermediary Node" ;
+    rdfs:comment "A node that mediates connections between other nodes." .
+
+sc:MultiplexNode a owl:Class ;
+    rdfs:subClassOf sc:SuperNode ;
+    rdfs:label "Multiplex Node" ;
+    rdfs:comment "A node that participates in multiple types of relations or groups." .
+
+sc:SuperNode a owl:Class ;
+    rdfs:label "Super Node" ;
+    rdfs:comment "A super node with multiple roles and high connectivity." .
+
+# Define Properties
+sc:connectsTo a owl:ObjectProperty ;
+    rdfs:label "connects to" ;
+    rdfs:comment "Indicates a connection between two nodes." .
+
+sc:relatesTo a owl:ObjectProperty ;
+    rdfs:label "relates to" ;
+    rdfs:comment "Indicates a relation of any kind between entities." .
+
+sc:linksTo a owl:ObjectProperty ;
+    rdfs:label "links to" ;
+    rdfs:comment "A link from one node to another." .
+
+# Create Nodes
+:HubNode1 a sc:HubNode ;
+    rdfs:label "Main Hub" ;
+    rdfs:comment "The central hub node connecting multiple high-degree nodes." ;
+    sc:connectsTo :HighNode1, :HighNode2, :HighNode3 .
+
+:HighNode1 a sc:HighDegreeNode ;
+    rdfs:label "High Degree Node 1" ;
+    rdfs:comment "A high-degree node connected to the main hub and other nodes." ;
+    sc:connectsTo :HubNode1, :ConnectorNode1, :HighNode2 .
+
+:HighNode2 a sc:HighDegreeNode ;
+    rdfs:label "High Degree Node 2" ;
+    rdfs:comment "Another high-degree node connected to the hub and intermediary nodes." ;
+    sc:connectsTo :HubNode1, :IntermediaryNode1 .
+
+:HighNode3 a sc:HighDegreeNode ;
+    rdfs:label "High Degree Node 3" ;
+    rdfs:comment "A high-degree node connected to the hub and multiplex nodes." ;
+    sc:connectsTo :HubNode1, :MultiplexNode1 .
+
+:CentralNode1 a sc:CentralNode ;
+    rdfs:label "Central Node 1" ;
+    rdfs:comment "A central node connecting different groups." ;
+    sc:connectsTo :IntermediaryNode1, :ConnectorNode2 .
+
+:ConnectorNode1 a sc:ConnectorNode ;
+    rdfs:label "Connector Node 1" ;
+    rdfs:comment "Connects high-degree nodes to intermediary nodes." ;
+    sc:connectsTo :HighNode1, :HighNode2, :IntermediaryNode2 .
+
+:IntermediaryNode1 a sc:IntermediaryNode ;
+    rdfs:label "Intermediary Node 1" ;
+    rdfs:comment "Mediates between high-degree nodes and multiplex nodes." ;
+    sc:connectsTo :HighNode2, :MultiplexNode2 .
+
+:IntermediaryNode2 a sc:IntermediaryNode ;
+    rdfs:label "Intermediary Node 2" ;
+    sc:connectsTo :ConnectorNode1, :SuperNode1 .
+
+:MultiplexNode1 a sc:MultiplexNode ;
+    rdfs:label "Multiplex Node 1" ;
+    rdfs:comment "Participates in multiple relations and groups." ;
+    sc:connectsTo :HighNode3, :SuperNode1 .
+
+:SuperNode1 a sc:SuperNode ;
+    rdfs:label "Super Node 1" ;
+    rdfs:comment "A super node with multiple roles and high connectivity." ;
+    sc:connectsTo :HubNode1, :HighNode2, :MultiplexNode1 .
+
+# Relations between nodes
+:HighNode1 sc:relatesTo :IntermediaryNode2 .
+:HighNode2 sc:linksTo :IntermediaryNode1 .
+:HighNode3 sc:connectsTo :MultiplexNode1 .
+:IntermediaryNode2 sc:relatesTo :SuperNode1 .
+:MultiplexNode1 sc:linksTo :SuperNode1 .
+
+# Additional relations to create a complex network
+:ConnectorNode2 a sc:ConnectorNode ;
+    rdfs:label "Connector Node 2" ;
+    rdfs:comment "Connects intermediary nodes to other groups." ;
+    sc:connectsTo :IntermediaryNode2, :HighNode3 .
+
+:SuperNode2 a sc:SuperNode ;
+    rdfs:label "Super Node 2" ;
+    rdfs:comment "A super node with multiplex roles." ;
+    sc:connectsTo :HighNode1, :MultiplexNode1, :IntermediaryNode2 .
+
+:HighNode4 a sc:HighDegreeNode ;
+    rdfs:label "High Degree Node 4" ;
+    rdfs:comment "A high-degree node connected to the super node and other high-degree nodes." ;
+    sc:connectsTo :SuperNode2, :HighNode2 .
+
+:MultiplexNode2 a sc:MultiplexNode ;
+    rdfs:label "Multiplex Node 2" ;
+    rdfs:comment "Participates in multiple relations across different groups." ;
+    sc:connectsTo :IntermediaryNode1, :SuperNode2 .
+
+:IntermediaryNode3 a sc:IntermediaryNode ;
+    rdfs:label "Intermediary Node 3" ;
+    rdfs:comment "Connects multiplex nodes to other central nodes." ;
+    sc:connectsTo :MultiplexNode2, :CentralNode1 .
+
+:HighNode5 a sc:HighDegreeNode ;
+    rdfs:label "High Degree Node 5" ;
+    rdfs:comment "A high-degree node bridging super nodes and intermediary nodes." ;
+    sc:connectsTo :SuperNode2, :IntermediaryNode3 .
+
+:SuperNode3 a sc:SuperNode ;
+    rdfs:label "Super Node 3" ;
+    rdfs:comment "A super node with multiple multiplex roles." ;
+    sc:connectsTo :HighNode4, :MultiplexNode2 .
+
+# End of graph
