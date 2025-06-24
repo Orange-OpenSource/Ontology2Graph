@@ -1,5 +1,6 @@
 
-''' This script plots line chart from concatenated file '''
+''' This script plots line chart from concatenated file the name of the KPI
+must be use as an argument when laucnhing the python file'''
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -11,6 +12,7 @@ Y_NAME = sys.argv[1:]
 
 df = pd.read_csv(FILE_NAME)
 
-df.plot(x='metric',y=Y_NAME)
-plt.savefig('mon_graphique.svg', dpi=300)
-#plt.show()
+df.plot(x='date',y=Y_NAME)
+plt.savefig('mon_graphique.png', dpi=300)
+plt.show()
+
