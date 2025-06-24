@@ -18,4 +18,4 @@ Below are the modifications to add in the crontab to triggered execution of grap
     # Define environment variable 
     ORANGE_LLM_PROXY_KEY= YOUR LLM PROXY TOKEN
     
-    */5 * * * * PATH TO script_crontab.sh >> result.log 2>&1`
+    */5 * * * * bash "PATH TO script_crontab.sh" >> result.log 2>&1`
