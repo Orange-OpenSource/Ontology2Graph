@@ -1,9 +1,11 @@
 
-''' This script transfomed data coming from robots measurement as time series, it take int account
+''' This script transfomed data coming from robots measurement as time series, it take into account
 one argument corresponding to the date of the robot measurement file in the following 
-format : 2025-06-16_16-00-02'''
+format : 2025-06-16_16-00-02 You have to set up the MODEL constant accordingly to the MODEL used 
+by graphllm.py'''
 
 import sys
+import os
 from datetime import datetime,date
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -32,7 +34,8 @@ initial_date = arg[0]
 
 # Define the format of the date string
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
-PATH=f'/home/pdooze/DIGITAL_TWIN/GenGraphLLM/results/{MODEL}/robot_measurements/measurement/Third_graph_'
+CURRENT_DIR = os.getcwd()
+PATH=f'{CURRENT_DIR}/results/{MODEL}/robot_measurments/measurement/Third_graph_'
 
 def replace_char_at_index(original_string, index_to_replace, new_character):
     '''replacement of characters that doesn't conform to the date format'''
@@ -48,8 +51,8 @@ date = datetime.strptime(date_string2, DATE_FORMAT)
 'transposing initial data and concat the result'
 
 # Load the CSV file into a DataFrame
-input_file = PATH+initial_date+'_gpt-4.1-robot_measurement.csv'
-output_file = PATH+initial_date+'_gpt-4.1-robot_measurement_transposed.csv'
+input_file = PATH+initial_date+'_gpt-4.1-nano-robot_measurement.csv'
+output_file = PATH+initial_date+'_gpt-4.1-nano-robot_measurement_transposed.csv'
 
 # Read the CSV file
 df = pd.read_csv(input_file)
