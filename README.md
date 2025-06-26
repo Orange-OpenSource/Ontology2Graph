@@ -45,7 +45,10 @@ Results are displayed on the screen and recorded in the results folder (/results
 
 In order to produce KG at regular interval you have to setup the crontab like this :
 
-`# Define environment variable
+```
+    #Define environment variable
     ORANGE_LLM_PROXY_KEY= YOUR LLM PROXY TOKEN
 
-    */5 * * * * bash "PATH TO script_crontab.sh" >> result.log 2>&1`
+    */5 * * * * bash "PATH TO script_crontab.sh" >> result.log 2>&1
+```
+
