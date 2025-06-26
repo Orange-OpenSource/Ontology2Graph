@@ -29,15 +29,15 @@ MODEL='openai/gpt-4.1-nano'
 #MODEL="openai/o1-mini"
 #MODEL="openai/gpt-3.5-turbo"
 
-os.makedirs(f'{PATH}/results/{MODEL}',exist_ok=True)
+os.makedirs(f'{PATH}/comparison_model_results/Noria/{MODEL}',exist_ok=True)
 
 client = OpenAI(api_key=os.environ.get("ORANGE_LLM_PROXY_KEY"),
                 base_url="https://llmproxy.ai.orange")
 
-with open(f'{PATH}/schema.ttl','rt',encoding='utf-8') as TTL:
+with open(f'{PATH}/comparison_model_results/Noria/ontology_used/noria.ttl','rt',encoding='utf-8') as TTL:
     TTL_SCHEMA = ','.join(str(x) for x in TTL.readlines())
 
-with open(f'{PATH}/Third_instructions.txt','rt',encoding='utf-8') as file_instructions:
+with open(f'{PATH}/First_instructions.txt','rt',encoding='utf-8') as file_instructions:
     INSTRUCTION = ','.join(str(x) for x in file_instructions.readlines())
 
 with open(f'{PATH}/full_graph.ttl','rt',encoding='utf-8') as file_instructions:
@@ -54,30 +54,30 @@ try:
             },
             {   "role": "user",
                 "content": f"""Follow the instruction : {INSTRUCTION} and use the following schema:
-                {TTL_SCHEMA} and graph : {GRAPH} as en example to generate a new graph in turtle format"""
+                {TTL_SCHEMA} to generate a new graph in turtle format"""
             }
         ]
     )
 
     #Write the result in a temporary file
-    with open(f'{PATH}/results/{MODEL}/Third_graph_temp_{response.model}.ttl','w',encoding='utf-8') as file:
+    with open(f'{PATH}/comparison_model_results/Noria/{MODEL}/First_graph_temp_{response.model}.ttl','w',encoding='utf-8') as file:
         file.write(response.choices[0].message.content)
         file.close
 
     #Remove lines start with '  
-    with open(f'{PATH}/results/{MODEL}/Third_graph_temp_{response.model}.ttl','r',encoding='utf-8') as file:
+    with open(f'{PATH}/comparison_model_results/Noria/{MODEL}/First_graph_temp_{response.model}.ttl','r',encoding='utf-8') as file:
         lines = file.readlines()
         filtered_lines = [lines for lines in lines if not lines.startswith('`')]
 
-        with open(f'{PATH}/results/{MODEL}/Third_graph_{DATE}_{response.model}.ttl', 'w',encoding='utf-8') as file_final:
+        with open(f'{PATH}/comparison_model_results/Noria/{MODEL}/First_graph_{DATE}_{response.model}.ttl', 'w',encoding='utf-8') as file_final:
             file_final.writelines(filtered_lines)
             file_final.close()
 
         file.close()
-        os.remove(f'{PATH}/results/{MODEL}/Third_graph_temp_{response.model}.ttl')
+        os.remove(f'{PATH}/comparison_model_results/Noria/{MODEL}/First_graph_temp_{response.model}.ttl')
     
 ## print file content
-    with open(f'{PATH}/results/{MODEL}/Third_graph_{DATE}_{response.model}.ttl', 'r',encoding='utf-8') as file_final:
+    with open(f'{PATH}/comparison_model_results/Noria/{MODEL}/First_graph_{DATE}_{response.model}.ttl', 'r',encoding='utf-8') as file_final:
         contents = file_final.read()
         print(contents)
         file_final.close()

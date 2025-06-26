@@ -27,3 +27,9 @@ with open('output.csv', mode='w', newline='') as file:
 print(f"Number of nodes: {nbr_nodes}")
 print(f"Number of edges: {nbr_edges}")
 #print(f"Nodes in the graph: {nodes}")
+
+#Convert ttl file to graphml for Gephi usage
+graph.parse(f'{PATH}/{FILE}', format="turtle")
+
+# Serialize to GraphML
+graph.serialize(destination="/mnt/c/Users/piod7321/Downloads/output.graphml", format="xml")
