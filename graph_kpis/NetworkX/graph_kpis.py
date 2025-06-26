@@ -5,7 +5,7 @@ import csv
 
 
 #constant
-PATH = "../comparison_model_results/Noria/"
+PATH = "../../comparison_model_results/Noria/"
 FILE = "First_graph_noria_2025-06-20_16-20-20_gemini-2.0-flash-001.ttl"
 
 #load the graph
