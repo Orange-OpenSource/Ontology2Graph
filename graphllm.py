@@ -9,7 +9,10 @@ DATE = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 # Set the path where the results will be saved
 #PATH="/mnt/c/Users/piod7321/Downloads/results"
 #PATH="/home/piod7321/DIGITAL_TWIN/gengraphllm"
-PATH="/home/pdooze/DIGITAL_TWIN/gengraphllm"
+PATH=os.getcwd()
+PATH_ontologie=f'{PATH}/ontologies'
+PATH_promt
+PATH_graph
 #MODEL="vertex_ai/gemini-2.0-flash" 
 #MODEL='openai/gpt-4.1-mini'
 #MODEL='vertex_ai/claude3.7-sonnet'
@@ -29,12 +32,12 @@ MODEL='openai/gpt-4.1-nano'
 #MODEL="openai/o1-mini"
 #MODEL="openai/gpt-3.5-turbo"
 
-os.makedirs(f'{PATH}/comparison_model_results/Noria/{MODEL}',exist_ok=True)
+#os.makedirs(f'{PATH}/comparison_model_results/Noria/{MODEL}',exist_ok=True)
 
 client = OpenAI(api_key=os.environ.get("ORANGE_LLM_PROXY_KEY"),
                 base_url="https://llmproxy.ai.orange")
 
-with open(f'{PATH}/comparison_model_results/Noria/ontology_used/noria.ttl','rt',encoding='utf-8') as TTL:
+with open(f'{PATH_ontologie}/noria.ttl','rt',encoding='utf-8') as TTL:
     TTL_SCHEMA = ','.join(str(x) for x in TTL.readlines())
 
 with open(f'{PATH}/First_instructions.txt','rt',encoding='utf-8') as file_instructions:
