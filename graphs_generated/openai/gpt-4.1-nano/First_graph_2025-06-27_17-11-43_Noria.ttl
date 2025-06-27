@@ -1,0 +1,110 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix fo: <http://purl.org/foaf/0.1/> .
+
+# Hub Node: Resource1, a central resource connected to multiple entities
+<https://example.com/Resource1> a noria:Resource ;
+  rdfs:label "Main Database Server" ;
+  rdfs:comment "Core database server acting as a hub for data storage and retrieval." ;
+  noria:resourceLogisticId "LOG12345" ;
+  noria:resourceHostName "db-server-01" ;
+  noria:locatedAtLocus <https://example.com/Locus1> ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/Server> ;
+  noria:resourceSerialNumber "SN987654321" ;
+  noria:resourceUsageState <https://w3id.org/noria/kos/Resource/LifecycleState/Active> ;
+  noria:resourceInstallationDate "2022-01-15T10:00:00Z"^^xsd:dateTime ;
+  noria:resourceProductModel <https://example.com/ProductModel1> ;
+  noria:agentManagesResource <https://example.com/ITSupportTeam> .
+
+# High-Degree Node: NetworkLink connecting multiple resources
+<https://example.com/NetworkLink1> a noria:NetworkLink ;
+  rdfs:label "Fiber Optic Link A-B" ;
+  rdfs:comment "High-capacity fiber link connecting Resource1 and Resource2." ;
+  noria:networkLinkId "NLK-001" ;
+  noria:networkLinkInstallationDate "2021-06-01T09:00:00Z"^^xsd:dateTime ;
+  noria:networkLinkType "Optical Fiber" ;
+  noria:networkLinkTerminationResource <https://example.com/Resource1> ;
+  noria:networkLinkTerminationResource <https://example.com/Resource2> .
+
+# Central Node: Resource2, a critical resource connected to multiple entities
+<https://example.com/Resource2> a noria:Resource ;
+  rdfs:label "Web Application Server" ;
+  rdfs:comment "Application server hosting customer-facing web services." ;
+  noria:resourceLogisticId "LOG54321" ;
+  noria:resourceHostName "web-app-01" ;
+  noria:locatedAtLocus <https://example.com/Locus2> ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/ApplicationServer> ;
+  noria:resourceSerialNumber "SN123456789" ;
+  noria:resourceUsageState <https://w3id.org/noria/kos/Resource/LifecycleState/Active> ;
+  noria:resourceInstallationDate "2022-03-10T11:30:00Z"^^xsd:dateTime ;
+  noria:resourceProductModel <https://example.com/ProductModel2> ;
+  noria:agentManagesResource <https://example.com/ITSupportTeam> .
+
+# Connector Node: Application linked to resources
+<https://example.com/Application1> a noria:Application ;
+  rdfs:label "Customer Web Portal" ;
+  rdfs:comment "Web portal providing customer access to services." ;
+  noria:applicationModelIdentifier "APP-PORTAL-001" ;
+  noria:applicationNumericalIdentifier 101 ;
+  noria:applicationShortIdentifier "CustPortal" ;
+  noria:applicationType <https://w3id.org/noria/kos/application/type/CustomerFacing> ;
+  noria:applicationBusinessImportance <https://w3id.org/noria/kos/application/business-importance/High> ;
+  noria:resourceForApplication <https://example.com/Resource2> .
+
+# Intermediary Node: Locus within a room
+<https://example.com/Locus1> a noria:Locus ;
+  rdfs:label "Locus in Server Room 314" ;
+  rdfs:comment "Physical location of Resource1 within server room 314." .
+
+<https://example.com/Locus2> a noria:Locus ;
+  rdfs:label "Locus in Data Center A" ;
+  rdfs:comment "Physical location of Resource2 within Data Center A." .
+
+# Multiplex Node: Application Module with multiple related parties
+<https://example.com/AppModule1> a noria:ApplicationModule ;
+  rdfs:label "Auth Service Module" ;
+  rdfs:comment "Module responsible for authentication services." ;
+  noria:applicationModuleIdentifier "AM-Auth-01" ;
+  noria:applicationModuleName "AuthService" ;
+  noria:applicationModuleRelatedParty <https://example.com/SupportTeam> ;
+  noria:applicationModuleRelatedParty <https://example.com/DevOpsTeam> .
+
+# Super Node: Organization with multiple entities
+<https://example.com/SupportTeam> a org:OrganizationalUnit ;
+  rdfs:label "Support Team" ;
+  rdfs:comment "Operational support team responsible for managing resources." .
+
+<https://example.com/DevOpsTeam> a org:OrganizationalUnit ;
+  rdfs:label "DevOps Team" ;
+  rdfs:comment "Development and deployment team responsible for application modules." .
+
+# Additional Nodes to ensure no isolated nodes
+<https://example.com/Resource3> a noria:Resource ;
+  rdfs:label "Backup Storage Server" ;
+  rdfs:comment "Secondary storage server for backups." ;
+  noria:resourceHostName "backup-server-01" ;
+  noria:locatedAtLocus <https://example.com/Locus3> ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/Server> ;
+  noria:agentManagesResource <https://example.com/ITSupportTeam> .
+
+<https://example.com/Locus3> a noria:Locus ;
+  rdfs:label "Locus in Backup Room" ;
+  rdfs:comment "Location of backup storage server." .
+
+# Link Resource3 to Resource1 via a network link
+<https://example.com/NetworkLink2> a noria:NetworkLink ;
+  rdfs:label "Ethernet Link B-C" ;
+  rdfs:comment "Ethernet connection between Resource3 and Resource1." ;
+  noria:networkLinkId "NLK-002" ;
+  noria:networkLinkInstallationDate "2022-07-20T14:00:00Z"^^xsd:dateTime ;
+  noria:networkLinkType "Ethernet" ;
+  noria:networkLinkTerminationResource <https://example.com/Resource3> ;
+  noria:networkLinkTerminationResource <https://example.com/Resource1> .
+
+# End of graph

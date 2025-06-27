@@ -1,6 +1,6 @@
 # GenGraphLLM
 
-graphllm.py script is dedicated to query LLM models throught the internal Orange portal [LLM PROXY Portail](https://portal.llmproxy.ai.orange/) in order to generate a knowledge graph in  turtle format based on an ontology schema . Three differents prommpts have been created
+graphllm.py script is dedicated to query LLM models throught the internal Orange portal [LLM PROXY Portail](https://portal.llmproxy.ai.orange/) in order to generate a knowledge graph in  turtle format based on an ontology schema . Three differents prompts have been created
 
    * The First one gives the schema and provides some explanantions.
    * The Second one gives the schema and an extract of a knowledge graph, and provides some explanantions.
@@ -15,12 +15,12 @@ graphllm.py script is dedicated to query LLM models throught the internal Orange
 
 ### Settings in graphllm.py
 
-You have to set 2 constants
+You have to set several constants in graphllm.py
 
-1. You have to set the constant PATH in graphllm.py to store the result.
-2. You have to set the constant MODEL, as awaited by the LLM_Proxy_portal, to choose your LLM. (Models's list is inserted in the script)
-
-Then the name of the instruction file (INSTRUCTION) must be change depending of your choice
+1. PATH_RESULT to store the result.
+2. PROMPT_TYPE to choose between the 3 different prompts.
+3. ONTO: the name of the ontology, as you want it just to mention it in the file result
+2. MODEL, as awaited by the LLM_Proxy_portal, to choose your LLM. (Models's list is inserted in the script)
 
 You have 3 differents choices to generate a new graph. 
 

@@ -23,13 +23,13 @@ PROMPT_TYPE='First_prompt'
 #PROMPT_TYPE='Third_prompt'
 
 #PROMPT type
-PROMPT_FILE=f'{PROMPT_TYPE}_prompt.txt'
+PROMPT_FILE=f'{PROMPT_TYPE}.txt'
 
 #ONTOLOGY type to choose
 ONTO='Noria'
 #ONTOLOGY='pygraph'
 
-#MODEL constant to choosels
+#MODEL constant to choose
 
 #MODEL="vertex_ai/gemini-2.0-flash"
 #MODEL='openai/gpt-4.1-mini'
