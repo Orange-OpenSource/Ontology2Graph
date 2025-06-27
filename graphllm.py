@@ -2,18 +2,36 @@
 portal (https://portal.llmproxy.ai.orange/)"""
 
 import os
-from openai import OpenAI, OpenAIError
 import datetime
+from openai import OpenAI, OpenAIError
 
 DATE = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-# Set the path where the results will be saved
-#PATH="/mnt/c/Users/piod7321/Downloads/results"
-#PATH="/home/piod7321/DIGITAL_TWIN/gengraphllm"
+
+# PATH constant where are stored the needed ressources, prompt, ontology and graph
 PATH=os.getcwd()
-PATH_ontologie=f'{PATH}/ontologies'
-PATH_promt
-PATH_graph
-#MODEL="vertex_ai/gemini-2.0-flash" 
+PATH_ONTOLOGY=f'{PATH}/ontologies'
+PATH_PROMPT=f'{PATH}/prompt'
+PATH_GRAPH=f'{PATH}/graph'
+
+#PATH result to choose
+PATH_RESULT=f'{PATH}/graphs_generated'
+#PATH_RESULT=f'{PATH}/graphs_series_generated'
+
+#PROMPT_TYPE to choose
+PROMPT_TYPE='First_prompt'
+#PROMPT_TYPE='Second_prompt'
+#PROMPT_TYPE='Third_prompt'
+
+#PROMPT type
+PROMPT_FILE=f'{PROMPT_TYPE}_prompt.txt'
+
+#ONTOLOGY type to choose
+ONTO='Noria'
+#ONTOLOGY='pygraph'
+
+#MODEL constant to choosels
+
+#MODEL="vertex_ai/gemini-2.0-flash"
 #MODEL='openai/gpt-4.1-mini'
 #MODEL='vertex_ai/claude3.7-sonnet'
 #MODEL='openai/o1-preview'
@@ -21,7 +39,7 @@ PATH_graph
 MODEL='openai/gpt-4.1-nano'
 #MODEL='openai/gpt-4.1'
 #MODEL='vertex_ai/gemini-1.5-flash'
-#MODEL='openai/o4-mini'
+#MODEL='openai/o4-mini'07
 #MODEL='openai/gpt-4o'
 #MODEL='vertex_ai/gemini-1.5'
 #MODEL="openai/gpt-4o-mini"
@@ -32,19 +50,20 @@ MODEL='openai/gpt-4.1-nano'
 #MODEL="openai/o1-mini"
 #MODEL="openai/gpt-3.5-turbo"
 
-#os.makedirs(f'{PATH}/comparison_model_results/Noria/{MODEL}',exist_ok=True)
+os.makedirs(f'{PATH_RESULT}/{MODEL}/',exist_ok=True)
 
 client = OpenAI(api_key=os.environ.get("ORANGE_LLM_PROXY_KEY"),
                 base_url="https://llmproxy.ai.orange")
 
-with open(f'{PATH_ontologie}/noria.ttl','rt',encoding='utf-8') as TTL:
-    TTL_SCHEMA = ','.join(str(x) for x in TTL.readlines())
+with open(f'{PATH_ONTOLOGY}/Noria.ttl','rt',encoding='utf-8') as ontology:
+    ONTOLOGY = ','.join(str(x) for x in ontology.readlines())
 
-with open(f'{PATH}/First_instructions.txt','rt',encoding='utf-8') as file_instructions:
-    INSTRUCTION = ','.join(str(x) for x in file_instructions.readlines())
+with open(f'{PATH_PROMPT}/{PROMPT_FILE}','rt',encoding='utf-8') as prompt:
+    PROMPT = ','.join(str(x) for x in prompt.readlines())
 
-with open(f'{PATH}/full_graph.ttl','rt',encoding='utf-8') as file_instructions:
-    GRAPH = ','.join(str(x) for x in file_instructions.readlines())
+# Only for second and third prompr
+with open(f'{PATH_GRAPH}/full_graph.ttl','rt',encoding='utf-8') as graph:
+    GRAPH = ','.join(str(x) for x in graph.readlines())
 
 try:
     response = client.chat.completions.create(
@@ -53,34 +72,39 @@ try:
         top_p=0.1, # increase model's creativity
         messages = [
             {   "role":"system",
-                "content":"""You are an expert in websemantic technologies and most particulary in knowledge graph and ttl format"""
+                "content":"""You are an expert in websemantic technologies and most 
+                particulary in knowledge graph and ttl format"""
             },
             {   "role": "user",
-                "content": f"""Follow the instruction : {INSTRUCTION} and use the following schema:
-                {TTL_SCHEMA} to generate a new graph in turtle format"""
+                "content": f"""Follow the instruction : {PROMPT} and use the following schema:
+                {ONTOLOGY} to generate a new graph in turtle format"""
             }
         ]
     )
 
     #Write the result in a temporary file
-    with open(f'{PATH}/comparison_model_results/Noria/{MODEL}/First_graph_temp_{response.model}.ttl','w',encoding='utf-8') as file:
+    with open(f'{PATH_RESULT}/{MODEL}/{PROMPT_TYPE}_temp.ttl'
+              ,'w',encoding='utf-8') as file:
         file.write(response.choices[0].message.content)
-        file.close
+        file.close()
 
-    #Remove lines start with '  
-    with open(f'{PATH}/comparison_model_results/Noria/{MODEL}/First_graph_temp_{response.model}.ttl','r',encoding='utf-8') as file:
+    #Remove lines start with '
+    with open(f'{PATH_RESULT}/{MODEL}/{PROMPT_TYPE}_temp.ttl'
+              ,'r',encoding='utf-8') as file:
         lines = file.readlines()
         filtered_lines = [lines for lines in lines if not lines.startswith('`')]
 
-        with open(f'{PATH}/comparison_model_results/Noria/{MODEL}/First_graph_{DATE}_{response.model}.ttl', 'w',encoding='utf-8') as file_final:
+        with open(f'{PATH_RESULT}/{MODEL}/{PROMPT_TYPE}_{DATE}_{ONTO}.ttl'
+                ,'w',encoding='utf-8') as file_final:
             file_final.writelines(filtered_lines)
             file_final.close()
 
         file.close()
-        os.remove(f'{PATH}/comparison_model_results/Noria/{MODEL}/First_graph_temp_{response.model}.ttl')
-    
+        os.remove(f'{PATH_RESULT}/{MODEL}/{PROMPT_TYPE}_temp.ttl')
+
 ## print file content
-    with open(f'{PATH}/comparison_model_results/Noria/{MODEL}/First_graph_{DATE}_{response.model}.ttl', 'r',encoding='utf-8') as file_final:
+    with open(f'{PATH_RESULT}/{MODEL}/{PROMPT_TYPE}_{DATE}_{ONTO}.ttl',
+              'r',encoding='utf-8') as file_final:
         contents = file_final.read()
         print(contents)
         file_final.close()
