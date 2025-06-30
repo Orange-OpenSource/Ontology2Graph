@@ -1,0 +1,122 @@
+
+''' This script transformes data coming from robots measurement as time series, it take into account
+one argument corresponding to PATH where robot measurement files are stored. You have also to set up
+the MODEL constant accordingly to the MODEL used by graphllm.py'''
+
+import sys
+import os
+import glob
+from datetime import datetime,date
+import pandas as pd
+
+#MODEL="vertex_ai/gemini-2.0-flash"
+#MODEL='openai/gpt-4.1-mini'
+#MODEL='vertex_ai/claude3.7-sonnet'
+#MODEL='openai/o1-preview'
+#MODEL='openai/o3'
+MODEL='openai/gpt-4.1-nano'
+#MODEL='openai/gpt-4.1'
+#MODEL='vertex_ai/gemini-1.5-flash'
+#MODEL='openai/o4-mini'
+#MODEL='openai/gpt-4o'
+#MODEL='vertex_ai/gemini-1.5'
+#MODEL="openai/gpt-4o-mini"
+#MODEL="openai/o3-mini"
+#MODEL="vertex_ai/claude3.5-sonnet-v2"
+#MODEL="openai/o1"
+#MODEL="vertex_ai/codestral" #no answer
+#MODEL="openai/o1-mini"
+#MODEL="openai/gpt-3.5-turbo"
+
+arg = sys.argv[1:]
+PATH= arg[0]
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+CONCATENATED_FILE_NAME = 'concatenated_file.csv'
+
+### Transpose the robots measurement file
+
+#List all the files
+all_files=glob.glob(os.path.join(PATH, '*'))
+
+def replace_char_at_index(original_string, index_to_replace, new_character):
+    '''replacement of characters that doesn't conform to the date format'''
+    return original_string[:index_to_replace] + new_character + original_string[index_to_replace+1:]
+
+for file in all_files:
+    if file.endswith('measurement.csv'):
+        df=pd.read_csv(file)
+
+        #retrieve the date
+        start_index = file.find("2025")
+        DateString = file[start_index:start_index + 19]
+        print(DateString)
+
+        date_string = replace_char_at_index(DateString, 10, ' ')
+        date_string1 = replace_char_at_index(date_string, 13, ':')
+        date_string2 = replace_char_at_index(date_string1, 16, ':')
+
+        print(date_string2)
+
+        # Convert the string to a datetime object
+        date = datetime.strptime(date_string2, DATE_FORMAT)
+
+        # remove & rename columns and KPIs
+        del df['metric_type']
+        df = df.rename(columns={'metric_value':date})
+        df = df.rename(columns={'metric':'date'})
+
+        # Transpose the DataFrame
+        df_transposed = df.transpose()
+
+        #retrieve the name fo the file
+        parts=file.split("/")
+        file_name=parts[len(parts)-1].split(" ")[0]
+
+        # Save the transposed DataFrame to a new CSV file
+        os.makedirs(f'{PATH}/transposed', exist_ok=True)
+        df_transposed.to_csv(f'{PATH}/transposed/{file_name}', header=False)
+
+print(f"File transposed and saved as {PATH}/transposed")
+
+### Concat the transposed files
+
+# Retrieve all files transposed file
+matching_files = [file for file in os.listdir(f'{PATH}/transposed')]
+
+# initiate the concatenated file and remove the first value of matching file
+concatenated_df = pd.read_csv(f'{PATH}/transposed/{matching_files[0]}')
+del matching_files[0]
+
+# Concat the matching files
+for file in matching_files:
+    df = pd.read_csv(f'{PATH}/transposed/{file}')
+    #print(df)
+    # Append the data to the concatenated DataFrame
+    concatenated_df = pd.concat([concatenated_df, df], axis=0,ignore_index=True)
+
+# Remove some columns
+df_final=concatenated_df.drop(columns=['abox_nominals','abox_nominals_incl','axiom_type_count',
+                                       'axiom_type_count.1','axiom_type_count_incl',
+                                       'axiom_type_count_incl.1','axiom_types','axiom_types.1',
+                                       'axiom_types_incl','axiom_types_incl.1','axiom_types_incl',
+                                       'certain_cycle','certain_cycle_incl',
+                                       'class_expression_count','class_expression_count_incl',
+                                       'curie_map','curie_map.1','curie_map.2',
+                                       'datatypes_builtin','datatypes_builtin_incl',
+                                       'namespace_axiom_count','namespace_axiom_count.1',
+                                       'namespace_axiom_count_incl','namespace_axiom_count_incl.1',
+                                       'namespace_entity_count','namespace_entity_count.1',
+                                       'namespace_entity_count.2','namespace_entity_count.3',
+                                       'namespace_entity_count_incl',
+                                       'namespace_entity_count_incl.1',
+                                       'namespace_entity_count_incl.2',
+                                       'namespace_entity_count_incl.3',
+                                       'ontology_iri','ontology_version_iri','owl2','owl2_dl',
+                                       'owl2_el','owl2_ql','owl2_rl','owl2dl_profile_violation',
+                                       'owl2dl_profile_violation.1','rdfs','syntax','tbox_nominals',
+                                       'tbox_nominals_incl'])
+
+# Write the concatenated DataFrame to a new CSV file
+df_final.to_csv(f'{PATH}/{CONCATENATED_FILE_NAME}', index=False)
+print(f"CSV files have been concatenated into {PATH}/{CONCATENATED_FILE_NAME} without additional headers.")
