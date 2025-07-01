@@ -1,0 +1,177 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix ex: <http://example.com/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix bot: <https://w3id.org/bot#> .
+@prefix seas: <https://w3id.org/seas/> .
+
+# Entities
+ex:ApplicationModuleA
+    a noria:ApplicationModule ;
+    rdfs:label "Application Module A" ;
+    rdfs:comment "A critical application module." ;
+    noria:applicationModuleName "AppModuleA" ;
+    noria:applicationModuleIdentifier "AM001" ;
+    noria:applicationModuleOf ex:ApplicationX ;
+    noria:applicationModuleAdministrationTeam ex:TeamAlpha .
+
+ex:ApplicationModuleB
+    a noria:ApplicationModule ;
+    rdfs:label "Application Module B" ;
+    rdfs:comment "Another application module." ;
+    noria:applicationModuleName "AppModuleB" ;
+    noria:applicationModuleIdentifier "AM002" ;
+    noria:applicationModuleOf ex:ApplicationY ;
+    noria:applicationModuleSupportTeam ex:TeamBeta .
+
+ex:ApplicationX
+    a noria:Application ;
+    rdfs:label "Application X" ;
+    rdfs:comment "A core application." ;
+    noria:applicationShortIdentifier "AppX" ;
+    noria:applicationModelIdentifier "AppModelX" .
+
+ex:ApplicationY
+    a noria:Application ;
+    rdfs:label "Application Y" ;
+    rdfs:comment "An important application." ;
+    noria:applicationShortIdentifier "AppY" ;
+    noria:applicationModelIdentifier "AppModelY" .
+
+ex:Resource1
+    a noria:Resource ;
+    rdfs:label "Resource 1" ;
+    rdfs:comment "A server in the data center." ;
+    noria:resourceHostName "server1.example.com" ;
+    noria:resourceLogisticId "RL001" ;
+    noria:locatedAtLocus ex:Locus1 .
+
+ex:Resource2
+    a noria:Resource ;
+    rdfs:label "Resource 2" ;
+    rdfs:comment "Another server in the data center." ;
+    noria:resourceHostName "server2.example.com" ;
+    noria:resourceLogisticId "RL002" ;
+    noria:locatedAtLocus ex:Locus2 .
+
+ex:Resource3
+    a noria:Resource ;
+    rdfs:label "Resource 3" ;
+    rdfs:comment "A network device." ;
+    noria:resourceHostName "router1.example.com" ;
+    noria:resourceLogisticId "RL003" ;
+    noria:locatedAtLocus ex:Locus3 .
+
+ex:NetworkInterface1
+    a noria:NetworkInterface ;
+    rdfs:label "eth0" ;
+    rdfs:comment "Ethernet interface." ;
+    noria:networkInterfaceOf ex:Resource1 ;
+    noria:networkInterfaceConnects ex:NetworkLink1 .
+
+ex:NetworkInterface2
+    a noria:NetworkInterface ;
+    rdfs:label "eth1" ;
+    rdfs:comment "Another ethernet interface." ;
+    noria:networkInterfaceOf ex:Resource2 ;
+    noria:networkInterfaceConnects ex:NetworkLink1 .
+
+ex:NetworkLink1
+    a noria:NetworkLink ;
+    rdfs:label "Link 1" ;
+    rdfs:comment "A network link connecting two servers." ;
+    noria:networkLinkId "NL001" ;
+    noria:networkLinkTerminationResourceOrigin ex:Resource1 ;
+    noria:networkLinkTerminationResourceDestination ex:Resource2 .
+
+ex:Locus1
+    a noria:Locus ;
+    rdfs:label "Locus 1" ;
+    rdfs:comment "Location of Resource 1." ;
+    bot:locatedIn ex:Room1 .
+
+ex:Locus2
+    a noria:Locus ;
+    rdfs:label "Locus 2" ;
+    rdfs:comment "Location of Resource 2." ;
+    bot:locatedIn ex:Room1 .
+
+ex:Locus3
+    a noria:Locus ;
+    rdfs:label "Locus 3" ;
+    rdfs:comment "Location of Resource 3." ;
+    bot:locatedIn ex:Room2 .
+
+ex:Room1
+    a noria:Room ;
+    rdfs:label "Server Room 1" ;
+    rdfs:comment "A server room." .
+
+ex:Room2
+    a noria:Room ;
+    rdfs:label "Network Room 1" ;
+    rdfs:comment "A network equipment room." .
+
+ex:TeamAlpha
+    a org:OrganizationalUnit ;
+    rdfs:label "Team Alpha" ;
+    rdfs:comment "Administration team." .
+
+ex:TeamBeta
+    a org:OrganizationalUnit ;
+    rdfs:label "Team Beta" ;
+    rdfs:comment "Support team." .
+
+ex:TroubleTicket1
+    a noria:TroubleTicket ;
+    rdfs:label "Trouble Ticket 1" ;
+    rdfs:comment "A ticket related to Application Module A." ;
+    noria:troubleTicketRelatedService ex:ApplicationModuleA .
+
+ex:ChangeRequest1
+    a noria:ChangeRequest ;
+    rdfs:label "Change Request 1" ;
+    rdfs:comment "A change request impacting Resource 3." ;
+    noria:changeRequestImpact ex:Resource3 .
+
+# Relationships (Hub Node: Resource1, High-Degree Node: ApplicationModuleA, Central Node: NetworkLink1, Connector Node: Resource3, Intermediary Node: NetworkInterface1, Multiplex Node: ApplicationX, Super Node: ApplicationModuleA)
+ex:ApplicationModuleA noria:applicationModuleOf ex:ApplicationX .
+ex:ApplicationModuleB noria:applicationModuleOf ex:ApplicationY .
+ex:Resource1 noria:resourceForApplication ex:ApplicationX .
+ex:Resource2 noria:resourceForApplication ex:ApplicationY .
+ex:NetworkInterface1 noria:networkInterfaceOf ex:Resource1 .
+ex:NetworkInterface2 noria:networkInterfaceOf ex:Resource2 .
+ex:NetworkInterface1 noria:networkInterfaceConnects ex:NetworkLink1 .
+ex:NetworkInterface2 noria:networkInterfaceConnects ex:NetworkLink1 .
+ex:Resource3 noria:resourceForApplication ex:ApplicationX .
+ex:Resource3 noria:resourceForApplication ex:ApplicationY .
+ex:TroubleTicket1 noria:troubleTicketRelatedService ex:ApplicationModuleA .
+ex:ChangeRequest1 noria:changeRequestImpact ex:Resource3 .
+ex:Resource1 seas:subSystemOf ex:ApplicationModuleA .
+ex:Resource2 seas:subSystemOf ex:ApplicationModuleB .
+ex:Resource3 seas:subSystemOf ex:ApplicationX .
+ex:Resource3 seas:subSystemOf ex:ApplicationY .
+ex:ApplicationX seas:subSystemOf ex:ApplicationModuleA .
+ex:ApplicationY seas:subSystemOf ex:ApplicationModuleB .
+ex:ApplicationModuleA noria:applicationModuleAdministrationTeam ex:TeamAlpha .
+ex:ApplicationModuleB noria:applicationModuleSupportTeam ex:TeamBeta .
+ex:TeamAlpha org:member ex:ApplicationModuleA .
+ex:TeamBeta org:member ex:ApplicationModuleB .
+ex:Resource1 noria:locatedAtLocus ex:Locus1 .
+ex:Resource2 noria:locatedAtLocus ex:Locus2 .
+ex:Resource3 noria:locatedAtLocus ex:Locus3 .
+ex:Locus1 bot:locatedIn ex:Room1 .
+ex:Locus2 bot:locatedIn ex:Room1 .
+ex:Locus3 bot:locatedIn ex:Room2 .
+ex:ApplicationX seas:subSystemOf ex:Service1 .
+ex:ApplicationY seas:subSystemOf ex:Service1 .
+
+ex:Service1
+    a noria:Service ;
+    rdfs:label "Service 1" ;
+    rdfs:comment "A service composed of Application X and Y." .
