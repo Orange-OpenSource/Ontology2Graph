@@ -3,6 +3,8 @@ portal (https://portal.llmproxy.ai.orange/)"""
 
 import os
 import datetime
+import subprocess
+import shutil
 from openai import OpenAI, OpenAIError
 
 DATE = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -13,9 +15,7 @@ PATH_ONTOLOGY=f'{PATH}/ontologies'
 PATH_PROMPT=f'{PATH}/prompt'
 PATH_GRAPH=f'{PATH}/graph'
 
-#PATH result to choose
-PATH_RESULT=f'{PATH}/graphs_generated'
-#PATH_RESULT=f'{PATH}/graphs_series_generated'
+
 
 #PROMPT_TYPE to choose
 PROMPT_TYPE='First_prompt'
@@ -31,12 +31,12 @@ ONTO='Noria'
 
 #MODEL constant to choose
 
-#MODEL="vertex_ai/gemini-2.0-flash"
+MODEL="vertex_ai/gemini-2.0-flash"
 #MODEL='openai/gpt-4.1-mini'
 #MODEL='vertex_ai/claude3.7-sonnet'
 #MODEL='openai/o1-preview'
 #MODEL='openai/o3'
-MODEL='openai/gpt-4.1-nano'
+#MODEL='openai/gpt-4.1-nano'
 #MODEL='openai/gpt-4.1'
 #MODEL='vertex_ai/gemini-1.5-flash'
 #MODEL='openai/o4-mini'07
@@ -50,7 +50,13 @@ MODEL='openai/gpt-4.1-nano'
 #MODEL="openai/o1-mini"
 #MODEL="openai/gpt-3.5-turbo"
 
+#PATH result to choose
+PATH_RESULT=f'{PATH}/graphs_generated_by_models/{MODEL}'
+#PATH_RESULT=f'{PATH}/graphs_series_generated'
+
 os.makedirs(f'{PATH_RESULT}/{MODEL}/',exist_ok=True)
+
+BAD_PATH_RESULT=f'{PATH_RESULT}/Bad_Turtle_Syntax'
 
 client = OpenAI(api_key=os.environ.get("ORANGE_LLM_PROXY_KEY"),
                 base_url="https://llmproxy.ai.orange")
@@ -61,7 +67,7 @@ with open(f'{PATH_ONTOLOGY}/Noria.ttl','rt',encoding='utf-8') as ontology:
 with open(f'{PATH_PROMPT}/{PROMPT_FILE}','rt',encoding='utf-8') as prompt:
     PROMPT = ','.join(str(x) for x in prompt.readlines())
 
-# Only for second and third prompr
+# Only for second and third prompt
 with open(f'{PATH_GRAPH}/full_graph.ttl','rt',encoding='utf-8') as graph:
     GRAPH = ','.join(str(x) for x in graph.readlines())
 
@@ -83,31 +89,47 @@ try:
     )
 
     #Write the result in a temporary file
-    with open(f'{PATH_RESULT}/{MODEL}/{PROMPT_TYPE}_temp.ttl'
-              ,'w',encoding='utf-8') as file:
-        file.write(response.choices[0].message.content)
-        file.close()
+    with open(f'{PATH_RESULT}/{PROMPT_TYPE}_temp.ttl'
+              ,'w',encoding='utf-8') as filetemp:
+        filetemp.write(response.choices[0].message.content)
+        filetemp.close()
 
     #Remove lines start with '
-    with open(f'{PATH_RESULT}/{MODEL}/{PROMPT_TYPE}_temp.ttl'
+    with open(f'{PATH_RESULT}/{PROMPT_TYPE}_temp.ttl'
               ,'r',encoding='utf-8') as file:
         lines = file.readlines()
         filtered_lines = [lines for lines in lines if not lines.startswith('`')]
-
-        with open(f'{PATH_RESULT}/{MODEL}/{PROMPT_TYPE}_{DATE}_{ONTO}.ttl'
-                ,'w',encoding='utf-8') as file_final:
-            file_final.writelines(filtered_lines)
-            file_final.close()
+        #save filtered result
+        with open(f'{PATH_RESULT}/{PROMPT_TYPE}_{DATE}_{ONTO}.ttl'
+                    ,'w',encoding='utf-8') as filtered_file:
+            filtered_file.writelines(filtered_lines)
+            filtered_file.close()
 
         file.close()
-        os.remove(f'{PATH_RESULT}/{MODEL}/{PROMPT_TYPE}_temp.ttl')
+        os.remove(f'{PATH_RESULT}/{PROMPT_TYPE}_temp.ttl')
 
-## print file content
-    with open(f'{PATH_RESULT}/{MODEL}/{PROMPT_TYPE}_{DATE}_{ONTO}.ttl',
-              'r',encoding='utf-8') as file_final:
-        contents = file_final.read()
-        print(contents)
-        file_final.close()
+    # Check Turtle syntax
+    #command=["ttl",f'{PATH_RESULT}/{PROMPT_TYPE}_{DATE}_{ONTO}.ttl']
+    command=["ttl",f'{PATH_RESULT}/First_prompt_2025-07-01_15-33-33_Noria_BAD.ttl']
+    turtlevalidator=subprocess.Popen(command, stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE,text=True)
+    stdout, stderr = turtlevalidator.communicate()
+    print("Turtle validator Result:")
+    print(stdout)
+    print(stderr)
+    print(turtlevalidator.communicate())
+
+    if stdout!='Validator finished with 0 warnings and 0 errors.\n' :
+        # move bad file in bad folder and Save logs
+
+        os.makedirs(f'{BAD_PATH_RESULT}', exist_ok=True)
+        shutil.move(f'{PATH_RESULT}/{PROMPT_TYPE}_{DATE}_{ONTO}.ttl',
+                    f'{BAD_PATH_RESULT}/{PROMPT_TYPE}_{DATE}_{ONTO}_BAD.ttl')
+
+        with open(f'{PATH_RESULT}/Bad_Turtle_Syntax/errors.log', 'r+',
+                       encoding='utf-8') as log:
+            log.write(f'{PROMPT_TYPE}_{DATE}_{ONTO}_BAD.ttl : {turtlevalidator.communicate()}\n')
+            log.close()
 
 except OpenAIError as e:
     print(f"An error occured: {e}")
