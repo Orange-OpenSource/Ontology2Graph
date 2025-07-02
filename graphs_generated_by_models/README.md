@@ -27,3 +27,5 @@ gpt-4.1-nano provide a very specific result by describing first the ontologuy (a
 connects, relatesTo, bridges, partOf, hasRelation are defined), so all the relations are visible in ontograph(Protégé)
 
 \* This model provided a result file not coherent with the prompt, some comments was added by the LLM that broken the turtle format. After removing these comments the result file has been correctly processed by Protégé and ROBOTS.
+
+To choose models we uses several criteria like input and output tokens, price and if the result was consistent with the prompt durign tests sum up in this table above
