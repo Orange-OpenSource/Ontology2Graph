@@ -84,38 +84,24 @@ ex:NetworkInterface2
 ex:NetworkLink1
     a noria:NetworkLink ;
     rdfs:label "Link 1" ;
-    rdfs:comment "A network link connecting two servers." ;
+    rdfs:comment "A network link between servers." ;
     noria:networkLinkId "NL001" ;
     noria:networkLinkTerminationResourceOrigin ex:Resource1 ;
     noria:networkLinkTerminationResourceDestination ex:Resource2 .
 
-ex:Locus1
-    a noria:Locus ;
-    rdfs:label "Locus 1" ;
-    rdfs:comment "Location of Resource 1." ;
-    bot:locatedIn ex:Room1 .
+ex:TroubleTicket1
+    a noria:TroubleTicket ;
+    rdfs:label "Trouble Ticket 1" ;
+    rdfs:comment "A ticket related to a server issue." ;
+    dcterms:identifier "TT001" ;
+    noria:troubleTicketRelatedResource ex:Resource1 .
 
-ex:Locus2
-    a noria:Locus ;
-    rdfs:label "Locus 2" ;
-    rdfs:comment "Location of Resource 2." ;
-    bot:locatedIn ex:Room1 .
-
-ex:Locus3
-    a noria:Locus ;
-    rdfs:label "Locus 3" ;
-    rdfs:comment "Location of Resource 3." ;
-    bot:locatedIn ex:Room2 .
-
-ex:Room1
-    a noria:Room ;
-    rdfs:label "Server Room 1" ;
-    rdfs:comment "A server room." .
-
-ex:Room2
-    a noria:Room ;
-    rdfs:label "Network Room 1" ;
-    rdfs:comment "A network equipment room." .
+ex:ChangeRequest1
+    a noria:ChangeRequest ;
+    rdfs:label "Change Request 1" ;
+    rdfs:comment "A change request for a network configuration." ;
+    dcterms:identifier "CR001" ;
+    noria:changeRequestImpact ex:Resource3 .
 
 ex:TeamAlpha
     a org:OrganizationalUnit ;
@@ -127,51 +113,78 @@ ex:TeamBeta
     rdfs:label "Team Beta" ;
     rdfs:comment "Support team." .
 
+ex:Locus1 a noria:Locus ;
+    rdfs:label "Locus 1" ;
+    bot:site ex:Site1 .
+
+ex:Locus2 a noria:Locus ;
+    rdfs:label "Locus 2" ;
+    bot:site ex:Site1 .
+
+ex:Locus3 a noria:Locus ;
+    rdfs:label "Locus 3" ;
+    bot:site ex:Site2 .
+
+ex:Site1 a bot:Site ;
+    rdfs:label "Site 1" .
+
+ex:Site2 a bot:Site ;
+    rdfs:label "Site 2" .
+
+# Relationships and Node Types
+ex:ApplicationX
+    noria:resourceForApplication ex:Resource1, ex:Resource2 ; # High-degree node
+    seas:subSystemOf ex:ServiceA . # Hub node
+
+ex:ApplicationY
+    noria:resourceForApplication ex:Resource3 ;
+    seas:subSystemOf ex:ServiceB .
+
+ex:Resource1
+    noria:networkInterfaceOf ex:NetworkInterface1 ;
+    noria:resourceManagedBy ex:TeamAlpha ; # Connector node
+    noria:locatedAtLocus ex:Locus1 .
+
+ex:Resource2
+    noria:networkInterfaceOf ex:NetworkInterface2 ;
+    noria:resourceManagedBy ex:TeamBeta ;
+    noria:locatedAtLocus ex:Locus2 .
+
+ex:Resource3
+    noria:resourceManagedBy ex:TeamAlpha ;
+    noria:locatedAtLocus ex:Locus3 .
+
+ex:NetworkLink1
+    noria:networkLinkTerminationResource ex:Resource1, ex:Resource2 . # Multiplex node
+
 ex:TroubleTicket1
-    a noria:TroubleTicket ;
-    rdfs:label "Trouble Ticket 1" ;
-    rdfs:comment "A ticket related to Application Module A." ;
-    noria:troubleTicketRelatedService ex:ApplicationModuleA .
+    noria:eventRelatedElement ex:Resource1 . # Intermediary node
 
 ex:ChangeRequest1
-    a noria:ChangeRequest ;
-    rdfs:label "Change Request 1" ;
-    rdfs:comment "A change request impacting Resource 3." ;
-    noria:changeRequestImpact ex:Resource3 .
+    noria:eventRelatedElement ex:Resource3 .
 
-# Relationships (Hub Node: Resource1, High-Degree Node: ApplicationModuleA, Central Node: NetworkLink1, Connector Node: Resource3, Intermediary Node: NetworkInterface1, Multiplex Node: ApplicationX, Super Node: ApplicationModuleA)
-ex:ApplicationModuleA noria:applicationModuleOf ex:ApplicationX .
-ex:ApplicationModuleB noria:applicationModuleOf ex:ApplicationY .
-ex:Resource1 noria:resourceForApplication ex:ApplicationX .
-ex:Resource2 noria:resourceForApplication ex:ApplicationY .
-ex:NetworkInterface1 noria:networkInterfaceOf ex:Resource1 .
-ex:NetworkInterface2 noria:networkInterfaceOf ex:Resource2 .
-ex:NetworkInterface1 noria:networkInterfaceConnects ex:NetworkLink1 .
-ex:NetworkInterface2 noria:networkInterfaceConnects ex:NetworkLink1 .
-ex:Resource3 noria:resourceForApplication ex:ApplicationX .
-ex:Resource3 noria:resourceForApplication ex:ApplicationY .
-ex:TroubleTicket1 noria:troubleTicketRelatedService ex:ApplicationModuleA .
-ex:ChangeRequest1 noria:changeRequestImpact ex:Resource3 .
-ex:Resource1 seas:subSystemOf ex:ApplicationModuleA .
-ex:Resource2 seas:subSystemOf ex:ApplicationModuleB .
-ex:Resource3 seas:subSystemOf ex:ApplicationX .
-ex:Resource3 seas:subSystemOf ex:ApplicationY .
-ex:ApplicationX seas:subSystemOf ex:ApplicationModuleA .
-ex:ApplicationY seas:subSystemOf ex:ApplicationModuleB .
-ex:ApplicationModuleA noria:applicationModuleAdministrationTeam ex:TeamAlpha .
-ex:ApplicationModuleB noria:applicationModuleSupportTeam ex:TeamBeta .
-ex:TeamAlpha org:member ex:ApplicationModuleA .
-ex:TeamBeta org:member ex:ApplicationModuleB .
-ex:Resource1 noria:locatedAtLocus ex:Locus1 .
-ex:Resource2 noria:locatedAtLocus ex:Locus2 .
-ex:Resource3 noria:locatedAtLocus ex:Locus3 .
-ex:Locus1 bot:locatedIn ex:Room1 .
-ex:Locus2 bot:locatedIn ex:Room1 .
-ex:Locus3 bot:locatedIn ex:Room2 .
-ex:ApplicationX seas:subSystemOf ex:Service1 .
-ex:ApplicationY seas:subSystemOf ex:Service1 .
-
-ex:Service1
+ex:ServiceA
     a noria:Service ;
-    rdfs:label "Service 1" ;
-    rdfs:comment "A service composed of Application X and Y." .
+    rdfs:label "Service A" ;
+    rdfs:comment "A critical service." . # Central node
+
+ex:ServiceB
+    a noria:Service ;
+    rdfs:label "Service B" ;
+    rdfs:comment "Another important service." .
+
+ex:OrganizationA
+    a org:Organization ;
+    rdfs:label "Organization A" ;
+    rdfs:comment "A large organization." . # Super node
+
+ex:ApplicationX
+    noria:elementManagedBy ex:OrganizationA .
+ex:ApplicationY
+    noria:elementManagedBy ex:OrganizationA .
+ex:Resource1
+    noria:elementManagedBy ex:OrganizationA .
+ex:Resource2
+    noria:elementManagedBy ex:OrganizationA .
+ex:Resource3
+    noria:elementManagedBy ex:OrganizationA .
