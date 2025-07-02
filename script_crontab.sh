@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #start virtual env
-source "/home/pdooze/DIGITAL_TWIN/gengraphllm/bin/activate"
+#source "/home/pdooze/DIGITAL_TWIN/gengraphllm/bin/activate"
+source "/home/piod7321/DIGITAL_TWIN/gengraphllm/bin/activate"
 
 # Check if the virtual environment was activated successfully
 if [ $? -ne 0 ]; then
@@ -10,7 +11,8 @@ if [ $? -ne 0 ]; then
 fi
 
 #run python script
-/home/pdooze/DIGITAL_TWIN/gengraphllm/bin/python3 /home/pdooze/DIGITAL_TWIN/gengraphllm/graphllm.py
+#/home/pdooze/DIGITAL_TWIN/gengraphllm/bin/python3 /home/pdooze/DIGITAL_TWIN/gengraphllm/graphllm.py
+/home/piod7321/DIGITAL_TWIN/gengraphllm/bin/python3 /home/piod7321/DIGITAL_TWIN/gengraphllm/graphllm.py
 
 #deactivate virtual env
 deactivate

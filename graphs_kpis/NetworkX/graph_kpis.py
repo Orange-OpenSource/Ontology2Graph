@@ -1,11 +1,11 @@
 ''' This python script compute some Knowledge Graph KPIs '''
+
+import csv
 from rdflib import Graph
 import networkx as nx
-import csv
-
 
 #constant
-PATH = "../../comparison_model_results/Noria/"
+PATH = "../../graphs_generated_by_models/Noria/"
 FILE = "First_graph_noria_2025-06-20_16-20-20_gemini-2.0-flash-001.ttl"
 
 #load the graph
@@ -19,10 +19,11 @@ nbr_nodes=nx_graph.number_of_nodes()
 nbr_edges=nx_graph.number_of_edges()
 nodes=list(nx_graph.nodes())
 
-with open('output.csv', mode='w', newline='') as file:
+with open('output.csv', mode='w', newline='',encoding='utf-8') as file:
     writer = csv.writer(file)
-    for item in nodes:
-            writer.writerow([item])
+    for item in nodes :
+        writer.writerow([item])
+    file.close()
 
 print(f"Number of nodes: {nbr_nodes}")
 print(f"Number of edges: {nbr_edges}")
@@ -32,4 +33,5 @@ print(f"Number of edges: {nbr_edges}")
 graph.parse(f'{PATH}/{FILE}', format="turtle")
 
 # Serialize to GraphML
-graph.serialize(destination="/mnt/c/Users/piod7321/Downloads/output.graphml", format="xml")
+graph.serialize(destination='output.graphml', format="xml")
+

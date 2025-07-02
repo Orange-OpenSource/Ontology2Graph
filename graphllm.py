@@ -12,7 +12,8 @@ from openai import OpenAI, OpenAIError
 DATE = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # PATH constant where are stored the needed ressources, prompt, ontology and graph
-PATH=os.getcwd()
+#PATH=os.getcwd()
+PATH=f'{os.getcwd()}/DIGITAL_TWIN/gengraphllm' # when suing crontab
 PATH_ONTOLOGY=f'{PATH}/ontologies'
 PATH_PROMPT=f'{PATH}/prompt'
 PATH_GRAPH=f'{PATH}/graph'
@@ -83,6 +84,10 @@ try:
             }
         ]
     )
+
+    print(f'{DATE} {MODEL}')
+    print("Prompt tokens : ",response.usage.prompt_tokens)
+    print("Output response tokens", response.usage.completion_tokens)
 
     #Write the result in a temporary file
     with open(f'{PATH_RESULT}/{PROMPT_TYPE}_temp.ttl','x',encoding='utf-8') as filetemp:
