@@ -34,4 +34,3 @@ graph.parse(f'{PATH}/{FILE}', format="turtle")
 
 # Serialize to GraphML
 graph.serialize(destination='output.graphml', format="xml")
-
