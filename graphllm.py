@@ -12,8 +12,8 @@ from openai import OpenAI, OpenAIError
 DATE = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # PATH constant where are stored the needed ressources, prompt, ontology and graph
-#PATH=os.getcwd()
-PATH=f'{os.getcwd()}/DIGITAL_TWIN/gengraphllm' # when suing crontab
+PATH=os.getcwd()
+#PATH=f'{os.getcwd()}/DIGITAL_TWIN/gengraphllm' # when suing crontab
 PATH_ONTOLOGY=f'{PATH}/ontologies'
 PATH_PROMPT=f'{PATH}/prompt'
 PATH_GRAPH=f'{PATH}/graph'
