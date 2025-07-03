@@ -1,17 +1,12 @@
 
-''' This script plots line chart from concatenated file. The name of the KPI
-must be use as a first argument and the location of the concatenated file 
-(compelte folder PATH + the file itself as a second argument when laucnhing 
-the python script'''
+''' This script plots line chart based on KPI's timse series build from robot measurements. The 
+name of the KPI must be use as a first argument and the location of the concatenated file 
+(compelte folder PATH + the file itself as a second argument when laucnhing the python script'''
 
 import sys
+import os
 import plotly.express as px
-#import kaleido
-#from kaleido import write_fig_sync
 import pandas as pd
-#import os
-
-#kaleido.get_chrome_sync
 
 # use argument as constant
 Y_NAME = sys.argv[1]
@@ -26,6 +21,8 @@ for i in range(len(parts)-2) :
 
 SAVE_PATH=f'{PATH}/Charts'
 
+os.makedirs(f'{SAVE_PATH}', exist_ok=True)
+
 #Load the data and process them
 df = pd.read_csv((PATH_FILE))
 
@@ -33,6 +30,7 @@ df['date'] = pd.to_datetime(df['date'],format='%Y-%m-%d %H:%M:%S',errors="coerce
 df=df.sort_values(by=['date'])
 
 fig = px.line(df, x='date', y=Y_NAME, markers=True)
+#fig = go.Figure(data=go.df,x='date', y=Y_NAME, markers=True )
 
 fig.update_layout(
     title={
@@ -49,19 +47,5 @@ fig.update_layout(
 )
 
 fig.show()
+fig.write_html(f'{SAVE_PATH}/{Y_NAME}.html')
 
-#Save file
-#if not os.path.exists(SAVE_PATH):
-#    os.makedirs(f'{SAVE_PATH}')
-
-#print(f'{SAVE_PATH}/{Y_NAME}.svg')
-
-#kaleido.write_fig_sync(fig, path=f"{SAVE_PATH}/{Y_NAME}.png")
-
-#fig.write_image(f"{SAVE_PATH}/{Y_NAME}.svg")
-
-#Dysplay in firefox
-#HTML_FILE=f'{SAVE_PATH}/{Y_NAME}.html'
-
-#firefox_path = webbrowser.get("firefox")
-#firefox_path.open('file://' + os.path.realpath(HTML_FILE))
