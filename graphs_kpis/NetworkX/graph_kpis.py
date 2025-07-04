@@ -1,36 +1,72 @@
-''' This python script compute some Knowledge Graph KPIs '''
+''' This python script compute some Knowledge Graphs KPIs. You must pass as an argument the 
+location folder where are stored all the ttl files'''
 
-import csv
-from rdflib import Graph
+import sys
+from pathlib import Path
 import networkx as nx
+import rdflib
+from networkx.algorithms import approximation
 
-#constant
-PATH = "../../graphs_generated_by_models/Noria/"
-FILE = "First_graph_noria_2025-06-20_16-20-20_gemini-2.0-flash-001.ttl"
+arg = sys.argv[1:]
+PATH= arg[0]
 
-#load the graph
-graph = Graph()
-graph.parse(f'{PATH}/{FILE}', format="turtle")
-#nx_graph = rdflib_to_networkx_multidigraph(graph)
-#nx_graph = nx.DiGraph(graph)
-nx_graph = nx.MultiDiGraph(graph)
+#List all the files in PATH except folder
+all_files = [f.name for f in Path(PATH).iterdir() if f.is_file()]
 
-nbr_nodes=nx_graph.number_of_nodes()
-nbr_edges=nx_graph.number_of_edges()
-nodes=list(nx_graph.nodes())
+#rebuild complete file path (folder/file)
+for i, file in enumerate(all_files):
+    all_files[i]= PATH + file
 
-with open('output.csv', mode='w', newline='',encoding='utf-8') as file:
-    writer = csv.writer(file)
-    for item in nodes :
-        writer.writerow([item])
-    file.close()
+for file in all_files:
 
-print(f"Number of nodes: {nbr_nodes}")
-print(f"Number of edges: {nbr_edges}")
-#print(f"Nodes in the graph: {nodes}")
+    #retrieve file name
+    parts = file.split("/")
+    file_name_pos = len(parts)
+    file_name = parts[file_name_pos-1]
 
-#Convert ttl file to graphml for Gephi usage
-graph.parse(f'{PATH}/{FILE}', format="turtle")
+    #load the knowledge graph in G
+    g = rdflib.Graph()
+    g.parse(file, format='turtle')
 
-# Serialize to GraphML
-graph.serialize(destination='output.graphml', format="xml")
+    G = nx.DiGraph()
+
+    for subj, pred, obj in g:
+        # Convert RDF nodes to strings for node labels
+        SUBJ_STR = str(subj)
+        PRED_STR = str(pred)
+        OBJ_STR = str(obj)
+
+        # Add nodes (optional, as adding edges will add nodes automatically)
+        G.add_node(SUBJ_STR)
+        G.add_node(OBJ_STR)
+
+        # Add edge with predicate as label (if desired)
+        G.add_edge(SUBJ_STR, OBJ_STR, label=PRED_STR)
+
+    print(f'Knowledge Graph : {file_name}')
+    print('Number of Nodes :',G.number_of_nodes())
+    print('Number of edges :',G.number_of_edges())
+    print('Is the graph is directed ? :',G.is_directed())
+
+    if G.is_directed() is False : #is_connected and components not implemented for directed Graph
+        print('Is the graph is connected ? :',nx.is_connected(G))
+        print('How many component ? :',nx.number_connected_components(G))
+
+    print('Is the graph is multigraph ? :',G.is_multigraph())
+    #print('Is the graph is strongly connected ? :',nx.is_strongly_connected(G))
+
+    #if nx.is_strongly_connected(G) :
+    #    print('Diameter :', nx.diameter(G),'\n')
+    #else : print('Diameter cannot be compute because the Graph is not strongly connected')
+
+    #print('number of triangles by nodes',nx.triangles(G),'\n')
+
+    print('########### APPROX ################')
+    #print('Pairs of nodes connected : ',approximation.all_pairs_node_connectivity(G))
+    print('Node connectivity approx',approximation.node_connectivity(G))
+    #print('components',approximation.k_components(G))
+    #print('maximum independent set',nx.approximation.maximum_independent_set(G))
+    #print('maximum clique',nx.approximation.max_clique(G))
+
+
+    print('\n')
