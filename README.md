@@ -10,8 +10,8 @@ graphllm.py script is dedicated to query LLM models throught the internal Orange
 
 ### Prerequisite
 
-1. You need first to create an account in [LLM PROXY Portail](https://portal.llmproxy.ai.orange/).
-2. Then once it is done you must setup a local environment variable called LLM_PROXY_KEY with the value of your LLM_PROXY key.
+1. First, you need to create an account in [LLM PROXY Portail](https://portal.llmproxy.ai.orange/). Then once it is done you must setup a local environment variable called LLM_PROXY_KEY with the value of your LLM_PROXY key.
+2. Second you must install the following [turtle validator](https://github.com/IDLabResearch/TurtleValidator) in your environment. 
 
 ### Settings in graphllm.py
 
@@ -33,11 +33,11 @@ For the third choice :
 
 ### Start conversion
 
-To launch the python script just type 'python3 graphllm.py'. Results are stored in {PATH_RESULT} in turtle format.
+To launch the python script once for all, just type 'python3 graphllm.py'. Results are stored in {PATH_RESULT} in turtle format 
 
-### produce KG at regular interval
+### Produce KG at regular interval
 
-In order to produce KG at regular interval (Each five minutes) you have to setup the crontab like this :
+In order to produce Knowledge Graphs at regular intervals (Each five minutes for instance) you have to setup the crontab like this :
 
 ```
     #Define environment variable
@@ -45,6 +45,21 @@ In order to produce KG at regular interval (Each five minutes) you have to setup
 
     */5 * * * * bash "PATH TO script_crontab.sh" >> result.log 2>&1
 ```
-script_crontab.sh must be slighlt modified depending on the location of graphllm.py
+script_crontab.sh must be slighlty modified depending on the location of graphllm.py
 
-###
+With this crontab settings graphllm.py will produce Knowledge Graphs at regular intervals and a result.log file with the following content : 
+
+```
+	2025-07-02_15-54-01 vertex_ai/gemini-2.0-flash 
+	Prompt tokens :  35448
+	Output response tokens 3812
+	Turtle validator Result: ('Validator finished with 0 warnings and 0 errors.\n', '')
+	2025-07-02_15-56-01 vertex_ai/gemini-2.0-flash
+	Prompt tokens :  35448
+	Output response tokens 1694
+	Turtle validator Result: ('Validator finished with 0 warnings and 0 errors.\n', '')
+	...
+```
+
+
+
