@@ -65,8 +65,12 @@ for file in all_files:
     #print('Pairs of nodes connected : ',approximation.all_pairs_node_connectivity(G))
     print('Node connectivity approx',approximation.node_connectivity(G))
     #print('components',approximation.k_components(G))
-    #print('maximum independent set',nx.approximation.maximum_independent_set(G))
-    #print('maximum clique',nx.approximation.max_clique(G))
+    #print('maximum independent set',nx.approximation.maximum_indep
+    print("degree",G.degree())
+    print("in degree",G.in_degree())
+    print("out degree",G.out_degree())
+
+
 
 
     print('\n')
