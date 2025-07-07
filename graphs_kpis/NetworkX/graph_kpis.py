@@ -2,10 +2,15 @@
 location folder where are stored all the ttl files'''
 
 import sys
+import os
 from pathlib import Path
 import networkx as nx
 import rdflib
-from networkx.algorithms import approximation
+from networkx.algorithms import *
+from networkx.classes.function import degree_histogram
+#approximation, clique, connectivity, average_node_connectivity
+from pyvis.network import Network
+import webbrowser
 
 arg = sys.argv[1:]
 PATH= arg[0]
@@ -17,7 +22,7 @@ all_files = [f.name for f in Path(PATH).iterdir() if f.is_file()]
 for i, file in enumerate(all_files):
     all_files[i]= PATH + file
 
-for file in all_files:
+for file in all_files :
 
     #retrieve file name
     parts = file.split("/")
@@ -28,31 +33,34 @@ for file in all_files:
     g = rdflib.Graph()
     g.parse(file, format='turtle')
 
-    G = nx.DiGraph()
+    DiGraph = nx.DiGraph()
+    Graph = nx.Graph()
 
     for subj, pred, obj in g:
-        # Convert RDF nodes to strings for node labels
-        SUBJ_STR = str(subj)
-        PRED_STR = str(pred)
-        OBJ_STR = str(obj)
+
+        print(subj)
 
         # Add nodes (optional, as adding edges will add nodes automatically)
-        G.add_node(SUBJ_STR)
-        G.add_node(OBJ_STR)
+        DiGraph.add_node(str(subj))
+        DiGraph.add_node(str(obj))
+        DiGraph.add_edge(str(subj),str(obj),label=str(pred))
 
-        # Add edge with predicate as label (if desired)
-        G.add_edge(SUBJ_STR, OBJ_STR, label=PRED_STR)
+        Graph.add_node(str(subj))
+        Graph.add_node(str(obj))
+        Graph.add_edge(str(subj),str(obj),label=str(pred))
+
+     
 
     print(f'Knowledge Graph : {file_name}')
-    print('Number of Nodes :',G.number_of_nodes())
-    print('Number of edges :',G.number_of_edges())
-    print('Is the graph is directed ? :',G.is_directed())
+    print('Number of Nodes :',DiGraph.number_of_nodes())
+    print('Number of edges :',DiGraph.number_of_edges())
+    print('Is the graph is directed ? :',DiGraph.is_directed())
 
-    if G.is_directed() is False : #is_connected and components not implemented for directed Graph
-        print('Is the graph is connected ? :',nx.is_connected(G))
-        print('How many component ? :',nx.number_connected_components(G))
+    if DiGraph.is_directed() is False : #is_connected and components not implemented for directed Graph
+        print('Is the graph is connected ? :',nx.is_connected(DiGraph))
+        print('How many component ? :',nx.number_connected_components(DiGraph))
 
-    print('Is the graph is multigraph ? :',G.is_multigraph())
+    print('Is the graph is multigraph ? :',DiGraph.is_multigraph())
     #print('Is the graph is strongly connected ? :',nx.is_strongly_connected(G))
 
     #if nx.is_strongly_connected(G) :
@@ -63,14 +71,36 @@ for file in all_files:
 
     print('########### APPROX ################')
     #print('Pairs of nodes connected : ',approximation.all_pairs_node_connectivity(G))
-    print('Node connectivity approx',approximation.node_connectivity(G))
+    print('Node connectivity approx',approximation.node_connectivity(DiGraph))
     #print('components',approximation.k_components(G))
     #print('maximum independent set',nx.approximation.maximum_indep
-    print("degree",G.degree())
-    print("in degree",G.in_degree())
-    print("out degree",G.out_degree())
+   
+    #print("degree",G.degree())
+    #print("in degree",G.in_degree())
+    #print("out degree",G.out_degree())
 
+    #print("average node connectivity", average_node_connectivity(Graph))
+    print("degree_histogram", degree_histogram(DiGraph))
 
+    #print(list(DiGraph.nodes()))
 
+    for node in DiGraph.nodes() :
+        print(node)
 
     print('\n')
+
+    #### visualisation
+    #net=Network(height='840px',width='1700px',select_menu=True,filter_menu=True)
+    net = Network(height="840px", width="100%", bgcolor="#222222", font_color="white")
+
+    # set the physics layout of the network
+    net.barnes_hut()
+    net.from_nx(DiGraph)
+    net.show_buttons(filter_=['physics'])
+
+    OUTPUTFILE= "mon_graphe_de_test.html"
+    net.save_graph(OUTPUTFILE)
+    full_path=os.path.abspath(OUTPUTFILE)
+    print('full path',full_path)
+
+    webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{full_path}',autoraise=True)
