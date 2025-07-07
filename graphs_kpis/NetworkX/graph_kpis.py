@@ -38,7 +38,9 @@ for file in all_files :
 
     for subj, pred, obj in g:
 
-        print(subj)
+        #print('subj',subj)
+        #print('pred',pred)
+        #print('object',obj)
 
         # Add nodes (optional, as adding edges will add nodes automatically)
         DiGraph.add_node(str(subj))
@@ -48,9 +50,7 @@ for file in all_files :
         Graph.add_node(str(subj))
         Graph.add_node(str(obj))
         Graph.add_edge(str(subj),str(obj),label=str(pred))
-
-     
-
+   
     print(f'Knowledge Graph : {file_name}')
     print('Number of Nodes :',DiGraph.number_of_nodes())
     print('Number of edges :',DiGraph.number_of_edges())
@@ -84,8 +84,8 @@ for file in all_files :
 
     #print(list(DiGraph.nodes()))
 
-    for node in DiGraph.nodes() :
-        print(node)
+    #for node in DiGraph.nodes() :
+    #    print(node)
 
     print('\n')
 
@@ -101,6 +101,6 @@ for file in all_files :
     OUTPUTFILE= "mon_graphe_de_test.html"
     net.save_graph(OUTPUTFILE)
     full_path=os.path.abspath(OUTPUTFILE)
-    print('full path',full_path)
+    #print('full path',full_path)
 
-    webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{full_path}',autoraise=True)
+    #webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{full_path}',autoraise=True)
