@@ -13,8 +13,13 @@ from pyvis.network import Network
 
 arg = sys.argv[1:]
 PATH= arg[0]
-ONTO='/home/piod7321/DIGITAL_TWIN/gengraphllm/ontologies/Noria.ttl'
-print(ONTO)
+ONTO='/home/pdooze/DIGITAL_TWIN/gengraphllm/ontologies/Noria.ttl'
+
+def remove_pred_obj(expr, graph):
+     edges_to_remove = [(u, v) for u, v, attr in graph.edges(data=True)
+                         if attr.get(expr) == pred and v == obj]
+     return graph.remove_edges_from(edges_to_remove)
+
 
 ##retrieve all the Datatype properties listed in the ontologies
 index_list=[]
@@ -43,9 +48,9 @@ for dtp in DatatypeP:
     print(dtp)
     DatatypeProperty.append(dtp)
 
-print(DatatypeProperty)
-print(len(index_list))
-print(len)
+#print(DatatypeProperty)
+#print(len(index_list))
+#print(len)
    
 #for line in lines :
 #    if 'DatatypeProperty' in line :
@@ -89,23 +94,27 @@ for file in all_files :
         #print(type(parts_pred))
        
         # Add nodes
-        if 'comment' in pred : 
-            edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
-            if attr.get('comment') == pred and v == obj]
-            Graph.remove_edges_from(edges_to_remove)
+        if 'comment' in pred :
+            remove_pred_obj('comment', Graph)
+            remove_pred_obj('comment', DiGraph) 
+            #edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
+            #if attr.get('comment') == pred and v == obj]
+            #Graph.remove_edges_from(edges_to_remove)
 
-            edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
-            if attr.get('comment') == pred and v == obj]
-            DiGraph.remove_edges_from(edges_to_remove)
+            #edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
+            #if attr.get('comment') == pred and v == obj]
+            #DiGraph.remove_edges_from(edges_to_remove)
 
         elif 'label' in pred :
-            edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
-            if attr.get('label') == pred and v == obj]
-            Graph.remove_edges_from(edges_to_remove)
+            remove_pred_obj('label', Graph)
+            remove_pred_obj('label', DiGraph) 
+            #edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
+            #if attr.get('label') == pred and v == obj]
+            #Graph.remove_edges_from(edges_to_remove)
 
-            edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
-            if attr.get('label') == pred and v == obj]
-            DiGraph.remove_edges_from(edges_to_remove)
+            #edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
+            #if attr.get('label') == pred and v == obj]
+            #DiGraph.remove_edges_from(edges_to_remove)
 
         elif 'type' in pred :
             edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
