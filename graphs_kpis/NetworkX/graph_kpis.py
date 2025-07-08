@@ -7,15 +7,54 @@ from pathlib import Path
 import webbrowser
 import networkx as nx
 import rdflib
-#from networkx.algorithms import *
 from networkx.classes.function import degree_histogram
 from networkx import approximation
 from pyvis.network import Network
 
 arg = sys.argv[1:]
 PATH= arg[0]
+ONTO='/home/piod7321/DIGITAL_TWIN/gengraphllm/ontologies/Noria.ttl'
+print(ONTO)
 
-#List all the files in PATH except folder
+##retrieve all the Datatype properties listed in the ontologies
+index_list=[]
+DatatypeP=[]
+
+#retreive index line of datatype properties
+with open(f'{ONTO}', 'r',encoding='utf-8') as file:
+    for index, line in enumerate(file, start=1):
+        if 'DatatypeProperty' in line :
+            #print(f'{index  }:{line.strip()}')       
+            index_list.append(index-1) 
+    file.close()
+
+#retreive DatatypeProperties based on index
+with open(f'{ONTO}', 'r',encoding='utf-8') as file:
+    for index, line in enumerate(file, start=1):
+        if index in index_list:
+            #print(index,line.strip())
+            DatatypeP.append(line.strip())
+    file.close()
+
+#clean DatatypeProperties
+DatatypeProperty=[]
+for dtp in DatatypeP:
+    dtp=dtp.replace('noria:',"")
+    print(dtp)
+    DatatypeProperty.append(dtp)
+
+print(DatatypeProperty)
+print(len(index_list))
+print(len)
+   
+#for line in lines :
+#    if 'DatatypeProperty' in line :
+#        print(f'{line}')
+
+
+
+
+#List all the ttl graph files in PATH except folder
 all_files = [f.name for f in Path(PATH).iterdir() if f.is_file()]
 
 #rebuild complete file path (folder/file)
@@ -36,29 +75,36 @@ for file in all_files :
     DiGraph = nx.DiGraph()
     Graph = nx.Graph()
 
-    #my_subj=[]
-    #my_pred=[]
-    #my_obj=[]
+    my_subj=[]
+    my_pred=[]
+    my_obj=[]
 
     for subj, pred, obj in g:
 
+        #split pred in / / parts
+        parts_pred=pred.split("/")
+        dtp_pred=parts_pred[len(parts_pred)-1]
+        #print(parts_pred)
+        #print(parts_pred[len(parts_pred)-1])
+        #print(type(parts_pred))
+       
         # Add nodes
-        if 'comment' in pred :
+        if 'comment' in pred : 
             edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
-            if attr.get('label') == pred and v == obj]
+            if attr.get('comment') == pred and v == obj]
             Graph.remove_edges_from(edges_to_remove)
 
             edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
-            if attr.get('label') == pred and v == obj]
+            if attr.get('comment') == pred and v == obj]
             DiGraph.remove_edges_from(edges_to_remove)
 
         elif 'label' in pred :
             edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
-            if attr.get('comment') == pred and v == obj]
+            if attr.get('label') == pred and v == obj]
             Graph.remove_edges_from(edges_to_remove)
 
             edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
-            if attr.get('comment') == pred and v == obj]
+            if attr.get('label') == pred and v == obj]
             DiGraph.remove_edges_from(edges_to_remove)
 
         elif 'type' in pred :
@@ -78,18 +124,37 @@ for file in all_files :
             edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
             if attr.get('license') == pred and v == obj]
             DiGraph.remove_edges_from(edges_to_remove)
-
-        elif '"' in obj:
+        
+        elif 'inScheme' in pred :
             edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
-            if attr.get('license') == pred and v == obj]
+            if attr.get('inScheme') == pred and v == obj]
             Graph.remove_edges_from(edges_to_remove)
 
             edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
-            if attr.get('license') == pred and v == obj]
+            if attr.get('inScheme') == pred and v == obj]
             DiGraph.remove_edges_from(edges_to_remove)
 
-        else :
+        elif 'description' in pred :
+            edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
+            if attr.get('dcterms') == pred and v == obj]
+            Graph.remove_edges_from(edges_to_remove)
 
+            edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
+            if attr.get('dcterms') == pred and v == obj]
+            DiGraph.remove_edges_from(edges_to_remove)
+
+        elif (dtp_pred) in DatatypeProperty : #Remove DataTypeProperties
+            
+            edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
+            if attr.get(dtp_pred) == pred and v == obj]
+            Graph.remove_edges_from(edges_to_remove)
+
+            edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
+            if attr.get(dtp_pred) == pred and v == obj]
+            DiGraph.remove_edges_from(edges_to_remove)
+        
+        else :
+            
             Graph.add_edge(str(subj),str(obj),label=str(pred))
             DiGraph.add_edge(str(subj),str(obj),label=str(pred))
 
@@ -97,9 +162,11 @@ for file in all_files :
             #my_pred=[]
             #my_obj=[]
 
-            print('subj',subj)
-            print('pred',pred)
-            print('object',obj)
+            
+
+            #print('subj',subj)
+            #print('pred',pred)
+            #print('object',obj)
 
     print(f'Knowledge Graph : {file_name}')
     print('Number of Nodes :',DiGraph.number_of_nodes())
@@ -132,14 +199,14 @@ for file in all_files :
     #print("average node connectivity", average_node_connectivity(Graph))
     print("degree_histogram", degree_histogram(DiGraph))
 
-    print(list(DiGraph.nodes()))
+    #print(list(DiGraph.nodes()))
     print("number of nodes : ", len(DiGraph.nodes()))
-    print(list(DiGraph.edges()))
+    #print(list(DiGraph.edges()))
     print("number of edges : ", len(DiGraph.edges()))
     #print(my_subj)
 
-    #for node in DiGraph.nodes() :
-    #    print(node)
+    for node in DiGraph.nodes() :
+        print(node)
 
     print('\n')
 
@@ -155,6 +222,7 @@ for file in all_files :
     OUTPUTFILE= "mon_graphe_de_test.html"
     net.save_graph(OUTPUTFILE)
     full_path=os.path.abspath(OUTPUTFILE)
-    #print('full path',full_path)
+    print('full path',full_path)
 
-    webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{full_path}',autoraise=True)
+    #webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{full_path}',autoraise=True)
+    webbrowser.open(full_path,autoraise=True)
