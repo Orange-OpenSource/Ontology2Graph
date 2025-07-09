@@ -16,10 +16,10 @@ PATH= arg[0]
 #ONTO='/home/pdooze/DIGITAL_TWIN/gengraphllm/ontologies/Noria.ttl'
 ONTO='/home/piod7321/DIGITAL_TWIN/gengraphllm/ontologies/Noria.ttl'
 
-def remove_pred_obj(expr, graph):
+def remove_pred_obj(expr, graph, predi, obje):
     '''remove predicate and target object'''
     edges_to_remove = [(u, v) for u, v, attr in graph.edges(data=True)
-                         if attr.get(expr) == pred and v == obj]
+                         if attr.get(expr) == predi and v == obje]
     return graph.remove_edges_from(edges_to_remove)
 
 ##retrieve all the Datatype properties listed in the ontologies
@@ -29,6 +29,7 @@ DatatypeP=[]
 #retreive index line of datatype properties
 with open(f'{ONTO}', 'r',encoding='utf-8') as file:
     for index, line in enumerate(file, start=1):
+        #print(line)
         if 'DatatypeProperty' in line :
             #print(f'{index  }:{line.strip()}')
             index_list.append(index-1)
@@ -39,6 +40,7 @@ with open(f'{ONTO}', 'r',encoding='utf-8') as file:
     for index, line in enumerate(file, start=1):
         if index in index_list:
             #print(index,line.strip())
+            #print(line)
             DatatypeP.append(line.strip())
     file.close()
 
@@ -70,61 +72,34 @@ for file in all_files :
     DiGraph = nx.DiGraph()
     Graph = nx.Graph()
 
-    my_subj=[]
-    my_pred=[]
-    my_obj=[]
-
     for subj, pred, obj in g:
 
-        #split pred in / / parts
+        #retrive last part of predicate
         parts_pred=pred.split("/")
         dtp_pred=parts_pred[len(parts_pred)-1]
 
-        if dtp_pred in DatatypeProperty : #Remove DataTypeProperties
-
-            edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
-            if attr.get(dtp_pred) == pred and v == obj]
-            Graph.remove_edges_from(edges_to_remove)
-
-            edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
-            if attr.get(dtp_pred) == pred and v == obj]
-            DiGraph.remove_edges_from(edges_to_remove)
-
-        # remove useless nodes
-        #if 'comment' in pred :
-            #remove_pred_obj('comment', Graph)
-            #remove_pred_obj('comment', DiGraph)
-
-            #edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
-            #if attr.get('comment') == pred and v == obj]
-            #Graph.remove_edges_from(edges_to_remove)
-
-            #edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
-            #if attr.get('comment') == pred and v == obj]
-            #DiGraph.remove_edges_from(edges_to_remove)
+        if dtp_pred in DatatypeProperty :
+            #Remove edge and dtp_pred node'
+            remove_pred_obj(dtp_pred, Graph, pred ,obj)
+            remove_pred_obj(dtp_pred, DiGraph, pred ,obj)
 
         elif 'label' in pred :
-            remove_pred_obj('label', Graph)
-            remove_pred_obj('label', DiGraph)
+            remove_pred_obj('label', Graph, pred ,obj)
+            remove_pred_obj('label', DiGraph, pred ,obj)
 
         elif 'type' in pred :
-            remove_pred_obj('type', Graph)
-            remove_pred_obj('type', DiGraph)
-
-        elif 'license' in pred :
-            remove_pred_obj('licence', Graph)
-            remove_pred_obj('licence', DiGraph)
+            remove_pred_obj('type', Graph, pred ,obj)
+            remove_pred_obj('type', DiGraph, pred ,obj)
 
         elif 'inScheme' in pred :
-            remove_pred_obj('inScheme', Graph)
-            remove_pred_obj('inScheme', DiGraph)
+            remove_pred_obj('inScheme', Graph, pred ,obj)
+            remove_pred_obj('inScheme', DiGraph, pred ,obj)
 
         elif 'description' in pred :
-            remove_pred_obj('description', Graph)
-            remove_pred_obj('description', DiGraph)
+            remove_pred_obj('description', Graph, pred ,obj)
+            remove_pred_obj('description', DiGraph, pred ,obj)
 
         else :
-            print(dtp_pred)
             Graph.add_edge(str(subj),str(obj),label=str(dtp_pred))
             DiGraph.add_edge(str(subj),str(obj),label=str(dtp_pred))
 
@@ -159,25 +134,17 @@ for file in all_files :
     #print("average node connectivity", average_node_connectivity(Graph))
     print("degree_histogram", degree_histogram(DiGraph))
 
-    #print(list(DiGraph.nodes()))
-    print("number of nodes : ", len(DiGraph.nodes()))
-    #print(list(DiGraph.edges()))
-    print("number of edges : ", len(DiGraph.edges()))
-    #print(my_subj)
-
     #for node in DiGraph.nodes() :
     #    print(node)
 
-    print('\n')
-
-    #### visualisation
-    #net=Network(height='840px',width='1700px',select_menu=True,filter_menu=True)
-    net = Network(height="840px", width="100%", bgcolor="#222222", font_color="white", directed=True,neighborhood_highlight=True)
+    #### visualisation ####
+    net = Network(height="840px", width="100%", bgcolor="#222222", font_color="white",
+                  directed=True,neighborhood_highlight=True,)
 
     # set the physics layout of the network
     net.barnes_hut()
     net.from_nx(DiGraph)
-    net.show_buttons(filter_=['physics'])
+    #net.show_buttons(filter_=['physics'])
 
     OUTPUTFILE= "mon_graphe_de_test.html"
     net.save_graph(OUTPUTFILE)
