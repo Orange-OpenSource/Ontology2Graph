@@ -172,7 +172,7 @@ for file in all_files :
 
     #### visualisation
     #net=Network(height='840px',width='1700px',select_menu=True,filter_menu=True)
-    net = Network(height="840px", width="100%", bgcolor="#222222", font_color="white", directed=True)
+    net = Network(height="840px", width="100%", bgcolor="#222222", font_color="white", directed=True,neighborhood_highlight=True)
 
     # set the physics layout of the network
     net.barnes_hut()
