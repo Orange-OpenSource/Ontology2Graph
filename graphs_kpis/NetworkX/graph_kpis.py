@@ -94,6 +94,7 @@ for file in all_files :
         #if 'comment' in pred :
             #remove_pred_obj('comment', Graph)
             #remove_pred_obj('comment', DiGraph)
+
             #edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
             #if attr.get('comment') == pred and v == obj]
             #Graph.remove_edges_from(edges_to_remove)
@@ -105,62 +106,27 @@ for file in all_files :
         elif 'label' in pred :
             remove_pred_obj('label', Graph)
             remove_pred_obj('label', DiGraph)
-            #edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
-            #if attr.get('label') == pred and v == obj]
-            #Graph.remove_edges_from(edges_to_remove)
-
-            #edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
-            #if attr.get('label') == pred and v == obj]
-            #DiGraph.remove_edges_from(edges_to_remove)
 
         elif 'type' in pred :
             remove_pred_obj('type', Graph)
             remove_pred_obj('type', DiGraph)
-            #edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
-            #if attr.get('type') == pred and v == obj]
-            #Graph.remove_edges_from(edges_to_remove)
-
-            #edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
-            #if attr.get('type') == pred and v == obj]
-            #DiGraph.remove_edges_from(edges_to_remove)
 
         elif 'license' in pred :
             remove_pred_obj('licence', Graph)
             remove_pred_obj('licence', DiGraph)
-            #edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
-            #if attr.get('license') == pred and v == obj]
-            #Graph.remove_edges_from(edges_to_remove)
-
-            #edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
-            #if attr.get('license') == pred and v == obj]
-            #DiGraph.remove_edges_from(edges_to_remove)
 
         elif 'inScheme' in pred :
             remove_pred_obj('inScheme', Graph)
             remove_pred_obj('inScheme', DiGraph)
-            #edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
-            #if attr.get('inScheme') == pred and v == obj]
-            #Graph.remove_edges_from(edges_to_remove)
-
-            #edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
-            #if attr.get('inScheme') == pred and v == obj]
-            #DiGraph.remove_edges_from(edges_to_remove)
 
         elif 'description' in pred :
             remove_pred_obj('description', Graph)
             remove_pred_obj('description', DiGraph)
-            #edges_to_remove = [(u, v) for u, v, attr in Graph.edges(data=True)
-            #if attr.get('dcterms') == pred and v == obj]
-            #Graph.remove_edges_from(edges_to_remove)
-
-            #edges_to_remove = [(u, v) for u, v, attr in DiGraph.edges(data=True)
-            #if attr.get('dcterms') == pred and v == obj]
-            #DiGraph.remove_edges_from(edges_to_remove)
 
         else :
-            print(pred)
-            Graph.add_edge(str(subj),str(obj),label=str(pred))
-            DiGraph.add_edge(str(subj),str(obj),label=str(pred))
+            print(dtp_pred)
+            Graph.add_edge(str(subj),str(obj),label=str(dtp_pred))
+            DiGraph.add_edge(str(subj),str(obj),label=str(dtp_pred))
 
     print(f'Knowledge Graph : {file_name}')
     print('Number of Nodes :',DiGraph.number_of_nodes())
