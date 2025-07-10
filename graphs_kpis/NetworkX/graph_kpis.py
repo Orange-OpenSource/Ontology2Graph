@@ -150,5 +150,5 @@ for file in all_files :
     full_path=os.path.abspath(OUTPUTFILE)
     print('full path',full_path)
 
-    #webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{full_path}',autoraise=True)
-    webbrowser.open(full_path,autoraise=True)
+    webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{full_path}',autoraise=True)
+    #webbrowser.open(full_path,autoraise=True)
