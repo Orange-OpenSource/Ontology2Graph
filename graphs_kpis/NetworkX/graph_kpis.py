@@ -13,8 +13,7 @@ from pyvis.network import Network
 
 arg = sys.argv[1:]
 PATH= arg[0]
-#ONTO='/home/pdooze/DIGITAL_TWIN/gengraphllm/ontologies/Noria.ttl'
-ONTO='/home/piod7321/DIGITAL_TWIN/gengraphllm/ontologies/Noria.ttl'
+ONTO = os.path.expanduser('~/DIGITAL_TWIN/gengraphllm/ontologies/Noria.ttl')
 
 def remove_pred_obj(expr, graph, predi, obje):
     '''remove predicate and target object'''
