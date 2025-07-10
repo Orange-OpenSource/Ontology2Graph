@@ -16,10 +16,17 @@ PATH= arg[0]
 ONTO = os.path.expanduser('~/DIGITAL_TWIN/gengraphllm/ontologies/Noria.ttl')
 
 def remove_pred_obj(expr, graph, predi, obje):
-    '''remove predicate and target object'''
+    '''remove predicate and target object of an edge'''
     edges_to_remove = [(u, v) for u, v, attr in graph.edges(data=True)
                          if attr.get(expr) == predi and v == obje]
     return graph.remove_edges_from(edges_to_remove)
+
+def get_last_folder_part(string,sep_char):
+    """get last part of a folder string"""
+    string_parts=string.split(sep_char)
+    last_part=string_parts[len(string_parts)-1]
+    return last_part
+
 
 ##retrieve all the Datatype properties listed in the ontologies
 index_list=[]
@@ -73,14 +80,17 @@ for file in all_files :
 
     for subj, pred, obj in g:
 
-        #retrive last part of predicate
-        parts_pred=pred.split("/")
-        dtp_pred=parts_pred[len(parts_pred)-1]
+        #retreive last part of predicate
+        last_part_subj=get_last_folder_part(subj,'/')
+        last_part_pred=get_last_folder_part(pred,'/')
+        last_part_obj=get_last_folder_part(obj,'/')
+        #parts_pred=pred.split("/")
+        #last_part_pred=parts_pred[len(parts_pred)-1]
 
-        if dtp_pred in DatatypeProperty :
+        if last_part_pred in DatatypeProperty :
             #Remove edge and dtp_pred node'
-            remove_pred_obj(dtp_pred, Graph, pred ,obj)
-            remove_pred_obj(dtp_pred, DiGraph, pred ,obj)
+            remove_pred_obj(pred, Graph, pred ,obj)
+            remove_pred_obj(pred, DiGraph, pred ,obj)
 
         elif 'label' in pred :
             remove_pred_obj('label', Graph, pred ,obj)
@@ -99,8 +109,8 @@ for file in all_files :
             remove_pred_obj('description', DiGraph, pred ,obj)
 
         else :
-            Graph.add_edge(str(subj),str(obj),label=str(dtp_pred))
-            DiGraph.add_edge(str(subj),str(obj),label=str(dtp_pred))
+            Graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
+            DiGraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
 
     print(f'Knowledge Graph : {file_name}')
     print('Number of Nodes :',DiGraph.number_of_nodes())
