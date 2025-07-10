@@ -27,7 +27,6 @@ def get_last_folder_part(string,sep_char):
     last_part=string_parts[len(string_parts)-1]
     return last_part
 
-
 ##retrieve all the Datatype properties listed in the ontologies
 index_list=[]
 DatatypeP=[]
@@ -35,9 +34,7 @@ DatatypeP=[]
 #retreive index line of datatype properties
 with open(f'{ONTO}', 'r',encoding='utf-8') as file:
     for index, line in enumerate(file, start=1):
-        #print(line)
         if 'DatatypeProperty' in line :
-            #print(f'{index  }:{line.strip()}')
             index_list.append(index-1)
     file.close()
 
@@ -45,8 +42,6 @@ with open(f'{ONTO}', 'r',encoding='utf-8') as file:
 with open(f'{ONTO}', 'r',encoding='utf-8') as file:
     for index, line in enumerate(file, start=1):
         if index in index_list:
-            #print(index,line.strip())
-            #print(line)
             DatatypeP.append(line.strip())
     file.close()
 
@@ -54,8 +49,8 @@ with open(f'{ONTO}', 'r',encoding='utf-8') as file:
 DatatypeProperty=[]
 for dtp in DatatypeP:
     dtp=dtp.replace('noria:',"")
-    #print(dtp)
     DatatypeProperty.append(dtp)
+
 
 #List all the ttl graph files in PATH except folder
 all_files = [f.name for f in Path(PATH).iterdir() if f.is_file()]
@@ -64,14 +59,10 @@ all_files = [f.name for f in Path(PATH).iterdir() if f.is_file()]
 for i, file in enumerate(all_files):
     all_files[i]= PATH + file
 
+'''transforms ttl files as graph and remove all the nodes belonging to TBOX'''
 for file in all_files :
+    file_name=get_last_folder_part(file,'/')
 
-    #retrieve file name
-    parts = file.split("/")
-    file_name_pos = len(parts)
-    file_name = parts[file_name_pos-1]
-
-    #load the knowledge graph in G
     g = rdflib.Graph()
     g.parse(file, format='turtle')
 
@@ -79,43 +70,40 @@ for file in all_files :
     Graph = nx.Graph()
 
     for subj, pred, obj in g:
-
-        #retreive last part of predicate
-        last_part_subj=get_last_folder_part(subj,'/')
+        '''remove useless nodes'''
         last_part_pred=get_last_folder_part(pred,'/')
-        last_part_obj=get_last_folder_part(obj,'/')
-        #parts_pred=pred.split("/")
-        #last_part_pred=parts_pred[len(parts_pred)-1]
 
         if last_part_pred in DatatypeProperty :
-            #Remove edge and dtp_pred node'
+            '''remove Datatype properties'''
             remove_pred_obj(pred, Graph, pred ,obj)
             remove_pred_obj(pred, DiGraph, pred ,obj)
 
-        elif 'label' in pred :
-            remove_pred_obj('label', Graph, pred ,obj)
-            remove_pred_obj('label', DiGraph, pred ,obj)
-
-        elif 'type' in pred :
-            remove_pred_obj('type', Graph, pred ,obj)
-            remove_pred_obj('type', DiGraph, pred ,obj)
-
-        elif 'inScheme' in pred :
-            remove_pred_obj('inScheme', Graph, pred ,obj)
-            remove_pred_obj('inScheme', DiGraph, pred ,obj)
-
-        elif 'description' in pred :
-            remove_pred_obj('description', Graph, pred ,obj)
-            remove_pred_obj('description', DiGraph, pred ,obj)
+        elif ('label'in pred)or('type' in pred)or('inScheme' in pred)or('descrption' in pred):
+            '''remove '''
+            word=['label','type','inScheme','descrption']
+            for x in word :
+                if x in pred :
+                    remove_pred_obj(x, Graph, pred ,obj)
+                    remove_pred_obj(x, DiGraph, pred ,obj)
 
         else :
+            last_part_subj=get_last_folder_part(subj,'/')
+            last_part_obj=get_last_folder_part(obj,'/')
+            #print('toto')
             Graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
             DiGraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
+
+    ### Common information for Grap and DiGraph ####
 
     print(f'Knowledge Graph : {file_name}')
     print('Number of Nodes :',DiGraph.number_of_nodes())
     print('Number of edges :',DiGraph.number_of_edges())
-    print('Is the graph is directed ? :',DiGraph.is_directed())
+    print("degree_histogram", degree_histogram(DiGraph))
+
+    print('############ Graph KPIs ############')
+
+    print('############ DiGrap KPIs ############')
+
 
     #if DiGraph.is_directed() is False : #is_connected and components not implemented for DiGraph
         #print('Is the graph is connected ? :',nx.is_connected(DiGraph))
@@ -141,18 +129,17 @@ for file in all_files :
     #print("out degree",G.out_degree())
 
     #print("average node connectivity", average_node_connectivity(Graph))
-    print("degree_histogram", degree_histogram(DiGraph))
-
     #for node in DiGraph.nodes() :
     #    print(node)
 
     #### visualisation ####
     net = Network(height="840px", width="100%", bgcolor="#222222", font_color="white",
-                  directed=True,neighborhood_highlight=True,)
+                  directed=True,neighborhood_highlight=True)
 
     # set the physics layout of the network
     net.barnes_hut()
-    net.from_nx(DiGraph)
+    net.from_nx(DiGraph,)
+    #print(net.nodes)
     #net.show_buttons(filter_=['physics'])
 
     OUTPUTFILE= "mon_graphe_de_test.html"
