@@ -1,5 +1,9 @@
 '''list of function to be used '''
 
+import webbrowser
+import os
+from pyvis.network import Network
+
 def remove_pred_obj(expr, graph, predi, obje):
     '''remove predicate and target object of an edge'''
     edges_to_remove = [(u, v) for u, v, attr in graph.edges(data=True)
@@ -31,6 +35,7 @@ def retreive_datatype_properties(ontology):
         for index, line in enumerate(file, start=1):
             if index in index_list:
                 dtprop.append(line.strip())
+                print(line.strip())
     file.close()
 
     #clean DatatypeProperties
@@ -38,3 +43,21 @@ def retreive_datatype_properties(ontology):
         dtp=dtp.replace('noria:',"")
         dtproperties.append(dtp)
     return dtproperties
+
+def dysplay_graph(graph):
+    '''dysplay the graph'''
+
+    net = Network(height="840px", width="100%", bgcolor="#222222", font_color="white",
+                  directed=True,neighborhood_highlight=True)
+
+    net.barnes_hut()
+    net.from_nx(graph)
+    #net.show_buttons(filter_=['physics'])
+
+    OUTPUTFILE= "mon_graphe_de_test.html"
+    net.save_graph(OUTPUTFILE)
+    full_path=os.path.abspath(OUTPUTFILE)
+    print('full path',full_path)
+
+    #webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{full_path}',autoraise=True)
+    webbrowser.open(full_path,autoraise=True)
