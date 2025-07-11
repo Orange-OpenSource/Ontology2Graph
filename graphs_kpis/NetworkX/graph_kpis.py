@@ -4,13 +4,11 @@ location folder where are stored all the ttl files'''
 import sys
 import os
 from pathlib import Path
-import webbrowser
-from utils import get_last_folder_part, retreive_datatype_properties
+from utils import get_last_folder_part, retreive_datatype_properties, dysplay_graph
 import networkx as nx
 from networkx.classes.function import density, degree_histogram, number_of_selfloops
 from networkx import average_degree_connectivity
 import rdflib
-from pyvis.network import Network
 
 arg = sys.argv[1:]
 PATH= arg[0]
@@ -35,10 +33,13 @@ for file in all_files :
     Graph = nx.Graph()
 
     for subj, pred, obj in g:
-        last_part_pred=get_last_folder_part(pred,'/')
 
-        if (last_part_pred in DataTypeProperties) or\
-            ('label'in pred)or('type' in pred)or('inScheme' in pred)or('descrption' in pred):
+        last_part_pred=get_last_folder_part(pred,'/')
+        print(last_part_pred)
+
+        if ('label'in last_part_pred) or ('type' in last_part_pred) or\
+           ('inScheme' in last_part_pred) or ('description' in last_part_pred) or\
+            last_part_pred in DataTypeProperties:
             pass
 
         else :
@@ -47,7 +48,6 @@ for file in all_files :
             Graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
             DiGraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
 
-    ### Common information for Graph and DiGraph ####
     print('\n #### Common information for Graph and DiGraph #### \n')
     print(f'Knowledge Graph : {file_name}')
     print('Number of Nodes :',DiGraph.number_of_nodes())
@@ -65,18 +65,5 @@ for file in all_files :
     print('\n')
 
     #### visualisation ####
-    net = Network(height="840px", width="100%", bgcolor="#222222", font_color="white",
-                  directed=True,neighborhood_highlight=True)
+    dysplay_graph(DiGraph)
 
-    # set the physics layout of the network
-    net.barnes_hut()
-    net.from_nx(DiGraph,)
-    #net.show_buttons(filter_=['physics'])
-
-    OUTPUTFILE= "mon_graphe_de_test.html"
-    net.save_graph(OUTPUTFILE)
-    full_path=os.path.abspath(OUTPUTFILE)
-    print('full path',full_path)
-
-    #webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{full_path}',autoraise=True)
-    #webbrowser.open(full_path,autoraise=True)
