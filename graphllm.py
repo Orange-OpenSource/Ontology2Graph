@@ -15,7 +15,7 @@ DATE = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 PATH=os.getcwd()
 #PATH=f'{os.getcwd()}/DIGITAL_TWIN/gengraphllm' # when using crontab
 PATH_ONTOLOGY=f'{PATH}/ontologies'
-PATH_PROMPT=f'{PATH}/prompt'
+PATH_PROMPT=f'{PATH}/prompts'
 PATH_GRAPH=f'{PATH}/graph'
 
 ## PROMPT_TYPE to choose ##
