@@ -54,10 +54,10 @@ def dysplay_graph(graph):
     net.from_nx(graph)
     #net.show_buttons(filter_=['physics'])
 
-    OUTPUTFILE= "mon_graphe_de_test.html"
-    net.save_graph(OUTPUTFILE)
-    full_path=os.path.abspath(OUTPUTFILE)
+    outputfile="/home/pdooze/DIGITAL_TWIN/gengraphllm/graphs_kpis/NetworkX/mon_graphe_de_test.html"
+    net.save_graph(outputfile)
+    full_path=os.path.abspath(outputfile)
     print('full path',full_path)
 
-    #webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{full_path}',autoraise=True)
-    webbrowser.open(full_path,autoraise=True)
+    webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{full_path}',autoraise=True)
+    #webbrowser.open(full_path,autoraise=True)

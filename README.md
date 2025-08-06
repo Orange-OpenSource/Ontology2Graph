@@ -12,24 +12,21 @@ graphllm.py script is dedicated to query LLM models throught the internal Orange
 
 1. First, you need to create an account in [LLM PROXY Portail](https://portal.llmproxy.ai.orange/). Then once it is done you must setup a local environment variable called LLM_PROXY_KEY with the value of your LLM_PROXY key.
 2. Second you must install the following [turtle validator](https://github.com/IDLabResearch/TurtleValidator) in your environment. 
+3. You have to set several constants in graphllm.py
 
-## Settings in graphllm.py
+    1. PATH_ONTOLOGY to choose the righ ontologie ttl file.
+    2. PROMPT_TYPE to choose between the 3 different prompts.
+    3. MODEL, as awaited by the LLM_Proxy_portal, to choose your LLM. (Models's list is inserted in the script)
+    4. ONTO: the name of the ontology, as you want it just to mention it in the file result
+    5. PATH_RESULT to store the result depending on how you will use graphllm.py, just to generate one graph or to generate a series of graph.
 
-You have to set several constants in graphllm.py
+    For the second and the third prompt you have to do the following : 
 
-1. PATH_ONTOLOGY to choose the righ ontologie ttl file.
-2. PROMPT_TYPE to choose between the 3 different prompts.
-3. MODEL, as awaited by the LLM_Proxy_portal, to choose your LLM. (Models's list is inserted in the script)
-4. ONTO: the name of the ontology, as you want it just to mention it in the file result
-5. PATH_RESULT to store the result depending on how you will use graphllm.py, just to generate one graph or to generate a series of graph.
-
-For the third choice : 
-
-    - PATH_GRAPH constant must be set with the location of the knowledge graph 
-    - in graphllm.py :  replace f"""Follow the instruction : {PROMPT} and use the following schema
-                        {ONTOLOGY} to generate a new graph in turtle format"""
-                        by f"""Follow the instruction : {PROMPT} and use the following schema
-                        {ONTOLOGY} and {GRAPH} to generate a new graph in turtle format"""
+        - PATH_GRAPH constant must be set with the location of the knowledge graph 
+        - in graphllm.py :  replace f"""Follow the instruction : {PROMPT} and use the following schema
+                            {ONTOLOGY} to generate a new graph in turtle format"""
+                            by f"""Follow the instruction : {PROMPT} and use the following schema
+                            {ONTOLOGY} and {GRAPH} to generate a new graph in turtle format"""
 
 ### Start conversion
 

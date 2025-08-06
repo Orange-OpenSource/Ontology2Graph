@@ -48,4 +48,3 @@ fig.update_layout(
 
 fig.show()
 fig.write_html(f'{SAVE_PATH}/{Y_NAME}.html')
-

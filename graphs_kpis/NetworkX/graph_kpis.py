@@ -66,4 +66,3 @@ for file in all_files :
 
     #### visualisation ####
     dysplay_graph(DiGraph)
-
