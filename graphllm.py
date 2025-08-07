@@ -30,27 +30,18 @@ ONTO='Noria'
 
 ## MODEL constant to choose ##
 
-MODEL="vertex_ai/gemini-2.0-flash"
-#MODEL='openai/gpt-4.1-mini'
-#MODEL='vertex_ai/claude3.7-sonnet'
-#MODEL='openai/o1-preview'
-#MODEL='openai/o3'
-#MODEL='openai/gpt-4.1-nano'
-#MODEL='openai/gpt-4.1'
-#MODEL='vertex_ai/gemini-1.5-flash'
-#MODEL='openai/o4-mini'07
-#MODEL='openai/gpt-4o'
-#MODEL='vertex_ai/gemini-1.5'
-#MODEL="openai/gpt-4o-mini"
-#MODEL="openai/o3-mini"
-#MODEL="vertex_ai/claude3.5-sonnet-v2"
-#MODEL="openai/o1"
-#MODEL="vertex_ai/codestral" #no answer
-#MODEL="openai/o1-mini"
-#MODEL="openai/gpt-3.5-turbo"
+FILE_MODEL = f'{PATH}/model/models.txt'
+model_list = []
+# Open the text file
+with open(FILE_MODEL, mode='r',encoding='utf-8') as file:
+    lines = file.readlines()
+    for line in lines:
+        cleaned_line = line.strip()
+        model_list.append(cleaned_line)
 
-#PATH result to choose
-#PATH_RESULT=f'{PATH}/graphs_generated_by_models/{MODEL}'
+MODEL=model_list[0]
+
+##PATH result to choose##
 PATH_RESULT=f'{PATH}/results/synthetics_graphs_generated/{DATE}/{MODEL}'
 BAD_PATH_RESULT=f'{PATH_RESULT}/Bad_Turtle_Syntax'
 

@@ -37,7 +37,7 @@ python3 -m pip install -r requirements.txt
 
     1. PATH_ONTOLOGY to choose the righ ontologie ttl file.
     2. PROMPT_TYPE to choose between the 3 different prompts.
-    3. MODEL, as awaited by the LLM_Proxy_portal, to choose your LLM. (Models's list is inserted in the script)
+    3. MODEL, as awaited by the LLM_Proxy_portal, to choose your LLM.
     4. ONTO: the name of the ontology, as you want it just to mention it in the file result
     5. PATH_RESULT to store the result depending on how you will use graphllm.py, just to generate one graph or to generate a series of graph.
 
