@@ -9,7 +9,8 @@ import subprocess
 import shutil
 from openai import OpenAI, OpenAIError
 
-DATE = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+DATETIME = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+DATE = datetime.datetime.now().strftime("%Y-%m-%d")
 
 # PATH constant where are stored the needed ressources, prompt, ontology and graph
 PATH=os.getcwd()
@@ -50,11 +51,10 @@ MODEL="vertex_ai/gemini-2.0-flash"
 
 #PATH result to choose
 #PATH_RESULT=f'{PATH}/graphs_generated_by_models/{MODEL}'
-PATH_RESULT=f'{PATH}/graphs_time_series_generated/{MODEL}'
+PATH_RESULT=f'{PATH}/results/synthetics_graphs_generated/{DATE}/{MODEL}'
+BAD_PATH_RESULT=f'{PATH_RESULT}/Bad_Turtle_Syntax'
 
 os.makedirs(f'{PATH_RESULT}/',exist_ok=True)
-
-BAD_PATH_RESULT=f'{PATH_RESULT}/Bad_Turtle_Syntax'
 
 client = OpenAI(api_key=os.environ.get("LLM_PROXY_KEY"),base_url="https://llmproxy.ai.orange")
 
@@ -85,7 +85,7 @@ try:
         ]
     )
 
-    print(f'{DATE} {MODEL}')
+    print(f'{DATETIME} {MODEL}')
     print("Prompt tokens : ",response.usage.prompt_tokens)
     print("Output response tokens", response.usage.completion_tokens)
 
@@ -101,14 +101,14 @@ try:
         file.close()
 
     #save filtered result
-    with open(f'{PATH_RESULT}/{PROMPT_TYPE}_{DATE}_{ONTO}.ttl','w',encoding='utf-8') as filtered:
-        filtered.writelines(filtered_lines)
-        filtered.close()
+    with open(f'{PATH_RESULT}/{PROMPT_TYPE}_{DATETIME}_{ONTO}.ttl','w',encoding='utf-8') as final:
+        final.writelines(filtered_lines)
+        final.close()
 
     os.remove(f'{PATH_RESULT}/{PROMPT_TYPE}_temp.ttl')
 
     # Check Turtle syntax
-    command=["ttl",f'{PATH_RESULT}/{PROMPT_TYPE}_{DATE}_{ONTO}.ttl']
+    command=["ttl",f'{PATH_RESULT}/{PROMPT_TYPE}_{DATETIME}_{ONTO}.ttl']
     ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
     stdout, stderr = ttlvalidator.communicate()
     print(f'Turtle validator Result: {ttlvalidator.communicate()}')
@@ -117,12 +117,12 @@ try:
         # move bad file in bad folder and Save logs
 
         os.makedirs(f'{BAD_PATH_RESULT}', exist_ok=True)
-        shutil.move(f'{PATH_RESULT}/{PROMPT_TYPE}_{DATE}_{ONTO}.ttl',
-                    f'{BAD_PATH_RESULT}/{PROMPT_TYPE}_{DATE}_{ONTO}_BAD.ttl')
+        shutil.move(f'{PATH_RESULT}/{PROMPT_TYPE}_{DATETIME}_{ONTO}.ttl',
+                    f'{BAD_PATH_RESULT}/{PROMPT_TYPE}_{DATETIME}_{ONTO}_BAD.ttl')
 
         with open(f'{BAD_PATH_RESULT}/errors.log', 'a',
                        encoding='utf-8') as log:
-            log.write(f'{PROMPT_TYPE}_{DATE}_{ONTO}_BAD.ttl : {ttlvalidator.communicate()}\n')
+            log.write(f'{PROMPT_TYPE}_{DATETIME}_{ONTO}_BAD.ttl : {ttlvalidator.communicate()}\n')
             log.close()
 
 except OpenAIError as e:

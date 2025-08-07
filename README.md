@@ -1,18 +1,16 @@
 # GenGraphLLM
 
-GenGraphLLM is a set of python scripts that create synthetic Knowledge Graphs based on LLM queries. GenGraphLLM is also able to compute to Knowledge Graph KPIs and display the Grpah Generated.
+GenGraphLLM is a set of python scripts that create synthetic Knowledge Graphs based on LLM queries. GenGraphLLM is also able to compute Knowledge Graph KPIs and display the Graph Generated.
 
-
-graphllm.py script is dedicated to query LLM models throught the internal Orange portal [LLM PROXY Portail](https://portal.llmproxy.ai.orange/) in order to generate a knowledge graph in turtle (ttl) format based on an ontology ttl schema. A validation turtle syntax step is integrated in the graph generation process. Three differents prompts have been elaborated and are available in the 'prompts' folder. 
+**graphllm.py** script is dedicated to query LLM models throught the internal Orange portal [LLM PROXY Portail](https://portal.llmproxy.ai.orange/) in order to generate a knowledge graph in turtle (ttl) format based on an ontology ttl schema. A validation turtle syntax step is integrated in the graph generation process. Three differents prompts have been elaborated and are available in the 'prompts' folder. 
 
    * The First one (First_prompt.txt) just needs and ontologie ttl format.
    * The Second one (Second_prompt.txt) needs ontologie ttl file and an extract of a knowledge graph based on this ontologie.
    * The Third one (Third_prompt.txt) needs ontologie ttl file and a complete knowledge graph based on this ontologie.
 
+**graph_kpis_display.py** script compute some specific Knowledge Graphs KPIs and dysplay the graph in your brower
 
-graph_kpis_display.py script compute some specific Knowledge Graphs KPIs and dysplay the graph in your brower
-
-utils.py script is a collection of functions used by graph_kpis_display.py
+**utils.py** script is a collection of functions used by graph_kpis_display.py
 
 ## Getting started
 
