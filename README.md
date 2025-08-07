@@ -12,6 +12,7 @@ graphllm.py script is dedicated to query LLM models throught the internal Orange
 
 graph_kpis_display.py script compute some specific Knowledge Graphs KPIs and dysplay the graph in your brower
 
+utils.py script is a collection of functions used by graph_kpis_display.py
 
 ## Getting started
 
