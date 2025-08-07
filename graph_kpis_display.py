@@ -35,7 +35,6 @@ for file in all_files :
     for subj, pred, obj in g:
 
         last_part_pred=get_last_folder_part(pred,'/')
-        print(last_part_pred)
 
         if ('label'in last_part_pred) or ('type' in last_part_pred) or\
            ('inScheme' in last_part_pred) or ('description' in last_part_pred) or\
@@ -65,4 +64,6 @@ for file in all_files :
     print('\n')
 
     #### visualisation ####
+    toto=get_last_folder_part(PATH, '/')
+    print(toto)
     display_graph(DiGraph)

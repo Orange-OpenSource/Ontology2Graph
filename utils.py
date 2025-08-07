@@ -2,8 +2,8 @@
 
 import webbrowser
 import os
-from pyvis.network import Network
 import datetime
+from pyvis.network import Network
 
 def remove_pred_obj(expr, graph, predi, obje):
     '''remove predicate and target object of an edge'''
@@ -48,17 +48,17 @@ def retreive_datatype_properties(ontology):
 def display_graph(graph):
     '''dysplay the graph'''
 
-    PATH=os.getcwd()
-    DATETIME = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
+    path=os.getcwd()
+    date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    
     net = Network(height="840px", width="100%", bgcolor="#222222", font_color="white",
                   directed=True,neighborhood_highlight=True)
 
     net.barnes_hut()
     net.from_nx(graph)
-    #net.show_buttons(filter_=['physics'])
+    net.show_buttons(filter_=['physics'])
 
-    outputfile=f'{PATH}/results/HTML_graph/knowledge_graphe_{DATETIME}.html'
+    outputfile=f'{path}/results/HTML_graph/knowledge_graphe_{date_time}_{model}.html'
     net.save_graph(outputfile)
     full_path=os.path.abspath(outputfile)
     print('full path',full_path)
