@@ -3,6 +3,7 @@
 import webbrowser
 import os
 from pyvis.network import Network
+import datetime
 
 def remove_pred_obj(expr, graph, predi, obje):
     '''remove predicate and target object of an edge'''
@@ -44,8 +45,11 @@ def retreive_datatype_properties(ontology):
         dtproperties.append(dtp)
     return dtproperties
 
-def dysplay_graph(graph):
+def display_graph(graph):
     '''dysplay the graph'''
+
+    PATH=os.getcwd()
+    DATETIME = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     net = Network(height="840px", width="100%", bgcolor="#222222", font_color="white",
                   directed=True,neighborhood_highlight=True)
@@ -54,7 +58,7 @@ def dysplay_graph(graph):
     net.from_nx(graph)
     #net.show_buttons(filter_=['physics'])
 
-    outputfile="/home/pdooze/DIGITAL_TWIN/gengraphllm/graphs_kpis/NetworkX/mon_graphe_de_test.html"
+    outputfile=f'{PATH}/results/HTML_graph/knowledge_graphe_{DATETIME}.html'
     net.save_graph(outputfile)
     full_path=os.path.abspath(outputfile)
     print('full path',full_path)

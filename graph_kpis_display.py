@@ -4,7 +4,7 @@ You must pass as an argument the location folder where are stored all the ttl fi
 import sys
 import os
 from pathlib import Path
-from utils import get_last_folder_part, retreive_datatype_properties, dysplay_graph
+from utils import get_last_folder_part, retreive_datatype_properties, display_graph
 import networkx as nx
 from networkx.classes.function import density, degree_histogram, number_of_selfloops
 from networkx import average_degree_connectivity
@@ -65,4 +65,4 @@ for file in all_files :
     print('\n')
 
     #### visualisation ####
-    dysplay_graph(DiGraph)
+    display_graph(DiGraph)
