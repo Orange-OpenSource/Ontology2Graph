@@ -15,6 +15,8 @@ def get_last_folder_part(string, sep_char):
     """get last part of a folder string"""
     string_parts=string.split(sep_char)
     last_part=string_parts[len(string_parts)-1]
+    if last_part=='':
+        last_part=string_parts[len(string_parts)-2]
     return last_part
 
 def retreive_datatype_properties(ontology):
@@ -36,7 +38,7 @@ def retreive_datatype_properties(ontology):
         for index, line in enumerate(file, start=1):
             if index in index_list:
                 dtprop.append(line.strip())
-                print(line.strip())
+                #print(line.strip())
     file.close()
 
     #clean DatatypeProperties
@@ -45,12 +47,12 @@ def retreive_datatype_properties(ontology):
         dtproperties.append(dtp)
     return dtproperties
 
-def display_graph(graph):
+def display_graph(graph,model):
     '''dysplay the graph'''
 
     path=os.getcwd()
     date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    
+
     net = Network(height="840px", width="100%", bgcolor="#222222", font_color="white",
                   directed=True,neighborhood_highlight=True)
 
