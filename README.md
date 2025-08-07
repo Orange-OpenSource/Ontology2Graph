@@ -1,14 +1,36 @@
 # GenGraphLLM
 
-graphllm.py script is dedicated to query LLM models throught the internal Orange portal [LLM PROXY Portail](https://portal.llmproxy.ai.orange/) in order to generate a knowledge graph in turtle (ttl) format based on an ontology ttl schema . Three differents prompts have been elaborated and are available in the 'prompts' folder. 
+GenGraphLLM is a set of python scripts that create synthetic Knowledge Graphs based on LLM queries. GenGraphLLM is also able to compute to Knowledge Graph KPIs and display the Grpah Generated.
+
+
+graphllm.py script is dedicated to query LLM models throught the internal Orange portal [LLM PROXY Portail](https://portal.llmproxy.ai.orange/) in order to generate a knowledge graph in turtle (ttl) format based on an ontology ttl schema. A validation turtle syntax step is integrated in the graph generation process. Three differents prompts have been elaborated and are available in the 'prompts' folder. 
 
    * The First one (First_prompt.txt) just needs and ontologie ttl format.
    * The Second one (Second_prompt.txt) needs ontologie ttl file and an extract of a knowledge graph based on this ontologie.
    * The Third one (Third_prompt.txt) needs ontologie ttl file and a complete knowledge graph based on this ontologie.
 
+
+graph_kpis_display.py script compute some specific Knowledge Graphs KPIs and dysplay the graph in your brower
+
+
 ## Getting started
 
-### Prerequisite
+### GenGraphLLM installation
+
+To install GenGraphLLM in your local environment, clone this repository, create and launch a virtual python environement.
+
+```
+python3 -m venv .
+source /bin/activate
+```
+
+and intall all the packages listed in requirements.txt file
+
+```
+python3 -m pip install -r requirements.txt
+```
+
+### Prerequisite to generate a synthetic Knowledge Graph
 
 1. First, you need to create an account in [LLM PROXY Portail](https://portal.llmproxy.ai.orange/). Then once it is done you must setup a local environment variable called LLM_PROXY_KEY with the value of your LLM_PROXY key.
 2. Second you must install the following [turtle validator](https://github.com/IDLabResearch/TurtleValidator) in your environment. 
@@ -58,5 +80,7 @@ With this crontab settings graphllm.py will produce Knowledge Graphs at regular 
 	...
 ```
 
+### Merge Knmowledge Graph 
 
+TBD
 

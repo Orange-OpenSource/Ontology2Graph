@@ -1,5 +1,5 @@
-''' This python script compute some Knowledge Graphs KPIs. You must pass as an argument the 
-location folder where are stored all the ttl files'''
+''' This python script compute some Knowledge Graphs KPIs and display the Graph.
+You must pass as an argument the location folder where are stored all the ttl files'''
 
 import sys
 import os
