@@ -63,33 +63,23 @@ prefix_lines=[]
 with open (OUTPUT_FILE, 'r', encoding='utf-8') as outfile:
     lines = outfile.readlines()
     prefix_lines = [lines for lines in lines if lines.startswith('@')]
-    filtered_lines= [lines for lines in lines if not lines.startswith('@')]
+    nodes_lines= [lines for lines in lines if not lines.startswith('@')]
     outfile.close()
 
-#print(prefix_lines)
 prefix_lines_unique=[]
 
+#remove duplicate prefix
 for item in prefix_lines:
     if item not in prefix_lines_unique:
         prefix_lines_unique.append(item)
-        print(item)
 
-print(prefix_lines_unique)
+#Need to remove duplicate nodes
 
-prefix = []
-#remove duplicate
-for item in prefix_lines:
-    if item not in prefix:
-        prefix.append(item)
-        
 
-#print(prefix)
+
 
 with open ('Graph.ttl', 'w', encoding='utf-8') as graph:
     graph.writelines(prefix_lines_unique)
     graph.writelines(filtered_lines)
     graph.close()
-
-
-#print(prefix_lines)
 
