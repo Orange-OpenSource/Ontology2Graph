@@ -34,15 +34,16 @@ for file in all_files :
 
     for subj, pred, obj in g:
         last_part_pred=get_last_folder_part(pred,'/')
-
-        if ('label'in last_part_pred) or ('type' in last_part_pred) or\
+               
+        if ('label' in last_part_pred) or ('type' in last_part_pred) or\
            ('inScheme' in last_part_pred) or ('description' in last_part_pred) or\
-            last_part_pred in DataTypeProperties:
-            pass
+           ('comment' in last_part_pred) or last_part_pred in DataTypeProperties:
+               pass
 
         else :
             last_part_subj=get_last_folder_part(subj,'/')
             last_part_obj=get_last_folder_part(obj,'/')
+            print({last_part_subj},{last_part_pred},{last_part_obj})
             Graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
             DiGraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
 
