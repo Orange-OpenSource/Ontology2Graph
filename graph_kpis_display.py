@@ -1,14 +1,14 @@
 ''' This python script compute some Knowledge Graphs KPIs and display the Graph.
 You must pass as an argument the location folder where are stored all the ttl files'''
 
-import sys
-import os
-from pathlib import Path
-from utils import get_last_folder_part, retreive_datatype_properties, display_graph
 import networkx as nx
 from networkx.classes.function import density, degree_histogram, number_of_selfloops
 from networkx import average_degree_connectivity
 import rdflib
+import sys
+import os
+from pathlib import Path
+from utils import get_last_folder_part, retreive_datatype_properties, display_graph
 
 arg = sys.argv[1:]
 PATH= arg[0]
