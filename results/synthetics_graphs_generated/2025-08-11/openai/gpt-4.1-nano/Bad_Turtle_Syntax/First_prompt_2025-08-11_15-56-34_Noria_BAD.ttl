@@ -1,0 +1,180 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.com/hubNode> a noria:ManagedElement ;
+  rdfs:label "Main Hub Node"@en ;
+  rdfs:comment "Central hub node connecting multiple network segments."@en ;
+  noria:elementManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/highDegreeNode> a noria:StructuralElement ;
+  rdfs:label "High-Degree Switch"@en ;
+  rdfs:comment "A switch with high connectivity degree, acting as a network backbone."@en ;
+  noria:structuralElementObservableData <https://example.com/latency> ;
+  noria:elementManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/centralNode> a noria:StructuralElement ;
+  rdfs:label "Central Router"@en ;
+  rdfs:comment "A core router serving as a central point in the network topology."@en ;
+  noria:structuralElementObservable <https://example.com/trafficLoad> ;
+  noria:elementManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/connectorNode> a noria:StructuralElement ;
+  rdfs:label "Connector Node"@en ;
+  rdfs:comment "A node acting as a connector between different network segments."@en ;
+  noria:structuralElementObservable <https://example.com/connectionStatus> ;
+  noria:elementManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/intermediaryNode> a noria:StructuralElement ;
+  rdfs:label "Intermediary Node"@en ;
+  rdfs:comment "A relay node facilitating data transfer."@en ;
+  noria:structuralElementObservableData <https://example.com/transferRate> ;
+  noria:elementManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/multiplexNode> a noria:StructuralElement ;
+  rdfs:label "Multiplex Node"@en ;
+  rdfs:comment "A node supporting multiple data streams."@en ;
+  noria:structuralElementObservable <https://example.com/streamCount> ;
+  noria:elementManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/superNode> a noria:StructuralElement ;
+  rdfs:label "Super Node"@en ;
+  rdfs:comment "A super node aggregating multiple nodes for high-level management."@en ;
+  noria:structuralElementObservable <https://example.com/aggregateTraffic> ;
+  noria:elementManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/NetworkOperations> a org:OrganizationalUnit ;
+  rdfs:label "Network Operations Team"@en ;
+  rdfs:comment "Team responsible for managing network nodes."@en .
+
+<https://example.com/Resource1> a noria:Resource ;
+  rdfs:label "Server A"@en ;
+  rdfs:comment "A critical application server."@en ;
+  noria:resourceLogisticId "SRV-A-001" ;
+  noria:resourceHostName "serverA.example.com" ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/Server> ;
+  noria:locatedAtLocus <https://example.com/Locus1> ;
+  noria:resourceManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/Resource2> a noria:Resource ;
+  rdfs:label "Router B"@en ;
+  rdfs:comment "Edge router connecting to external network."@en ;
+  noria:resourceLogisticId "RTR-B-002" ;
+  noria:resourceHostName "routerB.example.com" ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/Router> ;
+  noria:locatedAtLocus <https://example.com/Locus2> ;
+  noria:resourceManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/Locus1> a noria:Locus ;
+  rdfs:label "Server Room 314"@en ;
+  rdfs:comment "Location of Server A."@en ;
+  noria:locusLine "L" ;
+  noria:locusRow "3" .
+
+<https://example.com/Locus2> a noria:Locus ;
+  rdfs:label "Main Data Center"@en ;
+  rdfs:comment "Location of Router B."@en ;
+  noria:locusLine "A" ;
+  noria:locusRow "1" .
+
+<https://example.com/NetworkLink1> a noria:NetworkLink ;
+  rdfs:label "Fiber Link 1"@en ;
+  rdfs:comment "Optical fiber connection between Server A and Router B."@en ;
+  noria:networkLinkId "NL-001" ;
+  noria:networkLinkType "Optical Fiber" ;
+  noria:networkLinkInstallationDate "2022-01-15T10:00:00"^^xsd:dateTime ;
+  noria:networkLinkTerminationResource <https://example.com/Resource1> ;
+  noria:networkLinkTerminationResourceDestination <https://example.com/Resource2> .
+
+<https://example.com/Service1> a noria:Service ;
+  rdfs:label "Data Processing Service"@en ;
+  rdfs:comment "Core data processing service for analytics."@en ;
+  noria:serviceType <https://w3id.org/noria/kos/service/type/Processing> ;
+  noria:serviceRelatedApplication <https://example.com/App1> .
+
+<https://example.com/App1> a noria:Application ;
+  rdfs:label "Analytics Application"@en ;
+  rdfs:comment "Application for data analytics."@en ;
+  noria:applicationModelIdentifier "APP-XYZ-123" ;
+  noria:applicationType <https://w3id.org/noria/kos/application/type/Analytics> .
+
+<https://example.com/Alarm1> a noria:EventRecord ;
+  rdfs:label "Link Down Alarm"@en ;
+  rdfs:comment "Alarm indicating fiber link failure."@en ;
+  noria:loggingTime "2023-10-01T14:30:00"^^xsd:dateTime ;
+  noria:logText "Fiber link NL-001 is down."@en ;
+  noria:logOriginatingManagedObject <https://example.com/Resource1> ;
+  noria:alarmSeverity <https://w3id.org/noria/kos/Notification/Severity/Critical> ;
+  noria:alarmProposedRepairAction <https://example.com/Action1> .
+
+<https://example.com/Action1> a pep:Procedure ;
+  rdfs:label "Fiber Repair Procedure"@en ;
+  rdfs:comment "Procedure to repair fiber link."@en .
+
+<https://example.com/IntermediaryNode> a noria:StructuralElement ;
+  rdfs:label "Relay Node"@en ;
+  rdfs:comment "A relay node in the network."@en ;
+  noria:structuralElementObservable <https://example.com/transferRate> ;
+  noria:elementManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/SuperNode> a noria:StructuralElement ;
+  rdfs:label "Aggregation Super Node"@en ;
+  rdfs:comment "Super node aggregating multiple nodes for high-level management."@en ;
+  noria:structuralElementObservable <https://example.com/totalTraffic> ;
+  noria:elementManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/MultiplexNode> a noria:StructuralElement ;
+  rdfs:label "Multiplex Node"@en ;
+  rdfs:comment "Node supporting multiple data streams."@en ;
+  noria:structuralElementObservable <https://example.com/streamCount> ;
+  noria:elementManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/CentralNode> a noria:StructuralElement ;
+  rdfs:label "Central Router"@en ;
+  rdfs:comment "Core router in the network."@en ;
+  noria:structuralElementObservable <https://example.com/trafficLoad> ;
+  noria:elementManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/HubNode> a noria:StructuralElement ;
+  rdfs:label "Main Hub"@en ;
+  rdfs:comment "Central hub node connecting multiple segments."@en ;
+  noria:structuralElementObservable <https://example.com/connectionQuality> ;
+  noria:elementManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/NetworkOperations> a org:OrganizationalUnit ;
+  rdfs:label "Network Management Team"@en .
+
+<https://example.com/Resource3> a noria:Resource ;
+  rdfs:label "Firewall Appliance"@en ;
+  rdfs:comment "Security firewall device."@en ;
+  noria:resourceLogisticId "FW-003" ;
+  noria:resourceHostName "firewall1.example.com" ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/Firewall> ;
+  noria:locatedAtLocus <https://example.com/Locus3> ;
+  noria:resourceManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/Locus3> a noria:Locus ;
+  rdfs:label "Security Zone 1"@en ;
+  rdfs:comment "Location of Firewall Appliance."@en ;
+  noria:locusLine "X" ;
+  noria:locusRow "7" .
+
+<https://example.com/Alarm2> a noria:EventRecord ;
+  rdfs:label "Firewall Breach Alarm"@en ;
+  rdfs:comment "Alarm indicating security breach."@en ;
+  noria:loggingTime "2023-10-02T09:15:00"^^xsd:dateTime ;
+  noria:logText "Firewall FW-003 detected intrusion attempt."@en ;
+  noria:logOriginatingManagedObject <https://example.com/Resource3> ;
+  noria:alarmSeverity <https://w3id.org/noria/kos/Notification/Severity/Major> ;
+  noria:alarmProposedRepairAction <https://example.com/Action2> .
+
+<https://example.com/Action2> a pep:Procedure ;
+  rdfs:label "Firewall Incident Response"@en ;
+  rdfs:comment "Procedure to respond to firewall breach."@en .
+
+# End of graph

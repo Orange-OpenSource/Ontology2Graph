@@ -1,0 +1,97 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://w3id.org/noria/graph/ExampleGraph> a owl:Ontology ;
+    rdfs:label "Example Noria Knowledge Graph"@en ;
+    rdfs:comment "A sample knowledge graph demonstrating various node types and relations based on the Noria schema."@en .
+
+# Hub Node: Central Router
+<https://example.com/routerCentral> a noria:StructuralElement ;
+    rdfs:label "Central Router"@en ;
+    rdfs:comment "The main backbone router connecting multiple network segments."@en ;
+    noria:elementDistinguishedName "Router-01" .
+
+# High-Degree Node: Data Center
+<https://example.com/dataCenter> a noria:StructuralElement ;
+    rdfs:label "Main Data Center"@en ;
+    rdfs:comment "The primary data center hosting critical infrastructure."@en .
+
+# Connector Node: Switch
+<https://example.com/switchA> a noria:StructuralElement ;
+    rdfs:label "Switch A"@en ;
+    rdfs:comment "A core switch connecting servers and routers."@en ;
+    noria:elementDistinguishedName "Switch-A" ;
+    noria:structuralElementObservable noria:structuralElementObservableData .
+
+# Intermediary Node: Virtual Machine
+<https://example.com/vmAppServer> a noria:StructuralElement ;
+    rdfs:label "Application Server VM"@en ;
+    rdfs:comment "A virtual machine hosting application services."@en ;
+    noria:elementDistinguishedName "VM-APP-01" .
+
+# Multiplex Node: Network Link
+<https://example.com/linkFiber> a noria:NetworkLink ;
+    rdfs:label "Fiber Optic Link"@en ;
+    rdfs:comment "High-speed fiber optic connection between Data Center and Router."@en ;
+    noria:networkLinkId "FiberLink-01" .
+
+# Super Node: Network System
+<https://example.com/networkSystem> a noria:Service ;
+    rdfs:label "Corporate Network System"@en ;
+    rdfs:comment "The entire corporate network infrastructure."@en ;
+    noria:serviceType <https://w3id.org/noria/kos/service/type/CorporateNetwork> .
+
+# Relations: Nodes linked via schema relations
+
+# Hub node connected to high-degree node
+<https://example.com/routerCentral> noria:structuralElementObservable noria:structuralElementObservableData ;
+    noria:structuralElementObservableOf <https://example.com/dataCenter> .
+
+<https://example.com/dataCenter> noria:locatedAtLocus <https://example.com/locusMain> .
+
+# Central node connected to connector node
+<https://example.com/switchA> noria:structuralElementObservable noria:structuralElementObservableData ;
+    noria:structuralElementObservableOf <https://example.com/vmAppServer> .
+
+<https://example.com/vmAppServer> noria:eventRelatedElement <https://example.com/linkFiber> .
+
+# Connector node linked to intermediary node
+<https://example.com/linkFiber> noria:networkLinkTerminationResource <https://example.com/dataCenter> ;
+    noria:networkLinkTerminationResource <https://example.com/routerCentral> .
+
+<https://example.com/vmAppServer> noria:structuralElementObservable noria:structuralElementObservableData ;
+    noria:structuralElementObservableOf <https://example.com/switchA> .
+
+# Intermediary node linked to high-degree node
+<https://example.com/vmAppServer> noria:eventRelatedElement <https://example.com/routerCentral> .
+
+# Multiplex node connected to multiple nodes
+<https://example.com/linkFiber> noria:networkLinkId "FiberLink-01" ;
+    noria:networkLinkTerminationResourceOrigin <https://example.com/dataCenter> ;
+    noria:networkLinkTerminationResourceDestination <https://example.com/routerCentral> .
+
+# Super node representing the entire system
+<https://example.com/networkSystem> noria:structuralElementObservable noria:structuralElementObservableData ;
+    noria:structuralElementObservableOf <https://example.com/dataCenter> , <https://example.com/routerCentral> , <https://example.com/switchA> , <https://example.com/vmAppServer> , <https://example.com/linkFiber> .
+
+# Additional descriptive nodes
+<https://example.com/locusMain> a noria:Locus ;
+    rdfs:label "Main Locus"@en ;
+    rdfs:comment "Main physical location of the data center."@en .
+
+<https://example.com/organization> a org:OrganizationalUnit ;
+    rdfs:label "IT Operations"@en ;
+    rdfs:comment "The IT Operations team responsible for network management."@en .
+
+# Link nodes to organization
+<https://example.com/routerCentral> noria:elementManagedBy <https://example.com/organization> .
+<https://example.com/switchA> noria:elementManagedBy <https://example.com/organization> .
+<https://example.com/dataCenter> noria:elementManagedBy <https://example.com/organization> .
+
+# End of example graph

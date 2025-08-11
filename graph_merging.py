@@ -3,10 +3,11 @@ You have to pass as a parameter the folder where are stored the graphs'''
 
 #/home/pdooze/DIGITAL_TWIN/gengraphllm/results/graphs_time_series_generated/vertex_ai/gemini-2.0-flash/outside_test
 
-import networkx as nx
 import sys
 import os
 from pathlib import Path
+import networkx as nx
+
 
 arg = sys.argv[1:]
 PATH= arg[0]
@@ -75,11 +76,7 @@ for item in prefix_lines:
 
 #Need to remove duplicate nodes
 
-
-
-
 with open ('Graph.ttl', 'w', encoding='utf-8') as graph:
     graph.writelines(prefix_lines_unique)
     graph.writelines(filtered_lines)
     graph.close()
-

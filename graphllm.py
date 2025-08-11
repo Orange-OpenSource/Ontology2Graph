@@ -5,11 +5,9 @@ set directly in this script before launching
 """
 import os
 import datetime
-import subprocess
-import shutil
-from openai import OpenAI, OpenAIError
+from utils import query_llm, storing_results, check_ttl
+#from openai import OpenAI, OpenAIError
 
-DATETIME = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 DATE = datetime.datetime.now().strftime("%Y-%m-%d")
 
 # PATH constant where are stored the needed ressources, prompt, ontology and graph
@@ -29,7 +27,6 @@ ONTO='Noria'
 #ONTOLOGY='pygraph'
 
 ## MODEL constant to choose ##
-
 FILE_MODEL = f'{PATH}/model/models.txt'
 model_list = []
 # Open the text file
@@ -38,16 +35,17 @@ with open(FILE_MODEL, mode='r',encoding='utf-8') as file:
     for line in lines:
         cleaned_line = line.strip()
         model_list.append(cleaned_line)
+        # print(line)
 
-MODEL=model_list[0]
+MODEL=model_list[5]
 
-##PATH result to choose##
+##SET constant##
 PATH_RESULT=f'{PATH}/results/synthetics_graphs_generated/{DATE}/{MODEL}'
 BAD_PATH_RESULT=f'{PATH_RESULT}/Bad_Turtle_Syntax'
+TEMP_FILE=f'{PATH_RESULT}/temp.ttl'
 
-os.makedirs(f'{PATH_RESULT}/',exist_ok=True)
-
-client = OpenAI(api_key=os.environ.get("LLM_PROXY_KEY"),base_url="https://llmproxy.ai.orange")
+os.makedirs(f'{PATH_RESULT}/', exist_ok=True)
+os.makedirs(f'{BAD_PATH_RESULT}', exist_ok=True)
 
 with open(f'{PATH_ONTOLOGY}/Noria.ttl','rt',encoding='utf-8') as ontology:
     ONTOLOGY = ','.join(str(x) for x in ontology.readlines())
@@ -59,62 +57,36 @@ with open(f'{PATH_PROMPT}/{PROMPT_TYPE}.txt','rt',encoding='utf-8') as prompt:
 with open(f'{PATH_GRAPH}/full_graph.ttl','rt',encoding='utf-8') as graph:
     GRAPH = ','.join(str(x) for x in graph.readlines())
 
-try:
-    response = client.chat.completions.create(
-        model=MODEL,
-        temperature=0.1, # model's creativity
-        top_p=0.1, # model's creativity
-        messages = [
-            {   "role":"system",
-                "content":"""You are an expert in websemantic technologies and most 
-                particulary in knowledge graph and ttl format"""
-            },
-            {   "role": "user",
-                "content": f"""Follow the instruction : {PROMPT} and use the following schema:
-                {ONTOLOGY} to generate a new graph in turtle format"""
-            }
-        ]
-    )
+###################
+#FILE_MODEL = f'{PATH}/model/models.txt'
+#model_list = []
+# Open the text file
+#with open(FILE_MODEL, mode='r',encoding='utf-8') as file:
+#    lines = file.readlines()
+#    for line in lines:
+#        model = line.strip()
+#        print(model)
+#        DATETIME = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        #model_list.append(cleaned_line)
+        #print(line)
+#####################
 
-    print(f'{DATETIME} {MODEL}')
-    print("Prompt tokens : ",response.usage.prompt_tokens)
-    print("Output response tokens", response.usage.completion_tokens)
+TARGET_NUMBER_OF_GRAPH = 66
+NUMBER_OF_GRAPH = 0
 
-    #Write the result in a temporary file
-    with open(f'{PATH_RESULT}/{PROMPT_TYPE}_temp.ttl','x',encoding='utf-8') as filetemp:
-        filetemp.write(response.choices[0].message.content)
-        filetemp.close()
+while NUMBER_OF_GRAPH != TARGET_NUMBER_OF_GRAPH:
+    
+    DATE_TIME = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    FILE_RESULT=f'{PATH_RESULT}/{PROMPT_TYPE}_{DATE_TIME}_{ONTO}.ttl'
+    BAD_FILE_RESULT=f'{BAD_PATH_RESULT}/{PROMPT_TYPE}_{DATE_TIME}_{ONTO}_BAD.ttl'
+    
+    #Query LLM
+    response=query_llm(DATE_TIME,PROMPT,ONTOLOGY,MODEL)
 
-    #Remove lines start with '
-    with open(f'{PATH_RESULT}/{PROMPT_TYPE}_temp.ttl','r',encoding='utf-8') as file:
-        lines = file.readlines()
-        filtered_lines = [lines for lines in lines if not lines.startswith('`')]
-        file.close()
-
-    #save filtered result
-    with open(f'{PATH_RESULT}/{PROMPT_TYPE}_{DATETIME}_{ONTO}.ttl','w',encoding='utf-8') as final:
-        final.writelines(filtered_lines)
-        final.close()
-
-    os.remove(f'{PATH_RESULT}/{PROMPT_TYPE}_temp.ttl')
+    #Store results
+    storing_results(response,TEMP_FILE,FILE_RESULT)
 
     # Check Turtle syntax
-    command=["ttl",f'{PATH_RESULT}/{PROMPT_TYPE}_{DATETIME}_{ONTO}.ttl']
-    ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
-    stdout, stderr = ttlvalidator.communicate()
-    print(f'Turtle validator Result: {ttlvalidator.communicate()}')
+    check_ttl(FILE_RESULT,BAD_FILE_RESULT, BAD_PATH_RESULT)
 
-    if stdout!='Validator finished with 0 warnings and 0 errors.\n' :
-        # move bad file in bad folder and Save logs
-
-        os.makedirs(f'{BAD_PATH_RESULT}', exist_ok=True)
-        shutil.move(f'{PATH_RESULT}/{PROMPT_TYPE}_{DATETIME}_{ONTO}.ttl',
-                    f'{BAD_PATH_RESULT}/{PROMPT_TYPE}_{DATETIME}_{ONTO}_BAD.ttl')
-
-        with open(f'{BAD_PATH_RESULT}/errors.log', 'a',
-                       encoding='utf-8') as log:
-            log.write(f'{PROMPT_TYPE}_{DATETIME}_{ONTO}_BAD.ttl : {ttlvalidator.communicate()}\n')
-            log.close()
-
-except OpenAIError as e:
-    print(f"An error occured: {e}")
+    NUMBER_OF_GRAPH=NUMBER_OF_GRAPH+1

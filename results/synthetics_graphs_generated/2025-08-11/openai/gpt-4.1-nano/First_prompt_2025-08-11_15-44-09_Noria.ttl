@@ -1,0 +1,196 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.com/hubNode> a noria:ManagedElement ;
+  rdfs:label "Main Hub Node"@en ;
+  rdfs:comment "A high-degree central node acting as a network hub."@en ;
+  noria:elementManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/highDegreeNode> a noria:StructuralElement ;
+  rdfs:label "High-Degree Node"@en ;
+  rdfs:comment "A node with many connections, acting as a connector."@en ;
+  noria:structuralElementObservableData <https://example.com/connectionCount> .
+
+<https://example.com/centralNode> a noria:StructuralElement ;
+  rdfs:label "Central Node"@en ;
+  rdfs:comment "A node with high centrality in the network graph."@en ;
+  noria:structuralElementObservable <https://example.com/trafficVolume> .
+
+<https://example.com/connectorNode> a noria:StructuralElement ;
+  rdfs:label "Connector Node"@en ;
+  rdfs:comment "A node linking different network segments."@en ;
+  noria:structuralElementObservableData <https://example.com/segmentCount> .
+
+<https://example.com/intermediaryNode> a noria:StructuralElement ;
+  rdfs:label "Intermediary Node"@en ;
+  rdfs:comment "A node acting as an intermediary in data flow."@en ;
+  noria:structuralElementObservable <https://example.com/dataFlowRate> .
+
+<https://example.com/multiplexNode> a noria:StructuralElement ;
+  rdfs:label "Multiplex Node"@en ;
+  rdfs:comment "A node handling multiple data streams."@en ;
+  noria:structuralElementObservableData <https://example.com/streamCount> .
+
+<https://example.com/superNode> a noria:StructuralElement ;
+  rdfs:label "Super Node"@en ;
+  rdfs:comment "A super node aggregating multiple nodes."@en ;
+  noria:structuralElementObservable <https://example.com/aggregateTraffic> .
+
+<https://example.com/Resource1> a noria:Resource ;
+  rdfs:label "Resource 1"@en ;
+  rdfs:comment "A core network resource."@en ;
+  noria:resourceLogisticId "RES-001" ;
+  noria:locatedAtLocus <https://example.com/LocusA> ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/physical> ;
+  noria:resourceSerialNumber "SN123456" ;
+  noria:resourceHostName "host-resource1" .
+
+<https://example.com/Resource2> a noria:Resource ;
+  rdfs:label "Resource 2"@en ;
+  rdfs:comment "A virtual network resource."@en ;
+  noria:resourceLogisticId "RES-002" ;
+  noria:locatedAtLocus <https://example.com/LocusB> ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/virtual> ;
+  noria:resourceSerialNumber "SN654321" ;
+  noria:resourceHostName "host-resource2" .
+
+<https://example.com/LocusA> a noria:Locus ;
+  rdfs:label "Locus A"@en ;
+  rdfs:comment "Locus in Server Room 314."@en .
+
+<https://example.com/LocusB> a noria:Locus ;
+  rdfs:label "Locus B"@en ;
+  rdfs:comment "Locus in Data Center 1."@en .
+
+<https://example.com/NetworkInterface1> a noria:NetworkInterface ;
+  rdfs:label "eth0"@en ;
+  rdfs:comment "Primary Ethernet interface."@en ;
+  noria:networkInterfaceType "physical"^^xsd:string ;
+  noria:networkInterfaceDescription "GigabitEthernet0/0/1"@en ;
+  noria:networkInterfaceOf <https://example.com/Resource1> ;
+  noria:networkInterfaceConnects <https://example.com/NetworkLink1> .
+
+<https://example.com/NetworkInterface2> a noria:NetworkInterface ;
+  rdfs:label "veth0"@en ;
+  rdfs:comment "Virtual Ethernet interface."@en ;
+  noria:networkInterfaceType "virtual"^^xsd:string ;
+  noria:networkInterfaceDescription "veth interface for container."@en ;
+  noria:networkInterfaceOf <https://example.com/Resource2> ;
+  noria:networkInterfaceConnects <https://example.com/NetworkLink2> .
+
+<https://example.com/NetworkLink1> a noria:NetworkLink ;
+  rdfs:label "Link1"@en ;
+  rdfs:comment "Optical fiber link between Resource1 and Resource2."@en ;
+  noria:networkLinkId "NL-001" ;
+  noria:networkLinkType "fiber"^^xsd:string ;
+  noria:networkLinkInstallationDate "2022-01-15T10:00:00"^^xsd:dateTime ;
+  noria:networkLinkTerminationResource <https://example.com/Resource1> ;
+  noria:networkLinkTerminationResourceDestination <https://example.com/Resource2> .
+
+<https://example.com/NetworkLink2> a noria:NetworkLink ;
+  rdfs:label "Link2"@en ;
+  rdfs:comment "Virtual link for overlay network."@en ;
+  noria:networkLinkId "NL-002" ;
+  noria:networkLinkType "overlay"^^xsd:string ;
+  noria:networkLinkInstallationDate "2023-03-10T12:00:00"^^xsd:dateTime ;
+  noria:networkLinkTerminationResource <https://example.com/Resource2> ;
+  noria:networkLinkTerminationResourceOrigin <https://example.com/Resource1> .
+
+<https://example.com/Resource> a noria:Resource ;
+  rdfs:label "Resource"@en ;
+  rdfs:comment "Generic resource node."@en .
+
+<https://example.com/connectionCount> a noria:structuralElementObservableData ;
+  rdfs:label "connectionCount"@en ;
+  rdfs:comment "Number of active connections."@en ;
+  rdfs:seeAlso <https://example.com/Resource1> .
+
+<https://example.com/trafficVolume> a noria:structuralElementObservable ;
+  rdfs:label "trafficVolume"@en ;
+  rdfs:comment "Current network traffic volume."@en ;
+  rdfs:seeAlso <https://example.com/Resource1> .
+
+<https://example.com/dataFlowRate> a noria:structuralObservableOf ;
+  rdfs:label "dataFlowRate"@en ;
+  rdfs:comment "Data flow rate through the node."@en ;
+  rdfs:seeAlso <https://example.com/Resource2> .
+
+<https://example.com/aggregateTraffic> a noria:structuralObservable ;
+  rdfs:label "aggregateTraffic"@en ;
+  rdfs:comment "Aggregated traffic across super node."@en ;
+  rdfs:seeAlso <https://example.com/Resource1> .
+
+<https://example.com/streamCount> a noria:structuralElementObservableData ;
+  rdfs:label "streamCount"@en ;
+  rdfs:comment "Number of data streams multiplexed."@en ;
+  rdfs:seeAlso <https://example.com/Resource2> .
+
+<https://example.com/Resource3> a noria:Resource ;
+  rdfs:label "Resource 3"@en ;
+  rdfs:comment "A core network resource."@en ;
+  noria:resourceLogisticId "RES-003" ;
+  noria:locatedAtLocus <https://example.com/LocusC> ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/physical> ;
+  noria:resourceSerialNumber "SN789012" ;
+  noria:resourceHostName "host-resource3" .
+
+<https://example.com/LocusC> a noria:Locus ;
+  rdfs:label "Locus C"@en ;
+  rdfs:comment "Locus in Main Data Center."@en .
+
+<https://example.com/Resource4> a noria:Resource ;
+  rdfs:label "Resource 4"@en ;
+  rdfs:comment "A virtual resource for testing."@en ;
+  noria:resourceLogisticId "RES-004" ;
+  noria:locatedAtLocus <https://example.com/LocusD> ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/virtual> ;
+  noria:resourceSerialNumber "SN345678" ;
+  noria:resourceHostName "host-resource4" .
+
+<https://example.com/LocusD> a noria:Locus ;
+  rdfs:label "Locus D"@en ;
+  rdfs:comment "Locus in Backup Data Center."@en .
+
+<https://example.com/Resource5> a noria:Resource ;
+  rdfs:label "Resource 5"@en ;
+  rdfs:comment "A multiplexed resource."@en ;
+  noria:resourceLogisticId "RES-005" ;
+  noria:locatedAtLocus <https://example.com/LocusE> ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/physical> ;
+  noria:resourceSerialNumber "SN890123" ;
+  noria:resourceHostName "host-resource5" .
+
+<https://example.com/LocusE> a noria:Locus ;
+  rdfs:label "Locus E"@en ;
+  rdfs:comment "Locus in Edge Data Center."@en .
+
+<https://example.com/SuperNode> a noria:StructuralElement ;
+  rdfs:label "Super Node"@en ;
+  rdfs:comment "Aggregates multiple nodes for high throughput."@en ;
+  noria:structuralElementObservable <https://example.com/aggregateTraffic> .
+
+<https://example.com/Resource6> a noria:Resource ;
+  rdfs:label "Resource 6"@en ;
+  rdfs:comment "A super node resource."@en ;
+  noria:resourceLogisticId "RES-006" ;
+  noria:locatedAtLocus <https://example.com/LocusF> ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/physical> ;
+  noria:resourceSerialNumber "SN901234" ;
+  noria:resourceHostName "host-resource6" .
+
+<https://example.com/LocusF> a noria:Locus ;
+  rdfs:label "Locus F"@en ;
+  rdfs:comment "Locus in Central Office."@en .
+
+<https://example.com/SuperNode> a noria:StructuralElement ;
+  rdfs:label "Super Node"@en ;
+  rdfs:comment "A super node for high capacity."@en ;
+  noria:structuralElementObservable <https://example.com/aggregateTraffic> .
+
+# End of generated graph
