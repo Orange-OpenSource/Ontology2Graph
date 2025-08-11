@@ -8,7 +8,6 @@ import os
 from pathlib import Path
 import networkx as nx
 
-
 arg = sys.argv[1:]
 PATH= arg[0]
 
