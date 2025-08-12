@@ -126,7 +126,7 @@ def check_ttl(file_result, bad_file_result, bad_path_result):
     command=["ttl",file_result]
     ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
     stdout, stderr = ttlvalidator.communicate()
-    print(f'Turtle validator Result: {ttlvalidator.communicate()}')
+    print(f'Turtle validator Result: {stdout}, {stderr}')
 
     if stdout!='Validator finished with 0 warnings and 0 errors.\n' :
     # move bad file in bad folder and Save logs
