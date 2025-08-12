@@ -75,11 +75,11 @@ TARGET_NUMBER_OF_GRAPH = 66
 NUMBER_OF_GRAPH = 0
 
 while NUMBER_OF_GRAPH != TARGET_NUMBER_OF_GRAPH:
-    
+
     DATE_TIME = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     FILE_RESULT=f'{PATH_RESULT}/{PROMPT_TYPE}_{DATE_TIME}_{ONTO}.ttl'
     BAD_FILE_RESULT=f'{BAD_PATH_RESULT}/{PROMPT_TYPE}_{DATE_TIME}_{ONTO}_BAD.ttl'
-    
+
     #Query LLM
     response=query_llm(DATE_TIME,PROMPT,ONTOLOGY,MODEL)
 
