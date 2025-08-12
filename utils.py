@@ -62,7 +62,7 @@ def display_graph(graph,model):
 
     net.barnes_hut()
     net.from_nx(graph)
-    net.show_buttons()
+    net.show_buttons(filter_=['physics'])
 
     outputfile=f'{path}/results/HTML_graph/knowledge_graphe_{date_time}_{model}.html'
     net.save_graph(outputfile)

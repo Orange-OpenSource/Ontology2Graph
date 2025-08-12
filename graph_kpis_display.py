@@ -19,7 +19,7 @@ DataTypeProperties=retreive_datatype_properties(ONTOLOGY)
 #List all the ttl graph files in PATH except folder
 all_files = [f.name for f in Path(PATH).iterdir() if f.is_file()]
 
-cumul_nodes = 0
+CUMUL_NODES = 0
 
 #rebuild complete file path (folder/file)
 for i, file in enumerate(all_files):
@@ -53,8 +53,8 @@ for file in all_files :
     print(f'Knowledge Graph : {file_name}')
     print('Number of Nodes :',DiGraph.number_of_nodes())
     print('Number of edges :',DiGraph.number_of_edges())
-    cumul_nodes = cumul_nodes + DiGraph.number_of_nodes()
-    print('cumulative number of nodes :',cumul_nodes )
+    CUMUL_NODES = CUMUL_NODES + DiGraph.number_of_nodes()
+    print('cumulative number of nodes :',CUMUL_NODES )
     print('degree_histogram :', degree_histogram(Graph))
     print('number of self loop :', number_of_selfloops(Graph))
 
