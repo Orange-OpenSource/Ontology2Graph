@@ -6,7 +6,7 @@ You have to pass as a parameter the folder where are stored the graphs'''
 import sys
 import os
 from pathlib import Path
-from utils import ttl_validator
+from utils import ttl_validator, remove_duplicate_prefix
 
 arg = sys.argv[1:]
 PATH= arg[0]
@@ -32,9 +32,6 @@ with open(OUTPUT_FILE_TEMP, 'w', encoding='utf-8') as outfile:
 
 # create the graph
 
-
-
-
 # list all the classes
 
 SEARCH_STRING='a noria:'
@@ -57,29 +54,7 @@ print(class_list)
 # List all the nodes by classes
 
 # manage prefix
+remove_duplicate_prefix(OUTPUT_FILE_TEMP,OUTPUT_FILE)
 
-nodes_lines=[]
-prefix_lines=[]
-
-with open (OUTPUT_FILE_TEMP, 'r', encoding='utf-8') as outfile:
-    lines = outfile.readlines()
-    prefix_lines = [lines for lines in lines if lines.startswith('@')]
-    nodes_lines= [lines for lines in lines if not lines.startswith('@')]
-    outfile.close()
-
-os.remove(OUTPUT_FILE_TEMP)
-prefix_lines_unique=[]
-
-#remove duplicate prefix
-for item in prefix_lines:
-    if item not in prefix_lines_unique:
-        prefix_lines_unique.append(item)
-
-#Need to remove duplicate nodes ?
-
-with open (OUTPUT_FILE, 'w', encoding='utf-8') as graph:
-    graph.writelines(prefix_lines_unique)
-    graph.writelines(nodes_lines)
-    graph.close()
-
+# validate ttl syntax
 ttl_validator(OUTPUT_DIR)

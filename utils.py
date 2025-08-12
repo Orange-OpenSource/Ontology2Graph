@@ -153,3 +153,27 @@ def ttl_validator(path):
         print(file)
         print(f'Merged graph : Turtle validator Result: {stdout},{stderr}')
         print('\n')
+
+def remove_duplicate_prefix(output_file_temp,output_file):
+    '''remove duplicate prefix of the merged file'''
+    nodes_lines=[]
+    prefix_lines=[]
+    prefix_lines_unique=[]
+
+    with open (output_file_temp, 'r', encoding='utf-8') as outfile:
+        lines = outfile.readlines()
+        prefix_lines = [lines for lines in lines if lines.startswith('@')]
+        nodes_lines= [lines for lines in lines if not lines.startswith('@')]
+        outfile.close()
+
+    os.remove(output_file_temp)
+   
+    #remove duplicate prefix
+    for item in prefix_lines:
+        if item not in prefix_lines_unique:
+            prefix_lines_unique.append(item)
+
+    with open (output_file, 'w', encoding='utf-8') as graph:
+        graph.writelines(prefix_lines_unique)
+        graph.writelines(nodes_lines)
+        graph.close()
