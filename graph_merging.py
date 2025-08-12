@@ -1,23 +1,27 @@
 '''This python scipt merge several knowledge Graph in an only one. 
 You have to pass as a parameter the folder where are stored the graphs'''
 
-#/home/pdooze/DIGITAL_TWIN/gengraphllm/results/graphs_time_series_generated/vertex_ai/gemini-2.0-flash/outside_test
-
 import sys
 import os
 from pathlib import Path
-from utils import ttl_validator, remove_duplicate_prefix
+from utils import ttl_validator, remove_duplicate_prefix,find_duplicates_nodes
+from utils import rename_duplicates_nodes
 
 arg = sys.argv[1:]
 PATH= arg[0]
 
-all_graphs = [f.name for f in Path(PATH).iterdir() if f.is_file()]
-#print(all_graphs)
-
 OUTPUT_DIR=f'{PATH}/merged_graph/'
-os.makedirs(f'{OUTPUT_DIR}',exist_ok=True)
 OUTPUT_FILE_TEMP=f'{OUTPUT_DIR}/temp.ttl'
-OUTPUT_FILE=f'{OUTPUT_DIR}/merged_graph.ttl'
+MERGED_FILE=f'{OUTPUT_DIR}/merged_graph.ttl'
+PATH_ONTOLOGY='ontologies/Noria.ttl'
+
+#manage duplicate nodes in ttl files
+duplicates=find_duplicates_nodes(PATH,PATH_ONTOLOGY)
+rename_duplicates_nodes(PATH,duplicates)
+
+#Merge the ttl file
+all_graphs = [f.name for f in Path(PATH).iterdir() if f.is_file()]
+os.makedirs(f'{OUTPUT_DIR}',exist_ok=True)
 
 # Open the output file in write mode
 with open(OUTPUT_FILE_TEMP, 'w', encoding='utf-8') as outfile:
@@ -49,12 +53,8 @@ class_list = [item.replace(' ;','') for item in class_unique_list2]
 
 print(class_list)
 
-# List all the predicate
-
-# List all the nodes by classes
-
-# manage prefix
-remove_duplicate_prefix(OUTPUT_FILE_TEMP,OUTPUT_FILE)
+# manage prefix in merged file
+remove_duplicate_prefix(OUTPUT_FILE_TEMP,MERGED_FILE)
 
 # validate ttl syntax
 ttl_validator(OUTPUT_DIR)

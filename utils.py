@@ -6,8 +6,12 @@ import datetime
 import shutil
 from pathlib import Path
 import subprocess
+from collections import Counter
 from pyvis.network import Network
 from openai import OpenAI, OpenAIError
+import networkx as nx
+import rdflib
+
 
 def remove_pred_obj(expr, graph, predi, obje):
     '''remove predicate and target object of an edge'''
@@ -154,7 +158,7 @@ def ttl_validator(path):
         print(f'Merged graph : Turtle validator Result: {stdout},{stderr}')
         print('\n')
 
-def remove_duplicate_prefix(output_file_temp,output_file):
+def remove_duplicate_prefix(output_file_temp,merged_file):
     '''remove duplicate prefix of the merged file'''
     nodes_lines=[]
     prefix_lines=[]
@@ -167,13 +171,94 @@ def remove_duplicate_prefix(output_file_temp,output_file):
         outfile.close()
 
     os.remove(output_file_temp)
-   
+
     #remove duplicate prefix
     for item in prefix_lines:
         if item not in prefix_lines_unique:
             prefix_lines_unique.append(item)
 
-    with open (output_file, 'w', encoding='utf-8') as graph:
+    with open (merged_file, 'w', encoding='utf-8') as graph:
         graph.writelines(prefix_lines_unique)
         graph.writelines(nodes_lines)
         graph.close()
+
+def find_duplicates_nodes(path,ontology):
+    '''find duplicates nodes in ttl files, just add the folder where the files
+are stored as an argument'''
+
+    #List all the ttl graph files in PATH except folder
+    all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
+
+    datatypeproperties=retreive_datatype_properties(ontology)
+
+    #rebuild complete file path (folder/file)
+    for i, file in enumerate(all_files):
+        all_files[i]= path + file
+
+    all_nodes=[]
+    nodes=[]
+
+    for file in all_files :
+
+        g = rdflib.Graph()
+        g.parse(file, format="turtle")
+
+        nx_graph = nx.DiGraph()
+
+        for subj, pred, obj in g:
+            last_part_pred=get_last_folder_part(pred,'/')
+
+            if ('label' in last_part_pred) or ('type' in last_part_pred) or\
+                ('inScheme' in last_part_pred) or ('description' in last_part_pred) or\
+                ('comment' in last_part_pred) or last_part_pred in datatypeproperties:
+                pass
+
+            else :
+                last_part_subj=get_last_folder_part(subj,'/')
+                last_part_obj=get_last_folder_part(obj,'/')
+                nx_graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
+
+        nodes=list(nx_graph.nodes)
+        all_nodes.append(nodes)
+
+    #transform list of list into a simple list
+    all_nodes_list = [item for sublist in all_nodes for item in sublist]
+
+    print(all_nodes_list,'\n')
+
+    counts=Counter(all_nodes_list)
+    duplicates=[item for item, count in counts.items() if count > 1]
+    print(f'DUPLICATES {duplicates},\n')
+
+    all_nodes_list_unique = list(set(all_nodes_list))
+    print(f'NODES OF FINAL GRAPH {all_nodes_list_unique},\n')
+
+    return duplicates
+
+def rename_duplicates_nodes(path,duplicates):
+    '''find duplicates nodes in ttl files, just add the folder where the files
+are stored and the duplicate list as argument'''
+
+    #List all the ttl graph files in PATH except folder
+    all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
+
+    #rebuild complete file path (folder/file)
+    for i, file in enumerate(all_files):
+        all_files[i]= path + file
+
+    for ttl_file in all_files :
+
+        with open(ttl_file,'r',encoding='utf-8') as file:
+            content = file.read()
+            file.close()
+
+        words = content.split
+        print(words)
+
+        for item in duplicates:
+            if item in content:
+                content=content.replace(item,f'{item}_extra')
+                print(f'ITEM : {item}')
+
+        with open(ttl_file, 'w',encoding='utf-8') as file:
+            file.write(content)
