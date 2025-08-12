@@ -4,6 +4,7 @@ import webbrowser
 import os
 import datetime
 import shutil
+from pathlib import Path
 import subprocess
 from pyvis.network import Network
 from openai import OpenAI, OpenAIError
@@ -115,13 +116,13 @@ def storing_results(response,temp_file,file_result):
         file.close()
 
     with open(file_result,'w',encoding='utf-8') as final:
-        final.writelines(filtered_lines)      
+        final.writelines(filtered_lines)
         final.close()
 
     os.remove(temp_file)
 
 def check_ttl(file_result, bad_file_result, bad_path_result):
-    '''check ttl syntax'''
+    '''check ttl syntax and store wrong file in specific folder'''
     command=["ttl",file_result]
     ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
     stdout, stderr = ttlvalidator.communicate()
@@ -134,6 +135,21 @@ def check_ttl(file_result, bad_file_result, bad_path_result):
         shutil.move(file_result, bad_file_result)
 
         with open(f'{bad_path_result}/errors.log', 'a',encoding='utf-8') as log:
-            #log.write(f'{PROMPT_TYPE}_{DATE_TIME}_{ONTO}_BAD.ttl : {ttlvalidator.communicate()}\n')
             log.write(f'{bad_file_result} : {ttlvalidator.communicate()}\n')
             log.close()
+
+def ttl_validator(path):
+    '''validate ttl merged graph'''
+    all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
+
+    for i, file in enumerate(all_files):
+        all_files[i]= path + file
+
+    for file in all_files :
+        command=["ttl",file]
+        ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+                                      text=True)
+        stdout, stderr = ttlvalidator.communicate()
+        print(file)
+        print(f'Merged graph : Turtle validator Result: {stdout},{stderr}')
+        print('\n')
