@@ -223,14 +223,14 @@ are stored as an argument'''
     #transform list of list into a simple list
     all_nodes_list = [item for sublist in all_nodes for item in sublist]
 
-    print(all_nodes_list,'\n')
+    #print(all_nodes_list,'\n')
 
     counts=Counter(all_nodes_list)
     duplicates=[item for item, count in counts.items() if count > 1]
-    print(f'DUPLICATES {duplicates},\n')
+    #print(f'DUPLICATES {duplicates},\n')
 
     all_nodes_list_unique = list(set(all_nodes_list))
-    print(f'NODES OF FINAL GRAPH {all_nodes_list_unique},\n')
+    #print(f'NODES OF FINAL GRAPH {all_nodes_list_unique},\n')
 
     return duplicates
 
@@ -273,26 +273,46 @@ are stored and the duplicate list as argument'''
         all_files[i]= path + file
 
     occ_dup=occurence_duplicate(duplicates,path)
-
-    for ttl_file in all_files :
-
-        print(ttl_file)
-        with open(ttl_file,'r',encoding='utf-8') as file:
-            content = file.read()
-            file.close()
-
-        print(occ_dup[0][1])
-        j=0
-
-        for i,dup in enumerate(occ_dup):
-            if  (dup[0] in content) and (dup[1] > 2):
-                #dup[0], must be rename
-                content=content.replace(dup[0],f'{dup[0]}_extra_node_{j}')
-                occ_dup[i][1]=occ_dup[i][1]-1
-                occ_dup[i][0]=f'{dup[0]}_extra_node_{j}'
-
-                with open(ttl_file, 'w',encoding='utf-8') as file:
-                    file.write(content)
-                    file.close()
-
     print(occ_dup)
+
+    #for ttl_file in all_files :
+
+    #    print(ttl_file)
+    #    with open(ttl_file,'r',encoding='utf-8') as file:
+    #        content = file.read()
+    #        file.close()
+
+        #print(occ_dup[0][1])
+    #    j=0
+    for i,dup in enumerate(occ_dup):
+        j=0
+        for ttl_file in all_files :
+            #print(ttl_file)
+            with open(ttl_file,'r',encoding='utf-8') as file:
+                content = file.read()
+                file.close()
+                #print(occ_dup[0][1])
+                #print(dup)
+                if  (dup[0] in content) and (dup[1] > 2):
+                    #dup[0], must be rename
+                    #print(occ_dup)
+                    print(dup)
+                    new_node=f'{dup[0]}_extra_node_{j}'
+                    if (len(new_node)>50):
+                        print(ttl_file)
+                    print(new_node)
+                    #update occ_dup
+                    occ_dup[i][1]=occ_dup[i][1]-1
+
+                    #new_occ_dup=[f'{new_node}', 1]
+                    #occ_dup.append(new_occ_dup)
+
+                    #update content
+                    content=content.replace(dup[0],new_node)
+                    new_node=''
+                    j=j+1
+                    with open(ttl_file, 'w',encoding='utf-8') as file:
+                        file.write(content)
+                        file.close()
+
+    #print(occ_dup)
