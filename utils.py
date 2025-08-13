@@ -219,15 +219,6 @@ are stored as an argument'''
 
         nodes=list(nx_graph.nodes)
         all_nodes.append(nodes)
-        #with open(f'{file}_:_nodes.csv', 'w', encoding='utf-8',newline='') as file:
-        #    writer = csv.writer(file)
-        #    for item in nodes:
-        #        writer.writerow([item])
-        #    file.close()
-
-        #with open (f'{file}_:_nodes','w',encoding='utf-8') as file:
-        #    file.write(str(nodes))
-
 
     #transform list of list into a simple list
     all_nodes_list = [item for sublist in all_nodes for item in sublist]
@@ -291,13 +282,14 @@ are stored and the duplicate list as argument'''
             file.close()
 
         print(occ_dup[0][1])
+        j=0
 
         for i,dup in enumerate(occ_dup):
-            if (dup[1] > 2) and (dup[0] in content):
+            if  (dup[0] in content) and (dup[1] > 2):
                 #dup[0], must be rename
-                content=content.replace(dup[0],f'{dup[0]}_extra_node')
+                content=content.replace(dup[0],f'{dup[0]}_extra_node_{j}')
                 occ_dup[i][1]=occ_dup[i][1]-1
-                occ_dup[i][0]=f'{dup[0]}_extra_node'
+                occ_dup[i][0]=f'{dup[0]}_extra_node_{j}'
 
                 with open(ttl_file, 'w',encoding='utf-8') as file:
                     file.write(content)

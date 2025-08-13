@@ -1,4 +1,4 @@
-'''This python scipt merge several knowledge Graphs in an only one. 
+'''This python script merge several knowledge Graphs in an only one. 
 You have to pass as a parameter the folder where are stored the Graphs'''
 
 import sys

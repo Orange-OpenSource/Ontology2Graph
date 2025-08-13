@@ -1,21 +1,21 @@
 '''extract nodes from file'''
 
 import sys
+import csv
 import rdflib
 import networkx as nx
 from utils import get_last_folder_part,retreive_datatype_properties
-import csv
 
 arg = sys.argv[1:]
 file= arg[0]
-
 
 g = rdflib.Graph()
 g.parse(file, format="turtle")
 
 nx_graph = nx.DiGraph()
 
-datatypeproperties=retreive_datatype_properties('/home/pdooze/DIGITAL_TWIN/gengraphllm/ontologies/Noria.ttl')
+ONTO='/home/pdooze/DIGITAL_TWIN/gengraphllm/ontologies/Noria.ttl'
+datatypeproperties=retreive_datatype_properties(ONTO)
 
 for subj, pred, obj in g:
     last_part_pred=get_last_folder_part(pred,'/')
@@ -38,6 +38,3 @@ with open(f'{file}_:_extranodes.csv', 'w', encoding='utf-8',newline='') as file:
     for item in nodes:
         writer.writerow([item])
     file.close()
-
-#with open (f'{file}_:_nodes','w',encoding='utf-8') as file:
-    #file.write(str(nodes))
