@@ -1,5 +1,5 @@
-'''This python scipt merge several knowledge Graph in an only one. 
-You have to pass as a parameter the folder where are stored the graphs'''
+'''This python scipt merge several knowledge Graphs in an only one. 
+You have to pass as a parameter the folder where are stored the Graphs'''
 
 import sys
 import os
@@ -51,7 +51,7 @@ class_unique_list1 = [item.strip() for item in class_unique_list ]
 class_unique_list2 = [item.replace(SEARCH_STRING,'') for item in class_unique_list1]
 class_list = [item.replace(' ;','') for item in class_unique_list2]
 
-print(class_list)
+#print(class_list)
 
 # manage prefix in merged file
 remove_duplicate_prefix(OUTPUT_FILE_TEMP,MERGED_FILE)

@@ -1,0 +1,43 @@
+'''extract nodes from file'''
+
+import sys
+import rdflib
+import networkx as nx
+from utils import get_last_folder_part,retreive_datatype_properties
+import csv
+
+arg = sys.argv[1:]
+file= arg[0]
+
+
+g = rdflib.Graph()
+g.parse(file, format="turtle")
+
+nx_graph = nx.DiGraph()
+
+datatypeproperties=retreive_datatype_properties('/home/pdooze/DIGITAL_TWIN/gengraphllm/ontologies/Noria.ttl')
+
+for subj, pred, obj in g:
+    last_part_pred=get_last_folder_part(pred,'/')
+
+    if ('label' in last_part_pred) or ('type' in last_part_pred) or\
+        ('inScheme' in last_part_pred) or ('description' in last_part_pred) or\
+            ('comment' in last_part_pred) or last_part_pred in datatypeproperties:
+        pass
+
+    else :
+        last_part_subj=get_last_folder_part(subj,'/')
+        last_part_obj=get_last_folder_part(obj,'/')
+        nx_graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
+
+nodes=list(nx_graph.nodes)
+print(nodes)
+
+with open(f'{file}_:_extranodes.csv', 'w', encoding='utf-8',newline='') as file:
+    writer = csv.writer(file)
+    for item in nodes:
+        writer.writerow([item])
+    file.close()
+
+#with open (f'{file}_:_nodes','w',encoding='utf-8') as file:
+    #file.write(str(nodes))

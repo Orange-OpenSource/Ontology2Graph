@@ -12,7 +12,6 @@ from openai import OpenAI, OpenAIError
 import networkx as nx
 import rdflib
 
-
 def remove_pred_obj(expr, graph, predi, obje):
     '''remove predicate and target object of an edge'''
     edges_to_remove = [(u, v) for u, v, attr in graph.edges(data=True)
@@ -220,6 +219,15 @@ are stored as an argument'''
 
         nodes=list(nx_graph.nodes)
         all_nodes.append(nodes)
+        #with open(f'{file}_:_nodes.csv', 'w', encoding='utf-8',newline='') as file:
+        #    writer = csv.writer(file)
+        #    for item in nodes:
+        #        writer.writerow([item])
+        #    file.close()
+
+        #with open (f'{file}_:_nodes','w',encoding='utf-8') as file:
+        #    file.write(str(nodes))
+
 
     #transform list of list into a simple list
     all_nodes_list = [item for sublist in all_nodes for item in sublist]
@@ -235,6 +243,33 @@ are stored as an argument'''
 
     return duplicates
 
+def occurence_duplicate(duplicates,path):
+    '''compute the occurence of duplicates'''
+    occu_duplicates=[[duplicates[i],0] for i in range(0,len(duplicates))]
+
+    #List all the ttl graph files in PATH except folder
+    all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
+
+    #rebuild complete file path (folder/file)
+    for i, file in enumerate(all_files):
+        all_files[i]= path + file
+
+    for file in all_files:
+
+        with open(file,'r',encoding='utf-8') as file:
+            content = file.read()
+
+        for item in duplicates:
+            if item in content:
+                for row in occu_duplicates:
+                    if row[0]==item:
+                        row[1]=row[1]+1
+        file.close()
+
+    print(f'occu_duplicates : {occu_duplicates}')
+    return occu_duplicates
+
+
 def rename_duplicates_nodes(path,duplicates):
     '''find duplicates nodes in ttl files, just add the folder where the files
 are stored and the duplicate list as argument'''
@@ -246,19 +281,26 @@ are stored and the duplicate list as argument'''
     for i, file in enumerate(all_files):
         all_files[i]= path + file
 
+    occ_dup=occurence_duplicate(duplicates,path)
+
     for ttl_file in all_files :
 
+        print(ttl_file)
         with open(ttl_file,'r',encoding='utf-8') as file:
             content = file.read()
             file.close()
 
-        words = content.split
-        print(words)
+        print(occ_dup[0][1])
 
-        for item in duplicates:
-            if item in content:
-                content=content.replace(item,f'{item}_extra')
-                print(f'ITEM : {item}')
+        for i,dup in enumerate(occ_dup):
+            if (dup[1] > 2) and (dup[0] in content):
+                #dup[0], must be rename
+                content=content.replace(dup[0],f'{dup[0]}_extra_node')
+                occ_dup[i][1]=occ_dup[i][1]-1
+                occ_dup[i][0]=f'{dup[0]}_extra_node'
 
-        with open(ttl_file, 'w',encoding='utf-8') as file:
-            file.write(content)
+                with open(ttl_file, 'w',encoding='utf-8') as file:
+                    file.write(content)
+                    file.close()
+
+    print(occ_dup)
