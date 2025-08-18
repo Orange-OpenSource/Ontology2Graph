@@ -56,7 +56,8 @@ def storing_results(response,temp_file,file_result):
     os.remove(temp_file)
 
 def check_ttl(file_result, bad_file_result, bad_path_result,merged):
-    '''check ttl syntax and store wrong file in specific folder'''
+    '''check ttl syntax store wrong file in specific folder and 
+    maek a copy of right ttl file'''
     command=["ttl",file_result]
     ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
     stdout, stderr = ttlvalidator.communicate()
@@ -74,6 +75,11 @@ def check_ttl(file_result, bad_file_result, bad_path_result,merged):
         with open(f'{bad_path_result}/errors.log', 'a',encoding='utf-8') as log:
             log.write(f'{bad_file_result} : {ttlvalidator.communicate()}\n')
             log.close()
+    else:
+    # make a copy of right files        
+        folder_path = f'{os.path.dirname(file_result)}/raw_file'
+        os.makedirs(folder_path, exist_ok=True)
+        shutil.copy(file_result,folder_path)
 
 def ttl_validator(path):
     '''validate ttl merged graph'''

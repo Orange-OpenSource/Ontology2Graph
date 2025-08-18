@@ -199,8 +199,8 @@ def rename_duplicates_nodes(path,duplicates):
                 if  (dup[0] in content) and (dup[1] > 2):
                     print(dup)
                     new_node=f'{dup[0]}_extra_node_{j}'
-                    if len(new_node)>50:
-                        print(ttl_file)
+                    #if len(new_node)>50:
+                    #    print(ttl_file)
                     print(new_node)
                     occ_dup[i][1]=occ_dup[i][1]-1
 
