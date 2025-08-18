@@ -3,6 +3,7 @@
 import webbrowser
 import os
 import datetime
+from pathlib import Path
 from pyvis.network import Network
 
 def remove_pred_obj(expr, graph, predi, obje):
@@ -47,10 +48,10 @@ def retreive_datatype_properties(ontology):
         dtproperties.append(dtp)
     return dtproperties
 
-def display_graph(graph,model):
+def display_graph(graph,file):
     '''dysplay the graph'''
 
-    date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    #date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     net = Network(height="1300px", width="100%", bgcolor="#222222", font_color="white",
                   directed=True)
@@ -58,10 +59,21 @@ def display_graph(graph,model):
     net.from_nx(graph)
     #net.show_buttons(filter_=['physics'])
 
-    outputfile=f'../generate_graphs/results/HTML_graph/knowledge_graph_{date_time}_{model}.html'
-    net.save_graph(outputfile)
-    full_path=os.path.abspath(outputfile)
-    print('full path',full_path)
+    #file = os.path.basename(file)
+    #file_without_ext = os.path.splitext(file)[0]
 
-    webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{full_path}',autoraise=True)
-    #webbrowser.open(full_path,autoraise=True)
+    html_folder= f'{Path(file).parent}/html/'
+    print(html_folder)
+    os.makedirs(html_folder,exist_ok=True)
+
+    html_file = f'{html_folder}{Path(file).stem}.html'
+    print('html_file',html_file)
+
+    #folder = os.path.dirname(file)
+    #outputfile=f'{file[0]}.html'
+    net.save_graph(f'{html_file}')
+    #full_path=os.path.abspath(outputfile)
+    #print('full path',full_path)
+
+    webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{html_file}',autoraise=True)
+    #webbrowser.open(outputfile,autoraise=True)

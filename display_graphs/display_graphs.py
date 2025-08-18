@@ -1,5 +1,5 @@
 ''' This python script compute some Knowledge Graphs KPIs and display the Graph.
-You must pass as an argument the location folder where are stored all the ttl files'''
+You must pass as an argument the absolute path where are stored the ttl files'''
 
 import sys
 import os
@@ -27,6 +27,7 @@ for i, file in enumerate(all_files):
 
 for file in all_files :
     file_name=get_last_folder_part(file,'/')
+    print(file)
 
     g = rdflib.Graph()
     g.parse(file, format='turtle')
@@ -45,7 +46,7 @@ for file in all_files :
         else :
             last_part_subj=get_last_folder_part(subj,'/')
             last_part_obj=get_last_folder_part(obj,'/')
-    #        print({last_part_subj},{last_part_pred},{last_part_obj})
+    #       print({last_part_subj},{last_part_pred},{last_part_obj})
             Graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
             DiGraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
 
@@ -68,5 +69,6 @@ for file in all_files :
     print('\n')
 
     #### visualisation ####
-    model=get_last_folder_part(f'{PATH}', '/')
-    display_graph(DiGraph,model)
+    #model=get_last_folder_part(f'{PATH}', '/')
+    #print(model)
+    display_graph(DiGraph,file)

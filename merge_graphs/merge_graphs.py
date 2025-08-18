@@ -8,9 +8,10 @@ from utils.utils_merge import check_ttl
 
 arg = sys.argv[1:]
 PATH= arg[0]
+nbr_dup= int(arg[1])
 
 PATH_RESULT=f'{PATH}/merged_graph/'
-MERGED_FILE=f'{PATH_RESULT}/merged_graph.ttl'
+MERGED_FILE=f'{PATH_RESULT}/merged_graph_{nbr_dup}.ttl'
 
 BAD_PATH_RESULT=f'{PATH_RESULT}/Bad_Turtle_Syntax'
 BAD_MERGED_FILE=f'{BAD_PATH_RESULT}/merged_graph_BAD.ttl'
@@ -20,7 +21,7 @@ PATH_ONTOLOGY='../generate_graphs/ontologies/Noria.ttl'
 
 #manage duplicate nodes in ttl files
 duplicates=find_duplicates_nodes(PATH,PATH_ONTOLOGY)
-rename_duplicates_nodes(PATH,duplicates)
+rename_duplicates_nodes(PATH,duplicates,nbr_dup)
 
 #Merge the ttl file
 all_graphs = [f.name for f in Path(PATH).iterdir() if f.is_file()]

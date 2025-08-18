@@ -7,6 +7,7 @@ import subprocess
 from collections import Counter
 import networkx as nx
 import rdflib
+import glob
 
 def remove_pred_obj(expr, graph, predi, obje):
     '''remove predicate and target object of an edge'''
@@ -174,7 +175,7 @@ def occurence_duplicate(duplicates,path):
     return occu_duplicates
 
 
-def rename_duplicates_nodes(path,duplicates):
+def rename_duplicates_nodes(path,duplicates,nbr_dup):
     '''find duplicates nodes in ttl files, just add the folder where the files
     are stored and the duplicate list as argument'''
 
@@ -188,7 +189,7 @@ def rename_duplicates_nodes(path,duplicates):
     occ_dup=occurence_duplicate(duplicates,path)
     print(occ_dup)
 
-    for i,dup in enumerate(occ_dup):
+    for i,dup in enumerate(occ_dup, nbr_dup):
         j=0
         for ttl_file in all_files :
 
@@ -196,11 +197,13 @@ def rename_duplicates_nodes(path,duplicates):
                 content = file.read()
                 file.close()
 
-                if  (dup[0] in content) and (dup[1] > 2):
+                if  (dup[0] in content) and (dup[1] > nbr_dup):
                     print(dup)
                     new_node=f'{dup[0]}_extra_node_{j}'
-                    #if len(new_node)>50:
-                    #    print(ttl_file)
+                    print(len(new_node))
+                    print(i)
+                    if len(new_node)>50:
+                        print(ttl_file)
                     print(new_node)
                     occ_dup[i][1]=occ_dup[i][1]-1
 
@@ -211,3 +214,17 @@ def rename_duplicates_nodes(path,duplicates):
                     with open(ttl_file, 'w',encoding='utf-8') as file:
                         file.write(content)
                         file.close()
+    # restore ttl file
+    print('path',path)
+    #os.remove(f'{path}*.ttl')
+
+    for file in glob.glob(os.path.join(path, '*.ttl')):
+        os.remove(file)
+
+    src_folder=Path(f'{path}raw_file')
+    dst_folder=Path(f'{path}')
+
+    for file in src_folder.iterdir():
+        if file.is_file():
+            shutil.copy2(file, dst_folder / file.name)
+
