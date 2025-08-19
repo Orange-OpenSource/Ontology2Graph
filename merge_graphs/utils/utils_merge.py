@@ -7,7 +7,6 @@ import subprocess
 from collections import Counter
 import networkx as nx
 import rdflib
-import glob
 
 def remove_pred_obj(expr, graph, predi, obje):
     '''remove predicate and target object of an edge'''
@@ -187,9 +186,9 @@ def rename_duplicates_nodes(path,duplicates,nbr_dup):
         all_files[i]= path + file
 
     occ_dup=occurence_duplicate(duplicates,path)
-    print(occ_dup)
+    print(f'occ_dup : {occ_dup}')
 
-    for i,dup in enumerate(occ_dup, nbr_dup):
+    for i,dup in enumerate(occ_dup):
         j=0
         for ttl_file in all_files :
 
@@ -200,31 +199,32 @@ def rename_duplicates_nodes(path,duplicates,nbr_dup):
                 if  (dup[0] in content) and (dup[1] > nbr_dup):
                     print(dup)
                     new_node=f'{dup[0]}_extra_node_{j}'
-                    print(len(new_node))
+                    #print(len(new_node))
                     print(i)
-                    if len(new_node)>50:
-                        print(ttl_file)
+                    #if len(new_node)>50:
+                    #    print(ttl_file)
                     print(new_node)
                     occ_dup[i][1]=occ_dup[i][1]-1
+                    print(dup)
 
                     #update content
                     content=content.replace(dup[0],new_node)
+
                     new_node=''
                     j=j+1
                     with open(ttl_file, 'w',encoding='utf-8') as file:
                         file.write(content)
                         file.close()
     # restore ttl file
-    print('path',path)
+    #print('path',path)
     #os.remove(f'{path}*.ttl')
 
-    for file in glob.glob(os.path.join(path, '*.ttl')):
-        os.remove(file)
+    #for file in glob.glob(os.path.join(path, '*.ttl')):
+    #    os.remove(file)
 
-    src_folder=Path(f'{path}raw_file')
-    dst_folder=Path(f'{path}')
+    #src_folder=Path(f'{path}raw_file')
+    #dst_folder=Path(f'{path}')
 
-    for file in src_folder.iterdir():
-        if file.is_file():
-            shutil.copy2(file, dst_folder / file.name)
-
+    #for file in src_folder.iterdir():
+    #    if file.is_file():
+    #        shutil.copy2(file, dst_folder / file.name)

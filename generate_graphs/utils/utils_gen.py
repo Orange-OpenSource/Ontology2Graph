@@ -76,7 +76,7 @@ def check_ttl(file_result, bad_file_result, bad_path_result,merged):
             log.write(f'{bad_file_result} : {ttlvalidator.communicate()}\n')
             log.close()
     else:
-    # make a copy of right files        
+    # make a copy of right files
         folder_path = f'{os.path.dirname(file_result)}/raw_file'
         os.makedirs(folder_path, exist_ok=True)
         shutil.copy(file_result,folder_path)
