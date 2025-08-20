@@ -7,14 +7,13 @@ before launching
 import os
 import sys
 import datetime
+from pathlib import Path
 from utils.utils_gen import query_llm, storing_results, check_ttl
-
-DATE = datetime.datetime.now().strftime("%Y-%m-%d")
 
 ## SET constant ##
 
 # PATH constant where are stored the needed ressources, prompt, ontology and graph
-PATH=os.getcwd()
+PATH=Path(f'{os.getcwd()}')
 #PATH=f'{os.getcwd()}/DIGITAL_TWIN/gengraphllm' # when using crontab
 PATH_ONTOLOGY=f'{PATH}/ontologies'
 PATH_PROMPT=f'{PATH}/prompts'
@@ -41,20 +40,21 @@ with open(FILE_MODEL, mode='r',encoding='utf-8') as file:
         # print(line)
 
 MODEL=model_list[5]
+DATE = datetime.datetime.now().strftime("%Y-%m-%d")
 
-PATH_RESULT=f'{PATH}/results/synthetics_graphs_generated/{DATE}/{MODEL}'
+PATH_RESULT=f'{PATH.parent}/results/synthetics_graphs/{DATE}/{MODEL}'
 BAD_PATH_RESULT=f'{PATH_RESULT}/Bad_Turtle_Syntax'
 TEMP_FILE=f'{PATH_RESULT}/temp.ttl'
 
-with open(f'{PATH_ONTOLOGY}/Noria.ttl','rt',encoding='utf-8') as ontology:
+with open(f'{PATH_ONTOLOGY}/noria_to_check.ttl','rt',encoding='utf-8') as ontology:
     ONTOLOGY = ','.join(str(x) for x in ontology.readlines())
 
 with open(f'{PATH_PROMPT}/{PROMPT_TYPE}.txt','rt',encoding='utf-8') as prompt:
     PROMPT = ','.join(str(x) for x in prompt.readlines())
 
 # Only for second and third prompt
-with open(f'{PATH_GRAPH}/full_graph.ttl','rt',encoding='utf-8') as graph:
-    GRAPH = ','.join(str(x) for x in graph.readlines())
+#with open(f'{PATH_GRAPH}/full_graph.ttl','rt',encoding='utf-8') as graph:
+#    GRAPH = ','.join(str(x) for x in graph.readlines())
 
 os.makedirs(f'{PATH_RESULT}/', exist_ok=True)
 os.makedirs(f'{BAD_PATH_RESULT}', exist_ok=True)
