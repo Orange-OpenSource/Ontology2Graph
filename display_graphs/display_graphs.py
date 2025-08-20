@@ -1,74 +1,40 @@
 ''' This python script compute some Knowledge Graphs KPIs and display the Graph.
-You must pass as an argument the absolute path where are stored the ttl files'''
+You must pass as an argument the absolute path where are stored the ttl files or the PATH + the
+file name for a single one file'''
 
-import sys
 import os
+import sys
+import subprocess
 from pathlib import Path
-import networkx as nx
-from networkx.classes.function import density, degree_histogram, number_of_selfloops
-from networkx import average_degree_connectivity
-import rdflib
-from utils.utils_display import get_last_folder_part, retreive_datatype_properties, display_graph
+from utils.utils_display import visu_graph,remove_literal_from_nodes,log_kpis,set_the_graph
 
 arg = sys.argv[1:]
 PATH= arg[0]
-ONTOLOGY = os.path.expanduser('../generate_graphs/ontologies/Noria.ttl')
+ONTOLOGY = os.path.expanduser('../generate_graphs/ontologies/noria_to_check.ttl')
+CUMUL_NODES=0
 
-DataTypeProperties=retreive_datatype_properties(ONTOLOGY)
+if Path(PATH).is_file():
+    print('this is a single file')
+    FILE=[PATH]
 
-#List all the ttl graph files in PATH except folder
-all_files = [f.name for f in Path(PATH).iterdir() if f.is_file()]
+    g, Graph, DiGraph, file_name = set_the_graph(PATH)
+    remove_literal_from_nodes(g,Graph,DiGraph,ONTOLOGY)
+    log_kpis(PATH,file_name,Graph,DiGraph,CUMUL_NODES)
+    visu_graph(DiGraph,PATH)
 
-CUMUL_NODES = 0
+    subprocess.run(['xterm', '-e', 'vim', f'{PATH}/html/Graphs.log'],check=True)
 
-#rebuild complete file path (folder/file)
-for i, file in enumerate(all_files):
-    all_files[i]= PATH + file
+    sys.exit()
 
-for file in all_files :
-    file_name=get_last_folder_part(file,'/')
-    print(file)
+else :
+    #List all the ttl graph files in PATH except folder
+    all_files = [str(f.resolve()) for f in Path(PATH).iterdir() if f.is_file()]
 
-    g = rdflib.Graph()
-    g.parse(file, format='turtle')
+    for file in all_files :
 
-    DiGraph = nx.DiGraph()
-    Graph = nx.Graph()
+        g, Graph, DiGraph, file_name = set_the_graph(file)
+        remove_literal_from_nodes(g,Graph,DiGraph,ONTOLOGY)
+        CUMUL_NODES = log_kpis(PATH,file_name,Graph,DiGraph,CUMUL_NODES)
+        visu_graph(DiGraph,file)
 
-    for subj, pred, obj in g:
-        last_part_pred=get_last_folder_part(pred,'/')
-
-        if ('label' in last_part_pred) or ('type' in last_part_pred) or\
-           ('inScheme' in last_part_pred) or ('description' in last_part_pred) or\
-           ('comment' in last_part_pred) or last_part_pred in DataTypeProperties:
-            pass
-
-        else :
-            last_part_subj=get_last_folder_part(subj,'/')
-            last_part_obj=get_last_folder_part(obj,'/')
-    #       print({last_part_subj},{last_part_pred},{last_part_obj})
-            Graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
-            DiGraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
-
-    print('\n #### Common information for Graph and DiGraph #### \n')
-    print(f'Knowledge Graph : {file_name}')
-    print('Number of Nodes :',DiGraph.number_of_nodes())
-    print('Number of edges :',DiGraph.number_of_edges())
-    CUMUL_NODES = CUMUL_NODES + DiGraph.number_of_nodes()
-    print('cumulative number of nodes :',CUMUL_NODES )
-    print('degree_histogram :', degree_histogram(Graph))
-    print('number of self loop :', number_of_selfloops(Graph))
-
-    print('\n #### Graph KPIs #### \n')
-    print("Graph density",density(Graph))
-    #print('number of triangles by nodes',nx.triangles(Graph),'\n')
-
-    print('\n #### DiGrap KPIs #### \n')
-    print("DiGraph density",density(DiGraph))
-    print("Average degree connectivity", average_degree_connectivity(Graph))
-    print('\n')
-
-    #### visualisation ####
-    #model=get_last_folder_part(f'{PATH}', '/')
-    #print(model)
-    display_graph(DiGraph,file)
+    subprocess.run(['xterm','-e','vim', f'{PATH}html/Graphs.log'],check=True)

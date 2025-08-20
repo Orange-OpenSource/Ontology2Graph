@@ -120,15 +120,16 @@ def find_duplicates_nodes(path,ontology):
         for subj, pred, obj in g:
             last_part_pred=get_last_folder_part(pred,'/')
 
-            if ('label' in last_part_pred) or ('type' in last_part_pred) or\
-                ('inScheme' in last_part_pred) or ('description' in last_part_pred) or\
-                ('comment' in last_part_pred) or last_part_pred in datatypeproperties:
-                pass
+            literal_type=['label','type','inScheme','description','comment']
 
-            else :
-                last_part_subj=get_last_folder_part(subj,'/')
-                last_part_obj=get_last_folder_part(obj,'/')
-                nx_graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
+            for lt in literal_type:
+                if lt in datatypeproperties:
+                    pass
+                else :
+                    last_part_subj=get_last_folder_part(subj,'/')
+                    last_part_obj=get_last_folder_part(obj,'/')
+                    nx_graph.add_edge(str(last_part_subj),str(last_part_obj),
+                                      label=str(last_part_pred))
 
         nodes=list(nx_graph.nodes)
         all_nodes.append(nodes)
@@ -136,20 +137,18 @@ def find_duplicates_nodes(path,ontology):
     #transform list of list into a simple list
     all_nodes_list = [item for sublist in all_nodes for item in sublist]
 
-    #print(all_nodes_list,'\n')
+    #all_nodes_list_unique = list(set(all_nodes_list))
+    #print(f'NODES OF FINAL GRAPH : {all_nodes_list_unique} \n')
 
     counts=Counter(all_nodes_list)
-    duplicates=[item for item, count in counts.items() if count > 1]
-    #print(f'DUPLICATES {duplicates},\n')
+    dupplicate_nodes=[item for item, count in counts.items() if count > 1]
+    print(f'NODE WITH DUPLICATE IN THE GENERATED GRAPH: {dupplicate_nodes} \n ' )
 
-    all_nodes_list_unique = list(set(all_nodes_list))
-    print(f'NODES OF FINAL GRAPH {all_nodes_list_unique},\n')
+    return dupplicate_nodes
 
-    return duplicates
-
-def occurence_duplicate(duplicates,path):
+def occurence_duplicate(duplicates_nodes,path):
     '''compute the occurence of duplicates'''
-    occu_duplicates=[[duplicates[i],0] for i in range(0,len(duplicates))]
+    occu_duplicates=[[duplicates_nodes[i],0] for i in range(0,len(duplicates_nodes))]
 
     #List all the ttl graph files in PATH except folder
     all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
@@ -163,7 +162,7 @@ def occurence_duplicate(duplicates,path):
         with open(file,'r',encoding='utf-8') as file:
             content = file.read()
 
-        for item in duplicates:
+        for item in duplicates_nodes:
             if item in content:
                 for row in occu_duplicates:
                     if row[0]==item:
@@ -173,10 +172,9 @@ def occurence_duplicate(duplicates,path):
     print(f'occu_duplicates : {occu_duplicates}')
     return occu_duplicates
 
-
-def rename_duplicates_nodes(path,duplicates,nbr_dup):
-    '''find duplicates nodes in ttl files, just add the folder where the files
-    are stored and the duplicate list as argument'''
+def rename_duplicates_nodes(path,duplicates_nodes,nbr_occ):
+    '''rename the duplicates nodes based on nbr_occ. if 10 nodes have the same name in all the 
+    graphs generated and nbr_occ=2, 2 nodes will keep the same name and 8 nodes will be renamed'''
 
     #List all the ttl graph files in PATH except folder
     all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
@@ -185,7 +183,7 @@ def rename_duplicates_nodes(path,duplicates,nbr_dup):
     for i, file in enumerate(all_files):
         all_files[i]= path + file
 
-    occ_dup=occurence_duplicate(duplicates,path)
+    occ_dup=occurence_duplicate(duplicates_nodes,path)
     print(f'occ_dup : {occ_dup}')
 
     for i,dup in enumerate(occ_dup):
@@ -196,35 +194,19 @@ def rename_duplicates_nodes(path,duplicates,nbr_dup):
                 content = file.read()
                 file.close()
 
-                if  (dup[0] in content) and (dup[1] > nbr_dup):
+                if  (dup[0] in content) and (dup[1] > nbr_occ):
                     print(dup)
                     new_node=f'{dup[0]}_extra_node_{j}'
-                    #print(len(new_node))
-                    print(i)
-                    #if len(new_node)>50:
-                    #    print(ttl_file)
                     print(new_node)
                     occ_dup[i][1]=occ_dup[i][1]-1
-                    print(dup)
+                    print(f'{dup} \n')
 
                     #update content
                     content=content.replace(dup[0],new_node)
 
                     new_node=''
                     j=j+1
+
                     with open(ttl_file, 'w',encoding='utf-8') as file:
                         file.write(content)
                         file.close()
-    # restore ttl file
-    #print('path',path)
-    #os.remove(f'{path}*.ttl')
-
-    #for file in glob.glob(os.path.join(path, '*.ttl')):
-    #    os.remove(file)
-
-    #src_folder=Path(f'{path}raw_file')
-    #dst_folder=Path(f'{path}')
-
-    #for file in src_folder.iterdir():
-    #    if file.is_file():
-    #        shutil.copy2(file, dst_folder / file.name)
