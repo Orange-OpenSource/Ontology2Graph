@@ -102,6 +102,7 @@ def find_duplicates_nodes(path,ontology):
     all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
 
     datatypeproperties=retreive_datatype_properties(ontology)
+    print('DTP ///', datatypeproperties)
 
     #rebuild complete file path (folder/file)
     for i, file in enumerate(all_files):
@@ -119,17 +120,21 @@ def find_duplicates_nodes(path,ontology):
 
         for subj, pred, obj in g:
             last_part_pred=get_last_folder_part(pred,'/')
+            print(last_part_pred)
 
-            literal_type=['label','type','inScheme','description','comment']
+            #literal_type=['label','type','inScheme','description','comment']
 
-            for lt in literal_type:
-                if lt in datatypeproperties:
-                    pass
-                else :
-                    last_part_subj=get_last_folder_part(subj,'/')
-                    last_part_obj=get_last_folder_part(obj,'/')
-                    nx_graph.add_edge(str(last_part_subj),str(last_part_obj),
-                                      label=str(last_part_pred))
+            #for lt in literal_type:
+            # if lt in last_part_pred or last_part_pred in datatypeproperties:
+
+            if (('label' in last_part_pred) or ('type' in last_part_pred) or
+                ('inScheme' in last_part_pred) or ('description' in last_part_pred) or
+                ('comment' in last_part_pred) or last_part_pred in datatypeproperties):
+                pass
+            else :
+                last_part_subj=get_last_folder_part(subj,'/')
+                last_part_obj=get_last_folder_part(obj,'/')
+                nx_graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
 
         nodes=list(nx_graph.nodes)
         all_nodes.append(nodes)

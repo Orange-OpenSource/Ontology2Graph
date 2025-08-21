@@ -1,0 +1,158 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://w3id.org/noria/instance/Graph1> a owl:Ontology ;
+    rdfs:label "Sample Noria-based Knowledge Graph"@en .
+
+# Hub Node: Central Router
+<https://example.com/Router1> a noria:StructuralElement ;
+    rdfs:label "Router1"@en ;
+    rdfs:comment "Main backbone router serving the data center."@en ;
+    noria:structuralElementDistinguishedName "Router1-DC" ;
+    noria:elementManagedBy <https://example.com/NetworkOpsTeam> .
+
+# High-Degree Node: Data Center
+<https://example.com/DataCenter> a noria:StructuralElement ;
+    rdfs:label "Main Data Center"@en ;
+    rdfs:comment "Primary data center hosting multiple network devices."@en ;
+    noria:structuralElementDistinguishedName "DC-01" ;
+    noria:elementManagedBy <https://example.com/DataCenterOps> .
+
+# Connector Node: Network Link
+<https://example.com/Link1> a noria:NetworkLink ;
+    rdfs:label "Fiber Link 1"@en ;
+    rdfs:comment "Optical fiber connecting Router1 to Data Center."@en ;
+    noria:networkLinkId "Link-DC1" ;
+    noria:networkLinkInstallationDate "2022-01-15T10:00:00"^^xsd:dateTime ;
+    noria:networkLinkType "Optical Fiber" ;
+    noria:networkLinkTerminationResource <https://example.com/Router1> ;
+    noria:networkLinkTerminationResource <https://example.com/DataCenter> .
+
+# Intermediary Node: Virtual Machine
+<https://example.com/VM1> a noria:FunctionalElement ;
+    rdfs:label "Virtual Machine 1"@en ;
+    rdfs:comment "Application server VM hosting critical services."@en ;
+    noria:functionalElementDistinguishedName "VM-APP-01" ;
+    noria:elementManagedBy <https://example.com/ITSupportTeam> .
+
+# Multiplex Node: Application Service
+<https://example.com/ServiceA> a noria:Application ;
+    rdfs:label "Customer Portal Service"@en ;
+    rdfs:comment "Web application providing customer access."@en ;
+    noria:applicationModelIdentifier "AppModel-XYZ" ;
+    noria:applicationType <https://w3id.org/noria/kos/application/type#CustomerFacingService> ;
+    noria:resourceForApplication <https://example.com/VM1> .
+
+# Super Node: Network System
+<https://example.com/NetworkSystem> a seas:System ;
+    rdfs:label "Corporate Network System"@en ;
+    rdfs:comment "Entire corporate network infrastructure."@en ;
+    rdfs:subClassOf noria:ManagedElement ;
+    rdfs:subClassOf seas:System ;
+    noria:subSystemOf <https://example.com/GlobalNetwork> .
+
+# Connector: Link between VM and Service
+<https://example.com/Link_VM_Service> a noria:NetworkLink ;
+    rdfs:label "Link VM to Service"@en ;
+    rdfs:comment "Logical connection between VM and Application Service."@en ;
+    noria:networkLinkId "Link-VM-Service" ;
+    noria:networkLinkType "Virtual Connection" ;
+    noria:networkLinkTerminationResource <https://example.com/VM1> ;
+    noria:networkLinkTerminationResource <https://example.com/ServiceA> .
+
+# Intermediary: Event Record (e.g., system log)
+<https://example.com/Event1> a noria:EventRecord ;
+    rdfs:label "Router1 Interface Down"@en ;
+    rdfs:comment "Event indicating interface down on Router1."@en ;
+    noria:loggingTime "2024-03-15T14:30:00"^^xsd:dateTime ;
+    noria:logText "GigabitEthernet0/0/1 is down."@en ;
+    noria:logOriginatingManagedObject <https://example.com/Router1> ;
+    noria:logOriginatingManagementSystem <https://example.com/NMS1> ;
+    noria:alarmSeverity <https://w3id.org/noria/kos/Notification/Severity#Major> .
+
+# Hub Node: Support Team
+<https://example.com/NetworkOpsTeam> a org:OrganizationalUnit ;
+    rdfs:label "Network Operations Team"@en ;
+    rdfs:comment "Team responsible for network infrastructure."@en .
+
+# High-Degree Node: Application Server
+<https://example.com/AppServer> a noria:StructuralElement ;
+    rdfs:label "Application Server"@en ;
+    rdfs:comment "Server hosting critical business applications."@en ;
+    noria:structuralElementDistinguishedName "AppServer-01" ;
+    noria:elementManagedBy <https://example.com/ITSupportTeam> .
+
+# Connector Node: Connection between App Server and VM
+<https://example.com/Link_AppServer_VM> a noria:NetworkLink ;
+    rdfs:label "Link AppServer to VM"@en ;
+    rdfs:comment "Logical connection between application server and VM."@en ;
+    noria:networkLinkId "Link-AS-VM" ;
+    noria:networkLinkType "Virtual Network" ;
+    noria:networkLinkTerminationResource <https://example.com/AppServer> ;
+    noria:networkLinkTerminationResource <https://example.com/VM1> .
+
+# Intermediary Node: Change Request
+<https://example.com/ChangeReq1> a noria:ChangeRequest ;
+    rdfs:label "Upgrade Router1 Firmware"@en ;
+    rdfs:comment "Firmware upgrade to fix security vulnerability."@en ;
+    noria:changeRequestId "CR-2024-03-15" ;
+    noria:changeRequestCreationDateTime "2024-03-15T09:00:00"^^xsd:dateTime ;
+    noria:changeRequestImpact <https://example.com/Router1> ;
+    noria:changeRequestType <https://w3id.org/noria/kos/ChangeRequest/type#SoftwareUpgrade> .
+
+# Super Node: Application System
+<https://example.com/ApplicationSystem> a seas:System ;
+    rdfs:label "Application System"@en ;
+    rdfs:comment "Overall application ecosystem for customer services."@en ;
+    rdfs:subClassOf noria:ManagedElement ;
+    rdfs:subClassOf seas:System .
+
+# Connector: Link between Change Request and Router
+<https://example.com/Link_CR_Router> a noria:NetworkLink ;
+    rdfs:label "Link CR to Router"@en ;
+    rdfs:comment "Associates change request with affected router."@en ;
+    noria:networkLinkId "Link-CR-Router" ;
+    noria:networkLinkType "Change Impact Link" ;
+    noria:networkLinkTerminationResource <https://example.com/Router1> ;
+    noria:networkLinkTerminationResource <https://example.com/ChangeReq1> .
+
+# Intermediary Node: Incident Ticket
+<https://example.com/Ticket1> a noria:TroubleTicket ;
+    rdfs:label "Router1 Interface Down"@en ;
+    rdfs:comment "Ticket for interface down on Router1."@en ;
+    noria:troubleTicketId "TT-2024-03-15-001" ;
+    noria:troubleTicketCreationDateTime "2024-03-15T14:00:00"^^xsd:dateTime ;
+    noria:troubleTicketSeverity <https://w3id.org/noria/kos/TroubleTicket/severity#Major> ;
+    noria:troubleTicketType <https://w3id.org/noria/kos/TroubleTicket/type#Failure> ;
+    noria:troubleTicketImpacts <https://example.com/Router1> ;
+    noria:troubleTicketStatusCurrent <https://w3id.org/noria/kos/TroubleTicket/status#InProgress> .
+
+# Super Node: Risk Management System
+<https://example.com/RiskManagement> a seas:System ;
+    rdfs:label "Risk Management System"@en ;
+    rdfs:comment "System for assessing and managing network risks."@en .
+
+# Connector: Link between Ticket and Risk System
+<https://example.com/Link_Ticket_Risk> a noria:NetworkLink ;
+    rdfs:label "Link Ticket to Risk System"@en ;
+    rdfs:comment "Associates trouble ticket with risk assessment."@en ;
+    noria:networkLinkId "Link-Ticket-Risk" ;
+    noria:networkLinkType "Risk Link" ;
+    noria:networkLinkTerminationResource <https://example.com/Ticket1> ;
+    noria:networkLinkTerminationResource <https://example.com/RiskManagement> .
+
+# Connector Node: Application Module
+<https://example.com/AppModule1> a noria:ApplicationModule ;
+    rdfs:label "Logging Module"@en ;
+    rdfs:comment "Module responsible for log collection."@en ;
+    noria:applicationModuleIdentifier "LogMod-01" ;
+    noria:applicationModuleName "Logging Module"@en ;
+    noria:applicationModuleRelatedParty <https://example.com/ITSupportTeam> .
+
+# End of Graph

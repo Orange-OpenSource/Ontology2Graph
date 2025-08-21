@@ -1,0 +1,95 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://w3id.org/noria/instance/Network1> a noria:ManagedElement ;
+  rdfs:label "Core Network Infrastructure"@en ;
+  rdfs:comment "Hub node connecting multiple sub-networks."@en ;
+  noria:elementManagedBy <https://w3id.org/noria/instance/OrgDept> .
+
+<https://w3id.org/noria/instance/OrgDept> a org:OrganizationalUnit ;
+  rdfs:label "Network Operations Department"@en ;
+  rdfs:comment "Department responsible for network management."@en .
+
+<https://w3id.org/noria/instance/RouterA> a noria:StructuralElement, noria:Resource ;
+  rdfs:label "Router A"@en ;
+  rdfs:comment "High-degree core router."@en ;
+  noria:structuralElementDistinguishedName "RouterA-01"^^xsd:string ;
+  noria:elementManagedBy <https://w3id.org/noria/instance/OrgDept> ;
+  noria:resourceHostName "routerA.company.com"^^xsd:string ;
+  noria:resourceType [ a skos:Concept ; skos:inScheme <kos/Resource/type> ; skos:hasTopConcept <kos/Resource/type/Router> ] .
+
+<https://w3id.org/noria/instance/SwitchB> a noria:StructuralElement, noria:Resource ;
+  rdfs:label "Switch B"@en ;
+  rdfs:comment "Connector node with high degree."@en ;
+  noria:structuralElementDistinguishedName "SwitchB-02"^^xsd:string ;
+  noria:elementManagedBy <https://w3id.org/noria/instance/OrgDept> ;
+  noria:resourceHostName "switchb.company.com"^^xsd:string ;
+  noria:resourceType [ a skos:Concept ; skos:inScheme <kos/Resource/type> ; skos:hasTopConcept <kos/Resource/type/Switch> ] .
+
+<https://w3id.org/noria/instance/Link1> a noria:NetworkLink ;
+  rdfs:label "Fiber Link 1"@en ;
+  rdfs:comment "Physical link connecting Router A and Switch B."@en ;
+  noria:networkLinkId "Link-001"^^xsd:string ;
+  noria:networkLinkType "Optical Fiber"^^xsd:string ;
+  noria:networkLinkInstallationDate "2022-01-15T10:00:00Z"^^xsd:dateTime ;
+  noria:networkLinkTerminationResource <https://w3id.org/noria/instance/RouterA> ;
+  noria:networkLinkTerminationResourceDestination <https://w3id.org/noria/instance/SwitchB> .
+
+<https://w3id.org/noria/instance/ServerX> a noria:StructuralElement, noria:Resource ;
+  rdfs:label "Server X"@en ;
+  rdfs:comment "High-degree server hosting critical applications."@en ;
+  noria:structuralElementDistinguishedName "ServerX-Prod"^^xsd:string ;
+  noria:elementManagedBy <https://w3id.org/noria/instance/OrgDept> ;
+  noria:resourceHostName "serverx.prod.company.com"^^xsd:string ;
+  noria:resourceType [ a skos:Concept ; skos:inScheme <kos/Resource/type> ; skos:hasTopConcept <kos/Resource/type/Server> ] .
+
+<https://w3id.org/noria/instance/ServiceApp> a noria:Application, noria:FunctionalElement ;
+  rdfs:label "Customer Management System"@en ;
+  rdfs:comment "Application providing customer data services."@en ;
+  noria:applicationShortIdentifier "CMS"^^xsd:string ;
+  noria:applicationModelIdentifier "Model-XYZ"^^xsd:string ;
+  noria:resourceForApplication <https://w3id.org/noria/instance/ServerX> ;
+  noria:applicationType [ a skos:Concept ; skos:inScheme <kos/application/type> ; skos:hasTopConcept <kos/application/type/customer-management> ] .
+
+<https://w3id.org/noria/instance/Event1> a noria:EventRecord ;
+  rdfs:label "Router A Interface Up"@en ;
+  rdfs:comment "Event indicating interface on Router A is up."@en ;
+  noria:loggingTime "2023-10-23T14:30:00Z"^^xsd:dateTime ;
+  noria:logText "Interface ge-0/0/0 on Router A is now up."^^xsd:string ;
+  noria:logOriginatingManagedObject <https://w3id.org/noria/instance/RouterA> ;
+  noria:logOriginatingManagementSystem <https://w3id.org/noria/instance/NMS1> ;
+  noria:alarmSeverity [ a skos:Concept ; skos:inScheme <Notification/Severity/PerceivedSeverity> ; skos:hasTopConcept <Notification/Severity/Critical> ] .
+
+<https://w3id.org/noria/instance/NMS1> a noria:Application ;
+  rdfs:label "Network Management System 1"@en ;
+  rdfs:comment "System monitoring network devices."@en .
+
+<https://w3id.org/noria/instance/Alarm1> a noria:EventRecord ;
+  rdfs:label "Critical Alarm on Router A"@en ;
+  rdfs:comment "Critical alarm indicating failure."@en ;
+  noria:loggingTime "2023-10-23T14:31:00Z"^^xsd:dateTime ;
+  noria:logText "Critical failure detected on Router A."^^xsd:string ;
+  noria:alarmSeverity [ a skos:Concept ; skos:inScheme <Notification/Severity/PerceivedSeverity> ; skos:hasTopConcept <Notification/Severity/Critical> ] ;
+  noria:alarmMitigatedBy <https://w3id.org/noria/instance/Procedure1> .
+
+<https://w3id.org/noria/instance/Procedure1> a pep:Procedure ;
+  rdfs:label "Router Reset Procedure"@en ;
+  rdfs:comment "Procedure to reset Router A."@en .
+
+<https://w3id.org/noria/instance/ChangeReq1> a noria:ChangeRequest ;
+  rdfs:label "Firmware Upgrade on Router A"@en ;
+  rdfs:comment "Scheduled firmware upgrade."@en ;
+  noria:changeRequestId "CR-20231023-001"^^xsd:string ;
+  noria:changeRequestCreationDateTime "2023-10-23T14:00:00Z"^^xsd:dateTime ;
+  noria:changeRequestImpact <https://w3id.org/noria/instance/RouterA> ;
+  noria:changeRequestChangeCause "Firmware bug fix."^^xsd:string ;
+  noria:changeRequestType [ a skos:Concept ; skos:inScheme <kos/ChangeRequest/type> ; skos:hasTopConcept <kos/ChangeRequest/type/SoftwareUpgrade> ] ;
+  noria:changeRequestStatusCurrent [ a skos:Concept ; skos:inScheme <kos/ChangeRequest/status> ; skos:hasTopConcept <kos/ChangeRequest/status/Planned> ] .
+
+# End of generated graph

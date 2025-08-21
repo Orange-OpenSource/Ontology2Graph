@@ -37,7 +37,6 @@ with open(FILE_MODEL, mode='r',encoding='utf-8') as file:
     for line in lines:
         cleaned_line = line.strip()
         model_list.append(cleaned_line)
-    file.close
 
 MODEL=model_list[5]
 DATE = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -48,16 +47,13 @@ TEMP_FILE=f'{PATH_RESULT}/temp.ttl'
 
 with open(f'{PATH_ONTOLOGY}/Noria.ttl','rt',encoding='utf-8') as ontology:
     ONTOLOGY = ','.join(str(x) for x in ontology.readlines())
-    ontology.close
 
 with open(f'{PATH_PROMPT}/{PROMPT_TYPE}.txt','rt',encoding='utf-8') as prompt:
     PROMPT = ','.join(str(x) for x in prompt.readlines())
-    prompt.close
 
 # Only for second and third prompt
 #with open(f'{PATH_GRAPH}/full_graph.ttl','rt',encoding='utf-8') as graph:
 #    GRAPH = ','.join(str(x) for x in graph.readlines())
-#    graph.close
 
 os.makedirs(f'{PATH_RESULT}/', exist_ok=True)
 os.makedirs(f'{BAD_PATH_RESULT}', exist_ok=True)

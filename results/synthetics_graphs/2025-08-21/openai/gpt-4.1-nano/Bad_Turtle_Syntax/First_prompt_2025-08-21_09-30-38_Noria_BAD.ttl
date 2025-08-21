@@ -1,0 +1,112 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Hub Node: Central Resource representing a core network device
+<https://example.com/Resource/Hub1> a noria:Resource ;
+  rdfs:label "Main Data Center Router" ;
+  rdfs:comment "The central router managing core network traffic." .
+
+# High-Degree Node: Application with multiple dependencies
+<https://example.com/Application/AppA> a noria:Application ;
+  rdfs:label "Customer Management System" ;
+  rdfs:comment "Application handling customer data and interactions." .
+
+# Connector Node: Network Link connecting two resources
+<https://example.com/NetworkLink/Link1> a noria:NetworkLink ;
+  rdfs:label "Fiber Optic Link DC1 to DC2" ;
+  rdfs:comment "High-speed fiber link connecting data centers." .
+
+<https://example.com/Resource/Server1> a noria:Resource ;
+  rdfs:label "Application Server 1" ;
+  rdfs:comment "Primary application server in data center 1." .
+
+<https://example.com/Resource/Server2> a noria:Resource ;
+  rdfs:label "Application Server 2" ;
+  rdfs:comment "Secondary application server in data center 2." .
+
+<https://example.com/Resource/Router1> a noria:Resource ;
+  rdfs:label "Edge Router" ;
+  rdfs:comment "Router at the network edge managing external connections." .
+
+# Intermediary Node: Application Module linked to Application
+<https://example.com/ApplicationModule/Module1> a noria:ApplicationModule ;
+  rdfs:label "Auth Module" ;
+  rdfs:comment "Handles authentication services for the main application." .
+
+<https://example.com/Application/AppA> noria:resourceForApplication <https://example.com/Resource/Server1> ;
+<https://example.com/Application/AppA> noria:resourceForApplication <https://example.com/Resource/Server2> ;
+<https://example.com/Application/AppA> noria:applicationModuleOf <https://example.com/ApplicationModule/Module1> .
+
+# Multiplex Node: Resource involved in multiple applications
+<https://example.com/Resource/SharedResource> a noria:Resource ;
+  rdfs:label "Shared Database Server" ;
+  rdfs:comment "Database server used by multiple applications." .
+
+<https://example.com/Application/AppA> noria:resourceForApplication <https://example.com/Resource/SharedResource> .
+<https://example.com/Application/OtherApp> a noria:Application ;
+  rdfs:label "Analytics Platform" ;
+  rdfs:comment "Platform for data analytics." ;
+  noria:resourceForApplication <https://example.com/Resource/SharedResource> .
+
+# Super Node: Application representing a high-level service
+<https://example.com/Service/CustomerService> a noria:Application ;
+  rdfs:label "Customer Service Platform" ;
+  rdfs:comment "End-to-end customer service management system." .
+
+# Relations linking nodes
+<https://example.com/Resource/Server1> noria:structuralElementObservable <https://example.com/Resource/Server1/CPUUsage> ;
+<https://example.com/Resource/Server2> noria:structuralElementObservable <https://example.com/Resource/Server2/MemoryUsage> .
+
+<https://example.com/Resource/Server1> noria:elementManagedBy <https://example.com/Agent/ITSupportTeam> .
+<https://example.com/Resource/Server2> noria:elementManagedBy <https://example.com/Agent/ITSupportTeam> .
+
+<https://example.com/NetworkLink/Link1> rdfs:label "Fiber Link DC1-DC2" ;
+  rdfs:comment "Connecting core data centers." .
+
+<https://example.com/Resource/Router1> noria:structuralElementObservable <https://example.com/Resource/Router1/Status> .
+
+<https://example.com/Agent/ITSupportTeam> a org:OrganizationalUnit ;
+  rdfs:label "IT Support Team" ;
+  rdfs:comment "Team responsible for network and server maintenance." .
+
+# Additional Nodes for clarity
+<https://example.com/Resource/Server1/CPUUsage> a noria:StructuralObservable ;
+  rdfs:label "CPU Usage" ;
+  rdfs:comment "Current CPU load percentage." .
+
+<https://example.com/Resource/Server2/MemoryUsage> a noria:StructuralObservable ;
+  rdfs:label "Memory Usage" ;
+  rdfs:comment "Current memory utilization." .
+
+<https://example.com/Resource/Router1/Status> a noria:StructuralObservable ;
+  rdfs:label "Router Status" ;
+  rdfs:comment "Operational status of the router." .
+
+# Link resources to the application
+<https://example.com/Application/CustomerManagement> a noria:Application ;
+  rdfs:label "Customer Management System" ;
+  rdfs:comment "Application managing customer data." .
+
+<https://example.com/Application/CustomerManagement> noria:resourceForApplication <https://example.com/Resource/Server1> .
+
+# Link application modules
+<https://example.com/ApplicationModule/AuthModule> a noria:ApplicationModule ;
+  rdfs:label "Authentication Module" ;
+  rdfs:comment "Handles user authentication." .
+
+<https://example.com/Application/CustomerManagement> noria:applicationModuleOf <https://example.com/ApplicationModule/AuthModule> .
+
+# Link nodes to resources
+<https://example.com/Resource/SharedResource> noria:structuralElementObservable <https://example.com/Resource/SharedResource/Status> .
+
+<https://example.com/Resource/SharedResource/Status> a noria:StructuralObservable ;
+  rdfs:label "Shared Resource Status" ;
+  rdfs:comment "Operational status of shared resource." .
+
+# End of graph
