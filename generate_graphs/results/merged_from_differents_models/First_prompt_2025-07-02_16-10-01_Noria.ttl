@@ -1,0 +1,136 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix ex: <http://example.com/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix bot: <https://w3id.org/bot#> .
+
+# Entities and their relationships
+
+ex:ApplicationModuleA
+    a noria:ApplicationModule ;
+    rdfs:label "Application Module A"@en ;
+    noria:applicationModuleName "AppModuleA" ;
+    noria:applicationModuleIdentifier "AM001" ;
+    noria:applicationModuleOf ex:ApplicationX ;
+    noria:applicationModuleAdministrationTeam ex:TeamAlpha ;
+    noria:applicationModuleSupportTeam ex:TeamBeta .
+
+ex:ApplicationX
+    a noria:Application ;
+    rdfs:label "Application X"@en ;
+    noria:applicationShortIdentifier "AppX" ;
+    noria:applicationModelIdentifier "APP001" ;
+    noria:applicationType <https://w3id.org/noria/kos/application/type#service-platform> ;
+    noria:applicationBusinessImportance <https://w3id.org/noria/kos/application/business-importance#high> ;
+    noria:applicationFunctionalDomain "CRM" ;
+    noria:applicationFunctionalSubDomain "Customer Management" .
+
+ex:ResourceRouter1
+    a noria:Resource ;
+    rdfs:label "Router 1"@en ;
+    noria:resourceHostName "router1.example.com" ;
+    noria:resourceLogisticId "RL001" ;
+    noria:resourceType <https://w3id.org/noria/kos/Resource/type#router> ;
+    noria:resourceManagedBy ex:TeamGamma ;
+    noria:locatedAtLocus ex:LocusA .
+
+ex:ResourceServer1
+    a noria:Resource ;
+    rdfs:label "Server 1"@en ;
+    noria:resourceHostName "server1.example.com" ;
+    noria:resourceLogisticId "RS001" ;
+    noria:resourceType <https://w3id.org/noria/kos/Resource/type#server> ;
+    noria:resourceManagedBy ex:TeamDelta ;
+    noria:locatedAtLocus ex:LocusB ;
+    noria:resourceForApplication ex:ApplicationX .
+
+ex:NetworkInterfaceEth0
+    a noria:NetworkInterface ;
+    rdfs:label "eth0"@en ;
+    noria:networkInterfaceOf ex:ResourceServer1 ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceConnects ex:NetworkLink1 .
+
+ex:NetworkLink1
+    a noria:NetworkLink ;
+    rdfs:label "Network Link 1"@en ;
+    noria:networkLinkId "NL001" ;
+    noria:networkLinkType "Ethernet" ;
+    noria:networkLinkTerminationResourceOrigin ex:ResourceRouter1 ;
+    noria:networkLinkTerminationResourceDestination ex:ResourceServer1 ;
+    noria:resourceManagedBy ex:TeamEpsilon .
+
+ex:TroubleTicket1
+    a noria:TroubleTicket ;
+    rdfs:label "Trouble Ticket 1"@en ;
+    dcterms:description "Network outage affecting Application X" ;
+    noria:troubleTicketSeverity <https://w3id.org/noria/kos/TroubleTicket/severity#major> ;
+    noria:troubleTicketType <https://w3id.org/noria/kos/TroubleTicket/type#failure> ;
+    noria:troubleTicketRelatedService ex:ApplicationX ;
+    noria:troubleTicketRelatedResource ex:ResourceServer1 ;
+    noria:troubleTicketImpacts ex:ApplicationModuleA .
+
+ex:ChangeRequest1
+    a noria:ChangeRequest ;
+    rdfs:label "Change Request 1"@en ;
+    dcterms:description "Upgrade Router 1 firmware" ;
+    noria:changeRequestCategory <https://w3id.org/noria/kos/ChangeRequest/category#internal> ;
+    noria:changeRequestType <https://w3id.org/noria/kos/ChangeRequest/type#standard> ;
+    noria:changeRequestImpact ex:ResourceRouter1 ;
+    noria:changeRequestInitiatorParty ex:Employee1 .
+
+ex:Employee1
+    a foaf:Person ;
+    rdfs:label "John Doe"@en ;
+    foaf:name "John Doe" ;
+    org:memberOf ex:TeamAlpha .
+
+ex:TeamAlpha
+    a org:OrganizationalUnit ;
+    rdfs:label "Team Alpha"@en ;
+    org:unitOf ex:OrganizationXYZ .
+
+ex:TeamBeta
+    a org:OrganizationalUnit ;
+    rdfs:label "Team Beta"@en ;
+    org:unitOf ex:OrganizationXYZ .
+
+ex:TeamGamma
+    a org:OrganizationalUnit ;
+    rdfs:label "Team Gamma"@en ;
+    org:unitOf ex:OrganizationXYZ .
+
+ex:TeamDelta
+    a org:OrganizationalUnit ;
+    rdfs:label "Team Delta"@en ;
+    org:unitOf ex:OrganizationXYZ .
+
+ex:TeamEpsilon
+    a org:OrganizationalUnit ;
+    rdfs:label "Team Epsilon"@en ;
+    org:unitOf ex:OrganizationXYZ .
+
+ex:OrganizationXYZ
+    a org:Organization ;
+    rdfs:label "Organization XYZ"@en .
+
+ex:LocusA
+    a noria:Locus ;
+    rdfs:label "Locus A"@en ;
+    bot:containsZone ex:Room1 .
+
+ex:LocusB
+    a noria:Locus ;
+    rdfs:label "Locus B"@en ;
+    bot:containsZone ex:Room1 .
+
+ex:Room1
+    a noria:Room ;
+    rdfs:label "Room 1"@en .

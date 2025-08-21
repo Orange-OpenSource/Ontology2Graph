@@ -1,0 +1,101 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix fo: <http://example.com/> .
+
+# Hub Node: Central Resource
+fo:Resource1 a noria:Resource ;
+  rdfs:label "Main Database Server" ;
+  rdfs:comment "Core database server acting as a hub for data storage." ;
+  noria:resourceLogisticId "LOG-DB-001" ;
+  noria:resourceHostName "db-main.example.com" ;
+  noria:locatedAtLocus fo:Locus1 ;
+  noria:resourceType <http://example.com/ResourceType/Server> ;
+  noria:resourceSerialNumber "SN-DB-0001" ;
+  noria:resourceUsageState [ a skos:Concept ; skos:inScheme <kos/Resource/LifecycleState> ; skos:hasTopConcept <http://example.com/State/Active> ] ;
+  noria:resourceProductModel [ a noria:ProductModel ; rdfs:label "Dell PowerEdge R740" ; noria:productManufacturedBy org:Dell ] ;
+  rdfs:seeAlso <https://example.com/Resource1> .
+
+# High-Degree Node: Network Switch
+fo:Switch1 a noria:Resource ;
+  rdfs:label "Core Network Switch" ;
+  rdfs:comment "Switch connecting multiple network segments." ;
+  noria:resourceLogisticId "LOG-SW-002" ;
+  noria:resourceHostName "switch-core.example.com" ;
+  noria:locatedAtLocus fo:Locus2 ;
+  noria:resourceType <http://example.com/ResourceType/Switch> ;
+  noria:resourceSerialNumber "SN-SW-002" ;
+  noria:resourceUsageState [ a skos:Concept ; skos:inScheme <kos/Resource/LifecycleState> ; skos:hasTopConcept <http://example.com/State/Active> ] ;
+  noria:resourceProductModel [ a noria:ProductModel ; rdfs:label "Cisco Catalyst 9500" ; noria:productManufacturedBy org:Cisco ] .
+
+# Central Node: Application
+fo:App1 a noria:Application ;
+  rdfs:label "Customer Management System" ;
+  rdfs:comment "Application handling customer data and interactions." ;
+  noria:applicationModelIdentifier "CMS-Model-2023" ;
+  noria:applicationNumericalIdentifier 101 ;
+  noria:applicationShortIdentifier "CMS" ;
+  noria:applicationType <http://example.com/kos/application/type/Business> ;
+  noria:applicationBusinessImportance <http://example.com/kos/application/business-importance/High> ;
+  noria:applicationFunctionalDomain "Customer Relations" ;
+  noria:applicationFunctionalSubDomain "Customer Data Management" .
+
+# Connector Node: Network Link connecting Resource1 and Switch1
+fo:Link1 a noria:NetworkLink ;
+  rdfs:label "Fiber Optic Link 1" ;
+  rdfs:comment "High-speed fiber link between main database server and core switch." ;
+  noria:networkLinkId "NL-FO-001" ;
+  noria:networkLinkType "Optical Fiber" ;
+  noria:networkLinkInstallationDate "2022-01-15T09:00:00Z"^^xsd:dateTime ;
+  noria:networkLinkTerminationResourceOrigin fo:Resource1 ;
+  noria:networkLinkTerminationResourceDestination fo:Switch1 .
+
+# Intermediary Node: Event Record for a network event
+fo:Event1 a noria:EventRecord ;
+  rdfs:label "Interface GigabitEthernet0/0/1 Up" ;
+  rdfs:comment "Event indicating interface GigabitEthernet0/0/1 on Switch1 went up." ;
+  noria:loggingTime "2023-10-10T14:23:00Z"^^xsd:dateTime ;
+  noria:logText "Line protocol on Interface GigabitEthernet0/0/1, changed state to up" ;
+  noria:logOriginatingManagedObject fo:Switch1 ;
+  noria:logOriginatingManagementSystem fo:NMS1 ;
+  noria:alarmSeverity [ a skos:Concept ; skos:inScheme <Notification/Severity/PerceivedSeverity> ; skos:hasTopConcept <http://example.com/Severity/Critical> ] .
+#  noria:alarmProposedRepairAction [ a pep:Procedure ; rdfs:label "Reset Interface" ; rdfs:comment "Reset the network interface to restore connectivity." ] ;
+#  noria:alarmMitigatedBy [ a pep:ProcedureExecutionContainer ; rdfs:label "Interface Reset Procedure" ] .
+
+# Connector Node: Relationship between Application and Resource
+fo:App1Resource1 a noria:elementProperty ;
+  rdfs:label "Application-Resource Link" ;
+  rdfs:comment "Link indicating Resource1 is used by Application1." ;
+  rdfs:domain fo:App1 ;
+  rdfs:range fo:Resource1 .
+
+# Super Node: Super Application aggregating multiple applications
+fo:SuperApp a noria:Application ;
+  rdfs:label "Enterprise IT Infrastructure" ;
+  rdfs:comment "Super node representing the entire enterprise IT infrastructure." ;
+  noria:applicationShortIdentifier "EnterpriseInfra" ;
+  noria:applicationType <http://example.com/kos/application/type/Enterprise> ;
+  noria:applicationBusinessImportance <http://example.com/kos/application/business-importance/Critical> ;
+  noria:applicationFunctionalDomain "Enterprise Operations" .
+
+# Relationships linking the super node to other nodes
+fo:SuperAppResource1 a noria:elementProperty ;
+  rdfs:label "Super Application-Resource Link" ;
+  rdfs:comment "Link indicating Resource1 is part of the enterprise infrastructure." ;
+  rdfs:domain fo:SuperApp ;
+  rdfs:range fo:Resource1 .
+
+fo:SuperAppApplication1 a noria:elementProperty ;
+  rdfs:label "Super Application-Application Link" ;
+  rdfs:comment "Link indicating Application1 is part of the enterprise infrastructure." ;
+  rdfs:domain fo:SuperApp ;
+  rdfs:range fo:App1 .
+
+# Dismissed isolated nodes (none here, all nodes linked)
+# End of graph

@@ -1,0 +1,126 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://w3id.org/noria/instance/Network1> a noria:StructuralElement ;
+  rdfs:label "Main Data Center Network"@en ;
+  rdfs:comment "Core network infrastructure in the main data center."@en ;
+  noria:structuralElementDistinguishedName "DCN-01" ;
+  noria:resourceManagedBy <https://w3id.org/noria/instance/SupportTeam> ;
+  noria:locatedAtLocus <https://w3id.org/noria/instance/Locus1> ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type#Network> .
+
+<https://w3id.org/noria/instance/ResourceA> a noria:Resource ;
+  rdfs:label "Router A"@en ;
+  rdfs:comment "Core router in the main data center."@en ;
+  noria:resourceSerialNumber "SN123456" ;
+  noria:resourceHostName "routerA.dc1.example.com" ;
+  noria:resourceLogisticId "LOG-DC1-RA" ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type#Router> ;
+  noria:resourceProductModel <https://w3id.org/noria/instance/ModelX> ;
+  noria:locatedAtLocus <https://w3id.org/noria/instance/Locus1> ;
+  noria:resourceInstallationDate "2020-05-15T00:00:00"^^xsd:dateTime ;
+  noria:resourceUsageState <https://w3id.org/noria/kos/Resource/LifecycleState#Operational> ;
+  noria:agentManagesResource <https://w3id.org/noria/instance/NetworkAdmin> .
+
+<https://w3id.org/noria/instance/ModelX> a noria:ProductModel ;
+  rdfs:label "Model X"@en ;
+  rdfs:comment "Manufacturer's model name for Router A."@en ;
+  noria:productManufacturedBy <https://w3id.org/organization/Orange> .
+
+<https://w3id.org/noria/instance/NetworkInterface1> a noria:NetworkInterface ;
+  rdfs:label "ge-0/0/1"@en ;
+  rdfs:comment "GigabitEthernet interface 0/0/1 on Router A."@en ;
+  noria:networkInterfaceDescription "Uplink interface to core switch."@en ;
+  noria:networkInterfaceType "physical" ;
+  noria:networkInterfaceOf <https://w3id.org/noria/instance/ResourceA> ;
+  noria:networkInterfaceConnects <https://w3id.org/noria/instance/Link1> ;
+  noria:networkInterfaceOperationalStatus <https://w3id.org/noria/kos/Resource/OperationalState#Operational> ;
+  noria:networkInterfaceRoutingPriorityMetric 100 ;
+  noria:networkInterfaceLaserTxOpticalPower -2 ;
+  noria:networkInterfaceLaserRxOpticalPower -3 .
+
+<https://w3id.org/noria/instance/Link1> a noria:NetworkLink ;
+  rdfs:label "Link1"@en ;
+  rdfs:comment "Optical fiber link between Router A and Switch A."@en ;
+  noria:networkLinkId "LINK-001" ;
+  noria:networkLinkType "optical fiber" ;
+  noria:networkLinkInstallationDate "2020-05-16T00:00:00"^^xsd:dateTime ;
+  noria:networkLinkTerminationResourceOrigin <https://w3id.org/noria/instance/ResourceA> ;
+  noria:networkLinkTerminationResourceDestination <https://w3id.org/noria/instance/SwitchA> .
+
+<https://w3id.org/noria/instance/SwitchA> a noria:Resource ;
+  rdfs:label "Switch A"@en ;
+  rdfs:comment "Core switch in the main data center."@en ;
+  noria:resourceSerialNumber "SN654321" ;
+  noria:resourceHostName "switchA.dc1.example.com" ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type#Switch> ;
+  noria:locatedAt <https://w3id.org/noria/instance/Locus1> ;
+  noria:agentManagesResource <https://w3id.org/noria/instance/NetworkAdmin> .
+
+<https://w3id.org/noria/instance/Locus1> a noria:Locus ;
+  rdfs:label "Locus in Server Room 314"@en ;
+  noria:locusLine "Line:L, Column:6"@en ;
+  noria:locusRow "Row:3"@en .
+
+<https://w3id.org/noria/instance/SupportTeam> a org:OrganizationalUnit ;
+  rdfs:label "Network Support Team"@en ;
+  rdfs:comment "Support team responsible for network infrastructure."@en .
+
+<https://w3id.org/noria/instance/NetworkAdmin> a foaf:Agent ;
+  rdfs:label "Network Administrator"@en ;
+  rdfs:comment "Primary network administrator responsible for core network devices."@en .
+
+<https://w3id.org/organization/Orange> a org:Organization ;
+  rdfs:label "Orange Telecom"@en ;
+  rdfs:comment "Telecommunications provider Orange."@en .
+
+# Hub node: Router A connected to Switch A and Interface ge-0/0/1
+<https://w3id.org/noria/instance/RouterA> a noria:StructuralElement ;
+  rdfs:label "Router A"@en ;
+  rdfs:comment "Core router in data center."@en ;
+  noria:structuralElementDistinguishedName "DC-Router-01" ;
+  noria:elementManagedBy <https://w3id.org/noria/instance/NetworkAdmin> .
+
+<https://w3id.org/noria/instance/SwitchA> a noria:StructuralElement ;
+  rdfs:label "Switch A"@en ;
+  rdfs:comment "Core switch in data center."@en ;
+  noria:structuralElementDistinguishedName "DC-Switch-01" ;
+  noria:elementManagedBy <https://w3id.org/noria/instance/NetworkAdmin> .
+
+<https://w3id.org/noria/instance/InterfaceGE0_0_1> a noria:StructuralObservable ;
+  rdfs:label "Interface ge-0/0/1"@en ;
+  rdfs:comment "GigabitEthernet interface 0/0/1."@en ;
+  noria:structuralElementObservableData "Operational" ;
+  noria:structuralElementObservable "up" ;
+  noria:structuralElementObservableOf <https://w3id.org/noria/instance/ResourceA> .
+
+# High-degree node: Router A (connected to multiple interfaces and links)
+<https://w3id.org/noria/instance/RouterA> a noria:StructuralElement ;
+  rdfs:label "Router A"@en ;
+  rdfs:comment "Core router with multiple interfaces."@en ;
+  noria:elementManagedBy <https://w3id.org/noria/instance/NetworkAdmin> .
+
+# Connector node: Link1 connects ResourceA and SwitchA
+<https://w3id.org/noria/instance/Link1> a noria:NetworkLink ;
+  rdfs:label "Link1"@en ;
+  rdfs:comment "Optical fiber link between ResourceA and SwitchA."@en .
+
+# Intermediary node: Locus1 as location for ResourceA and SwitchA
+<https://w3id.org/noria/instance/Locus1> a noria:Locus ;
+  rdfs:label "Locus in Server Room 314"@en .
+
+# Multiplex node: ResourceA (multiple interfaces and properties)
+<https://w3id.org/noria/instance/ResourceA> a noria:Resource ;
+  rdfs:label "Router A"@en ;
+  rdfs:comment "Core router with multiple interfaces."@en .
+
+# Super node: Network1 (comprehensive network infrastructure)
+<https://w3id.org/noria/instance/Network1> a noria:StructuralElement ;
+  rdfs:label "Main Data Center Network"@en ;
+  rdfs:comment "Core network infrastructure."@en .

@@ -1,0 +1,146 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix fo: <http://purl.org/foaf/0.1/> .
+
+# Hub Node: Resource "Server-Resource-01"
+<https://example.com/resource/Server-Resource-01> a noria:Resource ;
+  rdfs:label "Main Application Server" ;
+  rdfs:comment "Core server hosting critical applications." ;
+  noria:resourceLogisticId "LOG-RES-001" ;
+  noria:resourceHostName "app-server-01" ;
+  noria:resourceType <http://purl.org/ontology/bibo/status/active> ;
+  noria:locatedAtLocus <https://example.com/locus/ServerRoom314> ;
+  noria:resourceSerialNumber "SN-123456" ;
+  noria:resourceUsageState <http://purl.org/ontology/bibo/status/operational> ;
+  noria:resourceInstallationDate "2022-01-15T10:00:00Z"^^xsd:dateTime ;
+  rdfs:label "Application Server 01" ;
+  rdfs:comment "Primary application server in data center." .
+
+# High-Degree Node: Network Link "Fiber-Connection-01"
+<https://example.com/networklink/Fiber-Connection-01> a noria:NetworkLink ;
+  rdfs:label "Fiber Connection between Data Center and Backup Site" ;
+  rdfs:comment "High capacity fiber link for critical data transfer." ;
+  noria:networkLinkId "NL-7890" ;
+  noria:networkLinkType "Optical Fiber" ;
+  noria:networkLinkInstallationDate "2021-06-10T09:00:00Z"^^xsd:dateTime ;
+  noria:networkLinkTerminationResource <https://example.com/resource/Server-Resource-01> ;
+  noria:networkLinkTerminationResource <https://example.com/resource/Backup-Server-02> ;
+  rdfs:label "Fiber-DataCenter-Backup" .
+
+# Central Node: Application "CRM-System"
+<https://example.com/application/CRM-System> a noria:Application ;
+  rdfs:label "Customer Relationship Management System" ;
+  rdfs:comment "Core application for customer data management." ;
+  noria:applicationModelIdentifier "CRM-Model-2023" ;
+  noria:applicationNumericalIdentifier 101 ;
+  noria:applicationShortIdentifier "CRM" ;
+  noria:applicationType <http://purl.org/ontology/bibo/Document> ;
+  noria:applicationBusinessImportance <skos:ConceptScheme> ;
+  noria:applicationFunctionalDomain "Customer Management" ;
+  noria:applicationFunctionalSubDomain "Sales and Support" .
+
+# Connector Node: Network Interface "eth0"
+<https://example.com/networkinterface/eth0> a noria:NetworkInterface ;
+  rdfs:label "eth0" ;
+  rdfs:comment "Primary network interface for Server-Resource-01." ;
+  noria:networkInterfaceType "virtual" ;
+  noria:networkInterfaceDescription "Virtual NIC for internal communication" ;
+  noria:networkInterfaceOf <https://example.com/resource/Server-Resource-01> ;
+  noria:networkInterfaceConnects <https://example.com/networklink/Fiber-Connection-01> ;
+  noria:networkInterfaceRoutingPriorityMetric 100 ;
+  noria:networkInterfaceLaserTxOpticalPower -2 ;
+  noria:networkInterfaceLaserRxOpticalPower -3 ;
+  noria:networkInterfaceLaserRxOpticalPowerAverage -2.5 ;
+  noria:networkInterfaceLaserRxHighPowerWarningThreshold -1 ;
+  noria:networkInterfaceLaserRxLowPowerWarningThreshold -4 ;
+  rdfs:label "eth0" .
+
+# Intermediary Node: Event Record "Event-2024-03-15T12:00:00Z"
+<https://example.com/event/Event-2024-03-15T12:00:00Z> a noria:EventRecord ;
+  rdfs:label "Network Interface Down" ;
+  rdfs:comment "Event indicating network interface failure." ;
+  noria:loggingTime "2024-03-15T12:00:00Z"^^xsd:dateTime ;
+  noria:logText "Interface eth0 on Server-Resource-01 is down." ;
+  noria:logOriginatingManagedObject <https://example.com/resource/Server-Resource-01> ;
+  noria:logOriginatingManagementSystem <https://example.com/system/NMS-01> ;
+  noria:alarmSeverity <skos:ConceptScheme> ;
+  noria:alarmSeverity <Notification/Severity/Major> ;
+  noria:alarmProposedRepairAction <https://example.com/procedure/Restart-Interface> ;
+  noria:alarmMitigatedBy <https://example.com/procedure/Reset-Interface-Procedure> ;
+  rdfs:label "eth0 Down Event" .
+
+# Super Node: Change Request "CR-2024-03-15"
+<https://example.com/changerequest/CR-2024-03-15> a noria:ChangeRequest ;
+  rdfs:label "Network Upgrade - CR-2024-03-15" ;
+  rdfs:comment "Scheduled network upgrade to improve bandwidth." ;
+  noria:changeRequestId "CR-2024-03-15" ;
+  noria:changeRequestCreationDateTime "2024-03-15T08:00:00Z"^^xsd:dateTime ;
+  noria:changeRequestLastUpdate "2024-03-15T08:30:00Z"^^xsd:dateTime ;
+  noria:changeRequestDescription "Upgrade network infrastructure for increased capacity." ;
+  noria:changeRequestCategory <skos:ConceptScheme> ;
+  noria:changeRequestCategory <ChangeRequest/category/NetworkUpgrade> ;
+  noria:changeRequestType <skos:ConceptScheme> ;
+  noria:changeRequestType <ChangeRequest/type/Planned> ;
+  noria:changeRequestImpact <https://example.com/resource/Server-Resource-01> ;
+  noria:changeRequestImpact <https://example.com/application/CRM-System> ;
+  noria:changeRequestOutageDuration "PT2H"^^xsd:duration ;
+  noria:changeRequestStatusCurrent <skos:ConceptScheme> ;
+  noria:changeRequestStatusCurrent <ChangeRequest/status/Planned> ;
+  noria:changeRequestSpecification <https://example.com/specification/Network-Upgrade-Spec> ;
+  noria:changeRequestInitiatorParty <https://example.com/agent/NetworkAdmin> ;
+  noria:changeRequestPilotParty <https://example.com/agent/NetworkEngineer> ;
+  noria:changeRequestActorParty <https://example.com/agent/NetworkManager> ;
+  rdfs:label "Network Upgrade CR" .
+
+# Connector Node: Agent "NetworkAdmin"
+<https://example.com/agent/NetworkAdmin> a foaf:Agent ;
+  rdfs:label "Network Administrator" ;
+  rdfs:comment "Responsible for network configuration and maintenance." .
+
+# Intermediary Node: Document Attachment "UpgradePlan.pdf"
+<https://example.com/document/UpgradePlan.pdf> a noria:DocumentAttachment ;
+  rdfs:label "Network Upgrade Plan" ;
+  rdfs:comment "Detailed plan for scheduled network upgrade." ;
+  rdfs:seeAlso <https://example.com/specification/Network-Upgrade-Spec> .
+
+# Central Node: Resource "Backup-Server-02"
+<https://example.com/resource/Backup-Server-02> a noria:Resource ;
+  rdfs:label "Backup Application Server" ;
+  rdfs:comment "Secondary server for redundancy." ;
+  noria:resourceLogisticId "LOG-RES-002" ;
+  noria:resourceHostName "backup-server-02" ;
+  noria:resourceType <http://purl.org/ontology/bibo/status/active> ;
+  noria:locatedAtLocus <https://example.com/locus/ServerRoom314> ;
+  noria:resourceSerialNumber "SN-654321" ;
+  noria:resourceUsageState <http://purl.org/ontology/bibo/status/operational> ;
+  noria:resourceInstallationDate "2022-02-20T11:00:00Z"^^xsd:dateTime ;
+  rdfs:label "Backup Server 02" .
+
+# Connector Node: Application "CRM-System" (linked to Resource)
+<https://example.com/application/CRM-System> noria:resourceForApplication <https://example.com/resource/Backup-Server-02> .
+
+# High-Degree Node: Event "Event-2024-03-15T12:00:00Z" (linked to multiple resources)
+<https://example.com/event/Event-2024-03-15T12:00:00Z> a noria:EventRecord ;
+  rdfs:label "Network Interface Down" ;
+  rdfs:comment "Event indicating network interface failure." ;
+  noria:loggingTime "2024-03-15T12:00:00Z"^^xsd:dateTime ;
+  noria:logText "Interface eth0 on Server-Resource-01 is down." ;
+  noria:logOriginatingManagedObject <https://example.com/resource/Server-Resource-01> ;
+  noria:logOriginatingManagementSystem <https://example.com/system/NMS-01> ;
+  noria:alarmSeverity <skos:ConceptScheme> ;
+  noria:alarmSeverity <Notification/Severity/Major> ;
+  noria:alarmProposedRepairAction <https://example.com/procedure/Restart-Interface> ;
+  noria:alarmMitigatedBy <https://example.com/procedure/Reset-Interface-Procedure> .
+
+# Super Node: Procedure "Restart-Interface"
+<https://example.com/procedure/Restart-Interface> a pep:Procedure ;
+  rdfs:label "Restart Network Interface" ;
+  rdfs:comment "Procedure to restart network interface eth0." .
+
+# End of graph

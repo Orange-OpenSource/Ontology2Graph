@@ -1,0 +1,74 @@
+@prefix ex: <http://example.com/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:AdminGroup
+   a org:OrganizationalUnit ;
+   rdfs:label "Administration Group"@en ;
+   rdfs:comment "Team responsible for the management of services and resources."@en .
+
+ex:CentralNode
+   a noria:Service ;
+   rdfs:label "Central Node"@en ;
+   rdfs:comment "Service acting as a central point for multiple applications."@en ;
+   noria:serviceType <https://w3id.org/noria/kos/service/type/CustomerFacingService> ;
+   noria:elementManagedBy ex:AdminGroup .
+
+ex:HighDegreeNode
+   a noria:Application ;
+   rdfs:label "High-Degree Node"@en ;
+   rdfs:comment "Application interacting with multiple components."@en ;
+   noria:applicationType <https://w3id.org/noria/kos/application/type/service-platform> ;
+   noria:applicationShortIdentifier "HDN" ;
+   noria:elementManagedBy ex:AdminGroup ;
+   seas:subSystemOf ex:CentralNode .
+
+ex:HubNode
+   a noria:Resource ;
+   rdfs:label "Hub Node"@en ;
+   rdfs:comment "Resource acting as a hub with multiple connections."@en ;
+   noria:resourceManagedBy ex:AdminGroup ;
+   noria:resourceType <https://w3id.org/noria/kos/Resource/type/physical> ;
+   noria:resourceForApplication ex:HighDegreeNode ;
+   noria:locatedAtLocus ex:Locus1 .
+
+ex:Locus1
+   a noria:Locus ;
+   rdfs:label "Locus 1"@en ;
+   rdfs:comment "Location of the Hub Node in the data center."@en ;
+   noria:locusLine "L" ;
+   noria:locusRow "6" .
+
+ex:ConnectorNode
+   a noria:NetworkLink ;
+   rdfs:label "Connector Node"@en ;
+   rdfs:comment "A network link connecting multiple resources."@en ;
+   noria:networkLinkId "conn-100" ;
+   noria:networkLinkTerminationResource ex:HubNode ;
+   noria:networkLinkTerminationResource ex:SuperNode ;
+   noria:resourceManagedBy ex:AdminGroup .
+
+ex:SuperNode
+   a noria:Resource ;
+   rdfs:label "Super Node"@en ;
+   rdfs:comment "Resource playing a major role in the infrastructure."@en ;
+   noria:resourceType <https://w3id.org/noria/kos/Resource/type/virtual> ;
+   noria:resourceManagedBy ex:AdminGroup .
+
+ex:IntermediaryNode
+   a noria:NetworkInterface ;
+   rdfs:label "Intermediary Node"@en ;
+   rdfs:comment "A network interface bridging communication between resources."@en ;
+   noria:networkInterfaceOf ex:SuperNode ;
+   noria:networkInterfaceConnects ex:ConnectorNode .
+
+ex:MultiplexNode
+   a noria:ApplicationModule ;
+   rdfs:label "Multiplex Node"@en ;
+   rdfs:comment "An application module distributing multiple functionalities."@en ;
+   noria:applicationModuleOf ex:HighDegreeNode ;
+   noria:applicationModuleName "MultiplexModule-A" ;
+   noria:applicationModuleSlaLevel <https://w3id.org/noria/kos/application/sla-level/gold> .

@@ -1,0 +1,160 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.com/hubNode1> a noria:ManagedElement ;
+  rdfs:label "Core Router Hub"@en ;
+  rdfs:comment "A high-degree central hub node connecting multiple network segments."@en ;
+  noria:elementManagedBy <https://example.com/NetworkOperationsTeam> .
+
+<https://example.com/HighDegreeNode> a noria:StructuralElement ;
+  rdfs:label "Main Switch"@en ;
+  rdfs:comment "A high-degree node with many connections, acting as a central switch."@en ;
+  noria:structuralElementObservableOf <https://example.com/HubNode1> .
+
+<https://example.com/CentralNode> a noria:StructuralElement ;
+  rdfs:label "Data Center Switch"@en ;
+  rdfs:comment "A central node within the data center connecting servers and other network devices."@en ;
+  noria:structuralElementObservableOf <https://example.com/HighDegreeNode> .
+
+<https://example.com/ConnectorNode> a noria:StructuralElement ;
+  rdfs:label "Firewall Connector"@en ;
+  rdfs:comment "A connector node linking external network to internal resources."@en ;
+  noria:structuralElementObservableOf <https://example.com/CentralNode> .
+
+<https://example.com/IntermediaryNode> a noria:StructuralElement ;
+  rdfs:label "Load Balancer"@en ;
+  rdfs:comment "An intermediary node distributing traffic among servers."@en ;
+  noria:structuralElementObservableOf <https://example.com/ConnectorNode> .
+
+<https://example.com/MultiplexNode> a noria:StructuralElement ;
+  rdfs:label "Multiplexer"@en ;
+  rdfs:comment "A multiplex node combining multiple data streams."@en ;
+  noria:structuralElementObservableOf <https://example.com/IntermediaryNode> .
+
+<https://example.com/SuperNode> a noria:StructuralElement ;
+  rdfs:label "Super Switch"@en ;
+  rdfs:comment "A super node aggregating multiple central nodes for high-level management."@en ;
+  noria:structuralElementObservableOf <https://example.com/CentralNode> .
+
+<https://example.com/Resource1> a noria:Resource ;
+  rdfs:label "Server A"@en ;
+  rdfs:comment "Application server hosting critical services."@en ;
+  noria:locatedAtLocus <https://example.com/Locus1> ;
+  noria:resourceManagedBy <https://example.com/ITSupportTeam> .
+
+<https://example.com/Resource2> a noria:Resource ;
+  rdfs:label "Router R1"@en ;
+  rdfs:comment "Edge router connecting to external network."@en ;
+  noria:locatedAtLocus <https://example.com/Locus2> ;
+  noria:resourceManagedBy <https://example.com/NetworkOps> .
+
+<https://example.com/Resource3> a noria:Resource ;
+  rdfs:label "Firewall F1"@en ;
+  rdfs:comment "Firewall protecting internal network."@en ;
+  noria:locatedAtLocus <https://example.com/Locus3> ;
+  noria:resourceManagedBy <https://example.com/SecurityTeam> .
+
+<https://example.com/Locus1> a noria:Locus ;
+  rdfs:label "Server Room 1"@en ;
+  rdfs:comment "Main server room."@en .
+
+<https://example.com/Locus2> a noria:Locus ;
+  rdfs:label "Main Entrance"@en ;
+  rdfs:comment "Entrance corridor."@en .
+
+<https://example.com/Locus3> a noria:Locus ;
+  rdfs:label "Security Zone"@en ;
+  rdfs:comment "Security restricted area."@en .
+
+<https://example.com/NetworkLink1> a noria:NetworkLink ;
+  rdfs:label "Fiber Link 1"@en ;
+  rdfs:comment "Optical fiber connecting Resource1 and Resource2."@en ;
+  noria:networkLinkId "NLK-001" ;
+  noria:networkLinkInstallationDate "2022-01-15T10:00:00"^^xsd:dateTime ;
+  noria:networkLinkType "Optical Fiber" .
+
+<https://example.com/NetworkLink2> a noria:NetworkLink ;
+  rdfs:label "Ethernet Link 1"@en ;
+  rdfs:comment "Ethernet connection between Resource2 and Resource3."@en ;
+  noria:networkLinkId "NLK-002" ;
+  noria:networkLinkInstallationDate "2022-02-20T09:30:00"^^xsd:dateTime ;
+  noria:networkLinkType "Ethernet" .
+
+<https://example.com/Event1> a noria:EventRecord ;
+  rdfs:label "Interface GigabitEthernet0/0/1 Up"@en ;
+  rdfs:comment "Interface on Router R1 changed to up."@en ;
+  noria:loggingTime "2023-10-01T14:23:00"^^xsd:dateTime ;
+  noria:logText "Line protocol on Interface GigabitEthernet0/0/1, changed state to up"@en ;
+  noria:logOriginatingManagedObject <https://example.com/Resource2> ;
+  noria:alarmSeverity <skos:ConceptScheme> ; # placeholder for severity concept
+  noria:alarmSeverity <https://example.com/Severity/Critical> .
+
+<https://example.com/Event2> a noria:EventRecord ;
+  rdfs:label "Firewall Configuration Change"@en ;
+  rdfs:comment "Firewall F1 configuration updated."@en ;
+  noria:loggingTime "2023-10-02T09:45:00"^^xsd:dateTime ;
+  noria:logText "Configured from console by admin."@en ;
+  noria:logOriginatingManagedObject <https://example.com/Resource3> .
+
+<https://example.com/TroubleTicket1> a noria:TroubleTicket ;
+  rdfs:label "Network Outage - Resource1"@en ;
+  rdfs:comment "Major outage affecting Resource1."@en ;
+  noria:troubleTicketSeverity <https://example.com/Severity/Major> ;
+  noria:troubleTicketType <skos:Concept> ; # placeholder for type concept
+  noria:troubleTicketOrigin <https://example.com/CustomerA> ;
+  noria:troubleTicketDetectionDateTime "2023-10-01T14:20:00"^^xsd:dateTime ;
+  noria:troubleTicketStatusCurrent <https://example.com/TicketStatus/InProgress> ;
+  noria:troubleTicketImpacts <https://example.com/Resource1> ;
+  noria:troubleTicketRelatedResource <https://example.com/Resource1> .
+
+<https://example.com/ChangeRequest1> a noria:ChangeRequest ;
+  rdfs:label "Upgrade Firmware on Router R1"@en ;
+  rdfs:comment "Firmware upgrade scheduled for Router R1."@en ;
+  noria:changeRequestId "CR-20231001-001" ;
+  noria:changeRequestCreationDateTime "2023-10-01T10:00:00"^^xsd:dateTime ;
+  noria:changeRequestActualStartTime "2023-10-02T22:00:00"^^xsd:dateTime ;
+  noria:changeRequestActualEndTime "2023-10-02T23:30:00"^^xsd:dateTime ;
+  noria:changeRequestImpact <https://example.com/Resource2> ;
+  noria:changeRequestChangeCause <skos:Concept> ; # placeholder for cause concept
+  noria:changeRequestStatusCurrent <https://example.com/ChangeStatus/Completed> .
+
+<https://example.com/Resource4> a noria:Resource ;
+  rdfs:label "Application Server B"@en ;
+  rdfs:comment "Application server hosting web services."@en ;
+  noria:resourceManagedBy <https://example.com/ITSupportTeam> .
+
+<https://example.com/ITSupportTeam> a org:OrganizationalUnit ;
+  rdfs:label "IT Support Team"@en ;
+  rdfs:comment "Team responsible for IT infrastructure support."@en .
+
+<https://example.com/NetworkOps> a org:OrganizationalUnit ;
+  rdfs:label "Network Operations"@en ;
+  rdfs:comment "Team managing network infrastructure."@en .
+
+<https://example.com/SecurityTeam> a org:OrganizationalUnit ;
+  rdfs:label "Security Team"@en ;
+  rdfs:comment "Team responsible for security."@en .
+
+<https://example.com/CustomerA> a foaf:Agent ;
+  rdfs:label "Customer A"@en ;
+  rdfs:comment "Customer organization A."@en .
+
+<https://example.com/Severity/Critical> a skos:Concept ;
+  rdfs:label "Critical"@en .
+
+<https://example.com/Severity/Major> a skos:Concept ;
+  rdfs:label "Major"@en .
+
+<https://example.com/TicketStatus/InProgress> a skos:Concept ;
+  rdfs:label "In Progress"@en .
+
+<https://example.com/ChangeStatus/Completed> a skos:Concept ;
+  rdfs:label "Completed"@en .

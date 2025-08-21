@@ -46,7 +46,7 @@ PATH_RESULT=f'{PATH.parent}/results/synthetics_graphs/{DATE}/{MODEL}'
 BAD_PATH_RESULT=f'{PATH_RESULT}/Bad_Turtle_Syntax'
 TEMP_FILE=f'{PATH_RESULT}/temp.ttl'
 
-with open(f'{PATH_ONTOLOGY}/noria_to_check.ttl','rt',encoding='utf-8') as ontology:
+with open(f'{PATH_ONTOLOGY}/Noria.ttl','rt',encoding='utf-8') as ontology:
     ONTOLOGY = ','.join(str(x) for x in ontology.readlines())
     ontology.close
 

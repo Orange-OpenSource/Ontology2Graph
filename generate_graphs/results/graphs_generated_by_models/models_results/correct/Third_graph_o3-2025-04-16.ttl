@@ -1,0 +1,83 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sc:      <http://pygraf.t/> .
+
+sc: a owl:Ontology ;
+    dcterms:license <https://creativecommons.org/publicdomain/zero/1.0/> .
+
+sc:HubNode a sc:C10 ;
+    rdfs:label   "Hub Node"@en ;
+    rdfs:comment "Acts as a highly‐connected hub that glues many parts of the graph together."@en ;
+    sc:R1  sc:SuperNode ;
+    sc:R6  sc:HighDegreeNode ,
+           sc:CentralNode ,
+           sc:PeripheralNode1 ,
+           sc:PeripheralNode2 .
+
+sc:HighDegreeNode a sc:C10 ;
+    rdfs:label   "High-Degree Node"@en ;
+    rdfs:comment "Node owning a very large number of adjacent edges."@en ;
+    sc:R1  sc:SuperNode ;
+    sc:R6  sc:HubNode ,
+           sc:CentralNode ,
+           sc:PeripheralNode1 ,
+           sc:PeripheralNode2 .
+
+sc:CentralNode a sc:C10 ;
+    rdfs:label   "Central Node"@en ;
+    rdfs:comment "Strategically placed in the centre of several sub-graphs."@en ;
+    sc:R1  sc:ConnectorNode ;
+    sc:R6  sc:HubNode ,
+           sc:HighDegreeNode ,
+           sc:PeripheralNode1 .
+
+sc:ConnectorNode a sc:C3 ;
+    rdfs:label   "Connector Node"@en ;
+    rdfs:comment "Bridges heterogeneous communities of the network."@en ;
+    sc:R2  sc:IntermediaryNode ;
+    sc:R1  sc:PeripheralNode2 .
+
+sc:IntermediaryNode a sc:C1 ;
+    rdfs:label   "Intermediary Node"@en ;
+    rdfs:comment "Transfers information between connector and peripheral parts."@en ;
+    sc:R3  sc:ConnectorNode ;
+    sc:R1  sc:PeripheralNode1 .
+
+sc:MultiplexNode a sc:C5 ;
+    rdfs:label   "Multiplex Node"@en ;
+    rdfs:comment "Participates simultaneously in several relational layers."@en ;
+    sc:R6  sc:BridgeNode ;
+    sc:R9  sc:SuperNode .
+
+sc:BridgeNode a sc:C7 ;
+    rdfs:label   "Bridge Node"@en ;
+    rdfs:comment "Serves as an interface between layer-specific classes C5 and C7."@en ;
+    sc:R8  sc:MultiplexNode .
+
+sc:SuperNode a sc:C9 ;
+    rdfs:label   "Super Node"@en ;
+    rdfs:comment "Aggregates and summarises information from large swathes of the graph."@en ;
+    sc:R4  sc:GatewayNode ;
+    sc:R9  sc:MultiplexNode ;
+    sc:R1  sc:HubNode .
+
+sc:GatewayNode a sc:C9 ;
+    rdfs:label   "Gateway Node"@en ;
+    rdfs:comment "Secondary super-level vertex paired with the Super Node through symmetric ties."@en ;
+    sc:R4  sc:SuperNode .
+
+sc:PeripheralNode1 a sc:C10 ;
+    rdfs:label   "Peripheral Node 1"@en ;
+    rdfs:comment "Peripheral vertex supplying reachability to the network boundary."@en ;
+    sc:R6  sc:HubNode ,
+           sc:HighDegreeNode ,
+           sc:CentralNode ;
+    sc:R1  sc:IntermediaryNode .
+
+sc:PeripheralNode2 a sc:C10 ;
+    rdfs:label   "Peripheral Node 2"@en ;
+    rdfs:comment "Additional outer vertex enriching degree counts of core structures."@en ;
+    sc:R6  sc:HubNode ,
+           sc:HighDegreeNode ;
+    sc:R1  sc:ConnectorNode .
