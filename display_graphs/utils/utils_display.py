@@ -53,7 +53,7 @@ def retreive_datatype_properties(ontology):
         dtproperties.append(dtp)
     return dtproperties
 
-def visu_graph(graph,file):
+def visu_graph(graph,file,html_folder):
     '''dysplay the graph'''
 
     net = Network(height="1300px", width="100%", bgcolor="#222222", font_color="white",
@@ -62,32 +62,29 @@ def visu_graph(graph,file):
     net.from_nx(graph)
     #net.show_buttons(filter_=['physics'])
 
-    html_folder= f'{Path(file).parent}/html/'
     os.makedirs(html_folder,exist_ok=True)
 
-    html_file = f'{html_folder}{Path(file).stem}.html'
+    html_file = f'{html_folder}/{Path(file).stem}.html'
     print('html_file',html_file)
 
-    net.save_graph(f'{html_file}')
+    net.save_graph(html_file)
 
-    webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{html_file}',autoraise=True)
-    #webbrowser.open(html_file,autoraise=True)
+    #webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{html_file}',autoraise=True
+    webbrowser.open(html_file,autoraise=True)
 
 def remove_literal_from_nodes(g,graph,digraph,ontology):
     '''remove literal and otrher expression from the graph in order to keep only the nodes'''
 
     datatypeproperties=retreive_datatype_properties(ontology)
-    print('dtp',datatypeproperties)
+    #print('dtp',datatypeproperties)
 
     for subj, pred, obj in g:
         last_part_pred=get_last_folder_part(pred,'/')
 
-        #literal_type=['label','type','inScheme','description','comment']
+        if (('label' in last_part_pred) or ('type' in last_part_pred) or
+            ('inScheme' in last_part_pred) or ('description' in last_part_pred) or
+            ('comment' in last_part_pred) or last_part_pred in datatypeproperties):
 
-        #for lt in literal_type:
-        if (('label' in last_part_pred) or ('type' in last_part_pred) or ('inScheme' in last_part_pred) or
-                ('description' in last_part_pred) or ('comment' in last_part_pred) or
-                last_part_pred in datatypeproperties):
             pass
         else :
             last_part_subj=get_last_folder_part(subj,'/')
@@ -95,60 +92,73 @@ def remove_literal_from_nodes(g,graph,digraph,ontology):
             #print({last_part_subj},{last_part_pred},{last_part_obj})
             graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
             digraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
-            print('last_part_subj',last_part_subj)
-            print('last_part_obj',last_part_obj)
-            print('last_part_pred',last_part_pred)
 
     return digraph
 
-def log_kpis(path,file_name,graph,digraph,cumul_nodes):
-    '''compute KPIS'''
+def log_kpis(file_name,graph,digraph,cumul_nodes):
+    '''compute and logs KPIS'''
 
-    if path.is_file():
-        html_folder= f'{str(Path(path).parent)}/html/'
-        os.makedirs(html_folder,exist_ok=True)
-        print('html_folder', html_folder)
-    else:
-        html_folder= f'{str(Path(path))}/html/'
-        os.makedirs(html_folder, exist_ok=True)
+    logger = logging.getLogger('Graph_KPI')
 
-    logging.basicConfig(level=logging.INFO, filename=f'{html_folder}Graphs.log', filemode='w',
-                         format='%(asctime)s - %(levelname)s - %(message)s')
-
-    logging.info('#### Common information for Graph and DiGraph ####')
-    logging.info('Knowledge Graph : %s',file_name)
-    logging.info('Number of Nodes : %s',digraph.number_of_nodes())
-    logging.info('Number of edges : %s',digraph.number_of_edges())
+    logger.info('##################################################')
+    logger.info('#### Common information for Graph and DiGraph ####')
+    logger.info('Knowledge Graph : %s',file_name)
+    logger.info('Number of Nodes : %s',digraph.number_of_nodes())
+    logger.info('Number of edges : %s',digraph.number_of_edges())
     cumul_nodes = cumul_nodes + digraph.number_of_nodes()
-    logging.info('cumulative number of nodes : %s',cumul_nodes )
-    logging.info('degree_histogram : %s', degree_histogram(graph))
-    logging.info('number of self loop : %s', number_of_selfloops(graph))
+    logger.info('cumulative number of nodes : %s',cumul_nodes )
+    logger.info('degree_histogram : %s', degree_histogram(graph))
+    logger.info('number of self loop : %s', number_of_selfloops(graph))
 
-    logging.info('#### Graph KPIs ####')
-    logging.info('Graph density : %s',density(graph))
-    #print('number of triangles by nodes',nx.triangles(graph),'\n')
+    logger.info('#### Graph KPIs ####')
+    logger.info('Graph density : %s',density(graph))
 
-    logging.info('#### DiGrap KPIs ####')
-    logging.info('DiGraph density : %s',density(digraph))
-    logging.info('Average degree connectivity : %s', average_degree_connectivity(graph))
-    logging.info('##################################################\n')
+    logger.info('#### DiGrap KPIs ####')
+    logger.info('DiGraph density : %s',density(digraph))
+    logger.info('Average degree connectivity : %s', average_degree_connectivity(graph))
+    logger.info('#### Subject, Object, predicate ####')
+    for s, p, data in digraph.edges(data=True):
+        logger.info('%s,%s,%s',s,p,data)
+    logger.info('#### NODES #### :%s',len(digraph.nodes))
+    logger.info('%s',digraph.nodes)
+    logger.info('##################################################\n')
 
     return cumul_nodes
 
-def set_the_graph(file):
-    '''set the graph base on the turtle file'''
+def set_the_graph(file,log_html_folder):
+    '''set the graph based on the turtle file and log some infos'''
     digraph = nx.DiGraph()
     graph = nx.Graph()
-
-    file_name=get_last_folder_part(file,'/')
-
     g = rdflib.Graph()
     g.parse(f'{file}', format='turtle')
 
+    ### set logger ###
+    #directory=Path(file).parent.resolve()
+    log_file=f'{Path(log_html_folder)}/URI_and_LITERAL.log'
+
+    logger_file1 = logging.getLogger('URI_and_LITERAL')
+    handler_file1 = logging.FileHandler(log_file)
+    logger_file1.setLevel(logging.INFO)
+    logger_file1.addHandler(handler_file1)
+
+    logger_file1.info('##################################################')
+    logger_file1.info('%s',file)
     for s, p, o in g:
         if isinstance(s, URIRef):
-            print(f"{s :} Subject is a URIRef")
+            logger_file1.info('URIRef Subject : %s',s)
         if isinstance(o, Literal):
-            print(f"{o :} Object is a Literal")
+            logger_file1.info('Literal Object : %s',o)
+    logger_file1.info('##################################################')
 
-    return g, digraph, graph, file_name
+    ### sort and remove duplicate lines ###
+    with open(log_file, 'r',encoding='utf-8') as f:
+        unique_lines = set(f.readlines())
+        f.close()
+
+    sorted_lines=sorted(unique_lines)  # Sorts in alphabetical order
+
+    with open(log_file, 'w',encoding='utf-8') as f:
+        f.writelines(sorted_lines)
+        f.close()
+
+    return g, digraph, graph #, file_name

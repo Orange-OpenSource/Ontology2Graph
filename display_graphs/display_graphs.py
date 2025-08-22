@@ -4,8 +4,9 @@ file name for a single one file'''
 
 import os
 import sys
-import subprocess
+import shutil
 import logging
+import subprocess
 from pathlib import Path
 from utils.utils_display import visu_graph,remove_literal_from_nodes,log_kpis,set_the_graph
 
@@ -14,45 +15,50 @@ PATH= arg[0]
 ONTOLOGY = os.path.expanduser('../generate_graphs/ontologies/noria_to_check.ttl')
 CUMUL_NODES=0
 
+### create new log_html_folder and clean old logs ###
 if Path(PATH).is_file():
+    log_html_folder = Path(f'{str(Path(PATH).parent)}/log_html/')
+else:
+    log_html_folder = Path(f'{str(Path(PATH))}/log_html/')
+
+if log_html_folder.exists() and log_html_folder.is_dir():
+    shutil.rmtree(log_html_folder)
+
+Path.mkdir(log_html_folder)
+
+log_file=Path(f'{log_html_folder}/Graph_KPIs.log')
+
+### set logger ###
+logger = logging.getLogger('Graph_KPI')
+handler = logging.FileHandler(log_file)
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
+
+if Path(PATH).is_file():
+
     print('this is a single file')
-    absolute_folder=Path(PATH).parent.resolve()
     file_name=Path(PATH).name
-    ABSOLUTE_FILE_NAME=f'{absolute_folder}/{file_name}'
+    absolute_file_name=Path(f'{Path(PATH).parent.resolve()}/{file_name}')
 
-    g, Graph, DiGraph, file_name = set_the_graph(PATH)
+    g, Graph, DiGraph = set_the_graph(PATH,log_html_folder)
 
-    #print(DiGraph.nodes)
     remove_literal_from_nodes(g,Graph,DiGraph,ONTOLOGY)
-
-
-    logging.basicConfig(level=logging.INFO, filename=f'{absolute_folder}/html/Digraph.log',
-                        filemode='w', format='%(asctime)s - %(levelname)s - %(message)s')
-
-    for s, p, data in DiGraph.edges(data=True):
-        print((s,p,data))
-        #logging.info(f'{(s,p,data)}')
-
-    #print(DiGraph)
-    log_kpis(Path(PATH),file_name,Graph,DiGraph,CUMUL_NODES)
-
-    #print(DiGraph.nodes)
-    #print(len(DiGraph.nodes))
-    visu_graph(DiGraph,ABSOLUTE_FILE_NAME)
+    log_kpis(file_name,Graph,DiGraph,CUMUL_NODES)
+    visu_graph(DiGraph,absolute_file_name,log_html_folder)
     #subprocess.run(['xterm', '-e', 'vim', f'{PATH}/html/Graphs.log'],check=True)
     sys.exit()
 
 else :
-    #List all the ttl graph files in PATH except folder
+
     all_files = [str(f.resolve()) for f in Path(PATH).iterdir() if f.is_file()]
 
     for file in all_files :
+        print('FILE',file)
 
-        g, Graph, DiGraph, file_name = set_the_graph(file)
-        print(DiGraph)
+        g, Graph, DiGraph = set_the_graph(file,log_html_folder)
+
         remove_literal_from_nodes(g,Graph,DiGraph,ONTOLOGY)
-        print(DiGraph)
-        CUMUL_NODES = log_kpis(Path(PATH),file_name,Graph,DiGraph,CUMUL_NODES)
-        visu_graph(DiGraph,file)
+        CUMUL_NODES = log_kpis(file,Graph,DiGraph,CUMUL_NODES)
+        visu_graph(DiGraph,file,log_html_folder)
         #subprocess.run(['xterm','-e','vim', f'{PATH}html/Graphs.log'],check=True)
     sys.exit()
