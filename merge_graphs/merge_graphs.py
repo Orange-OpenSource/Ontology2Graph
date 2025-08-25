@@ -28,7 +28,7 @@ OUTPUT_FILE_TEMP=f'{PATH_RESULT}/temp.ttl'
 PATH_ONTOLOGY='../generate_graphs/ontologies/noria_to_check.ttl'
 
 #manage duplicate nodes in ttl files
-duplicates=find_duplicates_nodes(PATH,PATH_ONTOLOGY)
+duplicates=find_duplicates_nodes(PATH)
 rename_duplicates_nodes(PATH,duplicates,nbr_occ)
 
 #Merge the ttl file

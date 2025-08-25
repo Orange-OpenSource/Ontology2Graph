@@ -7,20 +7,13 @@ import subprocess
 from collections import Counter
 import networkx as nx
 import rdflib
+from rdflib import URIRef,Namespace
 
 def remove_pred_obj(expr, graph, predi, obje):
     '''remove predicate and target object of an edge'''
     edges_to_remove = [(u, v) for u, v, attr in graph.edges(data=True)
                          if attr.get(expr) == predi and v == obje]
     return graph.remove_edges_from(edges_to_remove)
-
-def get_last_folder_part(string, sep_char):
-    """get last part of a folder string"""
-    string_parts=string.split(sep_char)
-    last_part=string_parts[len(string_parts)-1]
-    if last_part=='':
-        last_part=string_parts[len(string_parts)-2]
-    return last_part
 
 def retreive_datatype_properties(ontology):
     '''create a list of all the data type properties from the ontologie'''
@@ -94,15 +87,15 @@ def remove_duplicate_prefix(output_file_temp,merged_file):
         graph.writelines(nodes_lines)
         graph.close()
 
-def find_duplicates_nodes(path,ontology):
+def find_duplicates_nodes(path):
     '''find duplicates nodes in ttl files, just add the folder where the files
     are stored as an argument'''
 
     #List all the ttl graph files in PATH except folder
     all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
 
-    datatypeproperties=retreive_datatype_properties(ontology)
-    print('DTP ///', datatypeproperties)
+    #datatypeproperties=retreive_datatype_properties(ontology)
+    #print('DTP ///', datatypeproperties)
 
     #rebuild complete file path (folder/file)
     for i, file in enumerate(all_files):
@@ -110,6 +103,8 @@ def find_duplicates_nodes(path,ontology):
 
     all_nodes=[]
     nodes=[]
+    rdf = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+    rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
 
     for file in all_files :
 
@@ -119,22 +114,10 @@ def find_duplicates_nodes(path,ontology):
         nx_graph = nx.DiGraph()
 
         for subj, pred, obj in g:
-            last_part_pred=get_last_folder_part(pred,'/')
-            print(last_part_pred)
-
-            #literal_type=['label','type','inScheme','description','comment']
-
-            #for lt in literal_type:
-            # if lt in last_part_pred or last_part_pred in datatypeproperties:
-
-            if (('label' in last_part_pred) or ('type' in last_part_pred) or
-                ('inScheme' in last_part_pred) or ('description' in last_part_pred) or
-                ('comment' in last_part_pred) or last_part_pred in datatypeproperties):
-                pass
-            else :
-                last_part_subj=get_last_folder_part(subj,'/')
-                last_part_obj=get_last_folder_part(obj,'/')
-                nx_graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
+            if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type)
+                                                    and (pred != rdfs)):
+                #print(subj, pred, obj)
+                nx_graph.add_edge(str(subj), str(obj), label=str(pred))
 
         nodes=list(nx_graph.nodes)
         all_nodes.append(nodes)
@@ -147,13 +130,15 @@ def find_duplicates_nodes(path,ontology):
 
     counts=Counter(all_nodes_list)
     dupplicate_nodes=[item for item, count in counts.items() if count > 1]
-    print(f'NODE WITH DUPLICATE IN THE GENERATED GRAPH: {dupplicate_nodes} \n ' )
+    #print(f'NODE WITH DUPLICATE IN THE GENERATED GRAPH: {dupplicate_nodes} \n ' )
 
     return dupplicate_nodes
 
 def occurence_duplicate(duplicates_nodes,path):
-    '''compute the occurence of duplicates'''
+    '''compute the occurence of duplicates all over the ttl files once a node appear in a ttl file
+    occu_duplicates is increased by 1'''
     occu_duplicates=[[duplicates_nodes[i],0] for i in range(0,len(duplicates_nodes))]
+    #print('occu_duplicates_init',occu_duplicates)
 
     #List all the ttl graph files in PATH except folder
     all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
@@ -167,14 +152,12 @@ def occurence_duplicate(duplicates_nodes,path):
         with open(file,'r',encoding='utf-8') as file:
             content = file.read()
 
-        for item in duplicates_nodes:
-            if item in content:
-                for row in occu_duplicates:
-                    if row[0]==item:
-                        row[1]=row[1]+1
-        file.close()
+        for item in occu_duplicates:
+            if item[0] in content:
+                item[1]=item[1]+1
 
-    print(f'occu_duplicates : {occu_duplicates}')
+        file.close()
+    #print('occu_duplicates_final',occu_duplicates)
     return occu_duplicates
 
 def rename_duplicates_nodes(path,duplicates_nodes,nbr_occ):
@@ -192,6 +175,7 @@ def rename_duplicates_nodes(path,duplicates_nodes,nbr_occ):
     print(f'occ_dup : {occ_dup}')
 
     for i,dup in enumerate(occ_dup):
+
         j=0
         for ttl_file in all_files :
 

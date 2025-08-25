@@ -4,7 +4,7 @@ import logging
 import webbrowser
 import os
 from pathlib import Path
-from rdflib import URIRef, Literal
+from rdflib import URIRef, Literal, Namespace
 from pyvis.network import Network
 import networkx as nx
 from networkx.classes.function import density, degree_histogram, number_of_selfloops
@@ -72,19 +72,29 @@ def visu_graph(graph,file,html_folder):
     #webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{html_file}',autoraise=True
     webbrowser.open(html_file,autoraise=True)
 
-def remove_literal_from_nodes(g,graph,digraph,ontology):
-    '''remove literal and otrher expression from the graph in order to keep only the nodes'''
+def populate_graph(g,graph,digraph):
+    '''remove literal and other expression from the graph in order to keep only the nodes'''
+    rdf = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+    rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
+
+    for subj, pred, obj in g:
+        if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type)
+                                                    and (pred != rdfs)):
+            print(subj, pred, obj)
+            digraph.add_edge(str(subj), str(obj), label=str(pred))
+            graph.add_edge(str(subj), str(obj), label=str(pred))
+
+def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD
+    '''remove literal and other expression from the graph in order to keep only the nodes'''
 
     datatypeproperties=retreive_datatype_properties(ontology)
-    #print('dtp',datatypeproperties)
 
     for subj, pred, obj in g:
         last_part_pred=get_last_folder_part(pred,'/')
 
         if (('label' in last_part_pred) or ('type' in last_part_pred) or
-            ('inScheme' in last_part_pred) or ('description' in last_part_pred) or
-            ('comment' in last_part_pred) or last_part_pred in datatypeproperties):
-
+           ('inScheme' in last_part_pred) or ('description' in last_part_pred) or
+           ('comment' in last_part_pred) or last_part_pred in datatypeproperties):
             pass
         else :
             last_part_subj=get_last_folder_part(subj,'/')
@@ -92,8 +102,6 @@ def remove_literal_from_nodes(g,graph,digraph,ontology):
             #print({last_part_subj},{last_part_pred},{last_part_obj})
             graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
             digraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
-
-    return digraph
 
 def log_kpis(file_name,graph,digraph,cumul_nodes):
     '''compute and logs KPIS'''
