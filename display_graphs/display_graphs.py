@@ -43,6 +43,7 @@ if Path(PATH).is_file():
     g, Graph, DiGraph = set_the_graph(PATH,log_html_folder)
 
     populate_graph(g,Graph,DiGraph)
+    #remove_literal_from_nodes_old(g,Graph,DiGraph,ONTOLOGY)
     log_kpis(file_name,Graph,DiGraph,CUMUL_NODES)
     visu_graph(DiGraph,absolute_file_name,log_html_folder)
     #subprocess.run(['xterm', '-e', 'vim', f'{PATH}/html/Graphs.log'],check=True)
@@ -58,6 +59,7 @@ else :
         g, Graph, DiGraph = set_the_graph(file,log_html_folder)
 
         populate_graph(g,Graph,DiGraph)
+        #remove_literal_from_nodes_old(g,Graph,DiGraph,ONTOLOGY)
         CUMUL_NODES = log_kpis(file,Graph,DiGraph,CUMUL_NODES)
         visu_graph(DiGraph,file,log_html_folder)
         #subprocess.run(['xterm','-e','vim', f'{PATH}html/Graphs.log'],check=True)

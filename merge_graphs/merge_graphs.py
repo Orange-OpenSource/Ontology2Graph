@@ -18,6 +18,7 @@ nbr_occ= int(arg[1])
 #    print('Number of occurence nodes = 0 is not authorized as it wil rename all the nodes,')
 #    sys.exit()
 
+#PATH_RESULT=f'{PATH}/merged_graph/'
 PATH_RESULT=f'{PATH}/merged_graph/'
 MERGED_FILE=f'{PATH_RESULT}/merged_graph_{nbr_occ}.ttl'
 
@@ -25,10 +26,10 @@ BAD_PATH_RESULT=f'{PATH_RESULT}/Bad_Turtle_Syntax'
 BAD_MERGED_FILE=f'{BAD_PATH_RESULT}/merged_graph_BAD.ttl'
 OUTPUT_FILE_TEMP=f'{PATH_RESULT}/temp.ttl'
 
-PATH_ONTOLOGY='../generate_graphs/ontologies/noria_to_check.ttl'
+PATH_ONTOLOGY='../generate_graphs/ontologies/Noria.ttl'
 
 #manage duplicate nodes in ttl files
-duplicates=find_duplicates_nodes(PATH)
+duplicates=find_duplicates_nodes(PATH,PATH_ONTOLOGY)
 rename_duplicates_nodes(PATH,duplicates,nbr_occ)
 
 #Merge the ttl file

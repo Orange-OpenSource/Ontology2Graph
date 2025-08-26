@@ -63,6 +63,15 @@ def check_ttl(file_result, bad_file_result, bad_path_result,merged):
             log.write(f'{bad_file_result} : {ttlvalidator.communicate()}\n')
             log.close()
 
+def get_last_folder_part(string, sep_char):
+    """get last part of a folder string"""
+    string_parts=string.split(sep_char)
+    last_part=string_parts[len(string_parts)-1]
+    if last_part=='':
+        last_part=string_parts[len(string_parts)-2]
+    return last_part
+
+
 def remove_duplicate_prefix(output_file_temp,merged_file):
     '''remove duplicate prefix of the merged file'''
     nodes_lines=[]
@@ -87,14 +96,14 @@ def remove_duplicate_prefix(output_file_temp,merged_file):
         graph.writelines(nodes_lines)
         graph.close()
 
-def find_duplicates_nodes(path):
+def find_duplicates_nodes(path,ontology):
     '''find duplicates nodes in ttl files, just add the folder where the files
     are stored as an argument'''
 
     #List all the ttl graph files in PATH except folder
     all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
 
-    #datatypeproperties=retreive_datatype_properties(ontology)
+    datatypeproperties=retreive_datatype_properties(ontology)
     #print('DTP ///', datatypeproperties)
 
     #rebuild complete file path (folder/file)
@@ -114,9 +123,21 @@ def find_duplicates_nodes(path):
         nx_graph = nx.DiGraph()
 
         for subj, pred, obj in g:
+            #last_part_pred=get_last_folder_part(pred,'/')
+            #print(last_part_pred)
+
+            #if (('label' in last_part_pred) or ('type' in last_part_pred) or
+            #    ('inScheme' in last_part_pred) or ('description' in last_part_pred) or
+            #    ('comment' in last_part_pred) or last_part_pred in datatypeproperties):
+            #    pass
+            #else :
+            #    last_part_subj=get_last_folder_part(subj,'/')
+            #    last_part_obj=get_last_folder_part(obj,'/')
+            #    nx_graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
+
             if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type)
-                                                    and (pred != rdfs)):
-                #print(subj, pred, obj)
+                                and (pred != rdfs)):
+                print(subj, pred, obj)
                 nx_graph.add_edge(str(subj), str(obj), label=str(pred))
 
         nodes=list(nx_graph.nodes)

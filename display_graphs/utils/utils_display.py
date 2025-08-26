@@ -79,7 +79,7 @@ def populate_graph(g,graph,digraph):
 
     for subj, pred, obj in g:
         if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type)
-                                                    and (pred != rdfs)):
+                                            and (pred != rdfs.isDefinedBy)):
             print(subj, pred, obj)
             digraph.add_edge(str(subj), str(obj), label=str(pred))
             graph.add_edge(str(subj), str(obj), label=str(pred))
