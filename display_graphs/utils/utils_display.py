@@ -73,7 +73,7 @@ def visu_graph(graph,file,html_folder):
     webbrowser.open(html_file,autoraise=True)
 
 def populate_graph(g,graph,digraph):
-    '''remove literal and other expression from the graph in order to keep only the nodes'''
+    '''remove literal and other expression from the graph in order to keep only the real nodes'''
     rdf = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
     rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
 

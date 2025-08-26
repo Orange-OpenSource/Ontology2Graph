@@ -136,7 +136,7 @@ def find_duplicates_nodes(path,ontology):
             #    nx_graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
 
             if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type)
-                                and (pred != rdfs)):
+                                and (pred != rdfs.isDefinedBy)):
                 print(subj, pred, obj)
                 nx_graph.add_edge(str(subj), str(obj), label=str(pred))
 
