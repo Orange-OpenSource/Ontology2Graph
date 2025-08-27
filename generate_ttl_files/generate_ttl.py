@@ -1,83 +1,102 @@
-""" This python script generates knowledge graph in turtle format based on an ontology schema, a 
-prompt and/or a graph example. It uses the internal Orange LLM Proxy portal 
-(https://portal.llmproxy.ai.orange/) for which you must have an account. You just have to pass
-the number of graph you want as an argumet. Several constant must be set directly in this script 
-before launching
-"""
+''' This function generates knowledge graph in turtle format based on an ontology schema, a prompt
+    and/or a graph example. It uses the internal Orange LLM Proxy portal 
+    (https://portal.llmproxy.ai.orange/) for which you must have an account. You just have to pass
+    the number of graph you want as an argumet. Several constant must be set directly in this script 
+    before launching'''
+
 import os
-import sys
 import datetime
 from pathlib import Path
-from utils.utils_gen import query_llm, storing_results, check_ttl
+from generate_ttl_files.utils.utils_gen import query_llm, storing_results, check_ttl
 
-## SET constant ##
+def generate_ttl(nbr_ttl):
+    '''function to generate ttl files'''
 
-# PATH constant where are stored the needed ressources, prompt, ontology and graph
-PATH=Path(f'{os.getcwd()}')
-#PATH=f'{os.getcwd()}/DIGITAL_TWIN/gengraphllm' # when using crontab
-PATH_ONTOLOGY=f'{PATH}/ontologies'
-PATH_PROMPT=f'{PATH}/prompts'
-PATH_GRAPH=f'{PATH}/graph'
+    ## SET constant ##
 
-## PROMPT_TYPE to choose ##
-PROMPT_TYPE='First_prompt'
-#PROMPT_TYPE='Second_prompt'
-#PROMPT_TYPE='Third_prompt'
+    # PATH constant where are stored the needed ressources, prompt, ontology and graph
+    path=Path(f'{os.getcwd()}/generate_ttl_files')
+    #PATH=f'{os.getcwd()}/DIGITAL_TWIN/gengraphllm' # when using crontab
+    path_ontology=f'{path}/ontologies'
+    path_prompt=f'{path}/prompts'
+    path_graph=f'{path}/graph'
 
-## ONTOLOGY to choose ##
-ONTO='Noria'
-#ONTOLOGY='pygraph'
+    ## PROMPT_TYPE to choose ##
+    prompt_type='First_prompt'
+    #PROMPT_TYPE='Second_prompt'
+    #PROMPT_TYPE='Third_prompt'
 
-## choose MODEL ##
-FILE_MODEL = f'{PATH}/model/models.txt'
-model_list = []
-# Open the text file
-with open(FILE_MODEL, mode='r',encoding='utf-8') as file:
-    lines = file.readlines()
-    for line in lines:
-        cleaned_line = line.strip()
-        model_list.append(cleaned_line)
+    ## ONTOLOGY to choose ##
+    onto='Noria'
+    #ONTOLOGY='pygraph'
 
-MODEL=model_list[5]
-DATE = datetime.datetime.now().strftime("%Y-%m-%d")
+    ## choose MODEL ##
+    file_model = f'{path}/model/models.txt'
 
-PATH_RESULT=f'{PATH.parent}/results/synthetics_graphs/{DATE}/{MODEL}'
-BAD_PATH_RESULT=f'{PATH_RESULT}/Bad_Turtle_Syntax'
-TEMP_FILE=f'{PATH_RESULT}/temp.ttl'
+    model_list = []
+    # Open the text file
+    with open(file_model, mode='r',encoding='utf-8') as file:
+        lines = file.readlines()
+        for line in lines:
+            cleaned_line = line.strip()
+            model_list.append(cleaned_line)
 
-with open(f'{PATH_ONTOLOGY}/Noria.ttl','rt',encoding='utf-8') as ontology:
-    ONTOLOGY = ','.join(str(x) for x in ontology.readlines())
+    model = model_list[5]
+    date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-with open(f'{PATH_PROMPT}/{PROMPT_TYPE}.txt','rt',encoding='utf-8') as prompt:
-    PROMPT = ','.join(str(x) for x in prompt.readlines())
+    path_result = f'{path.parent}/results/synthetics_graphs/{date}/{model}'
+    bad_path_result = f'{path_result}/Bad_Turtle_Syntax'
+    temp_file = f'{path_result}/temp.ttl'
 
-# Only for second and third prompt
-#with open(f'{PATH_GRAPH}/full_graph.ttl','rt',encoding='utf-8') as graph:
-#    GRAPH = ','.join(str(x) for x in graph.readlines())
+    with open(f'{path_ontology}/Noria.ttl','rt',encoding='utf-8') as ontol:
+        ontology = ','.join(str(x) for x in ontol.readlines())
 
-os.makedirs(f'{PATH_RESULT}/', exist_ok=True)
-os.makedirs(f'{BAD_PATH_RESULT}', exist_ok=True)
+    with open(f'{path_prompt}/{prompt_type}.txt','rt',encoding='utf-8') as prpt:
+        prompt = ','.join(str(x) for x in prpt.readlines())
 
-arg = sys.argv[1:]
-TARGET_NUMBER_OF_GRAPH = int(arg[0])
-NUMBER_OF_GRAPH = 0
+    # Only for second and third prompt
+    #with open(f'{PATH_GRAPH}/full_graph.ttl','rt',encoding='utf-8') as graph:
+    #    GRAPH = ','.join(str(x) for x in graph.readlines())
 
-## Generate graphs ##
+    os.makedirs(f'{path_result}/', exist_ok=True)
+    os.makedirs(f'{bad_path_result}', exist_ok=True)
 
-while NUMBER_OF_GRAPH != TARGET_NUMBER_OF_GRAPH:
+    #arg = sys.argv[1:]
+    #TARGET_NUMBER_OF_GRAPH = int(arg[0])
+    number_of_graph = 0
+    nbr_ttl_int = int(nbr_ttl)
 
-    DATE_TIME = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    FILE_RESULT=f'{PATH_RESULT}/{PROMPT_TYPE}_{DATE_TIME}_{ONTO}.ttl'
-    BAD_FILE_RESULT=f'{BAD_PATH_RESULT}/{PROMPT_TYPE}_{DATE_TIME}_{ONTO}_BAD.ttl'
+    # remove the old files in path_result and bad_path_result
+    if Path(path_result).exists() and Path(path_result).is_dir():
+        for files in Path(path_result).iterdir():
+            if files.is_file():
+                files.unlink()
 
-    #Query LLM
-    response=query_llm(DATE_TIME,PROMPT,ONTOLOGY,MODEL)
+    if Path(bad_path_result).exists() and Path(bad_path_result).is_dir():
+        for files in Path(bad_path_result).iterdir():
+            if files.is_file():
+                files.unlink()
 
-    #Store results
-    storing_results(response,TEMP_FILE,FILE_RESULT)
+    ## Generate graphs ##
 
-    # Check Turtle syntax
-    check_ttl(FILE_RESULT,BAD_FILE_RESULT, BAD_PATH_RESULT,0)
+    while number_of_graph != nbr_ttl_int:
 
-    NUMBER_OF_GRAPH += 1
-    print(PATH_RESULT)
+        date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        file_result = f'{path_result}/{prompt_type}_{date_time}_{onto}.ttl'
+        bad_file_result = f'{bad_path_result}/{prompt_type}_{date_time}_{onto}_BAD.ttl'
+
+        #Query LLM
+        response=query_llm(prompt,ontology,model)
+
+        #Store results
+        storing_results(response,temp_file,file_result)
+
+        # Check Turtle syntax
+        check_ttl(file_result,bad_file_result,bad_path_result,0)
+
+        print("Prompt tokens : ",response.usage.prompt_tokens)
+        print("Output response tokens", response.usage.completion_tokens)
+
+        number_of_graph += 1
+
+    return path_result, f'{path_ontology}/Noria.ttl'

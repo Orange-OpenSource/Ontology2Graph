@@ -1,0 +1,114 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://w3id.org/noria/graph1> a owl:NamedIndividual ;
+    rdfs:label "Sample Network Topology"@en ;
+    rdfs:comment "A sample knowledge graph illustrating various node types based on the NORIA schema."@en .
+
+# Hub Node: Central Router
+<https://example.com/router1> a noria:StructuralElement ;
+    rdfs:label "Router1"@en ;
+    rdfs:comment "Main backbone router serving core network."@en ;
+    noria:elementDistinguishedName "CoreRouter-01"^^xsd:string ;
+    noria:elementManagedBy <https://example.com/opsTeam> .
+
+# High-Degree Node: Data Center Switch
+<https://example.com/switch1> a noria:StructuralElement ;
+    rdfs:label "Switch1"@en ;
+    rdfs:comment "High capacity switch in data center."@en ;
+    noria:elementDistinguishedName "DC_Switch-Alpha"^^xsd:string ;
+    noria:elementManagedBy <https://example.com/datacenterOps> .
+
+# Central Node: Application Server
+<https://example.com/appServer1> a noria:FunctionalElement ;
+    rdfs:label "AppServer1"@en ;
+    rdfs:comment "Primary application server handling user requests."@en ;
+    noria:functionalElementDistinguishedName "AppServer-Prod-01"^^xsd:string ;
+    noria:resourceForApplication <https://example.com/app1> .
+
+# Connector Node: Firewall
+<https://example.com/firewall1> a noria:StructuralElement ;
+    rdfs:label "Firewall1"@en ;
+    rdfs:comment "Firewall connecting internal network to external."@en ;
+    noria:elementDistinguishedName "Firewall-Edge"^^xsd:string ;
+    noria:elementManagedBy <https://example.com/securityTeam> .
+
+# Intermediary Node: Load Balancer
+<https://example.com/loadbalancer1> a noria:FunctionalElement ;
+    rdfs:label "LoadBalancer1"@en ;
+    rdfs:comment "Distributes traffic among application servers."@en ;
+    noria:functionalElementDistinguishedName "LoadBalancer-01"^^xsd:string ;
+    noria:resourceForApplication <https://example.com/app1> .
+
+# Multiplex Node: Virtual Machine Cluster
+<https://example.com/vmCluster> a noria:StructuralElement ;
+    rdfs:label "VMCluster"@en ;
+    rdfs:comment "Cluster of virtual machines providing scalable services."@en ;
+    noria:elementDistinguishedName "VMCluster-Alpha"^^xsd:string ;
+    noria:resourceManagedBy <https://example.com/virtualizationTeam> .
+
+# Super Node: Data Center
+<https://example.com/datacenter> a noria:StructuralElement ;
+    rdfs:label "DataCenter"@en ;
+    rdfs:comment "Main data center housing core infrastructure."@en ;
+    noria:elementDistinguishedName "DC-Primary"^^xsd:string ;
+    noria:resourceManagedBy <https://example.com/datacenterOps> .
+
+# Relationships
+
+# Hub node connected to high-degree node
+<https://example.com/router1> noria:structuralElementObservable noria:structuralElementObservableData ;
+    noria:structuralObservableOf <https://example.com/switch1> .
+
+# Central node linked to connector node
+<https://example.com/appServer1> noria:elementProperty <https://example.com/firewall1> .
+
+# Intermediary node connected to high-degree node
+<https://example.com/loadbalancer1> noria:structuralElementObservable noria:structuralElementObservableData ;
+    noria:structuralObservableOf <https://example.com/appServer1> .
+
+# Multiplex node linked to multiple resources
+<https://example.com/vmCluster> noria:structuralElementObservable noria:structuralElementObservableData ;
+    noria:structuralObservableOf <https://example.com/appServer1> , <https://example.com/datacenter> .
+
+# Super node connected to multiple structural elements
+<https://example.com/datacenter> noria:structuralElementObservable noria:structuralElementObservableData ;
+    noria:structuralObservableOf <https://example.com/router1> , <https://example.com/switch1> , <https://example.com/firewall1> , <https://example.com/loadbalancer1> .
+
+# Additional entities for context
+
+<https://example.com/opsTeam> a org:OrganizationalUnit ;
+    rdfs:label "Operations Team"@en ;
+    rdfs:comment "Team responsible for network operations."@en .
+
+<https://example.com/datacenterOps> a org:OrganizationalUnit ;
+    rdfs:label "Data Center Operations"@en ;
+    rdfs:comment "Team managing data center infrastructure."@en .
+
+<https://example.com/securityTeam> a org:OrganizationalUnit ;
+    rdfs:label "Security Team"@en ;
+    rdfs:comment "Team responsible for security management."@en .
+
+<https://example.com/virtualizationTeam> a org:OrganizationalUnit ;
+    rdfs:label "Virtualization Team"@en ;
+    rdfs:comment "Team managing virtual resources."@en .
+
+<https://example.com/app1> a noria:Application ;
+    rdfs:label "Customer Portal App"@en ;
+    rdfs:comment "Application providing customer portal services."@en .
+
+<https://example.com/Resource1> a noria:Resource ;
+    rdfs:label "Main Database Server"@en ;
+    rdfs:comment "Primary database server for applications."@en .
+
+<https://example.com/app1> a noria:Application ;
+    rdfs:label "Customer Portal"@en ;
+    rdfs:comment "Customer-facing web application."@en .
+
+# End of graph

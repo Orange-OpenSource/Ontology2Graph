@@ -1,0 +1,155 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.com/entity1> a noria:ManagedElement ;
+  rdfs:label "Core Router Hub"@en ;
+  rdfs:comment "A central hub router connecting multiple network segments."@en ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+<https://example.com/Org1> a org:Organization ;
+  rdfs:label "Network Operations Center"@en ;
+  rdfs:comment "The organization responsible for network management."@en .
+
+<https://example.com/entity2> a noria:StructuralElement ;
+  rdfs:label "Main Switch"@en ;
+  rdfs:comment "High-degree switch connecting multiple devices."@en ;
+  noria:structuralElementObservable noria:structuralObservableOf ;
+  noria:structuralObservableOf <https://example.com/observable1> ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+<https://example.com/observable1> a noria:StructuralObservable ;
+  rdfs:label "Switch Port Status"@en ;
+  rdfs:comment "Observable property indicating port status."@en .
+
+<https://example.com/entity3> a noria:StructuralElement ;
+  rdfs:label "Edge Router"@en ;
+  rdfs:comment "Connector node linking core network to branch offices."@en ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+<https://example.com/entity4> a noria:FunctionalElement ;
+  rdfs:label "Firewall Service"@en ;
+  rdfs:comment "A service providing network security."@en ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+<https://example.com/entity5> a noria:Application ;
+  rdfs:label "Customer Portal"@en ;
+  rdfs:comment "Web application for customer interactions."@en ;
+  noria:applicationType <https://w3id.org/noria/kos/application/type#CustomerFacingService> ;
+  noria:applicationBusinessImportance <https://w3id.org/noria/kos/application/business-importance#High> .
+
+<https://example.com/entity6> a noria:Service ;
+  rdfs:label "Email Service"@en ;
+  rdfs:comment "Email communication service."@en ;
+  noria:serviceType <https://w3id.org/noria/kos/service/type#Communication> .
+
+<https://example.com/entity7> a noria:Resource ;
+  rdfs:label "Database Server"@en ;
+  rdfs:comment "A critical database server."@en ;
+  noria:resourceSerialNumber "DBS-001" ;
+  noria:resourceHostName "db-server-01" ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type#Server> ;
+  noria:locatedAtLocus <https://example.com/locus1> ;
+  noria:resourceLogisticId "LOG-DBS-01" ;
+  noria:resourceManagementIPAddress "192.168.10.10" .
+
+<https://example.com/locus1> a noria:Locus ;
+  rdfs:label "Data Center Rack 5"@en ;
+  rdfs:comment "Location within the data center."@en .
+
+<https://example.com/link1> a noria:NetworkLink ;
+  rdfs:label "Fiber Link A-B"@en ;
+  rdfs:comment "Optical fiber link between core router and edge router."@en ;
+  noria:networkLinkId "LINK-AB" ;
+  noria:networkLinkType "Optical Fiber" ;
+  noria:networkLinkInstallationDate "2020-05-15T10:00:00"^^xsd:dateTime ;
+  noria:networkLinkTerminationResource <https://example.com/entity1> ;
+  noria:networkLinkTerminationResourceDestination <https://example.com/entity3> .
+
+<https://example.com/event1> a noria:EventRecord ;
+  rdfs:label "Interface GigabitEthernet0/0/1 Up"@en ;
+  rdfs:comment "Interface status change to up."@en ;
+  noria:loggingTime "2023-10-20T14:30:00Z"^^xsd:dateTime ;
+  noria:logText "Line protocol on Interface GigabitEthernet0/0/1, changed state to up."@en ;
+  noria:logOriginatingManagedObject <https://example.com/entity1> ;
+  noria:logOriginatingManagementSystem <https://example.com/MonitoringSystem> ;
+  noria:logOriginatingAgent <https://example.com/agent1> ;
+  noria:alarmSeverity <https://w3id.org/noria/kos/Notification/Severity#Major> ;
+  noria:alarmProposedRepairAction <https://example.com/operation1> .
+
+<https://example.com/agent1> a foaf:Agent ;
+  rdfs:label "Network Engineer Alice"@en ;
+  rdfs:comment "Engineer responsible for core router."@en .
+
+<https://example.com/operation1> a noria:OperationPlan ;
+  rdfs:label "Reset Interface"@en ;
+  rdfs:comment "Procedure to reset network interface."@en .
+
+<https://example.com/ticket1> a noria:TroubleTicket ;
+  rdfs:label "Router Interface Down"@en ;
+  rdfs:comment "Ticket for interface down issue."@en ;
+  noria:troubleTicketSeverity <https://w3id.org/noria/kos/TroubleTicket/severity#Major> ;
+  noria:troubleTicketType <https://w3id.org/noria/kos/TroubleTicket/type#Failure> ;
+  noria:troubleTicketStatusCurrent <https://w3id.org/noria/kos/TroubleTicket/status#InProgress> ;
+  noria:troubleTicketDetectionDateTime "2023-10-20T14:25:00"^^xsd:dateTime ;
+  noria:troubleTicketRelatedResource <https://example.com/entity1> ;
+  noria:troubleTicketRelatedService <https://example.com/entity6> ;
+  noria:troubleTicketRelatedParty <https://example.com/agent1> .
+
+<https://example.com/relatedResource> a noria:Resource ;
+  rdfs:label "Backup Power Supply"@en ;
+  rdfs:comment "Uninterruptible Power Supply for Data Center."@en .
+
+<https://example.com/relatedService> a noria:Service ;
+  rdfs:label "VPN Service"@en ;
+  rdfs:comment "Virtual Private Network Service."@en .
+
+<https://example.com/relatedApplication> a noria:Application ;
+  rdfs:label "Remote Access Portal"@en ;
+  rdfs:comment "Application for remote user access."@en .
+
+<https://example.com/relatedHub> a noria:ManagedElement ;
+  rdfs:label "Main Data Center Hub"@en ;
+  rdfs:comment "The central hub managing core network."@en .
+
+<https://example.com/connectorNode> a noria:StructuralElement ;
+  rdfs:label "Connector Node"@en ;
+  rdfs:comment "Logical connector node linking core and branch networks."@en ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+<https://example.com/intermediaryNode> a noria:StructuralElement ;
+  rdfs:label "Intermediary Node"@en ;
+  rdfs:comment "Intermediate node facilitating data flow."@en ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+<https://example.com/multiplexNode> a noria:StructuralElement ;
+  rdfs:label "Multiplex Node"@en ;
+  rdfs:comment "Node handling multiple data streams."@en ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+<https://example.com/superNode> a noria:StructuralElement ;
+  rdfs:label "Super Node"@en ;
+  rdfs:comment "High-capacity node aggregating multiple nodes."@en ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+<https://example.com/centralNode> a noria:StructuralElement ;
+  rdfs:label "Central Router"@en ;
+  rdfs:comment "The main routing node in the network."@en ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+<https://example.com/highDegreeNode> a noria:StructuralElement ;
+  rdfs:label "High-Degree Switch"@en ;
+  rdfs:comment "Switch with high connectivity."@en ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+<https://example.com/hubNode> a noria:StructuralElement ;
+  rdfs:label "Network Hub"@en ;
+  rdfs:comment "A hub node connecting multiple segments."@en ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+# End of generated graph

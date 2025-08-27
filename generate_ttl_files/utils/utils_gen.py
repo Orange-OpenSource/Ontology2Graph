@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 from openai import OpenAI, OpenAIError
 
-def query_llm(date_time,prompt,ontology,model):
+def query_llm(prompt,ontology,model):
     '''quey llm API'''
 
     client = OpenAI(api_key=os.environ.get("LLM_PROXY_KEY"),base_url="https://llmproxy.ai.orange")
@@ -27,9 +27,6 @@ def query_llm(date_time,prompt,ontology,model):
                 }
                         ]
                                                 )
-        print(f'{date_time} {model}')
-        print("Prompt tokens : ",response.usage.prompt_tokens)
-        print("Output response tokens", response.usage.completion_tokens)
 
     except OpenAIError as e:
         print(f"An error occured: {e}")
@@ -59,15 +56,13 @@ def check_ttl(file_result, bad_file_result, bad_path_result,merged):
     '''check ttl syntax store wrong file in specific folder and 
     maek a copy of right ttl file'''
     command=["ttl",file_result]
-    ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+    ttlvalidator = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
     stdout, stderr = ttlvalidator.communicate()
-    if merged==1:
-        print(f'Merged graph : Turtle validator Result: {stdout},{stderr}')
-    else:
-        print(f'Turtle validator Result: {stdout}, {stderr}')
 
     if stdout!='Validator finished with 0 warnings and 0 errors.\n' :
     # move bad file in bad folder and Save logs
+
+        print(f'\nFILE {Path(file_result).name} has been generated with errors')
 
         os.makedirs(f'{bad_path_result}', exist_ok=True)
         shutil.move(file_result, bad_file_result)
@@ -80,6 +75,12 @@ def check_ttl(file_result, bad_file_result, bad_path_result,merged):
         folder_path = f'{os.path.dirname(file_result)}/raw_file'
         os.makedirs(folder_path, exist_ok=True)
         shutil.copy(file_result,folder_path)
+        print(f'\nFILE {Path(file_result).name} has been generated succesffully without errors')
+
+    if merged==1:
+        print(f'Merged graph : Turtle validator Result: {stdout}'.rstrip('\n'))
+    else:
+        print(f'Turtle validator Result: {stdout}'.rstrip('\n'))
 
 def ttl_validator(path):
     '''validate ttl merged graph'''

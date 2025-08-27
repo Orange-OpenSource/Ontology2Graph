@@ -10,96 +10,108 @@
 @prefix folio: <http://IBCNServices.github.io/Folio-Ontology/Folio.owl#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 
-<https://example.com/hubNode> a noria:ManagedElement ;
-  rdfs:label "Main Hub Node"@en ;
-  rdfs:comment "Central hub node connecting multiple high-degree nodes."@en ;
-  noria:elementManagedBy <https://example.com/NetworkOperations> .
+<https://w3id.org/noria/instance/Network1> a noria:StructuralElement ;
+    rdfs:label "Main Data Center Network"@en ;
+    rdfs:comment "Core network infrastructure in the main data center."@en ;
+    noria:structuralElementDistinguishedName "DCN-01" ;
+    noria:resourceManagedBy <https://example.com/org/NetworkOps> ;
+    noria:locatedAtLocus <https://example.com/locus/ServerRoom314> ;
+    noria:resourceType <https://w3id.org/noria/kos/Resource/type/Network> .
 
-<https://example.com/highDegreeNode1> a noria:StructuralElement ;
-  rdfs:label "Data Center Switch 1"@en ;
-  rdfs:comment "High-degree node with many connections in the data center."@en ;
-  noria:structuralElementObservable <https://example.com/observable/PortStatus> ;
-  noria:elementManagedBy <https://example.com/NetworkOpsTeam> .
+<https://example.com/org/NetworkOps> a org:Organization ;
+    rdfs:label "Network Operations Team"@en ;
+    rdfs:comment "Team responsible for network management."@en .
 
-<https://example.com/highDegreeNode2> a noria:StructuralElement ;
-  rdfs:label "Core Router A"@en ;
-  rdfs:comment "High-degree core router handling multiple links."@en ;
-  noria:structuralElementObservable <https://example.com/observable/TrafficLoad> ;
-  noria:elementManagedBy <https://example.com/NetworkOpsTeam> .
+<https://example.com/locus/ServerRoom314> a noria:Locus ;
+    rdfs:label "Server Room 314"@en ;
+    rdfs:comment "Main server room on the 3rd floor."@en .
 
-<https://example.com/centralNode> a noria:StructuralElement ;
-  rdfs:label "Central Switch"@en ;
-  rdfs:comment "A central node connecting various subnetworks."@en ;
-  noria:structuralElementObservable <https://example.com/observable/LinkStatus> ;
-  noria:elementManagedBy <https://example.com/ITSupport> .
+<https://w3id.org/noria/instance/Resource2> a noria:Resource ;
+    rdfs:label "Router1"@en ;
+    rdfs:comment "Core router in the main data center."@en ;
+    noria:resourceSerialNumber "SN123456" ;
+    noria:resourceHostName "router1.dc.example.com" ;
+    noria:resourceType <https://w3id.org/noria/kos/Resource/type/Router> ;
+    noria:locatedAtLocus <https://example.com/locus/ServerRoom314> ;
+    noria:resourceProductModel <https://example.com/model/ModelX> ;
+    noria:resourceManagedBy <https://example.com/org/NetworkOps> .
 
-<https://example.com/connectorNode> a noria:StructuralElement ;
-  rdfs:label "Firewall Connector"@en ;
-  rdfs:comment "Connector node acting as a firewall between segments."@en ;
-  noria:structuralElementObservable <https://example.com/observable/FirewallStatus> ;
-  noria:elementManagedBy <https://example.com/SecurityTeam> .
+<https://example.com/model/ModelX> a noria:ProductModel ;
+    rdfs:label "Model X"@en ;
+    rdfs:comment "High-performance router model X."@en ;
+    noria:productManufacturedBy <https://example.com/org/RouterMakers> .
 
-<https://example.com/intermediaryNode> a noria:StructuralElement ;
-  rdfs:label "Load Balancer"@en ;
-  rdfs:comment "Intermediary node balancing load across servers."@en ;
-  noria:structuralElementObservable <https://example.com/observable/LoadDistribution> ;
-  noria:elementManagedBy <https://example.com/ITSupport> .
+<https://example.com/org/RouterMakers> a org:Organization ;
+    rdfs:label "Router Manufacturers Inc."@en ;
+    rdfs:comment "Manufacturer of Model X routers."@en .
 
-<https://example.com/multiplexNode> a noria:StructuralElement ;
-  rdfs:label "Multiplexing Device"@en ;
-  rdfs:comment "Device multiplexing multiple data streams."@en ;
-  noria:structuralElementObservable <https://example.com/observable/DataStreamQuality> ;
-  noria:elementManagedBy <https://example.com/NetworkOpsTeam> .
+<https://w3id.org/noria/instance/Interface1> a noria:NetworkInterface ;
+    rdfs:label "GigabitEthernet0/0/1"@en ;
+    rdfs:comment "Main uplink interface."@en ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceDescription "Uplink port for external connection."@en ;
+    noria:networkInterfaceOperationalStatus [ a skos:Concept ; skos:inScheme <kos/Resource/OperationalState> ; skos:hasTopConcept <https://w3id.org/noria/kos/OperationalState/Up> ] ;
+    noria:networkInterfaceRoutingPriorityMetric 100 ;
+    noria:networkInterfaceLaserTxOpticalPower -2 ;
+    noria:networkInterfaceLaserRxOpticalPower -3 ;
+    noria:networkInterfaceLaserRxOpticalPowerAverage -2.5 ;
+    noria:networkInterfaceConnects <https://w3id.org/noria/instance/Link1> ;
+    noria:networkInterfaceOf <https://w3id.org/noria/instance/Resource2> .
 
-<https://example.com/superNode> a noria:StructuralElement ;
-  rdfs:label "Super Node"@en ;
-  rdfs:comment "Super node aggregating multiple sub-nodes."@en ;
-  noria:structuralElementObservable <https://example.com/observable/SuperNodeLoad> ;
-  noria:elementManagedBy <https://example.com/NetworkManagement> .
+<https://w3id.org/noria/instance/Link1> a noria:NetworkLink ;
+    rdfs:label "FiberLink-01"@en ;
+    rdfs:comment "Optical fiber link between Router1 and Switch1."@en ;
+    noria:networkLinkId "LINK-001" ;
+    noria:networkLinkType "optical fiber" ;
+    noria:networkLinkInstallationDate "2022-01-15T10:00:00"^^xsd:dateTime ;
+    noria:networkLinkTerminationResource <https://example.com/resource/Switch1> ;
+    noria:networkLinkTerminationResourceOrigin <https://example.com/resource/Router1> .
 
-<https://example.com/NetworkOpsTeam> a org:OrganizationalUnit ;
-  rdfs:label "Network Operations Team"@en ;
-  rdfs:comment "Team responsible for network infrastructure management."@en .
+<https://example.com/resource/Switch1> a noria:Resource ;
+    rdfs:label "Switch1"@en ;
+    rdfs:comment "Aggregation switch in the main data center."@en ;
+    noria:resourceSerialNumber "SN654321" ;
+    noria:resourceHostName "switch1.dc.example.com" ;
+    noria:resourceType <https://w3id.org/noria/kos/Resource/type/Switch> ;
+    noria:locatedAtLocus <https://example.com/locus/ServerRoom314> ;
+    noria:resourceManagedBy <https://example.com/org/NetworkOps> .
 
-<https://example.com/ITSupport> a org:OrganizationalUnit ;
-  rdfs:label "IT Support"@en ;
-  rdfs:comment "Support team for IT infrastructure."@en .
+<https://example.com/locus/ServerRoom314> a noria:Locus ;
+    rdfs:label "Server Room 314"@en ;
+    rdfs:comment "Main server room on the 3rd floor."@en .
 
-<https://example.com/SecurityTeam> a org:OrganizationalUnit ;
-  rdfs:label "Security Team"@en ;
-  rdfs:comment "Team responsible for security and firewall management."@en .
+<https://w3id.org/noria/instance/Event1> a noria:EventRecord ;
+    rdfs:label "Link Up Event"@en ;
+    rdfs:comment "Event indicating link GigabitEthernet0/0/1 is up."@en ;
+    noria:loggingTime "2023-10-23T14:30:00"^^xsd:dateTime ;
+    noria:logText "Line protocol on Interface GigabitEthernet0/0/1 changed to up."@en ;
+    noria:logOriginatingManagedObject <https://w3id.org/noria/instance/Interface1> ;
+    noria:logOriginatingManagementSystem <https://example.com/sys/NMS1> ;
+    noria:logOriginatingAgent <https://example.com/agent/TechTeam> ;
+    noria:alarmSeverity [ a skos:Concept ; skos:inScheme <Notification/Severity/PerceivedSeverity> ; skos:hasTopConcept <skos:Concept/Warning> ] .
 
-<https://example.com/NetworkManagement> a org:OrganizationalUnit ;
-  rdfs:label "Network Management"@en ;
-  rdfs:comment "Team overseeing overall network performance."@en .
+<https://example.com/agent/TechTeam> a foaf:Agent ;
+    rdfs:label "Network Tech Team"@en ;
+    rdfs:comment "Team responsible for network hardware."@en .
 
-<https://example.com/observable/PortStatus> a noria:StructuralObservable ;
-  rdfs:label "Port Status"@en ;
-  rdfs:comment "Status of network ports (up/down)."@en .
+<https://example.com/sys/NMS1> a noria:Application ;
+    rdfs:label "Network Management System 1"@en ;
+    rdfs:comment "System monitoring network links."@en .
 
-<https://example.com/observable/TrafficLoad> a noria:StructuralObservable ;
-  rdfs:label "Traffic Load"@en ;
-  rdfs:comment "Current network traffic load."@en .
+<https://example.com/agent/TechTeam> a foaf:Agent ;
+    rdfs:label "Network Tech Team"@en .
 
-<https://example.com/observable/LinkStatus> a noria:StructuralObservable ;
-  rdfs:label "Link Status"@en ;
-  rdfs:comment "Status of network links."@en .
+<https://example.com/agent/TechTeam> rdfs:seeAlso <https://example.com/org/NetworkOps> .
 
-<https://example.com/observable/FirewallStatus> a noria:StructuralObservable ;
-  rdfs:label "Firewall Status"@en ;
-  rdfs:comment "Operational status of firewall."@en .
+<https://example.com/agent/TechTeam> a foaf:Agent ;
+    rdfs:label "Network Tech Team"@en .
 
-<https://example.com/observable/LoadDistribution> a noria:StructuralObservable ;
-  rdfs:label "Load Distribution"@en ;
-  rdfs:comment "Distribution of load across servers."@en .
+<https://example.com/agent/TechTeam> rdfs:seeAlso <https://example.com/org/NetworkOps> .
 
-<https://example.com/observable/DataStreamQuality> a noria:StructuralObservable ;
-  rdfs:label "Data Stream Quality"@en ;
-  rdfs:comment "Quality metrics of data streams."@en .
+<https://example.com/agent/TechTeam> a foaf:Agent ;
+    rdfs:label "Network Tech Team"@en .
 
-<https://example.com/observable/SuperNodeLoad> a noria:StructuralObservable ;
-  rdfs:label "Super Node Load"@en ;
-  rdfs:comment "Aggregate load on super node."@en .
+<https://example.com/agent/TechTeam> rdfs:seeAlso <https://example.com/org/NetworkOps> .
 
 <https://w3id.org/noria/instance/Network1> a noria:ManagedElement ;
   rdfs:label "Core Network Switch"@en ;
@@ -241,6 +253,108 @@
 
 # End of graph
 
+<https://example.com/hubNode1> a noria:ManagedElement ;
+  rdfs:label "Core Router Hub"@en ;
+  rdfs:comment "A high-degree central hub node connecting multiple network segments."@en ;
+  noria:elementManagedBy <https://example.com/NetworkOperationsTeam> .
+
+<https://example.com/HighDegreeNode> a noria:StructuralElement ;
+  rdfs:label "Main Switch"@en ;
+  rdfs:comment "A high-degree node with many connections, acting as a central switch."@en ;
+  noria:structuralElementObservableData <https://example.com/ConnectionCount> ;
+  noria:elementManagedBy <https://example.com/NetworkOperationsTeam> .
+
+<https://example.com/CentralNode> a noria:StructuralElement ;
+  rdfs:label "Data Center Switch"@en ;
+  rdfs:comment "A central node within the data center connecting servers and storage."@en ;
+  noria:structuralElementObservableData <https://example.com/TrafficVolume> ;
+  noria:structuralElementObservable <https://example.com/TrafficObservable> ;
+  noria:elementManagedBy <https://example.com/DataCenterOps> .
+
+<https://example.com/ConnectorNode> a noria:StructuralElement ;
+  rdfs:label "Firewall Connector"@en ;
+  rdfs:comment "A connector node linking external network to internal resources."@en ;
+  noria:structuralElementObservableData <https://example.com/FirewallStatus> ;
+  noria:structuralElementObservable <https://example.com/FirewallStatusObservable> ;
+  noria:elementManagedBy <https://example.com/SecurityTeam> .
+
+<https://example.com/IntermediaryNode> a noria:StructuralElement ;
+  rdfs:label "Load Balancer"@en ;
+  rdfs:comment "An intermediary node distributing traffic among servers."@en ;
+  noria:structuralElementObservableData <https://example.com/LoadDistributionRate> ;
+  noria:structuralElementObservable <https://example.com/LoadDistributionObservable> ;
+  noria:elementManagedBy <https://example.com/ITSupport> .
+
+<https://example.com/MultiplexNode> a noria:StructuralElement ;
+  rdfs:label "Multiplexing Switch"@en ;
+  rdfs:comment "A multiplex node combining multiple data streams."@en ;
+  noria:structuralElementObservableData <https://example.com/StreamCount> ;
+  noria:structuralElementObservable <https://example.com/StreamObservable> ;
+  noria:elementManagedBy <https://example.com/NetworkTeam> .
+
+<https://example.com/SuperNode> a noria:StructuralElement ;
+  rdfs:label "Super Node"@en ;
+  rdfs:comment "An advanced super node aggregating multiple hubs and central nodes."@en ;
+  noria:structuralElementObservableData <https://example.com/SuperNodeCapacity> ;
+  noria:structuralElementObservable <https://example.com/SuperNodeCapacityObservable> ;
+  noria:elementManagedBy <https://example.com/NetworkManagement> .
+
+<https://example.com/NetworkOperationsTeam> a org:OrganizationalUnit ;
+  rdfs:label "Network Operations Team"@en ;
+  rdfs:comment "Team responsible for managing network infrastructure."@en .
+
+<https://example.com/DataCenterOps> a org:OrganizationalUnit ;
+  rdfs:label "Data Center Operations"@en ;
+  rdfs:comment "Team managing data center network resources."@en .
+
+<https://example.com/SecurityTeam> a org:OrganizationalUnit ;
+  rdfs:label "Security Team"@en ;
+  rdfs:comment "Team responsible for security infrastructure."@en .
+
+<https://example.com/ITSupport> a org:OrganizationalUnit ;
+  rdfs:label "IT Support"@en ;
+  rdfs:comment "Support team for internal IT resources."@en .
+
+<https://example.com/NetworkTeam> a org:OrganizationalUnit ;
+  rdfs:label "Network Team"@en ;
+  rdfs:comment "Team managing network devices and links."@en .
+
+<https://example.com/ConnectionCount> a noria:StructuralObservable ;
+  rdfs:label "Connection Count"@en ;
+  rdfs:comment "Number of active connections at the node."@en .
+
+<https://example.com/TrafficVolume> a noria:StructuralObservable ;
+  rdfs:label "Traffic Volume"@en ;
+  rdfs:comment "Volume of traffic passing through the node."@en .
+
+<https://example.com/TrafficObservable> a noria:StructuralObservable ;
+  rdfs:label "Traffic Observable"@en ;
+  rdfs:comment "Observable representing traffic metrics."@en .
+
+<https://example.com/FirewallStatus> a noria:StructuralObservable ;
+  rdfs:label "Firewall Status"@en ;
+  rdfs:comment "Current status of the firewall."@en .
+
+<https://example.com/FirewallStatusObservable> a noria:StructuralObservable ;
+  rdfs:label "Firewall Status Observable"@en ;
+  rdfs:comment "Observable for firewall operational status."@en .
+
+<https://example.com/LoadDistributionRate> a noria:StructuralObservable ;
+  rdfs:label "Load Distribution Rate"@en ;
+  rdfs:comment "Rate at which load is distributed."@en .
+
+<https://example.com/LoadDistributionObservable> a noria:StructuralObservable ;
+  rdfs:label "Load Distribution Observable"@en ;
+  rdfs:comment "Observable for load balancing metrics."@en .
+
+<https://example.com/SuperNodeCapacity> a noria:StructuralObservable ;
+  rdfs:label "Super Node Capacity"@en ;
+  rdfs:comment "Capacity of the super node."@en .
+
+<https://example.com/SuperNodeCapacityObservable> a noria:StructuralObservable ;
+  rdfs:label "Super Node Capacity Observable"@en ;
+  rdfs:comment "Observable for super node capacity."@en .
+
 <https://w3id.org/noria/instance/Graph1> a owl:Ontology ;
     rdfs:label "Sample Noria-based Knowledge Graph"@en .
 
@@ -359,211 +473,6 @@
 
 # Dismiss isolated nodes: All nodes are linked via at least one relation, fulfilling the requirement.
 
-<https://example.com/hubNode1> a noria:ManagedElement ;
-  rdfs:label "Core Router Hub"@en ;
-  rdfs:comment "A high-degree central hub node connecting multiple network segments."@en ;
-  noria:elementManagedBy <https://example.com/NetworkOperationsTeam> .
-
-<https://example.com/HighDegreeNode> a noria:StructuralElement ;
-  rdfs:label "Main Switch"@en ;
-  rdfs:comment "A high-degree node with many connections, acting as a central switch."@en ;
-  noria:structuralElementObservableData <https://example.com/ConnectionCount> ;
-  noria:elementManagedBy <https://example.com/NetworkOperationsTeam> .
-
-<https://example.com/CentralNode> a noria:StructuralElement ;
-  rdfs:label "Data Center Switch"@en ;
-  rdfs:comment "A central node within the data center connecting servers and storage."@en ;
-  noria:structuralElementObservableData <https://example.com/TrafficVolume> ;
-  noria:structuralElementObservable <https://example.com/TrafficObservable> ;
-  noria:elementManagedBy <https://example.com/DataCenterOps> .
-
-<https://example.com/ConnectorNode> a noria:StructuralElement ;
-  rdfs:label "Firewall Connector"@en ;
-  rdfs:comment "A connector node linking external network to internal resources."@en ;
-  noria:structuralElementObservableData <https://example.com/FirewallStatus> ;
-  noria:structuralElementObservable <https://example.com/FirewallStatusObservable> ;
-  noria:elementManagedBy <https://example.com/SecurityTeam> .
-
-<https://example.com/IntermediaryNode> a noria:StructuralElement ;
-  rdfs:label "Load Balancer"@en ;
-  rdfs:comment "An intermediary node distributing traffic among servers."@en ;
-  noria:structuralElementObservableData <https://example.com/LoadDistributionRate> ;
-  noria:structuralElementObservable <https://example.com/LoadDistributionObservable> ;
-  noria:elementManagedBy <https://example.com/ITSupport> .
-
-<https://example.com/MultiplexNode> a noria:StructuralElement ;
-  rdfs:label "Multiplexing Switch"@en ;
-  rdfs:comment "A multiplex node combining multiple data streams."@en ;
-  noria:structuralElementObservableData <https://example.com/StreamCount> ;
-  noria:structuralElementObservable <https://example.com/StreamObservable> ;
-  noria:elementManagedBy <https://example.com/NetworkTeam> .
-
-<https://example.com/SuperNode> a noria:StructuralElement ;
-  rdfs:label "Super Node"@en ;
-  rdfs:comment "An advanced super node aggregating multiple hubs and central nodes."@en ;
-  noria:structuralElementObservableData <https://example.com/SuperNodeCapacity> ;
-  noria:structuralElementObservable <https://example.com/SuperNodeCapacityObservable> ;
-  noria:elementManagedBy <https://example.com/NetworkManagement> .
-
-<https://example.com/NetworkOperationsTeam> a org:OrganizationalUnit ;
-  rdfs:label "Network Operations Team"@en ;
-  rdfs:comment "Team responsible for managing network infrastructure."@en .
-
-<https://example.com/DataCenterOps> a org:OrganizationalUnit ;
-  rdfs:label "Data Center Operations"@en ;
-  rdfs:comment "Team managing data center network resources."@en .
-
-<https://example.com/SecurityTeam> a org:OrganizationalUnit ;
-  rdfs:label "Security Team"@en ;
-  rdfs:comment "Team responsible for security infrastructure."@en .
-
-<https://example.com/ITSupport> a org:OrganizationalUnit ;
-  rdfs:label "IT Support"@en ;
-  rdfs:comment "Support team for internal IT resources."@en .
-
-<https://example.com/NetworkTeam> a org:OrganizationalUnit ;
-  rdfs:label "Network Team"@en ;
-  rdfs:comment "Team managing network devices and links."@en .
-
-<https://example.com/ConnectionCount> a noria:StructuralObservable ;
-  rdfs:label "Connection Count"@en ;
-  rdfs:comment "Number of active connections at the node."@en .
-
-<https://example.com/TrafficVolume> a noria:StructuralObservable ;
-  rdfs:label "Traffic Volume"@en ;
-  rdfs:comment "Volume of traffic passing through the node."@en .
-
-<https://example.com/TrafficObservable> a noria:StructuralObservable ;
-  rdfs:label "Traffic Observable"@en ;
-  rdfs:comment "Observable representing traffic metrics."@en .
-
-<https://example.com/FirewallStatus> a noria:StructuralObservable ;
-  rdfs:label "Firewall Status"@en ;
-  rdfs:comment "Current status of the firewall."@en .
-
-<https://example.com/FirewallStatusObservable> a noria:StructuralObservable ;
-  rdfs:label "Firewall Status Observable"@en ;
-  rdfs:comment "Observable for firewall operational status."@en .
-
-<https://example.com/LoadDistributionRate> a noria:StructuralObservable ;
-  rdfs:label "Load Distribution Rate"@en ;
-  rdfs:comment "Rate at which load is distributed."@en .
-
-<https://example.com/LoadDistributionObservable> a noria:StructuralObservable ;
-  rdfs:label "Load Distribution Observable"@en ;
-  rdfs:comment "Observable for load balancing metrics."@en .
-
-<https://example.com/SuperNodeCapacity> a noria:StructuralObservable ;
-  rdfs:label "Super Node Capacity"@en ;
-  rdfs:comment "Capacity of the super node."@en .
-
-<https://example.com/SuperNodeCapacityObservable> a noria:StructuralObservable ;
-  rdfs:label "Super Node Capacity Observable"@en ;
-  rdfs:comment "Observable for super node capacity."@en .
-
-<https://w3id.org/noria/instance/Network1> a noria:StructuralElement ;
-    rdfs:label "Main Data Center Network"@en ;
-    rdfs:comment "Core network infrastructure in the main data center."@en ;
-    noria:structuralElementDistinguishedName "DCN-01" ;
-    noria:resourceManagedBy <https://example.com/org/NetworkOps> ;
-    noria:locatedAtLocus <https://example.com/locus/ServerRoom314> ;
-    noria:resourceType <https://w3id.org/noria/kos/Resource/type/Network> .
-
-<https://example.com/org/NetworkOps> a org:Organization ;
-    rdfs:label "Network Operations Team"@en ;
-    rdfs:comment "Team responsible for network management."@en .
-
-<https://example.com/locus/ServerRoom314> a noria:Locus ;
-    rdfs:label "Server Room 314"@en ;
-    rdfs:comment "Main server room on the 3rd floor."@en .
-
-<https://w3id.org/noria/instance/Resource2> a noria:Resource ;
-    rdfs:label "Router1"@en ;
-    rdfs:comment "Core router in the main data center."@en ;
-    noria:resourceSerialNumber "SN123456" ;
-    noria:resourceHostName "router1.dc.example.com" ;
-    noria:resourceType <https://w3id.org/noria/kos/Resource/type/Router> ;
-    noria:locatedAtLocus <https://example.com/locus/ServerRoom314> ;
-    noria:resourceProductModel <https://example.com/model/ModelX> ;
-    noria:resourceManagedBy <https://example.com/org/NetworkOps> .
-
-<https://example.com/model/ModelX> a noria:ProductModel ;
-    rdfs:label "Model X"@en ;
-    rdfs:comment "High-performance router model X."@en ;
-    noria:productManufacturedBy <https://example.com/org/RouterMakers> .
-
-<https://example.com/org/RouterMakers> a org:Organization ;
-    rdfs:label "Router Manufacturers Inc."@en ;
-    rdfs:comment "Manufacturer of Model X routers."@en .
-
-<https://w3id.org/noria/instance/Interface1> a noria:NetworkInterface ;
-    rdfs:label "GigabitEthernet0/0/1"@en ;
-    rdfs:comment "Main uplink interface."@en ;
-    noria:networkInterfaceType "physical" ;
-    noria:networkInterfaceDescription "Uplink port for external connection."@en ;
-    noria:networkInterfaceOperationalStatus [ a skos:Concept ; skos:inScheme <kos/Resource/OperationalState> ; skos:hasTopConcept <https://w3id.org/noria/kos/OperationalState/Up> ] ;
-    noria:networkInterfaceRoutingPriorityMetric 100 ;
-    noria:networkInterfaceLaserTxOpticalPower -2 ;
-    noria:networkInterfaceLaserRxOpticalPower -3 ;
-    noria:networkInterfaceLaserRxOpticalPowerAverage -2.5 ;
-    noria:networkInterfaceConnects <https://w3id.org/noria/instance/Link1> ;
-    noria:networkInterfaceOf <https://w3id.org/noria/instance/Resource2> .
-
-<https://w3id.org/noria/instance/Link1> a noria:NetworkLink ;
-    rdfs:label "FiberLink-01"@en ;
-    rdfs:comment "Optical fiber link between Router1 and Switch1."@en ;
-    noria:networkLinkId "LINK-001" ;
-    noria:networkLinkType "optical fiber" ;
-    noria:networkLinkInstallationDate "2022-01-15T10:00:00"^^xsd:dateTime ;
-    noria:networkLinkTerminationResource <https://example.com/resource/Switch1> ;
-    noria:networkLinkTerminationResourceOrigin <https://example.com/resource/Router1> .
-
-<https://example.com/resource/Switch1> a noria:Resource ;
-    rdfs:label "Switch1"@en ;
-    rdfs:comment "Aggregation switch in the main data center."@en ;
-    noria:resourceSerialNumber "SN654321" ;
-    noria:resourceHostName "switch1.dc.example.com" ;
-    noria:resourceType <https://w3id.org/noria/kos/Resource/type/Switch> ;
-    noria:locatedAtLocus <https://example.com/locus/ServerRoom314> ;
-    noria:resourceManagedBy <https://example.com/org/NetworkOps> .
-
-<https://example.com/locus/ServerRoom314> a noria:Locus ;
-    rdfs:label "Server Room 314"@en ;
-    rdfs:comment "Main server room on the 3rd floor."@en .
-
-<https://w3id.org/noria/instance/Event1> a noria:EventRecord ;
-    rdfs:label "Link Up Event"@en ;
-    rdfs:comment "Event indicating link GigabitEthernet0/0/1 is up."@en ;
-    noria:loggingTime "2023-10-23T14:30:00"^^xsd:dateTime ;
-    noria:logText "Line protocol on Interface GigabitEthernet0/0/1 changed to up."@en ;
-    noria:logOriginatingManagedObject <https://w3id.org/noria/instance/Interface1> ;
-    noria:logOriginatingManagementSystem <https://example.com/sys/NMS1> ;
-    noria:logOriginatingAgent <https://example.com/agent/TechTeam> ;
-    noria:alarmSeverity [ a skos:Concept ; skos:inScheme <Notification/Severity/PerceivedSeverity> ; skos:hasTopConcept <skos:Concept/Warning> ] .
-
-<https://example.com/agent/TechTeam> a foaf:Agent ;
-    rdfs:label "Network Tech Team"@en ;
-    rdfs:comment "Team responsible for network hardware."@en .
-
-<https://example.com/sys/NMS1> a noria:Application ;
-    rdfs:label "Network Management System 1"@en ;
-    rdfs:comment "System monitoring network links."@en .
-
-<https://example.com/agent/TechTeam> a foaf:Agent ;
-    rdfs:label "Network Tech Team"@en .
-
-<https://example.com/agent/TechTeam> rdfs:seeAlso <https://example.com/org/NetworkOps> .
-
-<https://example.com/agent/TechTeam> a foaf:Agent ;
-    rdfs:label "Network Tech Team"@en .
-
-<https://example.com/agent/TechTeam> rdfs:seeAlso <https://example.com/org/NetworkOps> .
-
-<https://example.com/agent/TechTeam> a foaf:Agent ;
-    rdfs:label "Network Tech Team"@en .
-
-<https://example.com/agent/TechTeam> rdfs:seeAlso <https://example.com/org/NetworkOps> .
-
 <https://example.com/HubNode1> a noria:ManagedElement ;
   rdfs:label "Core Hub Node"@en ;
   rdfs:comment "A high-degree central hub node connecting multiple network segments."@en ;
@@ -659,6 +568,97 @@
   rdfs:comment "Relation indicating physical or logical connection between nodes."@en .
 
 
+
+<https://example.com/hubNode> a noria:ManagedElement ;
+  rdfs:label "Main Hub Node"@en ;
+  rdfs:comment "Central hub node connecting multiple high-degree nodes."@en ;
+  noria:elementManagedBy <https://example.com/NetworkOperations> .
+
+<https://example.com/highDegreeNode1> a noria:StructuralElement ;
+  rdfs:label "Data Center Switch 1"@en ;
+  rdfs:comment "High-degree node with many connections in the data center."@en ;
+  noria:structuralElementObservable <https://example.com/observable/PortStatus> ;
+  noria:elementManagedBy <https://example.com/NetworkOpsTeam> .
+
+<https://example.com/highDegreeNode2> a noria:StructuralElement ;
+  rdfs:label "Core Router A"@en ;
+  rdfs:comment "High-degree core router handling multiple links."@en ;
+  noria:structuralElementObservable <https://example.com/observable/TrafficLoad> ;
+  noria:elementManagedBy <https://example.com/NetworkOpsTeam> .
+
+<https://example.com/centralNode> a noria:StructuralElement ;
+  rdfs:label "Central Switch"@en ;
+  rdfs:comment "A central node connecting various subnetworks."@en ;
+  noria:structuralElementObservable <https://example.com/observable/LinkStatus> ;
+  noria:elementManagedBy <https://example.com/ITSupport> .
+
+<https://example.com/connectorNode> a noria:StructuralElement ;
+  rdfs:label "Firewall Connector"@en ;
+  rdfs:comment "Connector node acting as a firewall between segments."@en ;
+  noria:structuralElementObservable <https://example.com/observable/FirewallStatus> ;
+  noria:elementManagedBy <https://example.com/SecurityTeam> .
+
+<https://example.com/intermediaryNode> a noria:StructuralElement ;
+  rdfs:label "Load Balancer"@en ;
+  rdfs:comment "Intermediary node balancing load across servers."@en ;
+  noria:structuralElementObservable <https://example.com/observable/LoadDistribution> ;
+  noria:elementManagedBy <https://example.com/ITSupport> .
+
+<https://example.com/multiplexNode> a noria:StructuralElement ;
+  rdfs:label "Multiplexing Device"@en ;
+  rdfs:comment "Device multiplexing multiple data streams."@en ;
+  noria:structuralElementObservable <https://example.com/observable/DataStreamQuality> ;
+  noria:elementManagedBy <https://example.com/NetworkOpsTeam> .
+
+<https://example.com/superNode> a noria:StructuralElement ;
+  rdfs:label "Super Node"@en ;
+  rdfs:comment "Super node aggregating multiple sub-nodes."@en ;
+  noria:structuralElementObservable <https://example.com/observable/SuperNodeLoad> ;
+  noria:elementManagedBy <https://example.com/NetworkManagement> .
+
+<https://example.com/NetworkOpsTeam> a org:OrganizationalUnit ;
+  rdfs:label "Network Operations Team"@en ;
+  rdfs:comment "Team responsible for network infrastructure management."@en .
+
+<https://example.com/ITSupport> a org:OrganizationalUnit ;
+  rdfs:label "IT Support"@en ;
+  rdfs:comment "Support team for IT infrastructure."@en .
+
+<https://example.com/SecurityTeam> a org:OrganizationalUnit ;
+  rdfs:label "Security Team"@en ;
+  rdfs:comment "Team responsible for security and firewall management."@en .
+
+<https://example.com/NetworkManagement> a org:OrganizationalUnit ;
+  rdfs:label "Network Management"@en ;
+  rdfs:comment "Team overseeing overall network performance."@en .
+
+<https://example.com/observable/PortStatus> a noria:StructuralObservable ;
+  rdfs:label "Port Status"@en ;
+  rdfs:comment "Status of network ports (up/down)."@en .
+
+<https://example.com/observable/TrafficLoad> a noria:StructuralObservable ;
+  rdfs:label "Traffic Load"@en ;
+  rdfs:comment "Current network traffic load."@en .
+
+<https://example.com/observable/LinkStatus> a noria:StructuralObservable ;
+  rdfs:label "Link Status"@en ;
+  rdfs:comment "Status of network links."@en .
+
+<https://example.com/observable/FirewallStatus> a noria:StructuralObservable ;
+  rdfs:label "Firewall Status"@en ;
+  rdfs:comment "Operational status of firewall."@en .
+
+<https://example.com/observable/LoadDistribution> a noria:StructuralObservable ;
+  rdfs:label "Load Distribution"@en ;
+  rdfs:comment "Distribution of load across servers."@en .
+
+<https://example.com/observable/DataStreamQuality> a noria:StructuralObservable ;
+  rdfs:label "Data Stream Quality"@en ;
+  rdfs:comment "Quality metrics of data streams."@en .
+
+<https://example.com/observable/SuperNodeLoad> a noria:StructuralObservable ;
+  rdfs:label "Super Node Load"@en ;
+  rdfs:comment "Aggregate load on super node."@en .
 
 # Hub Node: Central Resource (Main Data Center)
 <https://example.com/Resource/DataCenter1> a noria:Resource ;
