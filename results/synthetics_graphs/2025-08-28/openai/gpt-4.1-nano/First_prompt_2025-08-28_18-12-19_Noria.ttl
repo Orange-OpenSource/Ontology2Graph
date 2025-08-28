@@ -1,0 +1,116 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Hub Node: Central Resource (e.g., a core router)
+<https://example.com/Resource/RouterCore> a noria:Resource ;
+  rdfs:label "Core Router"@en ;
+  rdfs:comment "Main backbone router acting as a hub in the network."@en ;
+  noria:resourceLogisticId "LOG-CORE-001" ;
+  noria:locatedAtLocus <https://example.com/Locus/Room314> ;
+  noria:resourceHostName "core-router-314" ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/Router> ;
+  noria:resourceSerialNumber "SN-123456" ;
+  noria:resourceUsageState <https://w3id.org/noria/kos/Resource/LifecycleState/Active> ;
+  rdfs:label "Core Router" ;
+  rdfs:comment "Main backbone router acting as a hub in the network." .
+
+# High-Degree Node: Virtual Server with many connections
+<https://example.com/Resource/VirtualServer1> a noria:Resource ;
+  rdfs:label "Virtual Server 1"@en ;
+  rdfs:comment "A virtual server hosting multiple applications."@en ;
+  noria:resourceLogisticId "LOG-VS-001" ;
+  noria:locatedAtLocus <https://example.com/Locus/ServerRoom1> ;
+  noria:resourceHostName "vs-1" ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/VirtualServer> ;
+  noria:resourceSerialNumber "SN-VS-7890" ;
+  noria:resourceUsageState <https://w3id.org/noria/kos/Resource/LifecycleState/Active> ;
+  rdfs:label "Virtual Server 1" .
+
+# Connector Node: Network Interface connecting Resource and Network Link
+<https://example.com/NetworkInterface/eth0> a noria:NetworkInterface ;
+  rdfs:label "eth0" ;
+  rdfs:comment "Ethernet interface of Virtual Server 1." ;
+  noria:networkInterfaceType "physical" ;
+  noria:networkInterfaceOf <https://example.com/Resource/VirtualServer1> ;
+  noria:networkInterfaceConnects <https://example.com/NetworkLink/Link1> .
+
+# Intermediary Node: Network Link connecting two resources
+<https://example.com/NetworkLink/Link1> a noria:NetworkLink ;
+  rdfs:label "Link1" ;
+  rdfs:comment "Optical fiber link between core router and virtual server." ;
+  noria:networkLinkId "NL-001" ;
+  noria:networkLinkType "Optical Fiber" ;
+  noria:networkLinkInstallationDate "2022-01-15T10:00:00"^^xsd:dateTime ;
+  noria:networkLinkTerminationResourceOrigin <https://example.com/Resource/RouterCore> ;
+  noria:networkLinkTerminationResourceDestination <https://example.com/Resource/VirtualServer1> .
+
+# Multiplex Node: Application with multiple modules
+<https://example.com/Application/CRM> a noria:Application ;
+  rdfs:label "Customer Relationship Management System" ;
+  rdfs:comment "Application managing customer data and interactions." ;
+  noria:applicationModelIdentifier "CRM-Model-2023" ;
+  noria:applicationNumericalIdentifier 101 ;
+  noria:applicationShortIdentifier "CRM" ;
+  noria:applicationType <https://w3id.org/noria/kos/application/type/BusinessApplication> ;
+  noria:applicationBusinessImportance <https://w3id.org/noria/kos/application/business-importance/High> ;
+  noria:applicationFunctionalDomain "Customer Management" ;
+  noria:applicationFunctionalSubDomain "Sales and Support" .
+
+<https://example.com/ApplicationModule/CRM-Frontend> a noria:ApplicationModule ;
+  rdfs:label "CRM Frontend Module" ;
+  noria:applicationModuleIdentifier "CRM-FE" ;
+  noria:applicationModuleName "CRM Frontend" ;
+  noria:applicationModuleOf <https://example.com/Application/CRM> ;
+  noria:applicationModuleStatus <https://w3id.org/noria/kos/application/status/Operational> ;
+  noria:applicationModuleSlaLevel <https://w3id.org/noria/kos/application/sla-level/Gold> ;
+  noria:applicationModuleHotlineEnabled true ;
+  noria:applicationModuleSupportGroup <https://example.com/Org/SupportTeam> ;
+  noria:applicationModuleSupportLeader <https://example.com/Agent/SupportLead> .
+
+# Super Node: Organization acting as super node
+<https://example.com/Org/SupportTeam> a org:OrganizationalUnit ;
+  rdfs:label "Support Team"@en ;
+  rdfs:comment "Support team responsible for application modules."@en .
+
+<https://example.com/Agent/SupportLead> a foaf:Agent ;
+  rdfs:label "Support Team Lead"@en ;
+  rdfs:comment "Lead responsible for support activities."@en .
+
+# Additional Nodes to ensure all nodes are linked
+<https://example.com/Locus/Room314> a noria:Locus ;
+  rdfs:label "Room 314"@en ;
+  rdfs:comment "Server room 314 in the main building."@en .
+
+<https://example.com/Resource/Server1> a noria:Resource ;
+  rdfs:label "Server 1"@en ;
+  rdfs:comment "Application server hosting critical services."@en ;
+  noria:resourceHostName "server1" ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/Server> ;
+  noria:locatedAtLocus <https://example.com/Locus/Room314> ;
+  noria:resourceSerialNumber "SN-654321" ;
+  noria:resourceUsageState <https://w3id.org/noria/kos/Resource/LifecycleState/Active> .
+
+<https://example.com/NetworkLink/Link2> a noria:NetworkLink ;
+  rdfs:label "Link2" ;
+  rdfs:comment "Backup link between server and core router." ;
+  noria:networkLinkId "NL-002" ;
+  noria:networkLinkType "Ethernet" ;
+  noria:networkLinkInstallationDate "2022-02-20T09:00:00"^^xsd:dateTime ;
+  noria:networkLinkTerminationResourceOrigin <https://example.com/Resource/Server1> ;
+  noria:networkLinkTerminationResourceDestination <https://example.com/Resource/RouterCore> .
+
+<https://example.com/Resource/AgentSupport> a foaf:Agent ;
+  rdfs:label "Support Agent"@en ;
+  rdfs:comment "Agent responsible for support activities."@en .
+
+<https://example.com/Resource/Customer> a foaf:Agent ;
+  rdfs:label "Customer"@en ;
+  rdfs:comment "Customer entity involved in the network."@en .
+
+# All nodes are linked via properties, no isolated nodes present.

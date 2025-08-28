@@ -9,7 +9,6 @@ from pyvis.network import Network
 import networkx as nx
 from networkx.classes.function import density, degree_histogram, number_of_selfloops
 from networkx import average_degree_connectivity
-from merge_ttl_files.utils import 
 
 import rdflib
 
@@ -84,7 +83,6 @@ def populate_graph(g,graph,digraph):
         
         if last_part_pred in datatypeproperties:
                 #print(f'{last_part_pred} in DTP' )
-
 
         if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type)
                                             and (pred != rdfs.isDefinedBy)):

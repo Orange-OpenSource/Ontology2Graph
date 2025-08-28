@@ -72,9 +72,9 @@ def check_ttl(file_result, bad_file_result, bad_path_result,merged):
             log.close()
     else:
     # make a copy of right files
-        folder_path = f'{os.path.dirname(file_result)}/raw_file'
-        os.makedirs(folder_path, exist_ok=True)
-        shutil.copy(file_result,folder_path)
+        #folder_path = f'{os.path.dirname(file_result)}/raw_file'
+        #os.makedirs(folder_path, exist_ok=True)
+        #shutil.copy(file_result,folder_path)
         print(f'\nFILE {Path(file_result).name} has been generated succesffully without errors')
 
     if merged==1:
