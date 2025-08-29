@@ -7,41 +7,36 @@ from pathlib import Path
 from merge_ttl_files.utils.utils_merge import rename_duplicates_nodes,remove_duplicate_prefix
 from merge_ttl_files.utils.utils_merge import find_duplicates_nodes,check_ttl
 
-def merge_ttl(path,remain_occ,ontology):
+def merge_ttl(path_result,path_merged,ontology,nbr_occ_max):
     '''function to merge ttl files'''
 
     #path_result=f'{PATH}/merged_graph/'
-    path_result=f'{path}/merged_graph/'
-    merged_file=f'{path_result}/merged_graph_{remain_occ}.ttl'
-    merged_ttl_temp=f'{path_result}/merged_ttl_temp.ttl'
+    #path_result=f'{path}/merged_graph'
+    #merged_file=f'{path_merged}/merged_graph_{remain_occ}.ttl'
+    #merged_ttl_temp=f'{path_result}/merged_ttl_temp.ttl'
     #merged_ttl_final=f'{path_result}/merged_ttl_final.ttl'
 
     bad_path_result=f'{path_result}/bad_Turtle_Syntax'
     bad_merged_file=f'{bad_path_result}/merged_graph_BAD.ttl'
-    output_file_temp=f'{path_result}temp.ttl'
+    #output_file_temp=f'{path_result}/temp.ttl'
 
     #Merge the ttl file
-    all_graphs = [f.name for f in Path(path).iterdir() if f.is_file()]
+    #all_graphs = [f.name for f in Path(path_result).iterdir() if f.is_file()]
     os.makedirs(f'{path_result}',exist_ok=True)
 
-    with open(merged_ttl_temp, 'w', encoding='utf-8') as m_file:
-        for filename in all_graphs:
+    #with open(merged_file, 'w', encoding='utf-8') as m_file:
+    #    for filename in all_graphs:
             # Open each input file in read mode
-            with open(f'{path}/{filename}', 'r', encoding='utf-8') as infile:
+    #        with open(f'{path_result}/{filename}', 'r', encoding='utf-8') as infile:
                 #Read the content and write it to the output file
-                content = infile.read()
-                m_file.write(content)
-                m_file.write('\n')  # Adds a newline between files
+    #            content = infile.read()
+    #            m_file.write(content)
+    #            m_file.write('\n')  # Adds a newline between
+    #    print('m_file',m_file)
 
     #manage duplicate nodes in ttl files
-    duplicates=find_duplicates_nodes(path,ontology)
-    rename_duplicates_nodes(path,duplicates,remain_occ,merged_file)
-
-    #remove old files in the merge folfer
-    if Path(path_result).exists() and Path(path_result).is_dir():
-        for files in Path(path_result).iterdir():
-            if files.is_file():
-                files.unlink()
+    duplicates=find_duplicates_nodes(path_result,ontology)
+    rename_duplicates_nodes(path_result,path_merged,duplicates,nbr_occ_max)
 
     #Merge the ttl file
     #all_graphs = [f.name for f in Path(path).iterdir() if f.is_file()]
@@ -57,7 +52,12 @@ def merge_ttl(path,remain_occ,ontology):
     #            outfile.write('\n')  # Adds a newline between files
 
     # manage prefix in merged file
-    remove_duplicate_prefix(output_file_temp,merged_file)
+
+    all_merged_files = [f.name for f in Path(path_merged).iterdir() if f.is_file()]
+
+    for merged_file in all_merged_files:
+        remove_duplicate_prefix(Path(path_merged)/merged_file)
+        check_ttl(Path(path_merged)/merged_file,bad_merged_file,bad_path_result,1)
 
     # restore ttl file
     #for file in glob.glob(os.path.join(path, '*.ttl')):
@@ -71,6 +71,6 @@ def merge_ttl(path,remain_occ,ontology):
     #        shutil.copy2(file, dst_folder / file.name)
 
     # validate ttl syntax
-    check_ttl(merged_file,bad_merged_file,bad_path_result,1)
+    #check_ttl(merged_file,bad_merged_file,bad_path_result,1)
 
-    return path_result
+    #return path_result

@@ -9,17 +9,18 @@ import datetime
 from pathlib import Path
 from generate_ttl_files.utils.utils_gen import query_llm, storing_results, check_ttl
 
-def generate_ttl(nbr_ttl):
+def generate_ttl(path_gen,path_result,nbr_ttl,model):
     '''function to generate ttl files'''
 
     ## SET constant ##
 
     # PATH constant where are stored the needed ressources, prompt, ontology and graph
-    path=Path(f'{os.getcwd()}/generate_ttl_files')
+    #path=Path(f'{os.getcwd()}/generate_ttl_files')
+    #path_gen=Path(f'{path}/generate_ttl_files')
     #PATH=f'{os.getcwd()}/DIGITAL_TWIN/gengraphllm' # when using crontab
-    path_ontology=f'{path}/ontologies'
-    path_prompt=f'{path}/prompts'
-    path_graph=f'{path}/graph'
+    path_ontology=f'{path_gen}/ontologies'
+    path_prompt=f'{path_gen}/prompts'
+    path_graph=f'{path_gen}/graph'
 
     ## PROMPT_TYPE to choose ##
     prompt_type='First_prompt'
@@ -31,20 +32,20 @@ def generate_ttl(nbr_ttl):
     #ONTOLOGY='pygraph'
 
     ## choose MODEL ##
-    file_model = f'{path}/model/models.txt'
+    #file_model = f'{path_gen}/model/models.txt'
 
-    model_list = []
+    #model_list = []
     # Open the text file
-    with open(file_model, mode='r',encoding='utf-8') as file:
-        lines = file.readlines()
-        for line in lines:
-            cleaned_line = line.strip()
-            model_list.append(cleaned_line)
+    #with open(file_model, mode='r',encoding='utf-8') as file:
+    #    lines = file.readlines()
+    #    for line in lines:
+    #        cleaned_line = line.strip()
+    #        model_list.append(cleaned_line)
 
-    model = model_list[5]
-    date = datetime.datetime.now().strftime("%Y-%m-%d")
+    #model = model_list[5]
+    #date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    path_result = f'{path.parent}/results/synthetics_graphs/{date}/{model}'
+    #path_result = f'{path_gen.parent}/results/synthetics_graphs/{date}/{model}'
     bad_path_result = f'{path_result}/Bad_Turtle_Syntax'
     temp_file = f'{path_result}/temp.ttl'
 
@@ -58,7 +59,7 @@ def generate_ttl(nbr_ttl):
     #with open(f'{PATH_GRAPH}/full_graph.ttl','rt',encoding='utf-8') as graph:
     #    GRAPH = ','.join(str(x) for x in graph.readlines())
 
-    os.makedirs(f'{path_result}/', exist_ok=True)
+    os.makedirs(f'{path_result}', exist_ok=True)
     os.makedirs(f'{bad_path_result}', exist_ok=True)
 
     #arg = sys.argv[1:]
@@ -99,4 +100,4 @@ def generate_ttl(nbr_ttl):
 
         number_of_graph += 1
 
-    return path_result, f'{path_ontology}/Noria.ttl'
+    return f'{path_ontology}/Noria.ttl'
