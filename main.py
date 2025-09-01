@@ -7,7 +7,7 @@ import shutil
 import datetime
 import subprocess
 from generate_ttl_files.generate_ttl import generate_ttl
-from merge_ttl_files.merge_ttl import merge_ttl
+#from merge_ttl_files.merge_ttl import merge_ttl
 from merge_ttl_files.utils.utils_merge import max_node_occ_value
 
 
@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
     #path_result=f'{path}/merged_graph'
 
-    subprocess.run(['clear'],check=True)
+    #subprocess.run(['clear'],check=True)
 
     print('TTL FILE GENERATION IS IN PROGRESS')
 
@@ -45,6 +45,11 @@ if __name__ == '__main__':
     #save ttl file in another folder
     SAVED_TTL_FILES = Path(f'{Path(PATH_RESULT)}/saved_ttl_files')
     SAVED_TTL_FILES.mkdir(parents=True, exist_ok=True)
+
+    #remove previous files
+    for file in SAVED_TTL_FILES.iterdir():
+        if file.is_file():
+            file.unlink()
 
     for file in Path(PATH_RESULT).iterdir():
         if file.is_file():
@@ -64,12 +69,12 @@ if __name__ == '__main__':
     # find max number of duplicates nodes
     max_node_occ_value = max_node_occ_value(PATH_RESULT,ONTOLOGY)
 
-    #print('max_node_occ_value:', max_node_occ_value)
+    print('max_node_occ_value:', max_node_occ_value)
 
     nbr_occ_max=max_node_occ_value[0]
     node_max_occ=max_node_occ_value[1]
 
-    #print('max_node_occ_value',max_node_occ_value)
+    print('max_node_occ_value',max_node_occ_value)
 
     if max_node_occ_value[1] != 'NULL':
         print(f'\nNode {node_max_occ} appears {nbr_occ_max} times in {nbr_occ_max} different TTL files\n')
@@ -78,14 +83,14 @@ if __name__ == '__main__':
         #REMAIN_OCC=0
 
         #while REMAIN_OCC != nbr_occ_max + 1:
-        merge_ttl(PATH_RESULT,PATH_MERGED,ONTOLOGY,nbr_occ_max)
+        #merge_ttl(PATH_RESULT,PATH_MERGED,ONTOLOGY,nbr_occ_max)
         #    REMAIN_OCC=REMAIN_OCC+1
         #merge_ttl(PATH_RESULT,PATH_MERGED,0,ONTOLOGY)
 
-        print('#### MERGING PROCESS ENDED ####\n')
-        print(f'MERGED FILES ARE STORED in : {PATH_RESULT} \n')
+        #print('#### MERGING PROCESS ENDED ####\n')
+        #print(f'MERGED FILES ARE STORED in : {PATH_RESULT} \n')
 
-    else:
-        print('#### MERGING PROCESS ENDED ####\n')
-        print('NO DUPLICATES NODES FOUND\n')
+    #else:
+        #print('#### MERGING PROCESS ENDED ####\n')
+        #print('NO DUPLICATES NODES FOUND\n')
         #path_result=merge_ttl(TTL_FOLDER,0,ONTOLOGY)

@@ -204,16 +204,19 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
     #for i,dup in enumerate(occ_dup):
     print('occ_dup',occ_dup)
     all_ttl_files = [f.name for f in Path(path_result).iterdir() if f.is_file()]
+    print(all_ttl_files)
 
     os.makedirs(Path(path_merged),exist_ok=True)
+    os.makedirs(f'{Path(path_result)}/ttl_file_without_dup',exist_ok=True)
+
+    path_ttl_file_without_dup=f'{Path(path_result)}/ttl_file_without_dup'
 
     remain_occ=0
-    nbr_ttl_file_tt=0
+    #nbr_ttl_file_tt=0
 
-    while remain_occ != nbr_occ_max + 1:
+    while remain_occ != int(nbr_occ_max) + 1:
 
         for dup in occ_dup:
-
             #number of ttl file to treat
             if remain_occ == 0:
                 nbr_ttl_file_tt=dup[1]
@@ -222,29 +225,89 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
             elif remain_occ != 0 and dup[1]<=remain_occ:
                 nbr_ttl_file_tt = 0
 
-            print('remain_occ',remain_occ)
+            print('remain_occ ',remain_occ)
+            print('nbr_occ_max ',nbr_occ_max)
 
             #with open(merged_file,'r',encoding='utf-8') as m_ttl:
             #    content=m_ttl.read()
             #j=0
+
+            #create new node name
             j=1
-            replacement=[]
+            new_nodes_name=[]
             print(f'dup[0] {dup[0]}, dup[1] {dup[1]}')
-            while j<dup[1]+1-remain_occ:
+            while j<dup[1]+1:
                 new_node=f'{dup[0]}_extra_node_{j}'
-                replacement.append(new_node)
+                new_nodes_name.append(new_node)
                 j = j +1
                 new_node=''
-            print('replacemnt',replacement)
+            print('new nodes names',new_nodes_name)
 
-            ttl_file_treated=0
+            #ttl_file_treated=0
+            print('nbr_ttl_file_tt',nbr_ttl_file_tt)
 
+            file_to_treat=[]
             for ttl_file in all_ttl_files :
-                with open(Path(path_result)/ttl_file,'r',encoding='utf-8') as file:
-                    content = file.read()
-                print('ttl_file_treated',ttl_file_treated)
-                print('nbr_ttl_file_tt',nbr_ttl_file_tt)
-                while ttl_file_treated != nbr_ttl_file_tt:
+                print('ttl_file',ttl_file)
+                with open(Path(path_result)/ttl_file,'r',encoding='utf-8') as infile:
+                    content=infile.read()
+                    if dup[0] in content and len(file_to_treat) != nbr_ttl_file_tt:
+                        print(f'{dup[0]} in {infile}')
+                        file_to_treat.append(ttl_file)
+                        print('len_ftt',len(file_to_treat))
+                        print('nbr_ttl_file_tt',nbr_ttl_file_tt)
+                infile.close()
+
+            print('file_to_treat',file_to_treat)
+
+            i=0
+            for file in file_to_treat:
+                print('file :',file)
+                print('new_nodes_name ',new_nodes_name[i])
+                with open(Path(path_result)/file,'r',encoding='utf-8') as infile:
+                    lines=infile.readlines()
+
+                with open(f'{Path(path_ttl_file_without_dup)}/New_{file}','w',encoding='utf-8') as outfile:
+                    for line in lines:
+                        if dup[0] in line:
+                            print('line :',line)
+                            print('dup[0]',dup[0])
+                            outfile.write(line.replace(dup[0],new_nodes_name[i]))
+                        else:
+                            outfile.write(line)
+                print(f'file, {infile} treated with, {new_nodes_name[i]}')
+                i=i+1
+                print('i',i)
+
+                #with open(Path(path_result)/file,'r',encoding='utf-8') as infile, open(f'{Path(path_result)}/New_{file}','w',encoding='utf-8') as outfile:
+                #    for line in infile:
+                #        if dup[0] in line:
+                #            print('line ',line)
+                #            outfile.write(line.replace(dup[0],new_nodes_name[i]))
+                #            print(line.replace(dup[0],new_nodes_name[i]))
+                #        else :
+                #            outfile.write(line)
+                #infile.close()
+                #outfile.close()
+                #print(f'file, {infile} treated with, {new_nodes_name[i]}')
+                #i = i + 1
+           #             print('i ',i)
+                            #content = file.read()
+                            #print('file :',file)
+
+           #for ttl_file in file_to_treat :
+           #     with open(Path(path_result)/ttl_file,'r',encoding='utf-8') as infile, open(f'{Path(path_result)}/New_{ttl_file}','w',encoding='utf-8') as outfile:
+           #         content=infile.read()
+           #         if dup[0] in content:
+           #             print(f'{dup[0]} in {infile}')
+           #             for line in infile:
+           #                 outfile.write(line.replace(dup[0],new_nodes_name[i]))
+           #                 print(f'file, {infile} treated with, {new_nodes_name[i]}')
+           #             i = i + 1
+           #             print('i ',i)
+                            #content = file.read()
+                            #print('file :',file)
+
                 #content = outfile.read()
                 #file.close()
             #compute the number of occurence of
@@ -256,38 +319,43 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
 
             #build new name for dup
                     #print('replacement :',replacement)
-                    count=0
-                    idx=0 #number of character
-                    result=''
-                    found=content.find(dup[0],idx)
-                    #print(found) #number of character until dup[0]
-                    if found != -1: #modify ttl content file
-                        # Append up to the found target
-                        result += content[idx:found]
-                        ttl_file_treated=ttl_file_treated+1
-                        # Append the appropriate replacement
-                        result += replacement[count]
-                        idx = found + len(dup[0])
-                        print('idx :',idx)
-                        print('found :',found)
-                        count += 1
+                        ##count=0
+                        ##idx=0 #number of character
+                        ##result=''
+                        ##found=content.find(dup[0],idx)
+                        ##print(found) #number of character until dup[0]
+                        ##if found != -1: #modify ttl content file
+                            # Append up to the found target
+                            ##result += content[idx:found]
+                            ##ttl_file_treated=ttl_file_treated+1
+                            # Append the appropriate replacement
+                            ##result += replacement[count]
+                            ##idx = found + len(dup[0])
+                            ##print('idx :',idx)
+                            ##print('found :',found)
+                            ##count += 1
+                            ##print('ttl_file_treated',ttl_file_treated)
+                            ##print('nbr_ttl_file_tt',nbr_ttl_file_tt)
 
         # Add the rest of the file (after last replacement)
-                        result += content[idx:]
+
+                            ##result += content[idx:]
         #print("resultb :",result)
 
-                        with open(Path(path_result)/ttl_file, "w",encoding='utf-8') as f:
-                            f.write(result)
+                        #with open(Path(path_result)/ttl_file, "w",encoding='utf-8') as f:
+                        #    f.write(result)
 
         #Merge the ttl file
         #all_graphs = [f.name for f in Path(path).iterdir() if f.is_file()]
 
+        all_new_ttl_files = [f.name for f in  Path(path_ttl_file_without_dup).iterdir() if f.is_file()]
+
         # merge mofified ttl file in an only one file
         merged_file=f'{path_merged}/merged_graph_{remain_occ}.ttl'
         with open(merged_file, 'w', encoding='utf-8') as m_file:
-            for filename in all_ttl_files:
+            for filename in all_new_ttl_files:
             # Open each input file in read mode
-                with open(f'{path_result}/{filename}', 'r', encoding='utf-8') as ttl_file:
+                with open(f'{path_ttl_file_without_dup}/{filename}', 'r', encoding='utf-8') as ttl_file:
                     # Read the content and write it to the output file
                     content = ttl_file.read()
                     m_file.write(content)
@@ -305,7 +373,9 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
             if file.is_file():
                 shutil.copy2(file, Path(saved_ttl_files).parent / file.name)
 
+        #path_ttl_file_without_dup=f'{Path(path_result)}/ttl_file_without_dup'
 
+        #shutil.rmtree(path_ttl_file_without_dup)
 
                 #for line in m_ttl:
                 #    idx=0
@@ -348,11 +418,11 @@ def max_node_occ_value(ttl_folder,ontology):
     occ_dup=occurence_duplicate(duplicate_nodes,ttl_folder)
 
     if occ_dup != []:
-        print(f'List of all the nodes that appeared in sevral ttl files : {occ_dup} ')
+        print(f'List of all the nodes that appeared in several ttl files : {occ_dup} ')
         m_n_o_v = max(sublist[1] for sublist in occ_dup)
-        print('Max number of occurence of nodes in TTL files:', m_n_o_v)
+        print('Max number of occurence of nodes in ttl files:', m_n_o_v)
         node_max_occ=[sublist[0] for sublist in occ_dup if sublist[1] == m_n_o_v]
-        print('Node that have the max number of occurence in TTL files :',node_max_occ)
+        print('Node that have the max number of occurence in ttl files :',node_max_occ)
 
     else:
         #print('NO DUPLICATES NODES FOUND')

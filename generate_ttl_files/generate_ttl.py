@@ -4,13 +4,29 @@
     the number of graph you want as an argumet. Several constant must be set directly in this script 
     before launching'''
 
+import argparse
 import os
 import datetime
 from pathlib import Path
+
 from generate_ttl_files.utils.utils_gen import query_llm, storing_results, check_ttl
+#from utils.utils_gen import query_llm, storing_results, check_ttl
 
 def generate_ttl(path_gen,path_result,nbr_ttl,model):
     '''function to generate ttl files'''
+
+#parser = argparse.ArgumentParser()
+#parser.add_argument("path_gen")
+#parser.add_argument("path_result")
+#parser.add_argument("nbr_ttl")
+#parser.add_argument("model")
+
+#args = parser.parse_args()
+
+#path_gen=args.path_gen
+#path_result=args.path_result
+#nbr_ttl=args.nbr_ttl
+#model=args.model
 
     ## SET constant ##
 
