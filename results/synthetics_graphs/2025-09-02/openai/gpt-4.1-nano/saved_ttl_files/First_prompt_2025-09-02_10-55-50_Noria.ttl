@@ -1,0 +1,127 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Hub Node: Central Management System
+<https://example.com/central-management> a noria:ManagedElement ;
+  rdfs:label "Central Management System"@en ;
+  rdfs:comment "The main control hub for network operations."@en ;
+  noria:elementManagedBy <https://example.com/NetworkOperationsTeam> .
+
+# High-Degree Node: Network Router
+<https://example.com/Router1> a noria:StructuralElement, noria:Resource ;
+  rdfs:label "Router1"@en ;
+  rdfs:comment "Core network router handling multiple connections."@en ;
+  noria:structuralElementDistinguishedName "Router1-DN" ;
+  noria:resourceHostName "router1.company.com" ;
+  noria:locatedAtLocus <https://example.com/Locus1> ;
+  noria:resourceManagedBy <https://example.com/NetworkOpsDept> ;
+  noria:resourceType [ a skos:Concept ; skos:inScheme <kos/Resource/type> ; skos:hasTopConcept <https://example.com/ResourceTypeRouter> ] .
+
+# Central Node: Application Server
+<https://example.com/AppServerA> a noria:Application ;
+  rdfs:label "Application Server A"@en ;
+  rdfs:comment "Main application server for customer data processing."@en ;
+  noria:applicationModelIdentifier "AppModelX" ;
+  noria:applicationShortIdentifier "AppSrvA" ;
+  noria:resourceManagedBy <https://example.com/ITSupportTeam> ;
+  noria:resourceForApplication <https://example.com/CustomerDataApp> .
+
+# Connector Node: Network Interface
+<https://example.com/eth0> a noria:NetworkInterface ;
+  rdfs:label "eth0"@en ;
+  rdfs:comment "Primary network interface of Router1."@en ;
+  noria:networkInterfaceType [ a skos:Concept ; skos:inScheme <kos/NetworkInterface/type> ; skos:hasTopConcept <https://example.com/Physical> ] ;
+  noria:networkInterfaceOperationalStatus [ a skos:Concept ; skos:inScheme <kos/Resource/OperationalState> ; skos:hasTopConcept <https://example.com/up> ] ;
+  noria:networkInterfaceConnects <https://example.com/Link1> ;
+  noria:networkInterfaceOf <https://example.com/Router1> .
+
+# Intermediary Node: Network Link
+<https://example.com/Link1> a noria:NetworkLink ;
+  rdfs:label "Link1"@en ;
+  rdfs:comment "Optical fiber link between Router1 and Switch1."@en ;
+  noria:networkLinkId "FiberLink-01" ;
+  noria:networkLinkType "Optical fiber" ;
+  noria:networkLinkInstallationDate "2022-01-15T10:00:00"^^xsd:dateTime ;
+  noria:networkLinkTerminationResource <https://example.com/Router1> ;
+  noria:networkLinkTerminationResourceDestination <https://example.com/Switch1> .
+
+# Multiplex Node: Resource with multiple connections
+<https://example.com/ServerX> a noria:Resource ;
+  rdfs:label "ServerX"@en ;
+  rdfs:comment "Virtualized server hosting multiple applications."@en ;
+  noria:resourceHostName "serverx.company.com" ;
+  noria:resourceType [ a skos:Concept ; skos:inScheme <kos/Resource/type> ; skos:hasTopConcept <https://example.com/VirtualServer> ] ;
+  noria:locatedAtLocus <https://example.com/Locus2> ;
+  noria:resourceManagedBy <https://example.com/ITDept> .
+
+<https://example.com/ServerX> noria:resourceForApplication <https://example.com/FinanceApp> .
+
+# Super Node: Application with high importance
+<https://example.com/FinanceApp> a noria:Application ;
+  rdfs:label "Finance Application"@en ;
+  rdfs:comment "Critical financial data processing application."@en ;
+  noria:applicationModelIdentifier "FinSysV2" ;
+  noria:applicationShortIdentifier "FinApp" ;
+  noria:applicationBusinessImportance [ a skos:Concept ; skos:inScheme <kos/application/business-importance> ; skos:hasTopConcept <https://example.com/High> ] ;
+  noria:applicationType [ a skos:Concept ; skos:inScheme <kos/application/type> ; skos:hasTopConcept <https://example.com/CustomerFacingService> ] ;
+  noria:resourceManagedBy <https://example.com/FinanceDept> .
+
+# Connector Node: Intermediary for event reporting
+<https://example.com/EventRecord1> a noria:EventRecord ;
+  rdfs:label "Router1 Interface Up"@en ;
+  rdfs:comment "Event indicating Router1 interface eth0 is up."@en ;
+  noria:loggingTime "2023-10-01T12:00:00"^^xsd:dateTime ;
+  noria:logText "Interface eth0 on Router1 is now operational." ;
+  noria:logOriginatingManagedObject <https://example.com/eth0> ;
+  noria:logOriginatingManagementSystem <https://example.com/NMS1> ;
+  noria:logOriginatingAgent <https://example.com/NetworkAdmin> ;
+  noria:alarmSeverity [ a skos:Concept ; skos:inScheme <Notification/Severity/PerceivedSeverity> ; skos:hasTopConcept <https://example.com/Major> ] .
+
+# Additional entities to ensure nodes are linked
+<https://example.com/NetworkOpsDept> a org:OrganizationalUnit ;
+  rdfs:label "Network Operations Department"@en ;
+  rdfs:comment "Department responsible for network infrastructure."@en .
+
+<https://example.com/ITSupportTeam> a org:OrganizationalUnit ;
+  rdfs:label "IT Support Team"@en ;
+  rdfs:comment "Team providing application and infrastructure support."@en .
+
+<https://example.com/FinanceDept> a org:OrganizationalUnit ;
+  rdfs:label "Finance Department"@en ;
+  rdfs:comment "Department managing financial applications."@en .
+
+<https://example.com/NetworkAdmin> a foaf:Agent ;
+  rdfs:label "Network Administrator"@en ;
+  rdfs:comment "Person responsible for network configuration."@en .
+
+<https://example.com/CustomerDataApp> a noria:Application ;
+  rdfs:label "Customer Data Processing App"@en ;
+  rdfs:comment "Application handling customer data."@en .
+
+<https://example.com/ResourceTypeRouter> a skos:Concept ;
+  rdfs:label "Router"@en ;
+  skos:inScheme <kos/Resource/type> ;
+  skos:hasTopConcept <https://example.com/Router> .
+
+<https://example.com/VirtualServer> a skos:Concept ;
+  rdfs:label "Virtual Server"@en ;
+  skos:inScheme <kos/Resource/type> ;
+  skos:hasTopConcept <https://example.com/VirtualServer> .
+
+<https://example.com/High> a skos:Concept ;
+  rdfs:label "High"@en ;
+  skos:inScheme <kos/application/business-importance> ;
+  skos:hasTopConcept <https://example.com/High> .
+
+<https://example.com/CustomerFacingService> a skos:Concept ;
+  rdfs:label "Customer Facing Service"@en ;
+  skos:inScheme <kos/application/type> ;
+  skos:hasTopConcept <https://example.com/CustomerFacingService> .
+
+# End of graph

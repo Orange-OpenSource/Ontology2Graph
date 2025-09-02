@@ -40,6 +40,16 @@ def storing_results(response,temp_file,file_result):
         filetemp.write(response.choices[0].message.content)
         filetemp.close()
 
+    #with open(temp_file, 'r',encoding='utf-8') as infile, open(file_result, 'w',encoding='utf-8')\
+        # as outfile:
+    #    for line in infile:
+    #        if line.startswith('`'):
+    #            continue
+    #        cleaned_line = line.replace('<', '').replace('>', '')
+    #        outfile.write(cleaned_line)
+    #    infile.close()
+    #    outfile.close()
+
     #Remove lines start with '
     with open(temp_file,'r',encoding='utf-8') as file:
         lines = file.readlines()

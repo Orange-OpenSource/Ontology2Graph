@@ -77,7 +77,7 @@ if __name__ == '__main__':
     print('max_node_occ_value',max_node_occ_value)
 
     if max_node_occ_value[1] != 'NULL':
-        print(f'\nNode {node_max_occ} appears {nbr_occ_max} times in {nbr_occ_max} different TTL files\n')
+        print(f'\nNode {node_max_occ} appears {nbr_occ_max} times in {nbr_occ_max} TTL files\n')
         #print(nbr_occ_max)
 
         #REMAIN_OCC=0

@@ -78,7 +78,7 @@ rename_duplicates_nodes(path_result,path_merged,duplicates,nbr_occ_max)
 
 all_merged_files = [f.name for f in Path(path_merged).iterdir() if f.is_file()]
 
-for merged_file in all_merged_files:        
+for merged_file in all_merged_files:
     remove_duplicate_prefix(Path(path_merged)/merged_file)
     check_ttl(Path(path_merged)/merged_file,bad_merged_file,bad_path_result,1)
 
