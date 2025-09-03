@@ -105,7 +105,7 @@ def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD
         else :
             last_part_subj=get_last_folder_part(subj,'/')
             last_part_obj=get_last_folder_part(obj,'/')
-            #print({last_part_subj},{last_part_pred},{last_part_obj})
+            #print({last_part_subj},{last_part_pred},{last_part_obj})try:
             graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
             digraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
 
@@ -147,7 +147,7 @@ def set_the_graph(file,log_html_folder):
     g.parse(f'{file}', format='turtle')
 
     ### set logger ###
-    #directory=Path(file).parent.resolve()
+    #directory=Path(file).parent.resolve()try:
     log_file=f'{Path(log_html_folder)}/URI_and_LITERAL.log'
 
     logger_file1 = logging.getLogger('URI_and_LITERAL')

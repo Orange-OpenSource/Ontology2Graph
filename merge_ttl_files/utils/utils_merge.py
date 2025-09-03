@@ -258,8 +258,7 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
             with open(Path(path_result)/ttl_file,'r',encoding='utf-8') as infile, \
                 open(f'{Path(path_ttl_file_without_dup)}/{remain_occ}/New_{remain_occ}_{ttl_file}',\
                     'w',encoding='utf-8') as outfile:
-                
-                
+
                 print('treated_ttl_file_index',treated_ttl_file_index)
                 for line in infile:
                     dup_treated=False
@@ -283,7 +282,7 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
                         outfile.write(line)
                         print(line)
                     #    treated_line.append(line)
-                        
+
             if dup_treated is True:
                 nbr_file_treated=nbr_file_treated+1
                 print("count",nbr_file_treated)
@@ -296,7 +295,7 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
         all_new_ttl_files = [f for f in  ttl_file_folder.iterdir() if f.is_file()]
 
         # merge mofified ttl file in an only one file
-        merged_file=f'{path_merged}/{remain_occ}/merged_graph_{remain_occ}.ttl'
+        merged_file=f'{path_merged}/merged_graph_{remain_occ}.ttl'
         print(merged_file)
         with open(merged_file, 'w', encoding='utf-8') as m_file:
             for file in all_new_ttl_files:

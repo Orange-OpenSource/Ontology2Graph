@@ -8,7 +8,8 @@ import shutil
 import logging
 import subprocess
 from pathlib import Path
-from utils.utils_display import visu_graph, populate_graph,log_kpis,set_the_graph
+#from utils.utils_display import visu_graph, populate_graph,log_kpis,set_the_graph
+from utils.utils import visu_graph, populate_graph,log_kpis,set_the_graph
 
 arg = sys.argv[1:]
 PATH= arg[0]

@@ -46,10 +46,7 @@ BAD_PATH_RESULT=f'{path_result}/bad_Turtle_Syntax'
     #Merge the ttl file
     #all_graphs = [f.name for f in Path(path_result).iterdir() if f.is_file()]
 
-try:
-    os.makedirs(f'{path_result}',exist_ok=True)
-except OSError as e:
-    print(f"Error creating directory: {e}")
+os.makedirs(f'{path_result}',exist_ok=True)
 
     #with open(merged_file, 'w', encoding='utf-8') as m_file:
     #    for filename in all_graphs:

@@ -81,8 +81,8 @@ def populate_graph(g,graph,digraph):
         #print(pred)
         last_part_pred=get_last_folder_part(pred,'/')
         last_part_pred2=Path(pred).name
-        print(last_part_pred)
-        print(last_part_pred2)
+        #print(last_part_pred)
+        #print(last_part_pred2)
 
             #if last_part_pred in datatypeproperties:
                 #print(f'{last_part_pred} in DTP' )
@@ -90,7 +90,7 @@ def populate_graph(g,graph,digraph):
 
         if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type)
                                             and (pred != rdfs.isDefinedBy)):
-            print(subj, pred, obj)
+            #print(subj, pred, obj)
             digraph.add_edge(str(subj), str(obj), label=str(pred))
             graph.add_edge(str(subj), str(obj), label=str(pred))
 
