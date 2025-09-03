@@ -1,0 +1,174 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<https://example.com/entity1> a noria:ManagedElement ;
+  rdfs:label "Core Router"@en ;
+  rdfs:comment "High-degree hub node in the network, central for routing."@en ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+<https://example.com/Org1> a org:Organization ;
+  rdfs:label "Network Operations Center"@en ;
+  rdfs:comment "Main organizational hub managing critical network infrastructure."@en .
+
+<https://example.com/Entity2> a noria:StructuralElement ;
+  rdfs:label "Switch A"@en ;
+  rdfs:comment "Connector node linking core router to distribution switches."@en ;
+  noria:structuralElementObservable noria:structuralElementObservableData ;
+  noria:structuralObservableOf <https://example.com/entity1> .
+
+<https://example.com/Entity3> a noria:StructuralElement ;
+  rdfs:label "Distribution Switch"@en ;
+  rdfs:comment "Intermediary node connecting core router to access points."@en ;
+  noria:structuralElementObservable noria:structuralElementObservableData ;
+  noria:structuralObservableOf <https://example.com/Entity2> .
+
+<https://example.com/Entity4> a noria:StructuralElement ;
+  rdfs:label "Access Point"@en ;
+  rdfs:comment "Connector node providing user access."@en ;
+  noria:structuralElementObservable noria:structuralElementObservableData ;
+  noria:structuralObservableOf <https://example.com/Entity3> .
+
+<https://example.com/HubNode> a noria:StructuralElement ;
+  rdfs:label "Main Hub"@en ;
+  rdfs:comment "Super node with high connectivity, central for data flow."@en ;
+  noria:structuralElementObservable noria:structuralElementObservableData ;
+  noria:structuralObservableOf <https://example.com/entity1> .
+
+<https://example.com/ConnectorNode> a noria:StructuralElement ;
+  rdfs:label "Connector Node"@en ;
+  rdfs:comment "Connector node linking multiple entities, multiplex node."@en ;
+  noria:structuralElementObservable noria:structuralElementObservableData ;
+  noria:structuralObservableOf <https://example.com/Entity4> .
+
+<https://example.com/IntermediaryNode> a noria:StructuralElement ;
+  rdfs:label "Intermediary Node"@en ;
+  rdfs:comment "Intermediary node facilitating data transfer between hubs."@en ;
+  noria:structuralElementObservable noria:structuralElementObservableData ;
+  noria:structuralObservableOf <https://example.com/Entity3> .
+
+<https://example.com/MultiplexNode> a noria:StructuralElement ;
+  rdfs:label "Multiplex Node"@en ;
+  rdfs:comment "Node with multiple roles, connecting various network segments."@en ;
+  noria:structuralElementObservable noria:structuralElementObservableData ;
+  noria:structuralObservableOf <https://example.com/Entity2> .
+
+<https://example.com/SuperNode> a noria:StructuralElement ;
+  rdfs:label "Super Node"@en ;
+  rdfs:comment "Super node with super connectivity, forming a super network."@en ;
+  noria:structuralElementObservable noria:structuralElementObservableData ;
+  noria:structuralObservableOf <https://example.com/entity1> .
+
+<https://example.com/Entity5> a noria:FunctionalElement ;
+  rdfs:label "Monitoring Application"@en ;
+  rdfs:comment "Application monitoring network health."@en ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+<https://example.com/Entity6> a noria:Application ;
+  rdfs:label "Network Monitoring System"@en ;
+  rdfs:comment "Application responsible for network health monitoring."@en ;
+  noria:applicationType <https://w3id.org/noria/kos/application/type/Monitoring> ;
+  noria:applicationShortIdentifier "NetMonSys" ;
+  noria:applicationModelIdentifier "NM-2023" ;
+  noria:applicationNumericalIdentifier 101 ;
+  noria:applicationStatus <https://w3id.org/noria/kos/application/status/Operational> ;
+  noria:applicationSlaLevel <https://w3id.org/noria/kos/application/sla-level/Gold> ;
+  noria:applicationFunctionalDomain "Network Management" .
+
+<https://example.com/Entity7> a noria:Service ;
+  rdfs:label "Data Transmission Service"@en ;
+  rdfs:comment "Service providing data transfer across network segments."@en ;
+  noria:serviceType <https://w3id.org/noria/kos/service/type/EndToEnd> ;
+  noria:serviceRelatedApplication <https://example.com/Entity6> .
+
+<https://example.com/Entity8> a noria:TroubleTicket ;
+  rdfs:label "Network Outage Ticket"@en ;
+  rdfs:comment "Ticket reporting network outage."@en ;
+  noria:troubleTicketSeverity <https://w3id.org/noria/kos/TroubleTicket/severity/Critical> ;
+  noria:troubleTicketType <https://w3id.org/noria/kos/TroubleTicket/type/Failure> ;
+  noria:troubleTicketOrigin <https://example.com/Entity4> ;
+  noria:troubleTicketImpacts <https://example.com/Entity7> ;
+  noria:troubleTicketStatusCurrent <https://w3id.org/noria/kos/TroubleTicket/status/InProgress> ;
+  noria:troubleTicketDetectionDateTime "2024-03-15T10:30:00Z"^^xsd:dateTime .
+
+<https://example.com/Entity9> a noria:EventRecord ;
+  rdfs:label "Network Failure Event"@en ;
+  rdfs:comment "Event indicating network failure."@en ;
+  noria:loggingTime "2024-03-15T10:30:00Z"^^xsd:dateTime ;
+  noria:logText "Critical network failure detected on core router."@en ;
+  noria:logOriginatingManagedObject <https://example.com/entity1> ;
+  noria:logOriginatingManagementSystem <https://example.com/NetSys> ;
+  noria:logOriginatingAgent <https://example.com/Agent1> ;
+  noria:alarmSeverity <https://w3id.org/noria/kos/Notification/Severity/Critical> ;
+  noria:alarmProposedRepairAction <https://example.com/Action1> .
+
+<https://example.com/Agent1> a foaf:Agent ;
+  rdfs:label "Network Engineer"@en ;
+  rdfs:comment "Engineer responsible for core network."@en .
+
+<https://example.com/Action1> a pep:Procedure ;
+  rdfs:label "Restart Core Router"@en ;
+  rdfs:comment "Procedure to restart core router to recover from failure."@en .
+
+<https://example.com/Resource1> a noria:Resource ;
+  rdfs:label "Core Router"@en ;
+  rdfs:comment "Main core router in the network."@en ;
+  noria:resourceSerialNumber "CR-001" ;
+  noria:resourceHostName "core-router-1" ;
+  noria:resourceLogisticId "LR-CR-01" ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/Router> ;
+  noria:resourceInstallationDate "2020-01-15T00:00:00Z"^^xsd:dateTime ;
+  noria:resourceUsageState <https://w3id.org/noria/kos/Resource/LifecycleState/Active> ;
+  noria:resourceProductModel <https://example.com/Model1> .
+
+<https://example.com/Model1> a noria:ProductModel ;
+  rdfs:label "Model X1000"@en ;
+  rdfs:comment "High-performance router model."@en ;
+  noria:productManufacturedBy <https://orgs/RouterMakers> .
+
+<https://orgs/RouterMakers> a org:Organization ;
+  rdfs:label "Router Manufacturing Inc."@en .
+
+<https://example.com/NetSys> a noria:Application ;
+  rdfs:label "Network Management System"@en ;
+  rdfs:comment "System monitoring network health."@en ;
+  noria:applicationType <https://w3id.org/noria/kos/application/type/Monitoring> ;
+  noria:applicationShortIdentifier "NetMon" .
+
+<https://example.com/Action1> a pep:Procedure ;
+  rdfs:label "Restart Router"@en ;
+  rdfs:comment "Procedure to restart the core router."@en .
+
+<https://example.com/Action2> a pep:Procedure ;
+  rdfs:label "Run Diagnostics"@en ;
+  rdfs:comment "Procedure to run diagnostics on core router."@en .
+
+<https://example.com/Entity10> a noria:Application ;
+  rdfs:label "Diagnostic Tool"@en ;
+  rdfs:comment "Application used for diagnostics."@en ;
+  noria:applicationType <https://w3id.org/noria/kos/application/type/Diagnostics> .
+
+<https://example.com/Entity11> a noria:TroubleTicket ;
+  rdfs:label "Configuration Issue Ticket"@en ;
+  rdfs:comment "Ticket reporting configuration issues."@en ;
+  noria:troubleTicketSeverity <https://w3id.org/noria/kos/TroubleTicket/severity/Major> ;
+  noria:troubleTicketType <https://w3id.org/noria/kos/TroubleTicket/type/Configuration> ;
+  noria:troubleTicketOrigin <https://example.com/Entity4> ;
+  noria:troubleTicketImpacts <https://example.com/Entity6> .
+
+<https://example.com/Entity12> a noria:EventRecord ;
+  rdfs:label "Configuration Change Event"@en ;
+  rdfs:comment "Event indicating configuration change."@en ;
+  noria:loggingTime "2024-03-15T09:45:00Z"^^xsd:dateTime ;
+  noria:logText "Configuration changed on core router."@en ;
+  noria:logOriginatingManagedObject <https://example.com/entity1> ;
+  noria:logOriginatingManagementSystem <https://example.com/NetSys> ;
+  noria:logOriginatingAgent <https://example.com/Agent1> .
+
+# End of graph

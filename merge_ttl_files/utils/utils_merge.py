@@ -58,7 +58,7 @@ def check_ttl(path_merged,bad_path_result,merged):
     while count != remain_occ:
 
         path_merged_count=f'{path_merged}/{count}'
-        merged_file_list = [f.name for f in Path(f'{path_merged}/{count}').iterdir() if f.is_file()]
+        merged_file_list = [f.name for f in Path(path_merged_count).iterdir() if f.is_file()]
         print(merged_file_list)
         merged_file=f'{path_merged_count}/{merged_file_list[0]}'
 
@@ -66,7 +66,7 @@ def check_ttl(path_merged,bad_path_result,merged):
         ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
         stdout, stderr = ttlvalidator.communicate()
         if merged==1:
-            print(f'Merged graph : Turtle validator Result: {stdout},{stderr}\n')
+            print(f'Merged graph {Path(merged_file).name} : Turtle validator Result: {stdout},{stderr}\n')
         else:
             print(f'Turtle validator Result: {stdout}, {stderr}')
 
@@ -247,8 +247,7 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
 
         for ttl_file in all_ttl_files :
 
-            treated_line=[]
-            file_updated=False
+            #treated_line=[]
             treated_ttl_file_index=treated_ttl_file_index+1
 
             print(f'\n### REMAIN OCC ### = {remain_occ}, nbr_occ_max = {nbr_occ_max}')
@@ -259,9 +258,12 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
             with open(Path(path_result)/ttl_file,'r',encoding='utf-8') as infile, \
                 open(f'{Path(path_ttl_file_without_dup)}/{remain_occ}/New_{remain_occ}_{ttl_file}',\
                     'w',encoding='utf-8') as outfile:
-
+                
+                
                 print('treated_ttl_file_index',treated_ttl_file_index)
                 for line in infile:
+                    dup_treated=False
+                    print(line)
                     for dup in occ_dup:
 
                         if (dup[0] in line) and (nbr_file_treated < nbr_file_to_treat):
@@ -273,35 +275,38 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
 
                             outfile.write(updated_line)
                             print('updated_line',updated_line.strip())
-                            treated_line.append(line)
-                            file_updated=True
+                            #treated_line.append(line)
+                            print(updated_line)
+                            dup_treated=True
 
-                    if line not in treated_line or line=='\n':
+                    if dup_treated is False or line=='\n':
                         outfile.write(line)
-                        treated_line.append(line)
-
-            if file_updated is True:
+                        print(line)
+                    #    treated_line.append(line)
+                        
+            if dup_treated is True:
                 nbr_file_treated=nbr_file_treated+1
                 print("count",nbr_file_treated)
                 print('nbr_file_to_treat',nbr_file_to_treat)
+                #print(treated_line)
 
         os.makedirs(Path(f'{path_merged}/{remain_occ}'),exist_ok=True)
+        ttl_file_folder=Path(f'{path_result}/ttl_file_without_dup/{remain_occ}')
 
-        FILE=f'{Path(path_ttl_file_without_dup)}/{remain_occ}'
-        all_new_ttl_files = [f.name for f in  Path(FILE).iterdir()\
-            if f.is_file()]
+        all_new_ttl_files = [f for f in  ttl_file_folder.iterdir() if f.is_file()]
 
         # merge mofified ttl file in an only one file
         merged_file=f'{path_merged}/{remain_occ}/merged_graph_{remain_occ}.ttl'
         print(merged_file)
         with open(merged_file, 'w', encoding='utf-8') as m_file:
-            for filename in all_new_ttl_files:
+            for file in all_new_ttl_files:
             # Open each input file in read mode
-                with open(f'{FILE}/{filename}', 'r', encoding='utf-8')\
+                with open(file, 'r', encoding='utf-8')\
                  as ttl_file:
                     # Read the content and write it to the output file
                     content = ttl_file.read()
                     m_file.write(content)
+                    #m_file.write(f'{Path(file)}')
                     m_file.write('\n')  # Adds a newline between files
 
         remain_occ = remain_occ + 1
