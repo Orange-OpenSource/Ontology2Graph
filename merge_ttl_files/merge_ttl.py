@@ -9,7 +9,7 @@ from pathlib import Path
 #from merge_ttl_files.utils.utils_merge import find_duplicates_nodes,check_ttl
 
 #from utils.utils_merge import rename_duplicates_nodes,remove_duplicate_prefix
-#from utils.utils_merge import find_duplicates_nodes,check_ttl 
+#from utils.utils_merge import find_duplicates_nodes,check_ttl
 
 #from utils_merge import rename_duplicates_nodes,remove_duplicate_prefix
 #from utils_merge import find_duplicates_nodes,check_ttl
@@ -39,13 +39,17 @@ nbr_occ_max=args.nbr_occ_max
     #merged_ttl_temp=f'{path_result}/merged_ttl_temp.ttl'
     #merged_ttl_final=f'{path_result}/merged_ttl_final.ttl'
 
-bad_path_result=f'{path_result}/bad_Turtle_Syntax'
-bad_merged_file=f'{bad_path_result}/merged_graph_BAD.ttl'
+BAD_PATH_RESULT=f'{path_result}/bad_Turtle_Syntax'
+#BAD_MERGED_FILE=f'{BAD_PATH_RESULT}/merged_graph_BAD.ttl'
     #output_file_temp=f'{path_result}/temp.ttl'
 
     #Merge the ttl file
     #all_graphs = [f.name for f in Path(path_result).iterdir() if f.is_file()]
-os.makedirs(f'{path_result}',exist_ok=True)
+
+try:
+    os.makedirs(f'{path_result}',exist_ok=True)
+except OSError as e:
+    print(f"Error creating directory: {e}")
 
     #with open(merged_file, 'w', encoding='utf-8') as m_file:
     #    for filename in all_graphs:
@@ -58,7 +62,7 @@ os.makedirs(f'{path_result}',exist_ok=True)
     #    print('m_file',m_file)
 
     #manage duplicate nodes in ttl files
-duplicates=find_duplicates_nodes(path_result,ontology)
+duplicates = find_duplicates_nodes(path_result,ontology)
 rename_duplicates_nodes(path_result,path_merged,duplicates,nbr_occ_max)
 
     #Merge the ttl file
@@ -76,11 +80,11 @@ rename_duplicates_nodes(path_result,path_merged,duplicates,nbr_occ_max)
 
     # manage prefix in merged file
 
-all_merged_files = [f.name for f in Path(path_merged).iterdir() if f.is_file()]
+remove_duplicate_prefix(path_merged)
 
-for merged_file in all_merged_files:
-    remove_duplicate_prefix(Path(path_merged)/merged_file)
-    check_ttl(Path(path_merged)/merged_file,bad_merged_file,bad_path_result,1)
+check_ttl(path_merged,BAD_PATH_RESULT,1)
+
+#    check_ttl(Path(path_merged)/merged_file,BAD_MERGED_FILE,BAD_PATH_RESULT,1)
 
     # restore ttl file
     #for file in glob.glob(os.path.join(path, '*.ttl')):

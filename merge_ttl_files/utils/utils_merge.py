@@ -43,25 +43,46 @@ def retreive_datatype_properties(ontology):
         dtproperties.append(dtp)
     return dtproperties
 
-def check_ttl(file_result, bad_file_result, bad_path_result,merged):
+def check_ttl(path_merged,bad_path_result,merged):
     '''check ttl syntax and store wrong file in specific folder'''
-    command=["ttl",file_result]
-    ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
-    stdout, stderr = ttlvalidator.communicate()
-    if merged==1:
-        print(f'Merged graph : Turtle validator Result: {stdout},{stderr}\n')
-    else:
-        print(f'Turtle validator Result: {stdout}, {stderr}')
 
-    if stdout!='Validator finished with 0 warnings and 0 errors.\n' :
-    # move bad file in bad folder and Save logs
+    remain_occ=0
+    #retreive remain_occ number
+    with os.scandir(path_merged) as entries:
+        for entry in entries:
+            if entry.is_dir():
+                remain_occ+= 1
 
-        os.makedirs(f'{bad_path_result}', exist_ok=True)
-        shutil.move(file_result, bad_file_result)
+    count = 0
 
-        with open(f'{bad_path_result}/errors.log', 'a',encoding='utf-8') as log:
-            log.write(f'{bad_file_result} : {ttlvalidator.communicate()}\n')
-            log.close()
+    while count != remain_occ:
+
+        path_merged_count=f'{path_merged}/{count}'
+        merged_file_list = [f.name for f in Path(f'{path_merged}/{count}').iterdir() if f.is_file()]
+        print(merged_file_list)
+        merged_file=f'{path_merged_count}/{merged_file_list[0]}'
+
+        command=["ttl",merged_file]
+        ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        stdout, stderr = ttlvalidator.communicate()
+        if merged==1:
+            print(f'Merged graph : Turtle validator Result: {stdout},{stderr}\n')
+        else:
+            print(f'Turtle validator Result: {stdout}, {stderr}')
+
+        if stdout!='Validator finished with 0 warnings and 0 errors.\n' :
+        # move bad file in bad folder and Save logs
+
+            bad_merged_file=f'{bad_path_result}/merged_graph_{count}_BAD.ttl'
+            print('bad_merged_file : ', bad_merged_file)
+
+            os.makedirs(f'{bad_path_result}', exist_ok=True)
+            shutil.move(merged_file, bad_merged_file)
+
+            with open(f'{bad_path_result}/errors.log', 'a',encoding='utf-8') as log:
+                log.write(f'{bad_merged_file} : {ttlvalidator.communicate()}\n')
+                log.close()
+        count = count + 1
 
 def get_last_folder_part(string, sep_char):
     """get last part of a folder string"""
@@ -71,29 +92,44 @@ def get_last_folder_part(string, sep_char):
         last_part=string_parts[len(string_parts)-2]
     return last_part
 
-def remove_duplicate_prefix(merged_file):
+def remove_duplicate_prefix(path_merged):
     '''remove duplicate prefix of the merged file'''
     nodes_lines=[]
     prefix_lines=[]
     prefix_lines_unique=[]
 
-    with open (merged_file, 'r', encoding='utf-8') as outfile:
-        lines = outfile.readlines()
-        prefix_lines = [lines for lines in lines if lines.startswith('@')]
-        nodes_lines= [lines for lines in lines if not lines.startswith('@')]
-        outfile.close()
+    remain_occ=0
+    #retreive remain_occ number
+    with os.scandir(path_merged) as entries:
+        for entry in entries:
+            if entry.is_dir():
+                remain_occ+= 1
+
+    count = 0
+    while count != remain_occ:
+
+        path_merged_count=f'{path_merged}/{count}'
+        merged_file_list = [f.name for f in Path(f'{path_merged}/{count}').iterdir() if f.is_file()]
+        merged_file=f'{path_merged_count}/{merged_file_list[0]}'
+
+        with open (merged_file, 'r', encoding='utf-8') as outfile:
+            lines = outfile.readlines()
+            prefix_lines = [lines for lines in lines if lines.startswith('@')]
+            nodes_lines= [lines for lines in lines if not lines.startswith('@')]
+            outfile.close()
 
     #os.remove(output_file_temp)
 
     #remove duplicate prefix
-    for item in prefix_lines:
-        if item not in prefix_lines_unique:
-            prefix_lines_unique.append(item)
+        for item in prefix_lines:
+            if item not in prefix_lines_unique:
+                prefix_lines_unique.append(item)
 
-    with open (merged_file, 'w', encoding='utf-8') as graph:
-        graph.writelines(prefix_lines_unique)
-        graph.writelines(nodes_lines)
-        graph.close()
+        with open (merged_file, 'w', encoding='utf-8') as graph:
+            graph.writelines(prefix_lines_unique)
+            graph.writelines(nodes_lines)
+            graph.close()
+        count = count + 1
 
 def find_duplicates_nodes(path,ontology):
     '''find duplicates nodes in ttl files, just add the folder where the files
@@ -190,6 +226,7 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
     graphs generated and rename_step=2, 2 nodes will keep the same name and 8 nodes will 
     be renamed'''
 
+    #duplicates_nodes = find_duplicates_nodes(path_result,ontology)
     occ_dup=occurence_duplicate(duplicates_nodes,path_result)
 
     print('occ_dup',occ_dup)
@@ -217,8 +254,10 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
             print(f'\n### REMAIN OCC ### = {remain_occ}, nbr_occ_max = {nbr_occ_max}')
             print('#### FILE ####:', ttl_file)
 
+            os.makedirs(Path(f'{path_ttl_file_without_dup}/{remain_occ}'),exist_ok=True)
+
             with open(Path(path_result)/ttl_file,'r',encoding='utf-8') as infile, \
-                open(f'{Path(path_ttl_file_without_dup)}/New_{remain_occ}_{ttl_file}', \
+                open(f'{Path(path_ttl_file_without_dup)}/{remain_occ}/New_{remain_occ}_{ttl_file}',\
                     'w',encoding='utf-8') as outfile:
 
                 print('treated_ttl_file_index',treated_ttl_file_index)
@@ -246,24 +285,26 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
                 print("count",nbr_file_treated)
                 print('nbr_file_to_treat',nbr_file_to_treat)
 
-        all_new_ttl_files = [f.name for f in  Path(path_ttl_file_without_dup).iterdir()\
+        os.makedirs(Path(f'{path_merged}/{remain_occ}'),exist_ok=True)
+
+        FILE=f'{Path(path_ttl_file_without_dup)}/{remain_occ}'
+        all_new_ttl_files = [f.name for f in  Path(FILE).iterdir()\
             if f.is_file()]
 
         # merge mofified ttl file in an only one file
-        merged_file=f'{path_merged}/merged_graph_{remain_occ}.ttl'
+        merged_file=f'{path_merged}/{remain_occ}/merged_graph_{remain_occ}.ttl'
+        print(merged_file)
         with open(merged_file, 'w', encoding='utf-8') as m_file:
             for filename in all_new_ttl_files:
             # Open each input file in read mode
-                with open(f'{path_ttl_file_without_dup}/{filename}', 'r', encoding='utf-8')\
+                with open(f'{FILE}/{filename}', 'r', encoding='utf-8')\
                  as ttl_file:
                     # Read the content and write it to the output file
                     content = ttl_file.read()
                     m_file.write(content)
                     m_file.write('\n')  # Adds a newline between files
 
-        remain_occ = remain_occ +1
-
-        print(merged_file)
+        remain_occ = remain_occ + 1
 
         # restore ttl files not mofified
 
