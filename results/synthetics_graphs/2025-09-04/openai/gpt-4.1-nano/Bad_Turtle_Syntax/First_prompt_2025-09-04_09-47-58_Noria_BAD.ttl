@@ -1,0 +1,105 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://w3id.org/noria/graph1> a owl:Ontology ;
+    rdfs:label "Sample Noria-based Knowledge Graph"@en .
+
+# Hub Node: Central Application
+<https://example.com/Application1> a noria:Application ;
+    rdfs:label "Customer Management System"@en ;
+    rdfs:comment "Core application managing customer data and interactions."@en ;
+    noria:applicationModelIdentifier "CMS-2023" ;
+    noria:applicationType <kos/application/type/customer-management> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/high> ;
+    noria:applicationFunctionalDomain "Customer Relations" ;
+    noria:applicationFunctionalSubDomain "Customer Data Management" .
+
+# Connector Node: Network Interface of Application
+<https://example.com/NetIf1> a noria:NetworkInterface ;
+    rdfs:label "eth0" ;
+    rdfs:comment "Primary network interface of Application1."@en ;
+    noria:networkInterfaceType "virtual" ;
+    noria:networkInterfaceDescription "VLAN interface for internal communication."@en ;
+    noria:networkInterfaceOf <https://example.com/Application1> ;
+    noria:networkInterfaceConnects <https://example.com/Link1> ;
+    noria:networkInterfaceRoutingPriorityMetric 100 ;
+    noria:networkInterfaceLaserTxOpticalPower -2 .
+
+# High-Degree Node: Resource (Server)
+<https://example.com/Server1> a noria:Resource ;
+    rdfs:label "Server1"@en ;
+    rdfs:comment "Main application server hosting Customer Management System."@en ;
+    noria:resourceLogisticId "SRV-001" ;
+    noria:resourceHostName "app-server-01" ;
+    noria:resourceType <kos/Resource/type/server> ;
+    noria:resourceSerialNumber "SN123456" ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/active> ;
+    noria:locatedAtLocus <https://example.com/Locus1> ;
+    noria:resourceManagedBy <https://org/ITSupportTeam> .
+
+# Intermediary Node: Locus (Physical Location)
+<https://example.com/Locus1> a noria:Locus ;
+    rdfs:label "Data Center Rack 5"@en ;
+    rdfs:comment "Rack 5 in Data Center 1."@en ;
+    noria:locusLine "Line: L" ;
+    noria:locusRow "Row: R" .
+
+# Super Node: Network Link (Fiber)
+<https://example.com/Link1> a noria:NetworkLink ;
+    rdfs:label "FiberLink-01"@en ;
+    rdfs:comment "Optical fiber link connecting Server1 to Router1."@en ;
+    noria:networkLinkId "NL-2023-01" ;
+    noria:networkLinkType "optical fiber" ;
+    noria:networkLinkInstallationDate "2023-01-15T10:00:00Z"^^xsd:dateTime ;
+    noria:networkLinkTerminationResource <https://example.com/Server1> ;
+    noria:networkLinkTerminationResourceDestination <https://example.com/Router1> .
+
+# Connector Node: Router
+<https://example.com/Router1> a noria:Resource ;
+    rdfs:label "Router1"@en ;
+    rdfs:comment "Core router in Data Center 1."@en ;
+    noria:resourceLogisticId "RTR-001" ;
+    noria:resourceHostName "core-router-01" ;
+    noria:resourceType <kos/Resource/type/router> ;
+    noria:resourceSerialNumber "SN654321" ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/active> ;
+    noria:locatedAtLocus <https://example.com/Locus1> ;
+    noria:resourceManagedBy <https://org/NetworkOpsTeam> .
+
+# High-Degree Node: Event Record (Alarm)
+<https://example.com/Event1> a noria:EventRecord ;
+    rdfs:label "Link Down Alarm"@en ;
+    rdfs:comment "Alarm indicating fiber link failure."@en ;
+    noria:loggingTime "2023-03-20T14:22:00Z"^^xsd:dateTime ;
+    noria:logText "Fiber link NL-2023-01 is down."@en ;
+    noria:alarmSeverity <Notification/Severity/Critical> ;
+    noria:alarmProposedRepairAction <https://example.com/RepairAction1> ;
+    noria:logOriginatingManagedObject <https://example.com/Link1> ;
+    noria:logOriginatingManagementSystem <https://org/NetworkMonitoringSystem> ;
+    noria:alarmMitigatedBy <https://example.com/Procedure1> .
+
+# Intermediary Node: Repair Action
+<https://example.com/RepairAction1> a pep:Procedure ;
+    rdfs:label "Fiber Repair Procedure"@en ;
+    rdfs:comment "Procedure to repair fiber link NL-2023-01."@en ;
+    rdfs:seeAlso <https://github.com/tmforum-apis/TMF638_ServiceInventory> .
+
+# Super Node: Change Request
+<https://example.com/ChangeReq1> a noria:ChangeRequest ;
+    rdfs:label "Fiber Link Repair"@en ;
+    rdfs:comment "Change request for repairing fiber link NL-2023-01."@en ;
+    noria:changeRequestId "CR-2023-001" ;
+    noria:changeRequestCreationDateTime "2023-03-20T14:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestDescription "Repair fiber link NL-2023-01 due to fiber cut."@en ;
+    noria:changeRequestImpact <https://example.com/Link1> ;
+    noria:changeRequestStatusCurrent <kos/ChangeRequest/status/InProgress> ;
+    noria:changeRequestInitiatorParty <https://org/NetworkEngineer> ;
+    noria:changeRequestChangeCause "Fiber cut due to construction."@en .
+
+# Dismissed isolated nodes (no relations) are omitted to ensure all nodes are linked.

@@ -79,15 +79,16 @@ def populate_graph(g,graph,digraph):
     rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
 
     for subj, pred, obj in g:
-        last_part_pred=Path(pred).name
-        
-        if last_part_pred in datatypeproperties:
+        #last_part_pred=Path(pred).name
+        #if last_part_pred in datatypeproperties:
                 #print(f'{last_part_pred} in DTP' )
+        print('toto')
 
         if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type)
                                             and (pred != rdfs.isDefinedBy)):
             print(subj, pred, obj)
             digraph.add_edge(str(subj), str(obj), label=str(pred))
+            
             graph.add_edge(str(subj), str(obj), label=str(pred))
 
 def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD

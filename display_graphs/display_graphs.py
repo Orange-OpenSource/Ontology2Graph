@@ -13,8 +13,10 @@ from utils.utils import visu_graph, populate_graph,log_kpis,set_the_graph
 
 arg = sys.argv[1:]
 PATH= arg[0]
-ONTOLOGY = os.path.expanduser('../generate_graphs/ontologies/noria_to_check.ttl')
+ONTOLOGY = os.path.expanduser('../generate_ttl_files/ontologies/Noria.ttl')
 CUMUL_NODES=0
+print(ONTOLOGY)
+print(PATH)
 
 ### create new log_html_folder and clean old logs ###
 if Path(PATH).is_file():
@@ -43,7 +45,7 @@ if Path(PATH).is_file():
 
     g, Graph, DiGraph = set_the_graph(PATH,log_html_folder)
 
-    populate_graph(g,Graph,DiGraph)
+    populate_graph(g,Graph,DiGraph,ONTOLOGY)
     #remove_literal_from_nodes_old(g,Graph,DiGraph,ONTOLOGY)
     log_kpis(file_name,Graph,DiGraph,CUMUL_NODES)
     visu_graph(DiGraph,absolute_file_name,log_html_folder)
@@ -59,7 +61,7 @@ else :
 
         g, Graph, DiGraph = set_the_graph(file,log_html_folder)
 
-        populate_graph(g,Graph,DiGraph)
+        populate_graph(g,Graph,DiGraph,ONTOLOGY)
         #remove_literal_from_nodes_old(g,Graph,DiGraph,ONTOLOGY)
         CUMUL_NODES = log_kpis(file,Graph,DiGraph,CUMUL_NODES)
         visu_graph(DiGraph,file,log_html_folder)

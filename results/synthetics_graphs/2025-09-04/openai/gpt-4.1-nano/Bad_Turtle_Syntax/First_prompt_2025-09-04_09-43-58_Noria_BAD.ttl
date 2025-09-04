@@ -1,0 +1,127 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://w3id.org/noria/graph1> a owl:Ontology ;
+    rdfs:label "Sample Noria-based Knowledge Graph"@en .
+
+# Hub Node: Central Application
+<https://example.com/Application1> a noria:Application ;
+    rdfs:label "Core Network Management System"@en ;
+    rdfs:comment "Main application managing network devices and events."@en ;
+    noria:applicationModelIdentifier "CNMS-Model-X" ;
+    noria:applicationType <kos/application/type/ManagementSystem> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/High> ;
+    noria:applicationFunctionalDomain "Network Operations" ;
+    noria:applicationFunctionalSubDomain "Monitoring and Control" .
+
+# High-Degree Node: Network Link
+<https://example.com/NetworkLink1> a noria:NetworkLink ;
+    rdfs:label "Fiber Optic Link A-B"@en ;
+    rdfs:comment "High capacity fiber link connecting Router A and Router B."@en ;
+    noria:networkLinkId "Link-FO-AB-001" ;
+    noria:networkLinkType "Optical Fiber" ;
+    noria:networkLinkInstallationDate "2022-01-15T10:00:00"^^xsd:dateTime .
+
+# Connectors: Resources
+<https://example.com/Resource1> a noria:Resource ;
+    rdfs:label "Router A"@en ;
+    rdfs:comment "Core router in Data Center A."@en ;
+    noria:resourceLogisticId "R-A-DC1" ;
+    noria:resourceHostName "routerA.dc1.example.com" ;
+    noria:resourceType <kos/Resource/type/Router> ;
+    noria:resourceSerialNumber "SN123456789" ;
+    noria:resourceInstallationDate "2021-06-10T09:30:00"^^xsd:dateTime ;
+    noria:locatedAtLocus <https://example.com/Locus1> ;
+    noria:resourceManagedBy <https://example.com/OrgNetworkOps> .
+
+<https://example.com/Resource2> a noria:Resource ;
+    rdfs:label "Router B"@en ;
+    rdfs:comment "Edge router in Data Center B."@en ;
+    noria:resourceLogisticId "R-B-DC2" ;
+    noria:resourceHostName "routerB.dc2.example.com" ;
+    noria:resourceType <kos/Resource/type/Router> ;
+    noria:resourceSerialNumber "SN987654321" ;
+    noria:resourceInstallationDate "2021-07-20T11:00:00"^^xsd:dateTime ;
+    noria:locatedAtLocus <https://example.com/Locus2> ;
+    noria:resourceManagedBy <https://example.com/OrgNetworkOps> .
+
+# Intermediary Node: Locus
+<https://example.com/Locus1> a noria:Locus ;
+    rdfs:label "Locus 1"@en ;
+    rdfs:comment "Location of Router A in Data Center 1."@en ;
+    noria:locusLine "Line:L, in Room:Server Room 314"@en ;
+    noria:locusRow "Row: R1"@en .
+
+<https://example.com/Locus2> a noria:Locus ;
+    rdfs:label "Locus 2"@en ;
+    rdfs:comment "Location of Router B in Data Center 2."@en ;
+    noria:locusLine "Line:L, in Room:Server Room 315"@en ;
+    noria:locusRow "Row: R2"@en .
+
+# Multiplex Node: Application Module
+<https://example.com/AppModule1> a noria:ApplicationModule ;
+    rdfs:label "Routing Module"@en ;
+    rdfs:comment "Module responsible for routing functions within the network."@en ;
+    noria:applicationModuleIdentifier "RM-001" ;
+    noria:applicationModuleName "Routing Module" ;
+    noria:applicationModuleRelatedParty <https://example.com/OrgSupportTeam> ;
+    noria:applicationModuleStatus <skos:status/Active> .
+
+# Super Node: Organization
+<https://example.com/OrgNetworkOps> a org:Organization ;
+    rdfs:label "Network Operations Organization"@en ;
+    rdfs:comment "Organization responsible for network management."@en .
+
+<https://example.com/OrgSupportTeam> a org:Organization ;
+    rdfs:label "Support Team"@en ;
+    rdfs:comment "Support team managing network resources."@en .
+
+# Relations
+<https://example.com/Resource1> noria:structuralElementObservable <https://example.com/Resource1Observable> ;
+<https://example.com/Resource2> noria:structuralElementObservable <https://example.com/Resource2Observable> ;
+<https://example.com/Resource1> noria:locatedAtLocus <https://example.com/Locus1> ;
+<https://example.com/Resource2> noria:locatedAtLocus <https://example.com/Locus2> ;
+<https://example.com/Resource1> noria:resourceManagedBy <https://example.com/OrgNetworkOps> ;
+<https://example.com/Resource2> noria:resourceManagedBy <https://example.com/OrgNetworkOps> ;
+<https://example.com/NetworkLink1> noria:networkLinkTerminationResource <https://example.com/Resource1> ;
+<https://example.com/NetworkLink1> noria:networkLinkTerminationResource <https://example.com/Resource2> ;
+<https://example.com/Resource1> noria:resourceForApplication <https://example.com/Application1> ;
+<https://example.com/Resource2> noria:resourceForApplication <https://example.com/Application1> .
+
+# Observable nodes for resources
+<https://example.com/Resource1Observable> a noria:StructuralObservable ;
+    rdfs:label "Observable of Router A"@en ;
+    rdfs:comment "Observable properties for Router A."@en .
+
+<https://example.com/Resource2Observable> a noria:StructuralObservable ;
+    rdfs:label "Observable of Router B"@en ;
+    rdfs:comment "Observable properties for Router B."@en .
+
+# Event Record example: Network Interface Down Event
+<https://example.com/Event1> a noria:EventRecord ;
+    rdfs:label "Interface GigabitEthernet0/0/1 Down"@en ;
+    rdfs:comment "Event indicating interface down on Router A."@en ;
+    noria:loggingTime "2023-03-15T14:22:00"^^xsd:dateTime ;
+    noria:logText "LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1, changed state to down"@en ;
+    noria:logOriginatingManagedObject <https://example.com/Resource1> ;
+    noria:logOriginatingManagementSystem <https://example.com/NMS1> ;
+    noria:alarmSeverity <skos:Concept/Warning> ;
+    noria:alarmProposedRepairAction <https://example.com/Action1> ;
+    noria:alarmMitigatedBy <https://example.com/Procedure1> .
+
+# Action and Procedure example
+<https://example.com/Action1> a noria:OperationPlan ;
+    rdfs:label "Restart Interface"@en ;
+    rdfs:comment "Procedure to restart network interface."@en .
+
+<https://example.com/Procedure1> a noria:OperationPlan ;
+    rdfs:label "Restart Interface Procedure"@en ;
+    rdfs:comment "Procedure to restart network interface on Router A."@en .
+
+# End of sample graph

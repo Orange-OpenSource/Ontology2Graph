@@ -46,21 +46,20 @@ def retreive_datatype_properties(ontology):
 def check_ttl(path_merged,bad_path_result,merged):
     '''check ttl syntax and store wrong file in specific folder'''
 
-    remain_occ=0
-    #retreive remain_occ number
+    nbr_file = 0
+
     with os.scandir(path_merged) as entries:
         for entry in entries:
-            if entry.is_dir():
-                remain_occ+= 1
+            if entry.is_file():
+                nbr_file += 1
 
     count = 0
-
-    while count != remain_occ:
-
-        path_merged_count=f'{path_merged}/{count}'
-        merged_file_list = [f.name for f in Path(path_merged_count).iterdir() if f.is_file()]
+    
+    while count != nbr_file + 1:
+    
+        merged_file_list = [f.name for f in Path(path_merged).iterdir() if f.is_file()]
         print(merged_file_list)
-        merged_file=f'{path_merged_count}/{merged_file_list[0]}'
+        merged_file=f'{path_merged}/{merged_file_list[0]}'
 
         command=["ttl",merged_file]
         ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
@@ -98,27 +97,25 @@ def remove_duplicate_prefix(path_merged):
     prefix_lines=[]
     prefix_lines_unique=[]
 
-    remain_occ=0
-    #retreive remain_occ number
+    nbr_file = 0
+
     with os.scandir(path_merged) as entries:
         for entry in entries:
-            if entry.is_dir():
-                remain_occ+= 1
+            if entry.is_file():
+                nbr_file += 1
 
     count = 0
-    while count != remain_occ:
+    while count != nbr_file :
 
-        path_merged_count=f'{path_merged}/{count}'
-        merged_file_list = [f.name for f in Path(f'{path_merged}/{count}').iterdir() if f.is_file()]
-        merged_file=f'{path_merged_count}/{merged_file_list[0]}'
+        #path_merged_count=f'{path_merged}/'
+        merged_file_list = [f.name for f in Path(f'{path_merged}').iterdir() if f.is_file()]
+        merged_file=f'{path_merged}/{merged_file_list[count]}'
 
         with open (merged_file, 'r', encoding='utf-8') as outfile:
             lines = outfile.readlines()
             prefix_lines = [lines for lines in lines if lines.startswith('@')]
             nodes_lines= [lines for lines in lines if not lines.startswith('@')]
             outfile.close()
-
-    #os.remove(output_file_temp)
 
     #remove duplicate prefix
         for item in prefix_lines:
@@ -289,7 +286,7 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
                 print('nbr_file_to_treat',nbr_file_to_treat)
                 #print(treated_line)
 
-        os.makedirs(Path(f'{path_merged}/{remain_occ}'),exist_ok=True)
+        os.makedirs(Path(f'{path_merged}'),exist_ok=True)
         ttl_file_folder=Path(f'{path_result}/ttl_file_without_dup/{remain_occ}')
 
         all_new_ttl_files = [f for f in  ttl_file_folder.iterdir() if f.is_file()]

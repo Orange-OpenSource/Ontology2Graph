@@ -1,0 +1,102 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+# Hub Node: Central Network Hub
+<https://example.com/Hub1> a noria:ManagedElement ;
+  rdfs:label "Main Network Hub"@en ;
+  rdfs:comment "The central hub connecting multiple network segments."@en ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+# Organization responsible for the Hub
+<https://example.com/Org1> a org:Organization ;
+  rdfs:label "Network Operations Center"@en ;
+  rdfs:comment "The organization managing the central network hub."@en .
+
+# High-Degree Node: Core Router
+<https://example.com/RouterA> a noria:StructuralElement, noria:ManagedElement ;
+  rdfs:label "Core Router A"@en ;
+  rdfs:comment "The core router with high connectivity in the network."@en ;
+  noria:elementManagedBy <https://example.com/Org1> ;
+  noria:locatedAtLocus <https://example.com/Locus1> .
+
+# Locus (Physical Location)
+<https://example.com/Locus1> a noria:Locus ;
+  rdfs:label "Data Center Rack 12"@en ;
+  rdfs:comment "Physical location of RouterA."@en ;
+  noria:locusLine "Line: L, Column: 12"@en .
+
+# Connector Node: Virtual Link
+<https://example.com/VirtualLink1> a noria:NetworkLink ;
+  rdfs:label "Virtual Link 1"@en ;
+  rdfs:comment "A virtual connection between RouterA and RouterB."@en ;
+  noria:networkLinkId "VL-001"^^xsd:string .
+
+# Structural Element: RouterB
+<https://example.com/RouterB> a noria:StructuralElement, noria:ManagedElement ;
+  rdfs:label "Edge Router B"@en ;
+  rdfs:comment "Edge router connecting to external network."@en ;
+  noria:elementManagedBy <https://example.com/Org1> ;
+  noria:locatedAtLocus <https://example.com/Locus2> .
+
+# Locus (Physical Location)
+<https://example.com/Locus2> a noria:Locus ;
+  rdfs:label "Data Center Rack 34"@en ;
+  rdfs:comment "Physical location of RouterB."@en ;
+  noria:locusLine "Line: L, Column: 34"@en .
+
+# Intermediary Node: Firewall
+<https://example.com/Firewall1> a noria:StructuralElement, noria:ManagedElement ;
+  rdfs:label "Firewall 1"@en ;
+  rdfs:comment "Firewall device controlling traffic between RouterA and RouterB."@en ;
+  noria:elementManagedBy <https://example.com/Org1> ;
+  noria:locatedAtLocus <https://example.com/Locus1> .
+
+# Multiplex Node: Load Balancer
+<https://example.com/LoadBalancer1> a noria:StructuralElement, noria:ManagedElement ;
+  rdfs:label "Load Balancer 1"@en ;
+  rdfs:comment "Distributes traffic among multiple servers."@en ;
+  noria:elementManagedBy <https://example.com/Org1> ;
+  noria:locatedAtLocus <https://example.com/Locus3> .
+
+# Locus (Physical Location)
+<https://example.com/Locus3> a noria:Locus ;
+  rdfs:label "Server Room 2"@en ;
+  rdfs:comment "Physical location of Load Balancer 1."@en ;
+  noria:locusLine "Line: L, Column: 2"@en .
+
+# Super Node: Data Center
+<https://example.com/DataCenter1> a noria:StructuralElement, seas:System ;
+  rdfs:label "Main Data Center"@en ;
+  rdfs:comment "The overarching data center housing core network components."@en ;
+  noria:elementManagedBy <https://example.com/Org1> .
+
+# Relations linking nodes
+<https://example.com/Hub1> noria:structuralElementObservable <https://example.com/RouterA> ;
+<https://example.com/RouterA> noria:structuralElementObservable <https://example.com/Firewall1> ;
+<https://example.com/Firewall1> noria:structuralElementObservable <https://example.com/RouterB> ;
+<https://example.com/RouterA> noria:structuralElementObservable <https://example.com/LoadBalancer1> ;
+<https://example.com/LoadBalancer1> noria:structuralElementObservable <https://example.com/RouterB> .
+
+# Additional descriptive labels
+<https://example.com/RouterA> rdfs:label "Core Router A"@en ;
+<https://example.com/RouterB> rdfs:label "Edge Router B"@en ;
+<https://example.com/Firewall1> rdfs:label "Firewall 1"@en ;
+<https://example.com/LoadBalancer1> rdfs:label "Load Balancer 1"@en ;
+<https://example.com/DataCenter1> rdfs:label "Main Data Center"@en .
+
+# Comments for clarity
+# - Hub node: Main network hub managed by Org1.
+# - High-degree node: Core router with multiple connections.
+# - Connector node: Virtual link connecting routers.
+# - Intermediary node: Firewall controlling traffic.
+# - Multiplex node: Load balancer distributing traffic.
+# - Super node: Data center encompassing core components.
+# - All nodes are linked via 'structuralElementObservable' relations, never isolated.
