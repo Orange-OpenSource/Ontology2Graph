@@ -93,7 +93,6 @@ def populate_graph(g,graph,digraph,ontology):
         if str(last_part_pred) in dtp:
             print(f'{last_part_pred} in DTP' )
 
-
         if (isinstance(subj, URIRef) and isinstance(obj, URIRef)
                                         and (pred != rdf.type)
                                         and (pred != rdfs.isDefinedBy)

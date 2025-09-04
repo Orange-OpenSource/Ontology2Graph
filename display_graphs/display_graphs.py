@@ -15,8 +15,6 @@ arg = sys.argv[1:]
 PATH= arg[0]
 ONTOLOGY = os.path.expanduser('../generate_ttl_files/ontologies/Noria.ttl')
 CUMUL_NODES=0
-print(ONTOLOGY)
-print(PATH)
 
 ### create new log_html_folder and clean old logs ###
 if Path(PATH).is_file():
