@@ -1,5 +1,6 @@
 '''list of function to be used '''
 
+import logging
 import os
 import shutil
 from pathlib import Path
@@ -54,18 +55,19 @@ def check_ttl(path_merged,bad_path_result,merged):
                 nbr_file += 1
 
     count = 0
-    
+
     while count != nbr_file + 1:
-    
         merged_file_list = [f.name for f in Path(path_merged).iterdir() if f.is_file()]
-        print(merged_file_list)
+        #print(merged_file_list)
         merged_file=f'{path_merged}/{merged_file_list[0]}'
 
         command=["ttl",merged_file]
-        ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,
+                                      stderr=subprocess.PIPE,text=True)
         stdout, stderr = ttlvalidator.communicate()
         if merged==1:
-            print(f'Merged graph {Path(merged_file).name} : Turtle validator Result: {stdout},{stderr}\n')
+            print(f'Merged graph {Path(merged_file).name} : Turtle validator Result: \
+                  {stdout},{stderr}\n')
         else:
             print(f'Turtle validator Result: {stdout}, {stderr}')
 
@@ -228,10 +230,22 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
 
     print('occ_dup',occ_dup)
     all_ttl_files = [f.name for f in Path(path_result).iterdir() if f.is_file()]
-    print(all_ttl_files)
+    #print(all_ttl_files)
 
     os.makedirs(Path(path_merged),exist_ok=True)
+    path_merged_log=Path(f'{path_merged}/merge_log')
+    os.makedirs(path_merged_log,exist_ok=True)
     os.makedirs(f'{Path(path_result)}/ttl_file_without_dup',exist_ok=True)
+
+    #set logger
+    log_file=Path(f'{path_merged_log}/merge.log')
+    if log_file.is_file():
+        os.remove(log_file)
+
+    logger_merge = logging.getLogger('Merge_log')
+    handler = logging.FileHandler(log_file)
+    logger_merge.setLevel(logging.INFO)
+    logger_merge.addHandler(handler)
 
     path_ttl_file_without_dup=f'{Path(path_result)}/ttl_file_without_dup'
 
@@ -244,47 +258,66 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
 
         for ttl_file in all_ttl_files :
 
+            logger_merge.info('##################################################')
+
             #treated_line=[]
             treated_ttl_file_index=treated_ttl_file_index+1
 
-            print(f'\n### REMAIN OCC ### = {remain_occ}, nbr_occ_max = {nbr_occ_max}')
-            print('#### FILE ####:', ttl_file)
+            logger_merge.info('### REMAIN OCC ### = %s , nbr_occ_max = %s',remain_occ, nbr_occ_max)
+            logger_merge.info('#### FILE ####: %s ', ttl_file)
 
             os.makedirs(Path(f'{path_ttl_file_without_dup}/{remain_occ}'),exist_ok=True)
 
             with open(Path(path_result)/ttl_file,'r',encoding='utf-8') as infile, \
-                open(f'{Path(path_ttl_file_without_dup)}/{remain_occ}/New_{remain_occ}_{ttl_file}',\
+                 open(f'{Path(path_ttl_file_without_dup)}/{remain_occ}/New_{remain_occ}_{ttl_file}',\
                     'w',encoding='utf-8') as outfile:
 
-                print('treated_ttl_file_index',treated_ttl_file_index)
+                #print()
+                logger_merge.info('treated_ttl_file_index : %s',treated_ttl_file_index)
+                logger_merge.info("nbr file treated %s",nbr_file_treated)
+                logger_merge.info('nbr_file_to_treat %s',nbr_file_to_treat)
                 for line in infile:
                     dup_treated=False
-                    print(line)
+                    dup2_treated=False
+                    logger_merge.info('Line : %s',line.strip())
+                    
                     for dup in occ_dup:
 
-                        if (dup[0] in line) and (nbr_file_treated < nbr_file_to_treat):
+                        if (dup[0] in line) and (nbr_file_treated < nbr_file_to_treat) and dup_treated is False :
 
-                            print("count",nbr_file_treated)
-                            print('nbr_file_to_treat',nbr_file_to_treat)
                             updated_line = line.replace\
                                 (dup[0],f'{dup[0][:-1]}_extra_node_{treated_ttl_file_index}>')
-
-                            outfile.write(updated_line)
-                            print('updated_line',updated_line.strip())
+                            logger_merge.info('dup %s',dup)
+                            #outfile.write(updated_line)
+                            logger_merge.info('updated_line %s',updated_line.strip())
+                            logger_merge.info('file : %s',infile)
                             #treated_line.append(line)
-                            print(updated_line)
                             dup_treated=True
+                            line_number=len(line)
+                            logger_merge.info('line number : %s',line_number)
+
+
+                    for dup2 in occ_dup: #case when there are 2 dup to rename in the same line
+                        if dup_treated is True and dup2!=dup and (dup2[0] in updated_line) and\
+                        (nbr_file_treated < nbr_file_to_treat):
+                            
+                            updated_line_dual = updated_line.replace\
+                            (dup2[0],f'{dup2[0][:-1]}_extra_node_{treated_ttl_file_index}>')
+                            logger_merge.info('dup2 %s',dup2)
+                            logger_merge.info('updated_line_dual %s',updated_line_dual.strip())
+                            outfile.write(updated_line_dual)
+                            dup2_treated=True
+                    
+                    if dup_treated is True and dup2_treated is False:
+                        outfile.write(updated_line)
 
                     if dup_treated is False or line=='\n':
                         outfile.write(line)
-                        print(line)
-                    #    treated_line.append(line)
+                        logger_merge.info('Line : %s',line.strip())
+                    #   treated_line.append(line)
 
             if dup_treated is True:
                 nbr_file_treated=nbr_file_treated+1
-                print("count",nbr_file_treated)
-                print('nbr_file_to_treat',nbr_file_to_treat)
-                #print(treated_line)
 
         os.makedirs(Path(f'{path_merged}'),exist_ok=True)
         ttl_file_folder=Path(f'{path_result}/ttl_file_without_dup/{remain_occ}')
@@ -307,7 +340,7 @@ def rename_duplicates_nodes(path_result,path_merged,duplicates_nodes,nbr_occ_max
 
         remain_occ = remain_occ + 1
 
-        # restore ttl files not mofified
+        #restore ttl files not mofified
 
         #saved_ttl_files=f'{Path(path_result)}/saved_ttl_files'
 

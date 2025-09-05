@@ -53,9 +53,10 @@ if Path(PATH).is_file():
 else :
 
     all_files = [str(f.resolve()) for f in Path(PATH).iterdir() if f.is_file()]
+    print(all_files)
 
     for file in all_files :
-        print('FILE',file)
+        #print('FILE',file)
 
         g, Graph, DiGraph = set_the_graph(file,log_html_folder)
 

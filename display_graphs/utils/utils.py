@@ -51,7 +51,7 @@ def retreive_datatype_properties(ontology):
     for dtp in dtprop:
         dtp=dtp.replace('noria:',"")
         dtproperties.append(dtp)
-    print(dtproperties)
+    #print(dtproperties)
     return dtproperties
 
 def visu_graph(graph,file,html_folder):
@@ -66,7 +66,7 @@ def visu_graph(graph,file,html_folder):
     os.makedirs(html_folder,exist_ok=True)
 
     html_file = f'{html_folder}/{Path(file).stem}.html'
-    print('html_file',html_file)
+    #print('html_file',html_file)
 
     net.save_graph(html_file)
 
@@ -83,8 +83,8 @@ def populate_graph(g,graph,digraph,ontology):
         last_part_pred=[]
         #last_part_pred=get_last_folder_part(pred,'/')
         last_part_pred=Path(pred).name
-        print(last_part_pred)
-        print(type(last_part_pred))
+        #print(last_part_pred)
+        #print(type(last_part_pred))
         #print(last_part_pred2)
         dtp = retreive_datatype_properties(ontology)
         #print(dtp)
@@ -95,15 +95,17 @@ def populate_graph(g,graph,digraph,ontology):
 
         if (isinstance(subj, URIRef) and isinstance(obj, URIRef)
                                         and (pred != rdf.type)
-                                        and (pred != rdfs.isDefinedBy)
-                                        and (last_part_pred not in dtp)):
+                                        and (pred != rdfs.isDefinedBy)):
+                                        #and (last_part_pred not in dtp)):
 
             #print(subj, pred, obj)
-            digraph.add_edge(str(subj), str(obj), label=str(pred),color='white')
-            digraph.add_node(str(subj),label=str(pred),size=80,color='red')
-            digraph.add_node(str(obj),label=str(pred),size=80,color='blue')
-            #digraph.add_edge(str(subj),str(obj))
-            graph.add_edge(str(subj), str(obj), label=str(pred))
+            #digraph.add_edge(str(subj), str(obj), label=str(pred),color='white')
+
+            digraph.add_node(str(subj),size=80,color='red')
+            digraph.add_node(str(obj),size=80,color='blue')
+            digraph.add_edge(str(subj),str(obj),label=str(pred))
+
+            #graph.add_edge(str(subj),str(obj),label=str(pred))
 
 def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD
     '''remove literal and other expression from the graph in order to keep only the nodes'''
