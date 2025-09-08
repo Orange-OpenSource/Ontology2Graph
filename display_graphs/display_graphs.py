@@ -6,10 +6,8 @@ import os
 import sys
 import shutil
 import logging
-import subprocess
 from pathlib import Path
-#from utils.utils_display import visu_graph, populate_graph,log_kpis,set_the_graph
-from utils.utils import visu_graph, populate_graph,log_kpis,set_the_graph
+from utils.utils_display import visu_graph, prepare_graph_to_display, log_kpis
 
 arg = sys.argv[1:]
 PATH= arg[0]
@@ -41,13 +39,12 @@ if Path(PATH).is_file():
     file_name=Path(PATH).name
     absolute_file_name=Path(f'{Path(PATH).parent.resolve()}/{file_name}')
 
-    g, Graph, DiGraph = set_the_graph(PATH,log_html_folder)
+    Digraph = prepare_graph_to_display(PATH,log_html_folder,ONTOLOGY)
 
-    populate_graph(g,Graph,DiGraph,ONTOLOGY)
-    #remove_literal_from_nodes_old(g,Graph,DiGraph,ONTOLOGY)
-    log_kpis(file_name,Graph,DiGraph,CUMUL_NODES)
-    visu_graph(DiGraph,absolute_file_name,log_html_folder)
-    #subprocess.run(['xterm', '-e', 'vim', f'{PATH}/html/Graphs.log'],check=True)
+    log_kpis(file_name,Digraph,CUMUL_NODES)
+
+    visu_graph(Digraph,absolute_file_name,log_html_folder)
+
     sys.exit()
 
 else :
@@ -56,13 +53,11 @@ else :
     print(all_files)
 
     for file in all_files :
-        #print('FILE',file)
 
-        g, Graph, DiGraph = set_the_graph(file,log_html_folder)
+        Digraph = prepare_graph_to_display(file,log_html_folder,ONTOLOGY)
 
-        populate_graph(g,Graph,DiGraph,ONTOLOGY)
-        #remove_literal_from_nodes_old(g,Graph,DiGraph,ONTOLOGY)
-        CUMUL_NODES = log_kpis(file,Graph,DiGraph,CUMUL_NODES)
-        visu_graph(DiGraph,file,log_html_folder)
-        #subprocess.run(['xterm','-e','vim', f'{PATH}html/Graphs.log'],check=True)
+        CUMUL_NODES = log_kpis(file,Digraph,CUMUL_NODES)
+
+        visu_graph(Digraph,file,log_html_folder)
+
     sys.exit()
