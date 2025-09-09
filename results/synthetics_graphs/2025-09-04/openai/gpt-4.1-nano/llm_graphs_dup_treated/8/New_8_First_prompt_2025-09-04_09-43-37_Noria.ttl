@@ -1,0 +1,108 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+# Hub Node: Central Network Hub
+<https://example.com/HubNetwork> a noria:ManagedElement ;
+  rdfs:label "Main Network Hub"@en ;
+  rdfs:comment "Central node connecting multiple network segments and resources."@en ;
+  noria:elementManagedBy <https://example.com/NetworkAdmin> .
+
+# High-Degree Node: Core Router
+<https://example.com/CoreRouter> a noria:StructuralElement, seas:System ;
+  rdfs:label "Core Router"@en ;
+  rdfs:comment "High-capacity core router handling multiple network links."@en ;
+  noria:structuralElementObservable <https://example.com/RouterTrafficLoad> ;
+  noria:elementManagedBy <https://example.com/NetworkOperationsTeam> .
+
+# Connector Node: Network Link
+<https://example.com/Link1> a noria:NetworkLink ;
+  rdfs:label "Link1"@en ;
+  rdfs:comment "Optical fiber link connecting Core Router to Distribution Switch."@en ;
+  noria:networkLinkId "NL-001" ;
+  noria:networkLinkInstallationDate "2022-01-15T10:00:00"^^xsd:dateTime ;
+  noria:networkLinkType "Optical Fiber"@en ;
+  noria:networkLinkTerminationResource <https://example.com/CoreRouter> ;
+  noria:networkLinkTerminationResource <https://example.com/DistributionSwitch> .
+
+# Intermediary Node: Distribution Switch
+<https://example.com/DistributionSwitch> a noria:StructuralElement ;
+  rdfs:label "Distribution Switch"@en ;
+  rdfs:comment "Switch distributing network traffic to access layer."@en ;
+  noria:structuralElementObservable <https://example.com/PortTrafficLoad> ;
+  noria:elementManagedBy <https://example.com/NetworkSupportTeam> .
+
+# Multiplex Node: Virtual Machine Cluster
+<https://example.com/VMCluster> a noria:StructuralElement, seas:System ;
+  rdfs:label "Virtual Machine Cluster"@en ;
+  rdfs:comment "Cluster of virtual machines providing scalable services."@en ;
+  noria:structuralElementObservable <https://example.com/VMResourceUsage> ;
+  noria:elementManagedBy <https://example.com/ITOperations> .
+
+# Super Node: Data Center
+<https://example.com/DataCenter> a noria:StructuralElement, seas:System ;
+  rdfs:label "Data Center"@en ;
+  rdfs:comment "Main data center housing core network resources and servers."@en ;
+  noria:structuralElementObservable <https://example.com/DataCenterPowerUsage> ;
+  noria:elementManagedBy <https://example.com/DataCenterOps> .
+
+# Link entities with relations
+
+<https://example.com/HubNetwork> noria:structuralElementObservable <https://example.com/NetworkTrafficFlow> .
+
+<https://example.com/CoreRouter> noria:structuralElementObservable <https://example.com/RouterTrafficLoad> .
+
+<https://example.com/DistributionSwitch> noria:structuralElementObservable <https://example.com/SwitchTrafficLoad> .
+
+<https://example.com/VMCluster> noria:structuralElementObservable <https://example.com/VMResourceUsage> .
+
+<https://example.com/DataCenter> noria:structuralElementObservable <https://example.com/DataCenterPowerUsage> .
+
+# Additional entities for nodes
+
+<https://example.com/NetworkAdmin> a foaf:Agent ;
+  rdfs:label "Network Administrator"@en ;
+  rdfs:comment "Responsible for managing core network resources."@en .
+
+<https://example.com/NetworkOperationsTeam> a org:OrganizationalUnit ;
+  rdfs:label "Network Operations Team"@en ;
+  rdfs:comment "Team responsible for network infrastructure operations."@en .
+
+<https://example.com/ITOperations> a org:OrganizationalUnit ;
+  rdfs:label "IT Operations"@en ;
+  rdfs:comment "Team managing virtualized resources and clusters."@en .
+
+<https://example.com/DataCenterOps> a org:OrganizationalUnit ;
+  rdfs:label "Data Center Operations"@en ;
+  rdfs:comment "Team overseeing data center resources."@en .
+
+# Entities linked to nodes
+
+<https://example.com/NetworkTrafficFlow> a noria:StructuralObservable ;
+  rdfs:label "Network Traffic Flow"@en ;
+  rdfs:comment "Flow of network traffic through the core network."@en .
+
+<https://example.com/RouterTrafficLoad> a noria:StructuralObservable ;
+  rdfs:label "Router Traffic Load"@en ;
+  rdfs:comment "Traffic load on the core router."@en .
+
+<https://example.com/SwitchTrafficLoad> a noria:StructuralObservable ;
+  rdfs:label "Switch Traffic Load"@en ;
+  rdfs:comment "Traffic load on the distribution switch."@en .
+
+<https://example.com/VMResourceUsage> a noria:StructuralObservable ;
+  rdfs:label "VM Resource Usage"@en ;
+  rdfs:comment "Resource utilization of virtual machines in the cluster."@en .
+
+<https://example.com/DataCenterPowerUsage> a noria:StructuralObservable ;
+  rdfs:label "Data Center Power Usage"@en ;
+  rdfs:comment "Power consumption metrics of the data center."@en .
+
+# Dismiss isolated nodes: all nodes are linked via relations or managedBy properties, ensuring no isolated nodes exist.
