@@ -5,7 +5,7 @@ import argparse
 import os
 from pathlib import Path
 import logging
-from utils_merge import find_duplicates_nodes,occurence_duplicate,max_node_occ_value
+from utils_merge import find_duplicates_nodes,occurence_duplicate
 
 parser = argparse.ArgumentParser()
 parser.add_argument("path")
@@ -15,10 +15,12 @@ args = parser.parse_args()
 path=args.path
 ontology=args.ontology
 
+REMAIN_OCC=int(Path(path).name)
+
 #set logger
-test_dup_log_file=Path(f'{Path(path).parent}/test.log')
+test_dup_log_file=Path(f'{Path(path).parent}/test_{REMAIN_OCC}_.log')
 if test_dup_log_file.is_file():
-        os.remove(test_dup_log_file)
+    os.remove(test_dup_log_file)
 
 logger_test = logging.getLogger('test_duplicate')
 handler = logging.FileHandler(test_dup_log_file)
@@ -36,7 +38,6 @@ duplicates_nodes_treated=find_duplicates_nodes(path,ontology)
 occ_dup_llm_graph=occurence_duplicate(duplicates_nodes_llm,PATH_GRAPH_LLM)
 occ_dup_llm_graph_treated=occurence_duplicate(duplicates_nodes_treated,path)
 
-REMAIN_OCC=int(Path(path).name)
 logger_test.info('################### REMAIN OCC = %s ################### \n',REMAIN_OCC)
 
 if not duplicates_nodes_treated:
@@ -49,20 +50,74 @@ else:
     for dup_occ in occ_dup_llm_graph:
         #print(dup_occ)
         for dup_occ_treated in occ_dup_llm_graph_treated:
-           
-            if dup_occ[0]==dup_occ_treated[0]:
-                logger_test.info('dup_occ %s ////// dup_occ_treated %s',dup_occ,dup_occ_treated)
-                if dup_occ[1]>=REMAIN_OCC:
-                    if dup_occ_treated[1] == REMAIN_OCC:
-                        logger_test.info('dup_occ_treated %s equal to REMAIN OCC %s\n',\
-                            dup_occ_treated[1],REMAIN_OCC)
-                    else:
-                        logger_test.info('WARNING dup_occ %s - remain_occ %s not equal to\
-                            dup_occ_treated %s',dup_occ[1],REMAIN_OCC,dup_occ_treated[1])
-                        print(f'WARNING dup_occ {dup_occ} - remain_occ {REMAIN_OCC} not equal to dup_occ_treated {dup_occ_treated}\n',\
-                            dup_occ[1],REMAIN_OCC,dup_occ_treated[1])
 
-                if dup_occ[1]<REMAIN_OCC:
-                    logger_test.info('dup_occ %s = dup_occ_treated %s because dup_occ is lower than dup_occ_treated \n'\
-                        ,dup_occ[1],dup_occ_treated[1])
+            if dup_occ[0]==dup_occ_treated[0]:
+                logger_test.info('dup_occ (%s) ///// dup_occ_treated (%s)',dup_occ,dup_occ_treated)
+
+                if dup_occ[1]==dup_occ_treated[1]:
+
+                    if dup_occ_treated[1] == REMAIN_OCC:
+                        logger_test.info('dup_occ_treated (%s) equal to REMAIN OCC (%s)\n',\
+                            dup_occ_treated[1],REMAIN_OCC)
+
+                    if dup_occ_treated[1] > REMAIN_OCC:
+                        logger_test.info('###### WARNING ###### dup_occ_treated (%s) is higher' \
+                        'than remain_occ (%s) \n',dup_occ_treated[1],REMAIN_OCC)
+                        print('###### WARNING ###### dup_occ_treated (%s) is higher than' \
+                        ' remain_occ (%s) \n',dup_occ_treated[1],REMAIN_OCC)
+
+                    if dup_occ_treated[1]<REMAIN_OCC:
+                        logger_test.info('dup_occ (%s) = dup_occ_treated (%s) because dup_occ is'\
+                                          'lower than REMAIN_OCC (%s)\n',dup_occ[1],\
+                                            dup_occ_treated[1],REMAIN_OCC)
+
+                if dup_occ[1]>dup_occ_treated[1]:
+
+                    if dup_occ_treated[1] == REMAIN_OCC:
+                        logger_test.info('dup_occ_treated (%s) equal to remain occ (%s) ' \
+                        ,dup_occ_treated[1],REMAIN_OCC)
+
+                    if dup_occ_treated[1] > REMAIN_OCC:
+                        logger_test.info('###### WARNING ###### dup_occ_treated (%s) is higher' \
+                        ' than remain_occ (%s)',dup_occ_treated[1],REMAIN_OCC)
+                        print('###### WARNING ###### dup_occ_treated (%s) is higher than' \
+                        'remain_occ (%s)', dup_occ_treated[1],REMAIN_OCC)
+
+                    if dup_occ_treated[1]<REMAIN_OCC:
+                        logger_test.info('###### WARNING ###### dup_occ_treated (%s) is lower' \
+                        ' than remain_occ (%s) but higher than dup_occ (%s)\n',dup_occ_treated[1] \
+                            ,REMAIN_OCC,dup_occ[1])
+                        print('###### WARNING ###### ',dup_occ_treated,' : dup_occ_treated ('\
+                                ,dup_occ_treated[1],') is lower than remain_occ (',REMAIN_OCC,')'\
+                                  'but higher than dup_occ (',dup_occ[1],')\n')
+
+                if dup_occ[1]<dup_occ_treated[1]:
+
+                    if dup_occ_treated[1] == REMAIN_OCC:
+                        logger_test.info('###### WARNING ###### dup_occ_treated (%s) is equal to' \
+                        ' remain occ (%s) but is higher than dup_occ (%s)',dup_occ_treated[1],\
+                            REMAIN_OCC,dup_occ[1])
+                        print('###### WARNING ###### dup_occ_treated (%s) is equal to remain occ' \
+                        ' (%s) but is higher than dup_occ (%s)',dup_occ_treated[1],REMAIN_OCC,\
+                            dup_occ[1])
+
+                    if dup_occ_treated[1] > REMAIN_OCC:
+
+                        logger_test.info('###### WARNING ###### %s : dup_occ_treated (%s) is' \
+                        'higher than remain_occ (%s) and higher than dup_occ (%s)\n'\
+                        ,dup_occ_treated,dup_occ_treated[1],REMAIN_OCC,dup_occ[1])
+
+                        print('###### WARNING ######',dup_occ_treated,' : dup_occ_treated '\
+                              '(',dup_occ_treated[1],') is higher than remain_occ (',REMAIN_OCC,')'\
+                               'and higher than dup_occ (',dup_occ[1],')')
+
+                    if dup_occ_treated[1]<REMAIN_OCC:
+
+                        logger_test.info('###### WARNING ###### %s : dup_occ_treated (%s) is lower'\
+                                         'than remain_occ (%s) but higher than dup_occ (%s)\n',\
+                                         dup_occ_treated,dup_occ_treated[1],REMAIN_OCC,dup_occ[1])
+
+                        print('###### WARNING ###### ',dup_occ_treated,' : dup_occ_treated ('\
+                              ,dup_occ_treated[1],') is lower than remain_occ (',REMAIN_OCC,')'\
+                                  'but higher than dup_occ (',dup_occ[1],')\n')
 

@@ -128,7 +128,7 @@ def prepare_graph_to_display(file,log_html_folder,ontology):
         log.close()
 
     sorted_lines=sorted(unique_lines)  # sort in alphabetical order
-    
+
     os.remove(log_file)
 
     with open(log_file_sorted, 'a',encoding='utf-8') as log_sorted:
