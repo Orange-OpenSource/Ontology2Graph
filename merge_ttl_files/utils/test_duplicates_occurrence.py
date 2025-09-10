@@ -38,6 +38,17 @@ duplicates_nodes_treated=find_duplicates_nodes(path,ontology)
 occ_dup_llm_graph=occurence_duplicate(duplicates_nodes_llm,PATH_GRAPH_LLM)
 occ_dup_llm_graph_treated=occurence_duplicate(duplicates_nodes_treated,path)
 
+node_max_occ_llm=node_max_occ_llm_treated=[]
+
+if occ_dup_llm_graph != []:
+    m_n_o_v_llm = max(sublist[1] for sublist in occ_dup_llm_graph)
+    node_max_occ_llm=[sublist[0] for sublist in occ_dup_llm_graph if sublist[1] == m_n_o_v_llm]
+
+if occ_dup_llm_graph_treated != []:
+    m_n_o_v_llm_treated = max(sublist[1] for sublist in occ_dup_llm_graph_treated)
+    node_max_occ_llm_treated = [sublist[0] for sublist in occ_dup_llm_graph_treated if\
+                                     sublist[1] == m_n_o_v_llm_treated]
+
 logger_test.info('################### REMAIN OCC = %s ################### \n',REMAIN_OCC)
 
 if not duplicates_nodes_treated:
@@ -46,83 +57,118 @@ if not duplicates_nodes_treated:
     print(path,'\n')
 
 else:
+    #print('\nDUPLICATED NODES AFTER TREATMENT DETECTED FOR REMAI_OCC=',REMAIN_OCC,'\n'\
+    #      'SEE ',test_dup_log_file,' FOR MORE INFORMATION')
+
     logger_test.info('DUPLICATES NODES DETECTED in %s \n',path)
-    logger_test.info('occurence_duplicate_llm_graph_treated %s \n',occ_dup_llm_graph_treated)
     logger_test.info('occurence duplicate nodes llm : %s \n',occ_dup_llm_graph)
+    logger_test.info('Max node occurence before treatment : %s %s \n',node_max_occ_llm,m_n_o_v_llm)
+
+    logger_test.info('occurence duplicate nodes llm after treatment %s \n',\
+                     occ_dup_llm_graph_treated)
+    logger_test.info('Max node occurence after treatment : %s %s \n',node_max_occ_llm_treated,\
+                     m_n_o_v_llm_treated)
+
+    PROBLEM=False
 
     for dup_occ in occ_dup_llm_graph:
         #print(dup_occ)
         for dup_occ_treated in occ_dup_llm_graph_treated:
 
             if dup_occ[0]==dup_occ_treated[0]:
-                logger_test.info('dup_occ (%s) ///// dup_occ_treated (%s)',dup_occ,dup_occ_treated)
+                logger_test.info('\ndup_occ (%s) //// dup_occ_treated (%s)',dup_occ,dup_occ_treated)
 
-                if dup_occ[1]==dup_occ_treated[1]:
+                if dup_occ[1] == REMAIN_OCC:
 
                     if dup_occ_treated[1] == REMAIN_OCC:
-                        logger_test.info('dup_occ_treated (%s) equal to REMAIN OCC (%s)\n',\
-                            dup_occ_treated[1],REMAIN_OCC)
+                        logger_test.info('dup_occ_treated (%s) equal to REMAIN OCC (%s)',\
+                                           dup_occ_treated[1],REMAIN_OCC)
 
                     if dup_occ_treated[1] > REMAIN_OCC:
-                        logger_test.info('###### WARNING ###### dup_occ_treated (%s) is higher' \
-                        'than remain_occ (%s) \n',dup_occ_treated[1],REMAIN_OCC)
-                        print('\n###### WARNING ###### dup_occ_treated (%s) is higher than' \
-                        ' remain_occ (%s) \n',dup_occ_treated[1],REMAIN_OCC)
+                        logger_test.info('###### WARNING ###### dup_occ : (%s)',dup_occ)
+                        logger_test.info('dup_occ_treated (%s) is higher than remain_occ (%s),'\
+                                         ' should be equal to remain_occ',dup_occ_treated[1],\
+                                            REMAIN_OCC)
+                        print('\n###### WARNING ###### ',dup_occ_treated,' : dup_occ_treated (',\
+                              dup_occ_treated[1],') is higher than remain_occ (',REMAIN_OCC,'),'\
+                              ' should be equal to remain_occ')
+                        PROBLEM=True
 
-                    if dup_occ_treated[1]<REMAIN_OCC:
-                        logger_test.info('dup_occ (%s) = dup_occ_treated (%s) because dup_occ is'\
-                                          'lower than REMAIN_OCC (%s)\n',dup_occ[1],\
-                                            dup_occ_treated[1],REMAIN_OCC)
+                    if dup_occ_treated[1] < REMAIN_OCC:
+                        logger_test.info('###### WARNING ###### dup_occ : (%s)',dup_occ)
+                        logger_test.info('dup_occ_treated (%s) is lower than remain_occ (%s),'\
+                                         ' should be equal to remain_occ',dup_occ_treated[1],\
+                                         REMAIN_OCC)
+                        print('\n###### WARNING ###### ',dup_occ_treated,' : dup_occ_treated (',\
+                              dup_occ_treated[1],') is lower than remain_occ (',REMAIN_OCC,'),'\
+                              ' should be equal to remain_occ')
+                        PROBLEM=True
 
-                if dup_occ[1]>dup_occ_treated[1]:
+                if dup_occ[1] > REMAIN_OCC:
 
                     if dup_occ_treated[1] == REMAIN_OCC:
                         logger_test.info('dup_occ_treated (%s) equal to remain occ (%s) ' \
-                        ,dup_occ_treated[1],REMAIN_OCC)
+                                          ,dup_occ_treated[1],REMAIN_OCC)
 
                     if dup_occ_treated[1] > REMAIN_OCC:
-                        logger_test.info('###### WARNING ###### dup_occ_treated (%s) is higher' \
-                        ' than remain_occ (%s)',dup_occ_treated[1],REMAIN_OCC)
-                        print('\n###### WARNING ###### dup_occ_treated (%s) is higher than' \
-                        'remain_occ (%s)', dup_occ_treated[1],REMAIN_OCC)
+                        logger_test.info('###### WARNING ###### dup_occ : (%s)',dup_occ)
+                        logger_test.info('dup_occ_treated (%s) is higher than remain_occ (%s),'\
+                                         ' should be equal to remain_occ',dup_occ_treated[1],\
+                                         REMAIN_OCC)
+                        print('\n###### WARNING ###### ',dup_occ_treated,' : dup_occ_treated (',\
+                              dup_occ_treated[1],') is higher than remain_occ (',REMAIN_OCC,'),'\
+                              ' should be equal to remain_occ')
+                        PROBLEM=True
 
                     if dup_occ_treated[1]<REMAIN_OCC:
-                        logger_test.info('###### WARNING ###### dup_occ_treated (%s) is lower' \
-                        ' than remain_occ (%s) but higher than dup_occ (%s)\n',dup_occ_treated[1] \
-                            ,REMAIN_OCC,dup_occ[1])
-                        print('\n###### WARNING ###### ',dup_occ_treated,' : dup_occ_treated ('\
-                                ,dup_occ_treated[1],') is lower than remain_occ (',REMAIN_OCC,')'\
-                                  'but higher than dup_occ (',dup_occ[1],')\n')
+                        logger_test.info('###### WARNING ###### dup_occ : (%s)',dup_occ)
+                        logger_test.info('dup_occ_treated (%s) is lower than remain_occ (%s),'\
+                                         ' should be equal to remain_occ', dup_occ_treated[1],\
+                                         REMAIN_OCC)
+                        print('\n###### WARNING ###### ',dup_occ_treated,' : dup_occ_treated (',\
+                              dup_occ_treated[1],') is lower than remain_occ, (',REMAIN_OCC,'),'\
+                              ' should be equal to remain_occ')
+                        PROBLEM=True
 
-                if dup_occ[1]<dup_occ_treated[1]:
+                if dup_occ[1] < REMAIN_OCC:
+
+                    if dup_occ_treated[1] == dup_occ[1]:
+                        logger_test.info('As dup_occ (%s) is lower than remain_occ (%s),'\
+                                         ' dup_occ_treated (%s) is equal to dup_occ (%s) '\
+                                          ,dup_occ[1],REMAIN_OCC,dup_occ_treated[1],dup_occ[1])
 
                     if dup_occ_treated[1] == REMAIN_OCC:
-
-                        logger_test.info('###### WARNING ###### dup_occ_treated (%s) is equal to' \
-                        ' remain occ (%s) but is higher than dup_occ (%s)',dup_occ_treated[1],\
-                            REMAIN_OCC,dup_occ[1])
-                        
-                        print('\n###### WARNING ###### dup_occ_treated (%s) is equal to remain occ' \
-                        ' (%s) but is higher than dup_occ (%s)',dup_occ_treated[1],REMAIN_OCC,\
-                            dup_occ[1])
+                        logger_test.info('###### WARNING ###### dup_occ : (%s)',dup_occ)
+                        logger_test.info('dup_occ_treated (%s) is equal to remain occ (%s),'\
+                                         ' should be equal to dup_occ (%s)',dup_occ_treated[1],\
+                                         REMAIN_OCC,dup_occ[1])
+                        print('\n###### WARNING ###### ',dup_occ_treated,' : dup_occ_treated (',\
+                              dup_occ_treated[1],') is equal to remain_occ (',REMAIN_OCC,'),'\
+                              ' should be equal to dup_occ (',dup_occ[1],')')
+                        PROBLEM=True
 
                     if dup_occ_treated[1] > REMAIN_OCC:
+                        logger_test.info('###### WARNING ###### dup_occ : (%s)',dup_occ)
+                        logger_test.info('dup_occ_treated (%s) is higher than remain_occ (%s),'\
+                                         ' should be equal to dup_occ (%s)',dup_occ_treated[1]\
+                                          ,REMAIN_OCC,dup_occ[1])
+                        print('\n###### WARNING ###### ',dup_occ_treated,' : dup_occ_treated (',\
+                              dup_occ_treated[1],') is higher than remain_occ (',REMAIN_OCC,'),'\
+                              ' should be equal to dup_occ (',dup_occ[1],')')
+                        PROBLEM=True
 
-                        logger_test.info('###### WARNING ###### %s : dup_occ_treated (%s) is' \
-                        'higher than remain_occ (%s) and higher than dup_occ (%s)\n'\
-                        ,dup_occ_treated,dup_occ_treated[1],REMAIN_OCC,dup_occ[1])
+                    if dup_occ_treated[1] < REMAIN_OCC and dup_occ_treated[1] != dup_occ[1] :
+                        logger_test.info('###### WARNING ###### dup_occ : (%s)',dup_occ)
+                        logger_test.info('dup_occ_treated (%s) is lower than remain_occ (%s) and'\
+                                         ' not equal to dup_occ (%s), should be equal to dup_occ\n'\
+                                         ,dup_occ_treated,REMAIN_OCC,dup_occ[1])
+                        print('\n###### WARNING ###### ',dup_occ_treated,' : dup_occ_treated (',\
+                              dup_occ_treated[1],') is lower than remain_occ (',REMAIN_OCC,')'\
+                              ' and not equal to dup_occ (',dup_occ[1],'), should be equal to'\
+                              ' dupp_occ')
+                        PROBLEM=True
 
-                        print('\n###### WARNING ######',dup_occ_treated,' : dup_occ_treated '\
-                              '(',dup_occ_treated[1],') is higher than remain_occ (',REMAIN_OCC,')'\
-                               'and higher than dup_occ (',dup_occ[1],')')
-
-                    if dup_occ_treated[1]<REMAIN_OCC:
-
-                        logger_test.info('###### WARNING ###### %s : dup_occ_treated (%s) is lower'\
-                                         'than remain_occ (%s) but higher than dup_occ (%s)\n',\
-                                         dup_occ_treated,dup_occ_treated[1],REMAIN_OCC,dup_occ[1])
-
-                        print('\n###### WARNING ###### ',dup_occ_treated,' : dup_occ_treated ('\
-                              ,dup_occ_treated[1],') is lower than remain_occ (',REMAIN_OCC,')'\
-                                  'but higher than dup_occ (',dup_occ[1],')\n')
-
+    if PROBLEM is False:
+        print('\nDUPLICATED NODES AFTER TREATMENT DETECTED FOR REMAIN_OCC=',REMAIN_OCC,'\n'\
+              'WITHOUT ANY PROBLEM \n'\
+              'SEE ',test_dup_log_file,' FOR MORE INFORMATION\n')
