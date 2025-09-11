@@ -1,0 +1,128 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Hub Node: Central Resource representing a core data center
+<https://example.com/resource/DataCenter1> a noria:Resource ;
+  rdfs:label "Main Data Center"@en ;
+  rdfs:comment "The central data center hosting critical network infrastructure."@en ;
+  noria:resourceLogisticId "DC-001" ;
+  noria:locatedAtLocus <https://example.com/locus/Room314> ;
+  noria:resourceType <https://example.com/kos/Resource/type/data-center> ;
+  noria:resourceHostName "dc-main-01" ;
+  noria:resourceSerialNumber "SN-DC-001" ;
+  noria:resourceUsageState <https://example.com/kos/Resource/LifecycleState/operational> ;
+  noria:resourceInstallationDate "2020-05-15T10:00:00Z"^^xsd:dateTime ;
+  noria:resourceProductModel <https://example.com/product/ModelX> ;
+  noria:resourceManagedBy <https://example.com/org/ITSupport> .
+
+# High-Degree Node: Network Interface with multiple connections
+<https://example.com/nic/eth0> a noria:NetworkInterface ;
+  rdfs:label "Ethernet 0"@en ;
+  rdfs:comment "Primary network interface of DataCenter1."@en ;
+  noria:networkInterfaceType "physical" ;
+  noria:networkInterfaceDescription "GigabitEthernet0/0/1"@en ;
+  noria:networkInterfaceOf <https://example.com/resource/DataCenter1> ;
+  noria:networkInterfaceConnects <https://example.com/link/Link1> , <https://example.com/link/Link2> ;
+  noria:networkInterfaceRoutingPriorityMetric 100 ;
+  noria:networkInterfaceLaserTxOpticalPower -2 ;
+  noria:networkInterfaceLaserRxOpticalPower -3 .
+
+<https://example.com/link/Link1> a noria:NetworkLink ;
+  rdfs:label "Fiber Link A"@en ;
+  rdfs:comment "Optical fiber connection between DataCenter1 and Router1."@en ;
+  noria:networkLinkId "NL-FA" ;
+  noria:networkLinkType "optical fiber" ;
+  noria:networkLinkInstallationDate "2019-11-20T09:00:00Z"^^xsd:dateTime ;
+  noria:networkLinkTerminationResourceDestination <https://example.com/resource/Router1> ;
+  noria:networkLinkTerminationResourceOrigin <https://example.com/resource/DataCenter1> .
+
+<https://example.com/link/Link2> a noria:NetworkLink ;
+  rdfs:label "Fiber Link B"@en ;
+  noria:networkLinkId "NL-FB" ;
+  noria:networkLinkType "optical fiber" ;
+  noria:networkLinkInstallationDate "2019-11-20T09:00:00Z"^^xsd:dateTime ;
+  noria:networkLinkTerminationResourceDestination <https://example.com/resource/Router2> ;
+  noria:networkLinkTerminationResourceOrigin <https://example.com/resource/DataCenter1> .
+
+# Connector Node: Router connected to multiple resources
+<https://example.com/resource/Router1> a noria:Resource ;
+  rdfs:label "Router1"@en ;
+  rdfs:comment "Core router in Data Center 1."@en ;
+  noria:resourceType <https://example.com/kos/Resource/type/router> ;
+  noria:resourceHostName "router-01" ;
+  noria:resourceSerialNumber "SN-RTR-01" ;
+  noria:resourceUsageState <https://example.com/kos/Resource/LifecycleState/operational> ;
+  noria:locatedAtLocus <https://example.com/locus/Room314> ;
+  noria:resourceManagedBy <https://example.com/org/NetworkOps> ;
+  noria:resourceProductModel <https://example.com/product/ModelY> .
+
+<https://example.com/resource/Router2> a noria:Resource ;
+  rdfs:label "Router2"@en ;
+  rdfs:comment "Edge router in Data Center 1."@en ;
+  noria:resourceType <https://example.com/kos/Resource/type/router> ;
+  noria:resourceHostName "router-02" ;
+  noria:resourceSerialNumber "SN-RTR-02" ;
+  noria:resourceUsageState <https://example.com/kos/Resource/LifecycleState/operational> ;
+  noria:locatedAtLocus <https://example.com/locus/Room314> ;
+  noria:resourceManagedBy <https://example.com/org/NetworkOps> ;
+  noria:resourceProductModel <https://example.com/product/ModelY> .
+
+# Intermediary Node: Locus (physical location)
+<https://example.com/locus/Room314> a noria:Locus ;
+  rdfs:label "Server Room 314"@en ;
+  rdfs:comment "Main server room on floor 3."@en .
+
+# Multiplex Node: Application with multiple dependencies
+<https://example.com/app/CRM> a noria:Application ;
+  rdfs:label "Customer Relationship Management System"@en ;
+  rdfs:comment "CRM system used by sales and support teams."@en ;
+  noria:applicationModelIdentifier "CRM-Model-2023" ;
+  noria:applicationNumericalIdentifier 101 ;
+  noria:applicationShortIdentifier "CRM" ;
+  noria:applicationType <https://example.com/kos/application/type/enterprise> ;
+  noria:applicationBusinessImportance <https://example.com/kos/application/business-importance/high> ;
+  noria:applicationFunctionalDomain "Customer Management" ;
+  noria:applicationFunctionalSubDomain "Sales and Support" ;
+  noria:resourceForApplication <https://example.com/resource/DataCenter1> .
+
+<https://example.com/app/Analytics> a noria:Application ;
+  rdfs:label "Analytics Platform"@en ;
+  noria:applicationModelIdentifier "Analytics-Model-2023" ;
+  noria:applicationNumericalIdentifier 102 ;
+  noria:applicationShortIdentifier "Analytics" ;
+  noria:applicationType <https://example.com/kos/application/type/enterprise> ;
+  noria:applicationBusinessImportance <https://example.com/kos/application/business-importance/medium> ;
+  noria:applicationFunctionalDomain "Data Analysis" ;
+  noria:applicationFunctionalSubDomain "Business Intelligence" ;
+  noria:resourceForApplication <https://example.com/resource/DataCenter1> .
+
+# Super Node: System composed of multiple applications and resources
+<https://example.com/system/EnterpriseInfra> a seas:System ;
+  rdfs:label "Enterprise Infrastructure System"@en ;
+  rdfs:comment "Overall enterprise IT system integrating core applications and resources."@en ;
+  seas:subSystemOf <https://example.com/resource/DataCenter1> ;
+  seas:subSystemOf <https://example.com/app/CRM> ;
+  seas:subSystemOf <https://example.com/app/Analytics> .
+
+# Link resources and applications to form a connected knowledge graph
+<https://example.com/resource/DataCenter1> noria:resourceForApplication <https://example.com/app/CRM> .
+<https://example.com/resource/DataCenter1> noria:resourceForApplication <https://example.com/app/Analytics> .
+
+# Link applications to the system
+<https://example.com/app/CRM> seas:subSystemOf <https://example.com/system/EnterpriseInfra> .
+<https://example.com/app/Analytics> seas:subSystemOf <https://example.com/system/EnterpriseInfra> .
+
+# Link nodes to show high-degree connectivity
+<https://example.com/resource/Router1> noria:elementManagedBy <https://example.com/org/NetworkOps> .
+<https://example.com/resource/Router2> noria:elementManagedBy <https://example.com/org/NetworkOps> .
+
+# Dismiss isolated nodes: ensure all nodes are connected via at least one relation
+# (All nodes above are linked through resourceApplication, elementManagedBy, or network links)
+
+# End of graph

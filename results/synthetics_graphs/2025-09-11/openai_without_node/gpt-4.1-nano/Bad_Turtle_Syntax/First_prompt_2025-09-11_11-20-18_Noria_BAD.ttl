@@ -1,0 +1,123 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.com/Entity1> a noria:ManagedElement ;
+  rdfs:label "Core Router 1"@en ;
+  rdfs:comment "Main core router in the data center."@en ;
+  noria:elementDistinguishedName "Router1_DC_Core" ;
+  noria:elementManagedBy <https://example.com/OrgSupportTeam> ;
+  noria:structuralElementObservable noria:structuralObservableOf ;
+  noria:locatedAtLocus <https://example.com/Locus1> .
+
+<https://example.com/Entity2> a noria:StructuralElement ;
+  rdfs:label "Data Center Switch"@en ;
+  rdfs:comment "Switch connecting server racks in data center."@en ;
+  noria:structuralElementDistinguishedName "Switch_DC_01" ;
+  noria:structuralObservableOf <https://example.com/ObservableSwitchStatus> ;
+  noria:structuralElementObservableData "Operational"^^xsd:string ;
+  noria:elementManagedBy <https://example.com/OrgNetworkTeam> .
+
+<https://example.com/Entity3> a noria:Resource ;
+  rdfs:label "Server Rack A"@en ;
+  rdfs:comment "Rack containing multiple servers."@en ;
+  noria:resourceLogisticId "RackA-LogID" ;
+  noria:locatedAtLocus <https://example.com/Locus2> ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type#Rack> ;
+  noria:resourceHostName "RackA-Host" .
+
+<https://example.com/Entity4> a noria:NetworkInterface ;
+  rdfs:label "eth0"@en ;
+  rdfs:comment "Primary network interface of Server Rack A."@en ;
+  noria:networkInterfaceType "physical"^^xsd:string ;
+  noria:networkInterfaceDescription "Gigabit Ethernet port 0"@en ;
+  noria:networkInterfaceOf <https://example.com/Entity3> ;
+  noria:networkInterfaceConnects <https://example.com/Entity5> .
+
+<https://example.com/Entity5> a noria:NetworkLink ;
+  rdfs:label "Fiber Link 1"@en ;
+  rdfs:comment "Optical fiber connection between Rack A and Switch."@en ;
+  noria:networkLinkId "FiberLink-01" ;
+  noria:networkLinkType "optical fiber"^^xsd:string ;
+  noria:networkLinkInstallationDate "2022-01-15T10:00:00"^^xsd:dateTime ;
+  noria:networkLinkTerminationResource <https://example.com/Entity3> ;
+  noria:networkLinkTerminationResourceDestination <https://example.com/Entity2> .
+
+<https://example.com/Entity6> a noria:Application ;
+  rdfs:label "Customer Management System"@en ;
+  rdfs:comment "Application for managing customer data."@en ;
+  noria:applicationModelIdentifier "CMS-Model-2023" ;
+  noria:applicationNumericalIdentifier 1024 ;
+  noria:applicationShortIdentifier "CMS" ;
+  noria:applicationType <https://w3id.org/noria/kos/application/type#Business> ;
+  noria:applicationBusinessImportance <https://w3id.org/noria/kos/application/business-importance#High> ;
+  noria:applicationFunctionalDomain "Customer Relations"@en ;
+  noria:applicationFunctionalSubDomain "Customer Data Management"@en .
+
+<https://example.com/Entity7> a noria:Service ;
+  rdfs:label "Customer Data Service"@en ;
+  rdfs:comment "Service providing access to customer data."@en ;
+  noria:serviceType <https://w3id.org/noria/kos/service/type#DataAccess> ;
+  noria:troubleTicketRelatedService <https://example.com/Ticket1> .
+
+<https://example.com/Ticket1> a noria:TroubleTicket ;
+  rdfs:label "Ticket #12345"@en ;
+  rdfs:comment "Issue with customer data retrieval."@en ;
+  noria:troubleTicketSeverity <skos:ConceptScheme> ;
+  noria:troubleTicketType <skos:ConceptScheme> ;
+  noria:troubleTicketCriticity <skos:ConceptScheme> ;
+  noria:troubleTicketPriority <skos:ConceptScheme> ;
+  noria:troubleTicketOrigin <https://example.com/Entity8> ;
+  noria:troubleTicketTrigger <https://example.com/Event1> ;
+  noria:troubleTicketStatusCurrent <skos:ConceptScheme> ;
+  noria:troubleTicketRelatedParty <https://example.com/Entity8> ;
+  noria:troubleTicketRelatedResource <https://example.com/Entity3> ;
+  noria:troubleTicketImpacts <https://example.com/Entity7> .
+
+<https://example.com/Event1> a noria:EventRecord ;
+  rdfs:label "Login Failure Event"@en ;
+  rdfs:comment "Failed login attempt detected."@en ;
+  noria:loggingTime "2024-04-01T09:15:00"^^xsd:dateTime ;
+  noria:logText "Failed login for user 'john_doe'."@en ;
+  noria:logOriginatingManagedObject <https://example.com/Entity3> ;
+  noria:logOriginatingManagementSystem <https://example.com/MonitoringSystem> ;
+  noria:alarmSeverity <skos:ConceptScheme> ;
+  noria:alarmProposedRepairAction <https://example.com/Action1> .
+
+<https://example.com/Action1> a pep:Procedure ;
+  rdfs:label "Reset User Password"@en ;
+  rdfs:comment "Procedure to reset user password after failed login attempts."@en .
+
+<https://example.com/OrgSupportTeam> a org:OrganizationalUnit ;
+  rdfs:label "Support Team"@en ;
+  rdfs:comment "Support team responsible for network infrastructure."@en .
+
+<https://example.com/OrgNetworkTeam> a org:OrganizationalUnit ;
+  rdfs:label "Network Operations"@en ;
+  rdfs:comment "Network operations team."@en .
+
+<https://example.com/MonitoringSystem> a noria:Application ;
+  rdfs:label "Network Monitoring System"@en ;
+  rdfs:comment "System monitoring network devices."@en .
+
+<https://example.com/Entity8> a foaf:Agent ;
+  rdfs:label "John Doe"@en ;
+  rdfs:comment "Network user."@en .
+
+<https://example.com/Action1> a pep:Procedure ;
+  rdfs:label "Password Reset Procedure"@en .
+
+<https://example.com/Locus1> a noria:Locus ;
+  rdfs:label "Main Data Center"@en ;
+  rdfs:comment "Primary data center location."@en .
+
+<https://example.com/Locus2> a noria:Locus ;
+  rdfs:label "Server Room 314"@en ;
+  rdfs:comment "Server room in building 3."@en .

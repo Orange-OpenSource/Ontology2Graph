@@ -53,7 +53,7 @@ logger_test.info('################### REMAIN OCC = %s ################### \n',RE
 
 if not duplicates_nodes_treated:
     logger_test.info('No duplicates nodes detected in %s ',path)
-    print('\nNO DUPLICATED NODES DETECTED AFTER TREATEMENT FOR REMAIN_OCC = ',REMAIN_OCC)
+    print('\n NO DUPLICATED NODES DETECTED AFTER TREATEMENT FOR REMAIN_OCC = ',REMAIN_OCC)
     print(path,'\n')
 
 else:
@@ -169,6 +169,9 @@ else:
                         PROBLEM=True
 
     if PROBLEM is False:
-        print('\nDUPLICATED NODES AFTER TREATMENT DETECTED FOR REMAIN_OCC=',REMAIN_OCC,'\n'\
+        print('\nDUPLICATED NODES AFTER TREATMENT DETECTED FOR REMAIN_OCC=',REMAIN_OCC,\
               'WITHOUT ANY PROBLEM \n'\
-              'SEE ',test_dup_log_file,' FOR MORE INFORMATION\n')
+              '\nSEE ',test_dup_log_file,' FOR MORE INFORMATION\n')
+
+    else:
+        print('\n PROBLEMS DETECTED SEE ',test_dup_log_file,' FOR MORE INFORMATION\n')

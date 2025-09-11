@@ -1,0 +1,327 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix bot: <https://w3id.org/bot#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix observable: <https://unifiedcyberontology.org/ontology/uco/observable#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix pep: <https://w3id.org/pep/> .
+@prefix log: <https://w3id.org/sepses/ns/log#> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix ex: <http://example.com/data/> .
+
+# =============================================================================
+# Organizational Entities
+# =============================================================================
+
+ex:DevOpsTeam
+    a org:OrganizationalUnit ;
+    rdfs:label "DevOps Team" ;
+    rdfs:comment "Team responsible for application development and operations, including deployment and maintenance." ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri" .
+
+ex:NetworkOps
+    a org:OrganizationalUnit ;
+    rdfs:label "Network Operations" ;
+    rdfs:comment "Team responsible for managing and maintaining the network infrastructure." ;
+    noria:agentPreferredContactMethod [
+        a skos:Concept ;
+        skos:inScheme <kos/org/agent-contact-method> ;
+        rdfs:label "Email"
+    ] .
+
+ex:SecurityOps
+    a org:OrganizationalUnit ;
+    rdfs:label "Security Operations" ;
+    rdfs:comment "Team responsible for monitoring and responding to cybersecurity threats." .
+
+ex:JohnDo_extra_node_9
+    a foaf:Person ;
+    rdfs:label "John Doe" ;
+    rdfs:comment "Lead Engineer in the DevOps Team, specializing in application performance." ;
+    foaf:member ex:DevOpsTeam .
+
+# =============================================================================
+# Application and Application Module Entities
+# =============================================================================
+
+ex:OnlineBankingApp
+    a noria:Application ;
+    rdfs:label "Online Banking Application" ;
+    rdfs:comment "Core application providing online banking services to customers." ;
+    noria:applicationShortIdentifier "OBA" ;
+    noria:applicationBusinessImportance [
+        a skos:Concept ;
+        skos:inScheme <kos/application/business-importance> ;
+        rdfs:label "Critical"
+    ] ;
+    noria:elementManagedBy ex:DevOpsTeam .
+
+ex:OnlineBankingProdModule
+    a noria:ApplicationModule ;
+    rdfs:label "Online Banking Production Module" ;
+    rdfs:comment "The live production instance of the Online Banking Application." ;
+    noria:applicationModuleOf ex:OnlineBankingApp ;
+    noria:applicationModuleName "OBA_PROD" ;
+    noria:applicationModuleAdministrationTeam ex:DevOpsTeam ;
+    noria:applicationModuleSlaLevel [
+        a skos:Concept ;
+        skos:inScheme <https://w3id.org/noria/kos/application/sla-level> ;
+        rdfs:label "Platinum"
+    ] ;
+    noria:applicationModuleStatus [
+        a skos:Concept ;
+        skos:inScheme <https://w3id.org/noria/kos/application/statu_extra_node_9> ;
+        rdfs:label "In Production"
+    ] .
+
+# =============================================================================
+# Location Entities
+# =============================================================================
+
+ex:MainDataCenter
+    a bot:Site ;
+    rdfs:label "Main Data Center" ;
+    rdfs:comment "The primary data center facility hosting critica_extra_node_9 IT infrastructure." ;
+    noria:sitePrincipalAddressCityName "Metropolis" ;
+    noria:sitePrincipalAddressCountry "US" ;
+    noria:sitePrincipalAddressPostalCode "10001" .
+
+ex:ServerRoomA
+    a noria:Room ;
+    rdfs:label "Server Room A" ;
+    rdfs:comment "A dedicated serve_extra_node_9 room within the Main Data Center." ;
+    bot:hasSpace ex:MainDataCenter .
+
+ex:RackA1_U20
+    a noria:Locus ;
+    rdfs:label "Rack A1, Unit 20" ;
+    rdfs:comment "Specific rack and unit location for the Web Server 01." ;
+    noria:locusLine "A1" ;
+    noria:locusRow "20" ;
+    bot:hasSpace ex:ServerRoomA .
+
+ex:RackA1_U21
+    a noria:Locus ;
+    rdfs:label "Rack A1, Unit 21" ;
+    rdfs:comment "Specific rack and unit location for the Database Server 01." ;
+    noria:locusLine "A1" ;
+    noria:locusRow "21" ;
+    bot:hasSpace ex:ServerRoomA .
+
+ex:RackB2_U5
+    a noria:Locus ;
+    rdfs:label "Rack B2, Unit 5" ;
+    rdfs:comment "Specific rack and unit location for the Core Router 01." ;
+    noria:locusLine "B2" ;
+    noria:locusRow "5" ;
+    bot:hasSpace ex:ServerRoomA .
+
+# =============================================================================
+# Structural Entities (Resources, Network Interfaces, Network Links)
+# =============================================================================
+
+ex:WebServer01
+    a noria:Resource ;
+    rdfs:label "Web Server 01" ;
+    rdfs:comment "Virtual serve_extra_node_9 hosting the web frontend for the Online Banking application." ;
+    noria:resourceHostName "web01.example.com" ;
+    noria:resourceForApplication ex:OnlineBankingProdModule ;
+    noria:resourceManagedBy ex:DevOpsTeam ;
+    noria:locatedAtLocus ex:RackA1_U20 ;
+    noria:resourceType [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/type> ;
+        rdfs:label "Virtual Server"
+    ] ;
+    noria:resourceUsageState [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/LifecycleState> ;
+        rdfs:label "In Production"
+    ] .
+
+ex:DBServer01
+    a noria:Resource ;
+    rdfs:label "Database Server 01" ;
+    rdfs:comment "Physical serve_extra_node_9 hosting the database for the Online Banking application." ;
+    noria:resourceHostName "db01.example.com" ;
+    noria:resourceForApplication ex:OnlineBankingProdModule ;
+    noria:resourceManagedBy ex:DevOpsTeam ;
+    noria:locatedAtLocus ex:RackA1_U21 ;
+    noria:resourceType [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/type> ;
+        rdfs:label "Physical Server"
+    ] ;
+    noria:resourceInstallationDate "2023-01-10T09:00:00Z"^^xsd:dateTime .
+
+ex:CoreRouter0_extra_node_9
+    a noria:Resource ;
+    rdfs:label "Core Router 01" ;
+    rdfs:comment "Main route_extra_node_9 in the data center network, providing connectivity to serve_extra_node_9s and external networks." ;
+    noria:resourceHostName "cr01.example.com" ;
+    noria:resourceManagedBy ex:NetworkOps ;
+    noria:locatedAtLocus ex:RackB2_U5 ;
+    noria:resourceType [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/type> ;
+        rdfs:label "Network Router"
+    ] ;
+    noria:resourceSerialNumber "CR01-SN-XYZ789" .
+
+ex:WebServer01_Eth0
+    a noria:NetworkInterface ;
+    rdfs:label "web01-eth0" ;
+    rdfs:comment "Ethernet interface on Web Server 01, connected to the interna_extra_node_9 network." ;
+    noria:networkInterfaceOf ex:WebServer01 ;
+    noria:networkInterfaceAdministrativeStatus [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/AdministrativeState> ;
+        rdfs:label "u_extra_node_9"
+    ] ;
+    noria:networkInterfaceOperationalStatus [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/OperationalState> ;
+        rdfs:label "u_extra_node_9"
+    ] .
+
+ex:DBServer01_Eth0
+    a noria:NetworkInterface ;
+    rdfs:label "db01-eth0" ;
+    rdfs:comment "Ethernet interface on Database Server 01, connected to the interna_extra_node_9 network." ;
+    noria:networkInterfaceOf ex:DBServer01 ;
+    noria:networkInterfaceOperationalStatus [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/OperationalState> ;
+        rdfs:label "u_extra_node_9"
+    ] .
+
+ex:CoreRouter0_extra_node_9_Gi0_0_1
+    a noria:NetworkInterface ;
+    rdfs:label "cr01-Gi0/0/1" ;
+    rdfs:comment "Gigabit Ethernet interface 0/0/1 on Core Router 01, connected to the serve_extra_node_9 network." ;
+    noria:networkInterfaceOf ex:CoreRouter0_extra_node_9 ;
+    noria:networkInterfaceAdministrativeStatus [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/AdministrativeState> ;
+        rdfs:label "u_extra_node_9"
+    ] .
+
+ex:CoreRouter0_extra_node_9_Gi0_0_2
+    a noria:NetworkInterface ;
+    rdfs:label "cr01-Gi0/0/2" ;
+    rdfs:comment "Gigabit Ethernet interface 0/0/2 on Core Router 01, serving as an internet u_extra_node_9link." ;
+    noria:networkInterfaceOf ex:CoreRouter0_extra_node_9 ;
+    noria:networkInterfaceOperationalStatus [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/OperationalState> ;
+        rdfs:label "u_extra_node_9"
+    ] .
+
+ex:Link_Web_DB
+    a noria:NetworkLink ;
+    rdfs:label "Link between Web and DB Servers" ;
+    rdfs:comment "Direct network link connecting the web serve_extra_node_9 to the database serve_extra_node_9 for application traffic." ;
+    noria:networkInterfaceConnects ex:WebServer01_Eth0 ;
+    noria:networkInterfaceConnects ex:DBServer01_Eth0 ;
+    noria:networkLinkType "Ethernet" ;
+    noria:networkLinkInstallationDate "2023-01-15T10:00:00Z"^^xsd:dateTime .
+
+ex:Link_Web_Router
+    a noria:NetworkLink ;
+    rdfs:label "Link from Web Server to Core Router" ;
+    rdfs:comment "Network link connecting the web serve_extra_node_9 to the core route_extra_node_9 for external access." ;
+    noria:networkInterfaceConnects ex:WebServer01_Eth0 ;
+    noria:networkInterfaceConnects ex:CoreRouter0_extra_node_9_Gi0_0_1 ;
+    noria:networkLinkType "Fiber Optic" .
+
+ex:Link_Router_Internet
+    a noria:NetworkLink ;
+    rdfs:label "Internet Uplink from Core Router" ;
+    rdfs:comment "Network link providing internet connectivity from the core route_extra_node_9." ;
+    noria:networkInterfaceConnects ex:CoreRouter0_extra_node_9_Gi0_0_2 ;
+    noria:networkLinkType "Internet Uplink" .
+
+# =============================================================================
+# Dynamic Entities (Event Records, Trouble Tickets)
+# =============================================================================
+
+ex:Log_WebServerCPU
+    a noria:EventRecord ;
+    rdfs:label "High CPU Alert on Web Server" ;
+    rdfs:comment "Automated alert indicating high CPU utilization on web01.example.com, potentially impacting application performance." ;
+    noria:loggingTime "2024-04-20T14:30:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagedObject ex:WebServer01 ;
+    noria:logText "CPU utilization exceeded 90% for 5 minutes." ;
+    noria:alarmSeverity [
+        a skos:Concept ;
+        skos:inScheme <Notification/Severity/PerceivedSeverity> ;
+        rdfs:label "Major"
+    ] .
+
+ex:Log_DBConnectionError
+    a noria:EventRecord ;
+    rdfs:label "Database Connection Error" ;
+    rdfs:comment "Log entry indicating intermittent connection issues to the database, possibly due to network or database serve_extra_node_9 problems." ;
+    noria:loggingTime "2024-04-20T14:35:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagedObject ex:DBServer01 ;
+    noria:logText "Failed to establish connection to database 'online_bank_prod'." ;
+    noria:alarmSeverity [
+        a skos:Concept ;
+        skos:inScheme <Notification/Severity/PerceivedSeverity> ;
+        rdfs:label "Minor"
+    ] .
+
+ex:TT_OnlineBankingIssue
+    a noria:TroubleTicket ;
+    rdfs:label "Online Banking Performance Degradation" ;
+    rdfs:comment "Ticket opened due to slow response times reported by customers on the online banking platform, traced to high CPU on web serve_extra_node_9." ;
+    noria:troubleTicketDetectionDateTime "2024-04-20T14:32:00Z"^^xsd:dateTime ;
+    noria:troubleTicketSeverity [
+        a skos:Concept ;
+        skos:inScheme <kos/TroubleTicket/severity> ;
+        rdfs:label "Major"
+    ] ;
+    noria:troubleTicketPriority [
+        a skos:Concept ;
+        skos:inScheme <kos/TroubleTicket/priority> ;
+        rdfs:label "P2"
+    ] ;
+    noria:troubleTicketRelatedService ex:OnlineBankingProdModule ;
+    noria:troubleTicketRelatedResource ex:WebServer01 ;
+    noria:troubleTicketTrigger ex:Log_WebServerCPU ;
+    noria:troubleTicketRelatedParty ex:JohnDo_extra_node_9 ;
+    noria:troubleTicketStatusCurrent [
+        a skos:Concept ;
+        skos:inScheme <kos/TroubleTicket/statu_extra_node_9> ;
+        rdfs:label "InProgress"
+    ] .
+
+ex:SecurityIncidentTT
+    a noria:TroubleTicket ;
+    rdfs:label "Database Security Alert" ;
+    rdfs:comment "Ticket opened for suspicious database connection attempts, indicating a potential security breach." ;
+    noria:troubleTicketDetectionDateTime "2024-04-20T14:40:00Z"^^xsd:dateTime ;
+    noria:troubleTicketSeverity [
+        a skos:Concept ;
+        skos:inScheme <kos/TroubleTicket/severity> ;
+        rdfs:label "Critical"
+    ] ;
+    noria:troubleTicketPriority [
+        a skos:Concept ;
+        skos:inScheme <kos/TroubleTicket/priority> ;
+        rdfs:label "P1"
+    ] ;
+    noria:troubleTicketRelatedResource ex:DBServer01 ;
+    noria:troubleTicketTrigger ex:Log_DBConnectionError ;
+    noria:troubleTicketRelatedParty ex:SecurityOps ;
+    noria:troubleTicketStatusCurrent [
+        a skos:Concept ;
+        skos:inScheme <kos/TroubleTicket/statu_extra_node_9> ;
+        rdfs:label "InProgress"
+    ] .

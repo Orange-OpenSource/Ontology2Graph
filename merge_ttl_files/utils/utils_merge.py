@@ -183,10 +183,14 @@ def find_duplicates_nodes(path,ontology):
                 nx_graph.add_edge(str(subj), str(obj), label=str(pred))
 
         nodes=list(nx_graph.nodes)
-        nodes_with_bracket = [f"<{nodes}>" for nodes in nodes]
-        all_nodes.append(nodes_with_bracket)
 
-        #print('all_nodes',all_nodes)
+        nodes_no_url=[Path(nodes).name for nodes in nodes]
+        #print('nodes_no_url',nodes_no_url)
+        all_nodes.append(nodes_no_url)
+
+        #for gpt-4.1-nano 
+        #nodes_with_bracket = [f"<{nodes}>" for nodes in nodes]
+        #all_nodes.append(nodes_with_bracket)
 
     # Transform list of list into a simple list
     all_nodes_list = [item for sublist in all_nodes for item in sublist]
@@ -261,6 +265,9 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
         nbr_file_treated=0
         os.makedirs(Path(f'{path_llm_graphs_dup_treated}/{remain_occ}'),exist_ok=True)
 
+        #ttl_file_folder=Path(f'{path_result}/ttl_file_without_dup/{remain_occ}')
+        #os.makedirs(ttl_file_folder,exist_ok=True)
+
         for ttl_file in all_ttl_files :
             dup_treated_list=[]
             nbr_file_treated=nbr_file_treated+1
@@ -289,7 +296,8 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
                         if (dup1[0] in line) and (dup1[1]>remain_occ) and dup1_treated is False:
 
                             updated_line = line.replace\
-                                (dup1[0],f'{dup1[0][:-1]}_extra_node_{nbr_file_treated}>')
+                                (dup1[0],f'{dup1[0][:-1]}_extra_node_{nbr_file_treated}')
+                                #(dup1[0],f'{dup1[0][:-1]}_extra_node_{nbr_file_treated}>') for gpt-4.1-nano
                             logger_merge.info('dup %s',dup1)
                             logger_merge.info('remain_occ %s',remain_occ)
                             logger_merge.info('updated_line %s',updated_line.strip())
@@ -305,7 +313,8 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
                             (dup2[0] in updated_line) and (dup2[1]>remain_occ) :
 
                                 updated_line_dual = updated_line.replace\
-                                (dup2[0],f'{dup2[0][:-1]}_extra_node_{nbr_file_treated}>')
+                                (dup2[0],f'{dup2[0][:-1]}_extra_node_{nbr_file_treated}')
+                                #(dup2[0],f'{dup2[0][:-1]}_extra_node_{nbr_file_treated}>') for gpt-4.1-nano
                                 logger_merge.info('dup2 %s',dup2)
                                 logger_merge.info('updated_line_dual %s',updated_line_dual.strip())
                                 outfile.write(updated_line_dual)
@@ -347,12 +356,13 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
             #if dup1_treated is True:
             #    nbr_file_treated=nbr_file_treated+1
 
-        ttl_file_folder=Path(f'{path_result}/ttl_file_without_dup/{remain_occ}')
-        all_new_ttl_files = [f for f in  ttl_file_folder.iterdir() if f.is_file()]
+        all_new_ttl_files = [f for f in Path(f'{path_llm_graphs_dup_treated}/{remain_occ}').iterdir() if f.is_file()]
+        #print(all_new_ttl_files)
+        #print(Path(path_llm_graphs_dup_treated))
 
         # merge mofified ttl file in an only one file
         merged_file=f'{path_merged}/merged_graph_{remain_occ}.ttl'
-        print(merged_file)
+        #print(merged_file)
         with open(merged_file, 'w', encoding='utf-8') as m_file:
             for file in all_new_ttl_files: # Open each input file in read mode
                 with open(file, 'r', encoding='utf-8')\

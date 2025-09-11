@@ -1,0 +1,421 @@
+# Prefixes
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix bot: <https://w3id.org/bot#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix observable: <https://unifiedcyberontology.org/ontology/uco/observable#> .
+@prefix log: <https://w3id.org/sepses/ns/log#> .
+@prefix pep: <https://w3id.org/pep/> .
+@prefix BBO: <https://www.irit.fr/recherches/MELODI/ontologies/BBO#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix ex: <http://example.com/data/> .
+
+# Entities and their relationships describing an IT infrastructure and its management
+
+# 1. Organizations and People
+ex:ExampleCorp
+    a org:Organization ;
+    rdfs:label "Example Corporation" ;
+    rdfs:comment "A fictional company managing a diverse IT infrastructure." ;
+    noria:agentWorkingHours "9:00 AM - 5:00 PM (Mon-Fri)" ;
+    noria:agentInstructions "All IT-related inquiries should be directed through the internal service desk portal." .
+
+ex:ITOperationsTeam
+    a org:OrganizationalUnit ;
+    rdfs:label "IT Operations Team" ;
+    rdfs:comment "The primary team responsible for the daily operation and maintenance of ExampleCorp's IT systems." ;
+    org:unitOf ex:ExampleCorp ;
+    noria:agentWorkingHours "24/7 On-call rotation for critical services" ;
+    noria:agentPreferredContactMethod [
+        a skos:Concept ;
+        skos:inScheme <kos/org/agent-contact-method> ;
+        rdfs:label "Email and Phone"
+    ] ;
+    noria:agentInstructions "For urgent issues, use the dedicated hotline. For routine tasks, submit a ticket via the ITSM system." .
+
+ex:JohnDoe
+    a foaf:Person ;
+    rdfs:label "John Doe" ;
+    rdfs:comment "Lead System Administrator within the IT Operations Team." ;
+    org:memberOf ex:ITOperationsTeam ;
+    foaf:holdsAccount ex:JohnDoeCUid .
+
+ex:JohnDoeCUid
+    a noria:CorporateUserIdentifier ;
+    rdfs:label "John Doe's Corporate User ID" ;
+    rdfs:comment "Unique identifier for John Doe's IT system access." ;
+    foaf:accountName "jdoe" ;
+    noria:elementManagedBy ex:ExampleCorp . # The company manages its user IDs
+
+ex:JaneSmith
+    a foaf:Person ;
+    rdfs:label "Jane Smith" ;
+    rdfs:comment "Database Administrator and a key contact for application-related issues." ;
+    org:memberOf ex:ITOperationsTeam .
+
+# 2. Locations
+ex:DataCenterA
+    a bot:Site ;
+    rdfs:label "Main Data Center A" ;
+    rdfs:comment "ExampleCorp's primary data center, housing critical infrastructure." ;
+    noria:siteId "DC-A-001" ;
+    noria:siteType "data center" ;
+    noria:sitePrincipalAddress "123 Tech Avenue" ;
+    noria:sitePrincipalAddressCityName "Metropolis" ;
+    noria:sitePrincipalAddressPostalCode "10001" ;
+    noria:sitePrincipalAddressCountry "USA" .
+
+ex:ServerRoom1
+    a noria:Room ;
+    rdfs:label "Server Room 1" ;
+    rdfs:comment "A dedicated server room within Data Center A." ;
+    bot:hasSpace ex:DataCenterA .
+
+ex:RackA1
+    a noria:Locus ;
+    rdfs:label "Rack A1" ;
+    rdfs:comment "Specific rack location for servers in Server Room 1." ;
+    noria:locusLine "A" ;
+    noria:locusRow "1" ;
+    bot:hasSpace ex:ServerRoom1 .
+
+# 3. Resources and their properties
+ex:DellPowerEdgeR740
+    a noria:ProductModel ;
+    rdfs:label "Dell PowerEdge R740" ;
+    rdfs:comment "Product model for the Dell PowerEdge R740 server series." ;
+    noria:productManufacturedBy ex:DellTechnologies .
+
+ex:DellTechnologies
+    a org:Organization ;
+    rdfs:label "Dell Technologies" ;
+    rdfs:comment "A multinational technology company that develops, sells, repairs, and supports computers and related products and services." .
+
+ex:WebServer01
+    a noria:Resource ;
+    rdfs:label "Web Server 01" ;
+    rdfs:comment "A critical physical server hosting the main Web Portal application." ;
+    noria:resourceHostName "webserver01.example.com" ;
+    noria:resourceLogisticId "ASSET-WEB-001" ;
+    noria:resourceSerialNumber "SN-WEB-001-XYZ" ;
+    noria:resourceType [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/type> ;
+        rdfs:label "Server"
+    ] ;
+    noria:resourceUsageState [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/LifecycleState> ;
+        rdfs:label "In Production"
+    ] ;
+    noria:resourceInstallationDate "2023-01-15T10:00:00Z"^^xsd:dateTime ;
+    noria:resourceManagedBy ex:ITOperationsTeam ;
+    noria:locatedAtLocus ex:RackA1 ;
+    noria:resourceProductModel ex:DellPowerEdgeR740 ;
+    noria:resourceManagementIPAddress ex:WebServer01ManagementIP .
+
+ex:WebServer01ManagementIP
+    a observable:IPAddress ;
+    rdfs:label "Web Server 01 Management IP" ;
+    observable:ipAddressValue "192.168.10.100" .
+
+ex:CoreSwitch01
+    a noria:Resource ;
+    rdfs:label "Core Switch 01" ;
+    rdfs:comment "The central network switch in Data Center A, connecting all servers." ;
+    noria:resourceHostName "coreswitch01.example.com" ;
+    noria:resourceType [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/type> ;
+        rdfs:label "Network Switch"
+    ] ;
+    noria:resourceUsageState [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/LifecycleState> ;
+        rdfs:label "In Production"
+    ] ;
+    noria:resourceManagedBy ex:ITOperationsTeam ;
+    noria:locatedAtLocus ex:RackA1 .
+
+# 4. Network Components
+ex:Eth0InterfaceWebServer
+    a noria:NetworkInterface ;
+    rdfs:label "Ethernet 0 Interface on WebServer01" ;
+    rdfs:comment "The primary network interface for data traffic on WebServer01." ;
+    noria:networkInterfaceOf ex:WebServer01 ;
+    noria:networkInterfaceDescription "Primary data interface for Web Portal" ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/AdministrativeState> ;
+        rdfs:label "up"
+    ] ;
+    noria:networkInterfaceOperationalStatus [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/OperationalState> ;
+        rdfs:label "up"
+    ] ;
+    noria:networkInterfaceRoutingPriorityMetric 100 .
+
+ex:Eth1InterfaceCoreSwitch
+    a noria:NetworkInterface ;
+    rdfs:label "Ethernet 1 Interface on CoreSwitch01" ;
+    rdfs:comment "The interface on CoreSwitch01 connected to WebServer01." ;
+    noria:networkInterfaceOf ex:CoreSwitch01 ;
+    noria:networkInterfaceDescription "Link to WebServer01" ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/AdministrativeState> ;
+        rdfs:label "up"
+    ] ;
+    noria:networkInterfaceOperationalStatus [
+        a skos:Concept ;
+        skos:inScheme <kos/Resource/OperationalState> ;
+        rdfs:label "up"
+    ] .
+
+ex:WebServerToCoreSwitchLink
+    a noria:NetworkLink ;
+    rdfs:label "Link from WebServer01 to Core Switch 01" ;
+    rdfs:comment "A physical network link connecting WebServer01 to CoreSwitch01." ;
+    noria:networkLinkId "LINK-WEB01-CS01" ;
+    noria:networkLinkInstallationDate "2023-01-15T11:00:00Z"^^xsd:dateTime ;
+    noria:networkLinkType "Ethernet" ;
+    noria:networkLinkTerminationResourceOrigin ex:WebServer01 ;
+    noria:networkLinkTerminationResourceDestination ex:CoreSwitch01 ;
+    noria:resourceManagedBy ex:ITOperationsTeam ;
+    ex:Eth0InterfaceWebServer noria:networkInterfaceConnects ex:WebServerToCoreSwitchLink ;
+    ex:Eth1InterfaceCoreSwitch noria:networkInterfaceConnects ex:WebServerToCoreSwitchLink .
+
+# 5. Applications and Services
+ex:WebPortalApp
+    a noria:Application ;
+    rdfs:label "ExampleCorp Web Portal" ;
+    rdfs:comment "The main public-facing web application of ExampleCorp, providing customer services." ;
+    noria:applicationModelIdentifier "EC-WEB-PORTAL" ;
+    noria:applicationNumericalIdentifier 101 ;
+    noria:applicationShortIdentifier "ECWP" ;
+    noria:applicationType [
+        a skos:Concept ;
+        skos:inScheme <kos/application/type> ;
+        rdfs:label "Customer-Facing Application"
+    ] ;
+    noria:applicationBusinessImportance [
+        a skos:Concept ;
+        skos:inScheme <kos/application/business-importance> ;
+        rdfs:label "Critical"
+    ] ;
+    noria:applicationFunctionalDomain "Customer Relationship Management" ;
+    noria:applicationFunctionalSubDomain "Online Services" ;
+    noria:elementManagedBy ex:ITOperationsTeam .
+
+ex:WebPortalProdModule
+    a noria:ApplicationModule ;
+    rdfs:label "Web Portal Production Module" ;
+    rdfs:comment "The specific production instance of the ExampleCorp Web Portal application." ;
+    noria:applicationModuleOf ex:WebPortalApp ;
+    noria:applicationModuleName "EC-WEB-PORTAL_PROD" ;
+    noria:applicationModuleIdentifier "PROD" ;
+    noria:applicationModuleAdministrationTeam ex:ITOperationsTeam ;
+    noria:applicationModuleAdministrationLeader ex:JohnDoe ;
+    noria:applicationModuleSlaLevel [
+        a skos:Concept ;
+        skos:inScheme <https://w3id.org/noria/kos/application/sla-level> ;
+        rdfs:label "SLA Level 1 (24/7)"
+    ] ;
+    noria:applicationModuleSlaLevelDate "2023-03-01T00:00:00Z"^^xsd:dateTime ;
+    noria:applicationModuleHotlineEnabled true ;
+    noria:applicationModuleHotlineGroup ex:ITOperationsTeam ;
+    noria:applicationModuleStatus [
+        a skos:Concept ;
+        skos:inScheme <https://w3id.org/noria/kos/application/status> ;
+        rdfs:label "In Production"
+    ] .
+
+ex:WebServer01 noria:resourceForApplication ex:WebPortalApp .
+
+ex:PublicWebAccessService
+    a noria:Service ;
+    rdfs:label "Public Web Access Service" ;
+    rdfs:comment "An end-to-end service providing public access to ExampleCorp's web resources, underpinned by the Web Portal." ;
+    noria:serviceType [
+        a skos:Concept ;
+        skos:inScheme <kos/service/type> ;
+        rdfs:label "Customer-Facing Service"
+    ] ;
+    seas:subSystemOf ex:WebPortalProdModule .
+
+# 6. Dynamic Elements (Incidents, Changes, Events)
+ex:MonitoringSystem
+    a noria:Application ;
+    rdfs:label "Central Monitoring System" ;
+    rdfs:comment "An application responsible for collecting and analyzing system metrics and logs across the infrastructure." ;
+    noria:applicationShortIdentifier "CMS" ;
+    noria:elementManagedBy ex:ITOperationsTeam .
+
+ex:LogEventWebServerCPU
+    a noria:EventRecord ;
+    rdfs:label "Log Event: WebServer01 High CPU" ;
+    rdfs:comment "A log entry indicating high CPU utilization on WebServer01, detected by the monitoring system." ;
+    noria:loggingTime "2024-04-20T14:30:00Z"^^xsd:dateTime ;
+    noria:logText "CPU utilization on webserver01.example.com exceeded 90% for 5 minutes." ;
+    noria:logOriginatingManagedObject ex:WebServer01 ;
+    noria:logOriginatingManagementSystem ex:MonitoringSystem ;
+    noria:alarmSeverity [
+        a skos:Concept ;
+        skos:inScheme <Notification/Severity/PerceivedSeverity> ;
+        rdfs:label "Warning"
+    ] .
+
+ex:ITSMSystem
+    a noria:Application ;
+    rdfs:label "IT Service Management System" ;
+    rdfs:comment "The primary application used for managing incidents, problems, and changes within ExampleCorp." ;
+    noria:applicationShortIdentifier "ITSM" ;
+    noria:elementManagedBy ex:ITOperationsTeam .
+
+ex:TroubleTicket001
+    a noria:TroubleTicket ;
+    rdfs:label "TT-20240420-001: Web Portal Performance Degradation" ;
+    rdfs:comment "A trouble ticket opened in response to slow response times on the Web Portal, triggered by a high CPU alert." ;
+    dcterms:created "2024-04-20T14:35:00Z"^^xsd:dateTime ;
+    dcterms:modified "2024-04-20T16:00:00Z"^^xsd:dateTime ;
+    noria:troubleTicketSeverity [
+        a skos:Concept ;
+        skos:inScheme <kos/TroubleTicket/severity> ;
+        rdfs:label "Major"
+    ] ;
+    noria:troubleTicketType [
+        a skos:Concept ;
+        skos:inScheme <kos/TroubleTicket/type> ;
+        rdfs:label "Failure"
+    ] ;
+    noria:troubleTicketPriority [
+        a skos:Concept ;
+        skos:inScheme <kos/TroubleTicket/priority> ;
+        rdfs:label "P2"
+    ] ;
+    noria:troubleTicketOrigin [
+        a skos:Concept ;
+        skos:inScheme <kos/TroubleTicket/origin> ;
+        rdfs:label "Supervision"
+    ] ;
+    noria:troubleTicketTrigger ex:LogEventWebServerCPU ;
+    noria:troubleTicketStatusCurrent [
+        a skos:Concept ;
+        skos:inScheme <kos/TroubleTicket/status> ;
+        rdfs:label "InProgress"
+    ] ;
+    noria:troubleTicketRelatedService ex:WebPortalProdModule ;
+    noria:troubleTicketRelatedResource ex:WebServer01 ;
+    noria:troubleTicketRelatedParty ex:ITOperationsTeam, ex:JaneSmith ;
+    noria:troubleTicketCause "Sustained high CPU utilization on web server, impacting application performance." ;
+    noria:troubleTicketDetectionDateTime "2024-04-20T14:30:00Z"^^xsd:dateTime ;
+    noria:documentHRef "http://itsm.example.com/tickets/TT-20240420-001" .
+
+ex:TroubleTicketNote001
+    a noria:TroubleTicketNote ;
+    rdfs:label "TT-20240420-001 Note: Initial Diagnosis" ;
+    rdfs:comment "First note on the trouble ticket, detailing initial diagnosis steps and escalation." ;
+    dcterms:created "2024-04-20T14:45:00Z"^^xsd:dateTime ;
+    dcterms:creator ex:JohnDoe ;
+    noria:logText "Checked server logs, identified spike in CPU usage related to a specific database query. Escalating to DB team for further investigation." ;
+    noria:troubleTicketNoteCommentType [
+        a skos:Concept ;
+        skos:inScheme <kos/TroubleTicket/commentType> ;
+        rdfs:label "Internal"
+    ] ;
+    noria:troubleTicketNoteOperationType [
+        a skos:Concept ;
+        skos:inScheme <kos/TroubleTicket/operationType> ;
+        rdfs:label "Diagnosis"
+    ] ;
+    dcterms:isPartOf ex:TroubleTicket001 .
+
+ex:ScreenshotOfError
+    a noria:DocumentAttachment ;
+    rdfs:label "Screenshot of Web Portal Error" ;
+    rdfs:comment "A screenshot showing the error message displayed on the Web Portal during the performance degradation." ;
+    dcterms:created "2024-04-20T14:32:00Z"^^xsd:dateTime ;
+    dcterms:isPartOf ex:TroubleTicket001 ;
+    dcterms:format "image/png"^^xsd:string .
+
+ex:TT001StatusChange1
+    a noria:EventRecord ;
+    rdfs:label "TT001 Status Change: Initialised" ;
+    rdfs:comment "Event record indicating the initial creation and status of Trouble Ticket 001." ;
+    noria:loggingTime "2024-04-20T14:35:00Z"^^xsd:dateTime ;
+    noria:logText "Trouble Ticket TT-20240420-001 created and set to Initialised." ;
+    noria:logOriginatingManagementSystem ex:ITSMSystem .
+
+ex:TT001StatusChange2
+    a noria:EventRecord ;
+    rdfs:label "TT001 Status Change: InProgress" ;
+    rdfs:comment "Event record indicating the status change of Trouble Ticket 001 to InProgress." ;
+    noria:loggingTime "2024-04-20T14:40:00Z"^^xsd:dateTime ;
+    noria:logText "Trouble Ticket TT-20240420-001 assigned to IT Operations Team and set to InProgress." ;
+    noria:logOriginatingManagementSystem ex:ITSMSystem .
+
+ex:TroubleTicket001 noria:documentStatusHistory ex:TT001StatusChange1, ex:TT001StatusChange2 .
+
+ex:ChangeRequest001
+    a noria:ChangeRequest ;
+    rdfs:label "CR-20240425-001: WebServer01 OS Patching" ;
+    rdfs:comment "A change request to apply critical operating system patches to WebServer01 to improve stability and security." ;
+    dcterms:created "2024-04-25T09:00:00Z"^^xsd:dateTime ;
+    dcterms:modified "2024-04-25T10:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestPlannedStartTime "2024-05-01T02:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestPlannedEndTime "2024-05-01T04:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestCategory [
+        a skos:Concept ;
+        skos:inScheme <kos/ChangeRequest/category> ;
+        rdfs:label "Internal intervention"
+    ] ;
+    noria:changeRequestType [
+        a skos:Concept ;
+        skos:inScheme <kos/ChangeRequest/type> ;
+        rdfs:label "Standard"
+    ] ;
+    noria:changeRequestChangeCause [
+        a skos:Concept ;
+        skos:inScheme <kos/ChangeRequest/cause> ;
+        rdfs:label "Software upgrade"
+    ] ;
+    noria:changeRequestImpact ex:WebServer01 ;
+    noria:changeRequestOutageDuration "PT2H"^^xsd:duration ; # 2 hours
+    noria:changeRequestStatusCurrent [
+        a skos:Concept ;
+        skos:inScheme <kos/ChangeRequest/status> ;
+        rdfs:label "Scheduled"
+    ] ;
+    noria:changeRequestInitiatorParty ex:JohnDoe ;
+    noria:changeRequestPilotParty ex:JohnDoe ;
+    noria:changeRequestActorParty ex:ITOperationsTeam ;
+    noria:documentHRef "http://itsm.example.com/changes/CR-20240425-001" .
+
+# 7. Procedural Elements
+ex:OSPatchingOperationPlan
+    a noria:OperationPlan ;
+    rdfs:label "Standard OS Patching Procedure" ;
+    rdfs:comment "The documented procedure for applying operating system patches to production servers, including pre- and post-conditions." ;
+    noria:operationPlanPreCondition ex:ServerBackupPreCondition ;
+    noria:operationPlanPostCondition ex:ServiceRestoredPostCondition .
+
+ex:ServerBackupPreCondition
+    a noria:ActionPreCondition ;
+    rdfs:label "Server Backup Completed" ;
+    rdfs:comment "A pre-condition for OS patching, ensuring a full backup of the server is completed to allow for rollback if necessary." .
+
+ex:ServiceRestoredPostCondition
+    a noria:ActionPostCondition ;
+    rdfs:label "Web Portal Service Restored" ;
+    rdfs:comment "A post-condition for OS patching, verifying that the Web Portal application is fully functional after the procedure." .
+
+ex:ChangeRequest001 noria:actionCorrelatedOperationPlan ex:OSPatchingOperationPlan .

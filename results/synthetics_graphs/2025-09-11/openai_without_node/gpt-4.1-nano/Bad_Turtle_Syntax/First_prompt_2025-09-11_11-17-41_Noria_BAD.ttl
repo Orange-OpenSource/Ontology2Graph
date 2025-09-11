@@ -1,0 +1,134 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix resource: <https://example.com/resource/> .
+@prefix application: <https://example.com/application/> .
+@prefix service: <https://example.com/service/> .
+@prefix event: <https://example.com/event/> .
+
+# Entities
+resource:Res1 a noria:Resource ;
+  rdfs:label "Main Data Center Server"@en ;
+  rdfs:comment "High-performance server hosting critical applications."@en ;
+  noria:resourceLogisticId "DC-Server-001" ;
+  noria:resourceHostName "dc-server-01" ;
+  noria:locatedAtLocus resource:Locus1 ;
+  noria:resourceType [ a skos:Concept ; skos:inScheme <kos/Resource/type> ; skos:hasTopConcept <kos/Resource/type/Server> ] ;
+  noria:resourceSerialNumber "SN123456" ;
+  noria:resourceUsageState [ a skos:Concept ; skos:inScheme <kos/Resource/LifecycleState> ; skos:hasTopConcept <kos/Resource/LifecycleState/Active> ] ;
+  noria:resourceInstallationDate "2020-05-15T10:00:00Z"^^xsd:dateTime ;
+  noria:resourceProductModel [ a noria:ProductModel ; rdfs:label "Dell PowerEdge R740"@en ; noria:productManufacturedBy org:DellInc ] ;
+  noria:resourceManagementIPAddress "192.168.1.10"^^xsd:string ;
+  noria:clusterController resource:ClusterCtrl1 .
+
+resource:Locus1 a noria:Locus ;
+  rdfs:label "Locus in Server Room 314"@en ;
+  noria:locusLine "Line:L, Column:6"@en ;
+  noria:locusRow "Row:3"@en .
+
+org:DellInc a org:Organization ;
+  rdfs:label "Dell Inc."@en .
+
+resource:NetInterface1 a noria:NetworkInterface ;
+  rdfs:label "eth0"@en ;
+  noria:networkInterfaceDescription "Primary Ethernet Interface"@en ;
+  noria:networkInterfaceType [ a skos:Concept ; skos:inScheme <kos/NetworkInterface/type> ; skos:hasTopConcept <kos/NetworkInterface/type/Physical> ] ;
+  noria:networkInterfaceOf resource:Res1 ;
+  noria:networkInterfaceOperationalStatus [ a skos:Concept ; skos:inScheme <kos/Resource/OperationalState> ; skos:hasTopConcept <kos/Resource/OperationalState/Up> ] ;
+  noria:networkInterfaceRoutingPriorityMetric 100 .
+
+resource:Link1 a noria:NetworkLink ;
+  rdfs:label "Fiber Link DC to Branch"@en ;
+  noria:networkLinkId "NL-DC-BR-01" ;
+  noria:networkLinkType "Optical Fiber"@en ;
+  noria:networkLinkInstallationDate "2019-11-20T09:30:00Z"^^xsd:dateTime ;
+  noria:networkLinkTerminationResource resource:Res1 ;
+  noria:networkLinkTerminationResourceDestination resource:Res2 .
+
+resource:Res2 a noria:Resource ;
+  rdfs:label "Branch Office Router"@en ;
+  noria:resourceLogisticId "BR-Router-002" ;
+  noria:resourceHostName "br-router-01" ;
+  noria:locatedAtLocus resource:Locus2 ;
+  noria:resourceType [ a skos:Concept ; skos:inScheme <kos/Resource/type> ; skos:hasTopConcept <kos/Resource/type/Router> ] ;
+  noria:resourceSerialNumber "SN654321" ;
+  noria:resourceUsageState [ a skos:Concept ; skos:inScheme <kos/Resource/LifecycleState> ; skos:hasTopConcept <kos/Resource/LifecycleState/Active> ] ;
+  noria:resourceInstallationDate "2021-03-10T14:00:00Z"^^xsd:dateTime ;
+  noria:resourceProductModel [ a noria:ProductModel ; rdfs:label "Cisco ISR 4451"@en ; noria:productManufacturedBy org:CiscoSystems ] ;
+  noria:resourceManagementIPAddress "192.168.2.1"^^xsd:string .
+
+resource:Locus2 a noria:Locus ;
+  rdfs:label "Locus in Branch Office 12"@en ;
+  noria:locusLine "Line:L, Column:2"@en ;
+  noria:locusRow "Row:1"@en .
+
+# Relationships
+resource:Res1 noria:elementManagedBy org:ITSupportTeam .
+resource:Res2 noria:elementManagedBy org:ITSupportTeam .
+
+org:ITSupportTeam a org:OrganizationalUnit ;
+  rdfs:label "IT Support Team"@en .
+
+# Application entities
+application:App1 a noria:Application ;
+  rdfs:label "Customer Management System"@en ;
+  rdfs:comment "Application for managing customer data and interactions."@en ;
+  noria:applicationModelIdentifier "CMS-Model-2023" ;
+  noria:applicationNumericalIdentifier 101 ;
+  noria:applicationShortIdentifier "CMS" ;
+  noria:applicationType [ a skos:Concept ; skos:inScheme <kos/application/type> ; skos:hasTopConcept <kos/application/type/CustomerManagement> ] ;
+  noria:applicationBusinessImportance [ a skos:Concept ; skos:inScheme <kos/application/business-importance> ; skos:hasTopConcept <kos/application/business-importance/High> ] ;
+  noria:applicationFunctionalDomain "Customer Relations"@en ;
+  noria:applicationFunctionalSubDomain "Customer Data Storage"@en .
+
+application:App2 a noria:Application ;
+  rdfs:label "Network Monitoring Tool"@en ;
+  rdfs:comment "Tool for monitoring network health and performance."@en ;
+  noria:applicationModelIdentifier "NMT-2023" ;
+  noria:applicationNumericalIdentifier 102 ;
+  noria:applicationShortIdentifier "NMT" ;
+  noria:applicationType [ a skos:Concept ; skos:inScheme <kos/application/type> ; skos:hasTopConcept <kos/application/type/Monitoring> ] ;
+  noria:applicationBusinessImportance [ a skos:Concept ; skos:inScheme <kos/application/business-importance> ; skos:hasTopConcept <kos/application/business-importance/Medium> ] ;
+  noria:applicationFunctionalDomain "Network Operations"@en ;
+  noria:applicationFunctionalSubDomain "Performance Analysis"@en .
+
+# Service entities
+service:Service1 a noria:Service ;
+  rdfs:label "Customer Data Service"@en ;
+  rdfs:comment "Service providing customer data access."@en ;
+  noria:serviceType [ a skos:Concept ; skos:inScheme <kos/service/type> ; skos:hasTopConcept <kos/service/type/CustomerData> ] ;
+  rdfs:seeAlso <https://example.com/docs/Service1> .
+
+service:Service2 a noria:Service ;
+  rdfs:label "Network Connectivity Service"@en ;
+  rdfs:comment "Service ensuring network connectivity."@en ;
+  noria:serviceType [ a skos:Concept ; skos:inScheme <kos/service/type> ; skos:hasTopConcept <kos/service/type/Connectivity> ] ;
+  rdfs:seeAlso <https://example.com/docs/Service2> .
+
+# Event record
+event:Event1 a noria:EventRecord ;
+  rdfs:label "Link Up Event"@en ;
+  rdfs:comment "Event indicating network link is operational."@en ;
+  noria:loggingTime "2024-03-15T12:00:00Z"^^xsd:dateTime ;
+  noria:logText "Fiber link between DC and Branch is now active."@en ;
+  noria:logOriginatingManagedObject resource:Link1 ;
+  noria:logOriginatingManagementSystem event:SystemMonitor ;
+  noria:logOriginatingAgent foaf:Agent ;
+  noria:alarmSeverity [ a skos:Concept ; skos:inScheme <Notification/Severity/PerceivedSeverity> ; skos:hasTopConcept <Notification/Severity/Major> ] .
+
+# Additional relationships to ensure connectivity
+resource:Res1 noria:elementManagedBy org:ITSupportTeam .
+resource:Res2 noria:elementManagedBy org:ITSupportTeam .
+application:App1 noria:resourceForApplication resource:Res1 .
+application:App2 noria:resourceForApplication resource:Res2 .
+service:Service1 noria:troubleTicketRelatedService event:Event1 .
+service:Service2 noria:troubleTicketRelatedService event:Event1 .
+application:App1 noria:applicationType [ a skos:Concept ; skos:inScheme <kos/application/type> ; skos:hasTopConcept <kos/application/type/CustomerManagement> ] .
+application:App2 noria:applicationType [ a skos:Concept ; skos:inScheme <kos/application/type> ; skos:hasTopConcept <kos/application/type/Monitoring> ] .
+
+# End of graph

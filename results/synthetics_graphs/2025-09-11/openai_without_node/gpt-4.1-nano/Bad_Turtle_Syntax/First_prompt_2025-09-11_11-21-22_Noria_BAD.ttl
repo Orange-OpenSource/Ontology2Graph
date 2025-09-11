@@ -1,0 +1,118 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix fo: <http://purl.org/ontology/bibo/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.com/entities/RouterAlpha> a noria:StructuralElement, seas:System ;
+  rdfs:label "Router Alpha"@en ;
+  rdfs:comment "Core router in data center A, responsible for internal traffic routing."@en ;
+  noria:structuralElementDistinguishedName "RouterAlpha_DC_A" ;
+  noria:elementManagedBy <https://example.com/agents/NetworkAdminTeam> .
+
+<https://example.com/entities/NetworkAdminTeam> a org:OrganizationalUnit ;
+  rdfs:label "Network Administration Team"@en ;
+  rdfs:comment "Team responsible for managing network infrastructure."@en ;
+  rdfs:isDefinedBy <https://w3id.org/noria/> .
+
+<https://example.com/entities/Resource1> a noria:Resource, seas:CommunicationDevice ;
+  rdfs:label "Resource1"@en ;
+  rdfs:comment "Physical server hosting critical applications."@en ;
+  noria:resourceLogisticId "SRV-2023-001" ;
+  noria:resourceHostName "server01.datacenterA.example.com" ;
+  noria:resourceSerialNumber "SN123456789" ;
+  noria:resourceType <http://purl.org/ontology/bibo/Server> ;
+  noria:resourceUsageState [ a skos:Concept ; skos:inScheme <kos/Resource/LifecycleState> ; skos:hasTopConcept <http://example.com/concepts/Active> ] ;
+  noria:locatedAtLocus <https://example.com/locations/Locus1> ;
+  noria:resourceManagedBy <https://example.com/agents/ITSupportTeam> .
+
+<https://example.com/locations/Locus1> a noria:Locus ;
+  rdfs:label "Locus 1"@en ;
+  rdfs:comment "Main server rack in room 314."@en ;
+  noria:locusLine "Line: L, in Room:Server room 314"@en ;
+  noria:locusRow "Row: R, in Room:Server room 314"@en .
+
+<https://example.com/entities/NetworkInterface1> a noria:NetworkInterface ;
+  rdfs:label "eth0"@en ;
+  rdfs:comment "Primary network interface of Resource1."@en ;
+  noria:networkInterfaceType "physical" ;
+  noria:networkInterfaceDescription "Gigabit Ethernet port 0"@en ;
+  noria:networkInterfaceOf <https://example.com/entities/Resource1> ;
+  noria:networkInterfaceConnects <https://example.com/entities/Link1> ;
+  noria:networkInterfaceOperationalStatus [ a skos:Concept ; skos:inScheme <kos/Resource/OperationalState> ; skos:hasTopConcept <http://example.com/concepts/Up> ] ;
+  noria:networkInterfaceRoutingPriorityMetric 100 ;
+  noria:networkInterfaceLaserTxOpticalPower -2 ;
+  noria:networkInterfaceLaserRxOpticalPower -3 .
+
+<https://example.com/entities/Link1> a noria:NetworkLink ;
+  rdfs:label "Link1"@en ;
+  rdfs:comment "Optical fiber link between Resource1 and Resource2."@en ;
+  noria:networkLinkId "NL-2023-001" ;
+  noria:networkLinkType "optical fiber" ;
+  noria:networkLinkInstallationDate "2022-06-15T10:00:00Z"^^xsd:dateTime ;
+  noria:networkLinkTerminationResourceOrigin <https://example.com/entities/Resource1> ;
+  noria:networkLinkTerminationResourceDestination <https://example.com/entities/Resource2> .
+
+<https://example.com/entities/Resource2> a noria:Resource, seas:CommunicationDevice ;
+  rdfs:label "Resource2"@en ;
+  rdfs:comment "Backup server in data center A."@en ;
+  noria:resourceLogisticId "SRV-2023-002" ;
+  noria:resourceHostName "server02.datacenterA.example.com" ;
+  noria:resourceSerialNumber "SN987654321" ;
+  noria:resourceType <http://purl.org/ontology/bibo/Server> ;
+  noria:resourceUsageState [ a skos:Concept ; skos:inScheme <kos/Resource/LifecycleState> ; skos:hasTopConcept <http://example.com/concepts/Active> ] ;
+  noria:locatedAtLocus <https://example.com/locations/Locus1> ;
+  noria:resourceManagedBy <https://example.com/agents/ITSupportTeam> .
+
+<https://example.com/entities/Event1> a noria:EventRecord ;
+  rdfs:label "Interface GigabitEthernet0/0/1 Up"@en ;
+  rdfs:comment "Network interface eth0 on Resource1 changed state to up."@en ;
+  noria:loggingTime "2023-10-20T14:35:00Z"^^xsd:dateTime ;
+  noria:logText "LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1, changed state to up"@en ;
+  noria:logOriginatingManagedObject <https://example.com/entities/Resource1> ;
+  noria:logOriginatingManagementSystem <https://example.com/agents/NMS> ;
+  noria:logOriginatingAgent <https://example.com/agents/NetworkMonitoringSystem> ;
+  noria:alarmSeverity [ a skos:Concept ; skos:inScheme <Notification/Severity/PerceivedSeverity> ; skos:hasTopConcept <Critical> ] .
+
+<https://example.com/entities/Alarm1> a noria:EventRecord ;
+  rdfs:label "Critical Alarm on Resource1"@en ;
+  rdfs:comment "Critical alarm triggered due to interface down."@en ;
+  noria:loggingTime "2023-10-20T14:36:00Z"^^xsd:dateTime ;
+  noria:alarmSeverity [ a skos:Concept ; skos:inScheme <Notification/Severity/PerceivedSeverity> ; skos:hasTopConcept <Critical> ] ;
+  noria:alarmProposedRepairAction <https://example.com/actions/RestartInterface> ;
+  noria:alarmMitigatedBy <https://example.com/actions/ResetInterface> .
+
+<https://example.com/actions/RestartInterface> a pep:Procedure ;
+  rdfs:label "Restart Interface"@en ;
+  rdfs:comment "Procedure to restart network interface eth0."@en .
+
+<https://example.com/actions/ResetInterface> a pep:Procedure ;
+  rdfs:label "Reset Interface"@en ;
+  rdfs:comment "Procedure to reset network interface eth0."@en .
+
+<https://example.com/entities/ChangeRequest1> a noria:ChangeRequest ;
+  rdfs:label "CR-2023-001"@en ;
+  rdfs:comment "Change request to upgrade firmware on Resource2."@en ;
+  noria:changeRequestId "CR-2023-001" ;
+  noria:changeRequestCreationDateTime "2023-10-15T09:00:00Z"^^xsd:dateTime ;
+  noria:changeRequestDescription "Firmware upgrade to version 2.0 for Resource2."@en ;
+  noria:changeRequestImpact <https://example.com/entities/Resource2> ;
+  noria:changeRequestChangeCause "Scheduled firmware upgrade."@en ;
+  noria:changeRequestStatusCurrent [ a skos:Concept ; skos:inScheme <kos/ChangeRequest/status> ; skos:hasTopConcept <InProgress> ] ;
+  noria:changeRequestActorParty <https://example.com/agents/ITManager> ;
+  noria:changeRequestInitiatorParty <https://example.com/agents/ITSupportTeam> .
+
+<https://example.com/agents/ITSupportTeam> a org:OrganizationalUnit ;
+  rdfs:label "IT Support Team"@en ;
+  rdfs:comment "Team responsible for implementing change requests."@en .
+
+<https://example.com/agents/ITManager> a foaf:Agent ;
+  rdfs:label "IT Manager"@en ;
+  rdfs:comment "Manager overseeing network infrastructure changes."@en .

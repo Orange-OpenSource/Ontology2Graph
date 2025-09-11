@@ -1,0 +1,527 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix bot: <https://w3id.org/bot#> .
+@prefix log: <https://w3id.org/sepses/ns/log#> .
+@prefix pep: <https://w3id.org/pep/> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix observable: <https://unifiedcyberontology.org/ontology/uco/observable#> .
+@prefix devopsprod: <http://w3id.org/devops-infra/product#> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix ex: <http://example.com/noria-kg/> .
+
+# --- SKOS Concepts for controlled vocabularies ---
+
+ex:CustomerFacingServiceType
+    a skos:Concept ;
+    rdfs:label "Customer Facing Service Type" ;
+    rdfs:comment "A service directly exposed to and consumed by customers." .
+
+ex:HighImportance
+    a skos:Concept ;
+    rdfs:label "High Business Importance" ;
+    rdfs:comment "Indicates a critical application from a business impact perspective." .
+
+ex:VirtualServerType
+    a skos:Concept ;
+    rdfs:label "Virtual Server Resource Type" ;
+    rdfs:comment "A resource type representing a virtual server instance." .
+
+ex:PhysicalServerType
+    a skos:Concept ;
+    rdfs:label "Physical Server Resource Type" ;
+    rdfs:comment "A resource type representing a physical server hardware." .
+
+ex:NetworkRouterType
+    a skos:Concept ;
+    rdfs:label "Network Router Type" ;
+    rdfs:comment "A type of resource representing a network router." .
+
+ex:PhysicalInterfaceType
+    a skos:Concept ;
+    rdfs:label "Physical Interface Type" ;
+    rdfs:comment "A type of network interface representing a physical port." .
+
+ex:UpStatus
+    a skos:Concept ;
+    rdfs:label "Operational Status: Up" ;
+    rdfs:comment "Indicates that a component is currently operational." .
+
+ex:InProductionState
+    a skos:Concept ;
+    rdfs:label "In Production State" ;
+    rdfs:comment "Resource is actively used in a production environment." .
+
+ex:MajorSeverity
+    a skos:Concept ;
+    rdfs:label "Trouble Ticket Severity: Major" ;
+    rdfs:comment "A significant incident impacting service, but not completely blocking." .
+
+ex:CriticalSeverity
+    a skos:Concept ;
+    rdfs:label "Alarm Severity: Critical" ;
+    rdfs:comment "An alarm indicating a severe condition requiring immediate attention." .
+
+ex:CustomerOrigin
+    a skos:Concept ;
+    rdfs:label "Trouble Ticket Origin: Customer" ;
+    rdfs:comment "The trouble ticket was initiated by a customer report." .
+
+ex:FailureTicketType
+    a skos:Concept ;
+    rdfs:label "Failure Ticket Type" ;
+    rdfs:comment "A ticket type indicating a system or service failure." .
+
+ex:InProgressStatus
+    a skos:Concept ;
+    rdfs:label "In Progress Status" ;
+    rdfs:comment "The ticket is currently being worked on." .
+
+ex:SLA_P1
+    a skos:Concept ;
+    rdfs:label "SLA Level P1" ;
+    rdfs:comment "Highest Service Level Agreement priority, indicating maximum urgency." .
+
+ex:StandardChange
+    a skos:Concept ;
+    rdfs:label "Change Request Type: Standard" ;
+    rdfs:comment "A pre-approved change with low risk and well-defined procedure." .
+
+ex:InternalIntervention
+    a skos:Concept ;
+    rdfs:label "Internal Intervention" ;
+    rdfs:comment "Change performed by internal teams." .
+
+ex:SoftwareUpgradeCause
+    a skos:Concept ;
+    rdfs:label "Software Upgrade Cause" ;
+    rdfs:comment "The change is due to a software upgrade." .
+
+ex:ScheduledStatus
+    a skos:Concept ;
+    rdfs:label "Scheduled Status" ;
+    rdfs:comment "The change request is planned for a future date." .
+
+ex:PhoneContact
+    a skos:Concept ;
+    rdfs:label "Preferred Contact Method: Phone" ;
+    rdfs:comment "Indicates that phone is the preferred method for contact." .
+
+ex:EmailContact
+    a skos:Concept ;
+    rdfs:label "Preferred Contact Method: Email" ;
+    rdfs:comment "Indicates that email is the preferred method for contact." .
+
+ex:MonitoringSystemType
+    a skos:Concept ;
+    rdfs:label "Monitoring System Type" ;
+    rdfs:comment "A type of application dedicated to monitoring and alerting." .
+
+# --- Organizational Units (Super Node / High-Degree Node) ---
+
+ex:ServiceOpsTeam
+    a org:OrganizationalUnit, foaf:Agent ;
+    rdfs:label "Service Operations Team" ;
+    rdfs:comment "Team responsible for the overall operation and availability of customer-facing services." ;
+    noria:agentWorkingHours "24/7" ;
+    noria:agentPreferredContactMethod ex:PhoneContact ;
+    noria:agentInstructions "For critical issues, call the hotline. For non-critical, use ticketing system." ;
+    noria:agentManagesResource ex:CustomerPortalService .
+
+ex:DevOpsTeamA
+    a org:OrganizationalUnit, foaf:Agent ;
+    rdfs:label "DevOps Team A" ;
+    rdfs:comment "Team responsible for development and operations of the web frontend and backend API applications." ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri" ;
+    noria:agentPreferredContactMethod ex:EmailContact ;
+    noria:agentInstructions "Submit all requests via Jira." ;
+    noria:agentManagesResource ex:WebFrontendApp, ex:BackendAPIService .
+
+ex:InfraOpsTeam
+    a org:OrganizationalUnit, foaf:Agent ;
+    rdfs:label "Infrastructure Operations Team" ;
+    rdfs:comment "Team managing the core IT infrastructure, including servers and virtualization." ;
+    noria:agentWorkingHours "24/7" ;
+    noria:agentPreferredContactMethod ex:PhoneContact ;
+    noria:agentInstructions "Emergency calls only for P1/P2 incidents." ;
+    noria:agentManagesResource ex:WebServer01, ex:CoreRouterDC1, ex:CoreRouterDC2 .
+
+ex:NetworkTeam
+    a org:OrganizationalUnit, foaf:Agent ;
+    rdfs:label "Network Operations Team" ;
+    rdfs:comment "Team responsible for network devices, links, and connectivity." ;
+    noria:agentWorkingHours "24/7" ;
+    noria:agentPreferredContactMethod ex:PhoneContact ;
+    noria:agentInstructions "Use network monitoring tools for initial diagnosis." ;
+    noria:agentManagesResource ex:CoreNetworkLink_DC1_DC2 .
+
+ex:DBATeam
+    a org:OrganizationalUnit, foaf:Agent ;
+    rdfs:label "Database Administration Team" ;
+    rdfs:comment "Team managing all database servers and instances." ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri" ;
+    noria:agentPreferredContactMethod ex:EmailContact ;
+    noria:agentInstructions "For database issues, open a ticket with 'DB' prefix." ;
+    noria:agentManagesResource ex:DBServer01, ex:AnalyticsPlatform .
+
+ex:HPE_Org
+    a org:Organization ;
+    rdfs:label "Hewlett Packard Enterprise" ;
+    rdfs:comment "Manufacturer of server hardware." .
+
+ex:Cisco_Org
+    a org:Organization ;
+    rdfs:label "Cisco Systems" ;
+    rdfs:comment "Manufacturer of network equipment." .
+
+# --- Persons and Corporate User Identifiers ---
+ex:Alice_Smith
+    a foaf:Person ;
+    rdfs:label "Alice Smith" ;
+    rdfs:comment "Lead Engineer in DevOps Team A." ;
+    foaf:holdsAccount ex:ASmith_CUid .
+
+ex:ASmith_CUid
+    a noria:CorporateUserIdentifier ;
+    rdfs:label "Alice Smith's Corporate User ID" ;
+    rdfs:comment "Corporate user identifier for Alice Smith, used for system access." ;
+    foaf:accountName "asmith" .
+
+# --- Location related entities ---
+ex:DataCenterA
+    a bot:Site ;
+    rdfs:label "Primary Data Center A" ;
+    rdfs:comment "Main data center for hosting production services and infrastructure." ;
+    noria:siteId "DC-A" ;
+    noria:siteType "data center" ;
+    noria:sitePrincipalAddressStreet "123 Tech Lane" ;
+    noria:sitePrincipalAddressCityName "Metropolis" ;
+    noria:sitePrincipalAddressPostalCode "10001" ;
+    noria:sitePrincipalAddressCountry "US" .
+
+ex:DataCenterA_Room1
+    a noria:Room ;
+    rdfs:label "Server Room 1, DC-A" ;
+    rdfs:comment "Dedicated server room within Data Center A, housing critical hardware." ;
+    bot:hasSpace ex:DataCenterA_Rack1_U23, ex:DataCenterA_Rack1_U24 ;
+    bot:hasBuilding ex:DataCenterA .
+
+ex:DataCenterA_Rack1_U23
+    a noria:Locus ;
+    rdfs:label "Rack 1, Unit 23, DC-A Room 1" ;
+    rdfs:comment "Specific physical location for WebServer01 within a server rack." ;
+    noria:locusLine "R1" ;
+    noria:locusRow "U23" .
+
+ex:DataCenterA_Rack1_U24
+    a noria:Locus ;
+    rdfs:label "Rack 1, Unit 24, DC-A Room 1" ;
+    rdfs:comment "Specific physical location for DBServer01 within a server rack." ;
+    noria:locusLine "R1" ;
+    noria:locusRow "U24" .
+
+# --- Product Models ---
+ex:HP_ProLiant_DL380_Gen10
+    a noria:ProductModel ;
+    rdfs:label "HP ProLiant DL380 Gen10" ;
+    rdfs:comment "Product model for a common enterprise server type." ;
+    noria:productManufacturedBy ex:HPE_Org .
+
+ex:Cisco_Catalyst_9300
+    a noria:ProductModel ;
+    rdfs:label "Cisco Catalyst 9300" ;
+    rdfs:comment "Product model for a high-performance network switch/router." ;
+    noria:productManufacturedBy ex:Cisco_Org .
+
+# --- Services (Central Node) ---
+ex:EnterpriseServices
+    a noria:Service ;
+    rdfs:label "Enterprise Core Services" ;
+    rdfs:comment "High-level service grouping critical internal and external applications." .
+
+ex:CustomerPortalService
+    a noria:Service ;
+    rdfs:label "Customer Portal Service" ;
+    rdfs:comment "The main online service for customer interactions, part of enterprise services." ;
+    noria:serviceType ex:CustomerFacingServiceType ;
+    noria:elementManagedBy ex:ServiceOpsTeam ;
+    seas:subSystemOf ex:EnterpriseServices .
+
+# --- Applications (Hub Node) ---
+ex:WebFrontendApp
+    a noria:Application ;
+    rdfs:label "Web Frontend Application" ;
+    rdfs:comment "Application handling user interface and initial request processing for the customer portal." ;
+    noria:applicationShortIdentifier "WEB-FE" ;
+    noria:applicationBusinessImportance ex:HighImportance ;
+    noria:elementManagedBy ex:DevOpsTeamA ;
+    noria:applicationFunctionalDomain "Customer Relationship Management" ;
+    noria:applicationFunctionalSubDomain "Online Presence" .
+
+ex:BackendAPIService
+    a noria:Application ;
+    rdfs:label "Backend API Service" ;
+    rdfs:comment "Application providing core business logic and data access APIs for various services." ;
+    noria:applicationShortIdentifier "API-BE" ;
+    noria:applicationBusinessImportance ex:HighImportance ;
+    noria:elementManagedBy ex:DevOpsTeamA ;
+    noria:applicationFunctionalDomain "Service Development, Management and Operations" ;
+    noria:applicationFunctionalSubDomain "Business Logic Processing" .
+
+ex:AnalyticsPlatform
+    a noria:Application ;
+    rdfs:label "Analytics Platform" ;
+    rdfs:comment "Application for data analysis and reporting, consuming data from various sources." ;
+    noria:applicationShortIdentifier "ANALYTICS" ;
+    noria:applicationBusinessImportance ex:HighImportance ;
+    noria:elementManagedBy ex:DBATeam ;
+    noria:applicationFunctionalDomain "Data Management" ;
+    noria:applicationFunctionalSubDomain "Reporting and Insights" .
+
+ex:MonitoringSystem
+    a noria:Application ;
+    rdfs:label "Central Monitoring System" ;
+    rdfs:comment "System responsible for collecting and processing monitoring data from infrastructure and applications." ;
+    noria:applicationShortIdentifier "MONITOR" ;
+    noria:applicationType ex:MonitoringSystemType .
+
+ex:TicketingSystem
+    a noria:Application ;
+    rdfs:label "ITSM Ticketing System" ;
+    rdfs:comment "Application used for managing incidents, problems, and service requests." ;
+    noria:applicationShortIdentifier "ITSM-TT" .
+
+# --- Application Modules ---
+ex:WebFrontendApp_ProdModule
+    a noria:ApplicationModule ;
+    rdfs:label "Web Frontend Production Module" ;
+    rdfs:comment "Production instance of the Web Frontend Application, serving live traffic." ;
+    noria:applicationModuleOf ex:WebFrontendApp ;
+    noria:applicationModuleName "WEB-FE_PROD" ;
+    noria:applicationModuleIdentifier "PROD-001" ;
+    noria:applicationModuleAdministrationTeam ex:DevOpsTeamA ;
+    noria:applicationModuleSupportTeam ex:ServiceOpsTeam ;
+    noria:applicationModuleStatus ex:UpStatus ;
+    noria:applicationModuleSlaLevel ex:SLA_P1 .
+
+# --- Resources (High-Degree Node, Multiplex Node) ---
+ex:WebServer01_MgmtIP
+    a observable:IPAddress ;
+    rdfs:label "Web Server 01 Management IP" ;
+    observable:ipAddressValue "10.0.0.10" .
+
+ex:WebServer01
+    a noria:Resource ;
+    rdfs:label "Web Server 01" ;
+    rdfs:comment "Primary web server for the customer portal, hosting the frontend application." ;
+    noria:resourceHostName "web-prod-01.example.com" ;
+    noria:resourceType ex:VirtualServerType ;
+    noria:resourceProductModel ex:HP_ProLiant_DL380_Gen10 ;
+    noria:resourceSerialNumber "SN-WEB-001" ;
+    noria:resourceUsageState ex:InProductionState ;
+    noria:resourceInstallationDate "2023-01-15T10:00:00Z"^^xsd:dateTime ;
+    noria:resourceForApplication ex:WebFrontendApp ;
+    noria:elementManagedBy ex:InfraOpsTeam ;
+    noria:locatedAtLocus ex:DataCenterA_Rack1_U23 ;
+    noria:resourceManagementIPAddress ex:WebServer01_MgmtIP .
+
+ex:DBServer01_MgmtIP
+    a observable:IPAddress ;
+    rdfs:label "DB Server 01 Management IP" ;
+    observable:ipAddressValue "10.0.0.20" .
+
+ex:DBServer01
+    a noria:Resource ;
+    rdfs:label "Database Server 01" ;
+    rdfs:comment "Primary database server supporting multiple critical applications." ;
+    noria:resourceHostName "db-prod-01.example.com" ;
+    noria:resourceType ex:PhysicalServerType ;
+    noria:resourceProductModel ex:HP_ProLiant_DL380_Gen10 ;
+    noria:resourceSerialNumber "SN-DB-001" ;
+    noria:resourceUsageState ex:InProductionState ;
+    noria:resourceInstallationDate "2022-05-20T14:30:00Z"^^xsd:dateTime ;
+    noria:resourceForApplication ex:WebFrontendApp, ex:BackendAPIService, ex:AnalyticsPlatform ;
+    noria:elementManagedBy ex:DBATeam ;
+    noria:locatedAtLocus ex:DataCenterA_Rack1_U24 ;
+    noria:resourceManagementIPAddress ex:DBServer01_MgmtIP .
+
+ex:CoreRouterDC1_MgmtIP
+    a observable:IPAddress ;
+    rdfs:label "Core Router DC1 Management IP" ;
+    observable:ipAddressValue "10.0.0.254" .
+
+ex:CoreRouterDC1
+    a noria:Resource ;
+    rdfs:label "Core Router DC1" ;
+    rdfs:comment "Main router in Data Center A, providing connectivity to external networks." ;
+    noria:resourceHostName "core-router-dc1.example.com" ;
+    noria:resourceType ex:NetworkRouterType ;
+    noria:resourceProductModel ex:Cisco_Catalyst_9300 ;
+    noria:elementManagedBy ex:InfraOpsTeam ;
+    noria:resourceManagementIPAddress ex:CoreRouterDC1_MgmtIP .
+
+ex:CoreRouterDC2_MgmtIP
+    a observable:IPAddress ;
+    rdfs:label "Core Router DC2 Management IP" ;
+    observable:ipAddressValue "10.0.1.254" .
+
+ex:CoreRouterDC2
+    a noria:Resource ;
+    rdfs:label "Core Router DC2" ;
+    rdfs:comment "Main router in Data Center B, providing connectivity to external networks." ;
+    noria:resourceHostName "core-router-dc2.example.com" ;
+    noria:resourceType ex:NetworkRouterType ;
+    noria:resourceProductModel ex:Cisco_Catalyst_9300 ;
+    noria:elementManagedBy ex:InfraOpsTeam ;
+    noria:resourceManagementIPAddress ex:CoreRouterDC2_MgmtIP .
+
+# --- Network Interfaces (Intermediary Node) ---
+ex:WebServer01_Eth0
+    a noria:NetworkInterface ;
+    rdfs:label "WebServer01 Ethernet 0" ;
+    rdfs:comment "Primary network interface for WebServer01." ;
+    noria:networkInterfaceOf ex:WebServer01 ;
+    noria:networkInterfaceType ex:PhysicalInterfaceType ;
+    noria:networkInterfaceAdministrativeStatus ex:UpStatus ;
+    noria:networkInterfaceOperationalStatus ex:UpStatus .
+
+ex:DBServer01_Eth0
+    a noria:NetworkInterface ;
+    rdfs:label "DBServer01 Ethernet 0" ;
+    rdfs:comment "Primary network interface for DBServer01." ;
+    noria:networkInterfaceOf ex:DBServer01 ;
+    noria:networkInterfaceType ex:PhysicalInterfaceType ;
+    noria:networkInterfaceAdministrativeStatus ex:UpStatus ;
+    noria:networkInterfaceOperationalStatus ex:UpStatus .
+
+ex:CoreRouterDC1_Gig0_0_1
+    a noria:NetworkInterface ;
+    rdfs:label "CoreRouterDC1 Gig0/0/1" ;
+    rdfs:comment "Network interface on CoreRouterDC1 connecting to CoreRouterDC2." ;
+    noria:networkInterfaceOf ex:CoreRouterDC1 ;
+    noria:networkInterfaceType ex:PhysicalInterfaceType ;
+    noria:networkInterfaceAdministrativeStatus ex:UpStatus ;
+    noria:networkInterfaceOperationalStatus ex:UpStatus .
+
+ex:CoreRouterDC2_Gig0_0_1
+    a noria:NetworkInterface ;
+    rdfs:label "CoreRouterDC2 Gig0/0/1" ;
+    rdfs:comment "Network interface on CoreRouterDC2 connecting to CoreRouterDC1." ;
+    noria:networkInterfaceOf ex:CoreRouterDC2 ;
+    noria:networkInterfaceType ex:PhysicalInterfaceType ;
+    noria:networkInterfaceAdministrativeStatus ex:UpStatus ;
+    noria:networkInterfaceOperationalStatus ex:UpStatus .
+
+# --- Network Links (Connector Node) ---
+ex:CoreNetworkLink_DC1_DC2
+    a noria:NetworkLink ;
+    rdfs:label "Core Network Link DC1-DC2" ;
+    rdfs:comment "High-speed fiber optic link connecting Data Center A and Data Center B." ;
+    noria:networkLinkId "LINK-DC1-DC2-001" ;
+    noria:networkLinkType "Fiber Optic" ;
+    noria:networkLinkInstallationDate "2021-03-01T09:00:00Z"^^xsd:dateTime ;
+    noria:networkLinkTerminationResourceOrigin ex:CoreRouterDC1 ;
+    noria:networkLinkTerminationResourceDestination ex:CoreRouterDC2 ;
+    noria:resourceManagedBy ex:NetworkTeam ;
+    noria:networkInterfaceConnects ex:CoreRouterDC1_Gig0_0_1, ex:CoreRouterDC2_Gig0_0_1 .
+
+# --- Dynamic Elements (Trouble Tickets, Change Requests, Event Records) ---
+
+# Trouble Ticket (Hub Node)
+ex:TT_WebIssue_001
+    a noria:TroubleTicket ;
+    rdfs:label "Customer Portal Login Issue" ;
+    rdfs:comment "Customers are unable to log in to the portal due to an application error." ;
+    dcterms:identifier "TT-20240423-001" ;
+    dcterms:created "2024-04-23T09:30:00Z"^^xsd:dateTime ;
+    noria:troubleTicketSeverity ex:MajorSeverity ;
+    noria:troubleTicketType ex:FailureTicketType ;
+    noria:troubleTicketOrigin ex:CustomerOrigin ;
+    noria:troubleTicketStatusCurrent ex:InProgressStatus ;
+    noria:troubleTicketRelatedService ex:CustomerPortalService ;
+    noria:troubleTicketRelatedResource ex:WebServer01 ;
+    noria:troubleTicketRelatedParty ex:ServiceOpsTeam, ex:InfraOpsTeam ;
+    noria:documentStatusHistory ex:Event_TT_StatusChange_001, ex:Event_TT_StatusChange_002 ;
+    noria:troubleTicketTrigger ex:Event_WebLoginFailure_001 .
+
+# Change Request (Connector Node)
+ex:CR_DBUpgrade_001
+    a noria:ChangeRequest ;
+    rdfs:label "Database Server OS Upgrade" ;
+    rdfs:comment "Planned OS upgrade for DBServer01 to enhance security and performance, impacting Backend API Service." ;
+    dcterms:identifier "CR-20240501-001" ;
+    dcterms:created "2024-04-15T11:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestType ex:StandardChange ;
+    noria:changeRequestCategory ex:InternalIntervention ;
+    noria:changeRequestChangeCause ex:SoftwareUpgradeCause ;
+    noria:changeRequestPlannedStartTime "2024-05-01T02:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestPlannedEndTime "2024-05-01T04:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestImpact ex:DBServer01, ex:BackendAPIService ;
+    noria:changeRequestInitiatorParty ex:DevOpsTeamA ;
+    noria:changeRequestActorParty ex:DBATeam ;
+    noria:changeRequestStatusCurrent ex:ScheduledStatus .
+
+# Event Records (Intermediary Node)
+ex:Event_WebLoginFailure_001
+    a noria:EventRecord ;
+    rdfs:label "Web Login Failure Alert" ;
+    rdfs:comment "Alert generated by monitoring system due to high rate of login failures on web server." ;
+    noria:loggingTime "2024-04-23T09:25:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagedObject ex:WebServer01 ;
+    noria:logOriginatingManagementSystem ex:MonitoringSystem ;
+    noria:logText "High rate of HTTP 500 errors on /login endpoint." ;
+    noria:alarmSeverity ex:CriticalSeverity .
+
+ex:Event_TT_StatusChange_001
+    a noria:EventRecord ;
+    rdfs:label "Trouble Ticket Status Change: In Progress" ;
+    rdfs:comment "Automated event recording the status change of TT-20240423-001 to In Progress by the Service Operations Team." ;
+    noria:loggingTime "2024-04-23T09:45:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagementSystem ex:TicketingSystem ;
+    noria:logOriginatingAgent ex:ServiceOpsTeam ;
+    noria:logText "Ticket TT-20240423-001 status changed to In Progress." .
+
+ex:Event_TT_StatusChange_002
+    a noria:EventRecord ;
+    rdfs:label "Trouble Ticket Status Change: Resolved" ;
+    rdfs:comment "Automated event recording the status change of TT-20240423-001 to Resolved by the Infrastructure Operations Team." ;
+    noria:loggingTime "2024-04-23T11:15:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagementSystem ex:TicketingSystem ;
+    noria:logOriginatingAgent ex:InfraOpsTeam ;
+    noria:logText "Ticket TT-20240423-001 status changed to Resolved. Root cause: misconfiguration on WebServer01." ;
+    noria:alarmMitigatedBy ex:TT_WebIssue_001 .
+
+ex:Event_DB_Upgrade_Start
+    a noria:EventRecord ;
+    rdfs:label "DB Upgrade Start Notification" ;
+    rdfs:comment "Notification that DBServer01 OS upgrade has started, logged by the DBA Team." ;
+    noria:loggingTime "2024-05-01T02:00:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagedObject ex:DBServer01 ;
+    noria:logOriginatingAgent ex:DBATeam ;
+    noria:logText "OS upgrade initiated on db-prod-01.example.com." ;
+    noria:alarmMitigatedBy ex:CR_DBUpgrade_001 .
+
+# --- Operation Plans (Procedural Element) ---
+ex:WebLoginTroubleshootingGuide
+    a noria:OperationPlan ;
+    rdfs:label "Web Login Troubleshooting Guide" ;
+    rdfs:comment "Standard operating procedure for diagnosing and resolving web login issues." ;
+    noria:operationPlanPreCondition ex:LoginFailurePreCondition ;
+    noria:operationPlanPostCondition ex:LoginRestoredPostCondition .
+
+ex:LoginFailurePreCondition
+    a noria:ActionPreCondition ;
+    rdfs:label "Login Failure Pre-Condition" ;
+    rdfs:comment "Condition where users report inability to log in, and monitoring shows HTTP 5xx errors on login endpoint." .
+
+ex:LoginRestoredPostCondition
+    a noria:ActionPostCondition ;
+    rdfs:label "Login Restored Post-Condition" ;
+    rdfs:comment "Condition where users can successfully log in, and HTTP 200 responses are observed on login endpoint." .

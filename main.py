@@ -5,11 +5,8 @@ from pathlib import Path
 import os
 import shutil
 import datetime
-import subprocess
 from generate_ttl_files.generate_ttl import generate_ttl
-#from merge_ttl_files.merge_ttl import merge_ttl
 from merge_ttl_files.utils.utils_merge import max_node_occ_value
-
 
 if __name__ == '__main__':
 
@@ -29,15 +26,12 @@ if __name__ == '__main__':
         for line in lines:
             cleaned_line = line.strip()
             model_list.append(cleaned_line)
-    model = model_list[5]
+    model = model_list[7]
 
     PATH_RESULT = f'{path}/results/synthetics_graphs/{date}/{model}'
     PATH_MERGED = f'{PATH_RESULT}/merged_graph'
 
-    #path_result=f'{path}/merged_graph'
-
-    #subprocess.run(['clear'],check=True)
-
+    os.system("clear")
     print('TTL FILE GENERATION IS IN PROGRESS')
 
     ONTOLOGY=generate_ttl(path_gen,PATH_RESULT,args.nbrttl,model)
@@ -58,7 +52,7 @@ if __name__ == '__main__':
     print(f'\nTTL FILES ARE STORED IN : {PATH_RESULT}\n')
     print('#### TTL FILE GENERATION PROCESS ENDED ####\n')
 
-    print('MERGING TTL FILE PROCESS IS IN PROGRESS\n')
+    #print('MERGING TTL FILE PROCESS IS IN PROGRESS\n')
 
     #remove old files in the merge folfer
     if Path(PATH_MERGED).exists() and Path(PATH_MERGED).is_dir():

@@ -15,7 +15,7 @@ def query_llm(prompt,ontology,model):
         response = client.chat.completions.create(
             model=model,
             temperature=0.1, # model's creativity
-            top_p=0.1, # model's creativity
+            top_p=0.3, # model's creativity
             messages = [
                 {   "role":"system",
                     "content":"""You are an expert in websemantic technologies and most 

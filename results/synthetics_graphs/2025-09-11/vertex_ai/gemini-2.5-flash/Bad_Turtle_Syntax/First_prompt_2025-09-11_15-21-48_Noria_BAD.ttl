@@ -1,0 +1,438 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix bot: <https://w3id.org/bot#> .
+@prefix observable: <https://unifiedcyberontology.org/ontology/uco/observable#> .
+@prefix log: <https://w3id.org/sepses/ns/log#> .
+@prefix pep: <https://w3id.org/pep/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix ex: <http://example.com/noria-kg/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# Knowledge Graph based on NORIA schema
+
+# --- Organizations and Agents ---
+
+ex:OrangeCorp
+    a org:Organization ;
+    rdfs:label "Orange Corporation"@en ;
+    rdfs:comment "The main corporate entity responsible for the entire infrastructure."@en ;
+    org:hasUnit ex:ITOperationsDept .
+
+ex:ITOperationsDept
+    a org:OrganizationalUnit ;
+    rdfs:label "IT Operations Department"@en ;
+    rdfs:comment "Department responsible for managing IT infrastructure and applications."@en ;
+    org:unitOf ex:OrangeCorp ;
+    org:hasMember ex:JaneSmith .
+
+ex:NetworkTeam
+    a org:OrganizationalUnit ;
+    rdfs:label "Network Operations Team"@en ;
+    rdfs:comment "Specialized team within IT Operations managing network resources."@en ;
+    org:unitOf ex:ITOperationsDept ;
+    org:hasMember ex:JohnDoe ;
+    noria:agentWorkingHours "9:00 AM - 6:00 PM (Mon-Fri)"^^xsd:string ;
+    noria:agentPreferredContactMethod [
+        a skos:Concept ;
+        skos:prefLabel "Email"@en ;
+        skos:inScheme <kos/org/agent-contact-method>
+    ] ;
+    noria:agentInstructions "For critical issues, use the dedicated hotline after hours."^^xsd:string .
+
+ex:JohnDoe
+    a foaf:Person ;
+    rdfs:label "John Doe"@en ;
+    rdfs:comment "Network Engineer, responsible for core network devices."@en ;
+    foaf:mbox <mailto:john.doe@example.com> ;
+    org:memberOf ex:NetworkTeam ;
+    noria:agentManagesResource ex:Router_Edge01, ex:Switch_Core01 .
+
+ex:JaneSmith
+    a foaf:Person ;
+    rdfs:label "Jane Smith"@en ;
+    rdfs:comment "IT Service Manager, responsible for incident and change management."@en ;
+    foaf:mbox <mailto:jane.smith@example.com> ;
+    org:memberOf ex:ITOperationsDept .
+
+# --- Applications and Services ---
+
+ex:CoreBankingApp
+    a noria:Application ;
+    rdfs:label "Core Banking Application"@en ;
+    rdfs:comment "Mission-critical application for core banking operations."@en ;
+    noria:applicationModelIdentifier "CBA-V2.1"^^xsd:string ;
+    noria:applicationNumericalIdentifier 1001^^xsd:int ;
+    noria:applicationShortIdentifier "CBA"^^xsd:string ;
+    noria:applicationType [
+        a skos:Concept ;
+        skos:prefLabel "Financial System"@en ;
+        skos:inScheme <kos/application/type>
+    ] ;
+    noria:applicationBusinessImportance [
+        a skos:Concept ;
+        skos:prefLabel "Critical"@en ;
+        skos:inScheme <kos/application/business-importance>
+    ] ;
+    noria:applicationFunctionalDomain "Financial Services Management"@en ;
+    noria:applicationFunctionalSubDomain "Core Transaction Processing"@en ;
+    noria:elementManagedBy ex:ITOperationsDept .
+
+ex:CoreBankingApp_Prod
+    a noria:ApplicationModule ;
+    rdfs:label "Core Banking Application - Production Instance"@en ;
+    rdfs:comment "The production instance of the Core Banking Application."@en ;
+    noria:applicationModuleOf ex:CoreBankingApp ;
+    noria:applicationModuleName "CBA_PROD"^^xsd:string ;
+    noria:applicationModuleIdentifier "PROD-CBA-001"^^xsd:string ;
+    noria:applicationModuleAdministrationTeam ex:ITOperationsDept ;
+    noria:applicationModuleAdministrationLeader ex:JaneSmith ;
+    noria:applicationModuleStatus [
+        a skos:Concept ;
+        skos:prefLabel "In Production"@en ;
+        skos:inScheme <https://w3id.org/noria/kos/application/status>
+    ] ;
+    noria:applicationModuleSlaLevel [
+        a skos:Concept ;
+        skos:prefLabel "Platinum"@en ;
+        skos:inScheme <https://w3id.org/noria/kos/application/sla-level>
+    ] ;
+    noria:applicationModuleSlaLevelDate "2024-01-01T00:00:00Z"^^xsd:dateTime ;
+    noria:applicationModuleHotlineEnabled true^^xsd:boolean .
+
+ex:CustomerPortal
+    a noria:Application ;
+    rdfs:label "Customer Self-Service Portal"@en ;
+    rdfs:comment "Web application allowing customers to manage their accounts."@en ;
+    noria:applicationModelIdentifier "CSP-V1.5"^^xsd:string ;
+    noria:applicationShortIdentifier "CSP"^^xsd:string ;
+    noria:applicationType [
+        a skos:Concept ;
+        skos:prefLabel "Web Application"@en ;
+        skos:inScheme <kos/application/type>
+    ] ;
+    noria:applicationBusinessImportance [
+        a skos:Concept ;
+        skos:prefLabel "High"@en ;
+        skos:inScheme <kos/application/business-importance>
+    ] ;
+    noria:elementManagedBy ex:ITOperationsDept .
+
+ex:CustomerPortal_Dev
+    a noria:ApplicationModule ;
+    rdfs:label "Customer Self-Service Portal - Development Instance"@en ;
+    rdfs:comment "The development instance of the Customer Self-Service Portal."@en ;
+    noria:applicationModuleOf ex:CustomerPortal ;
+    noria:applicationModuleName "CSP_DEV"^^xsd:string ;
+    noria:applicationModuleIdentifier "DEV-CSP-001"^^xsd:string ;
+    noria:applicationModuleAdministrationTeam ex:ITOperationsDept ;
+    noria:applicationModuleStatus [
+        a skos:Concept ;
+        skos:prefLabel "In Development"@en ;
+        skos:inScheme <https://w3id.org/noria/kos/application/status>
+    ] .
+
+ex:FinancialDataService
+    a noria:Service ;
+    rdfs:label "Financial Data Exchange Service"@en ;
+    rdfs:comment "An end-to-end service for secure financial data exchange, relying on Core Banking App."@en ;
+    noria:serviceType [
+        a skos:Concept ;
+        skos:prefLabel "Customer Facing Service"@en ;
+        skos:inScheme <kos/service/type>
+    ] ;
+    noria:elementManagedBy ex:ITOperationsDept .
+
+# --- Resources and Infrastructure ---
+
+ex:DataCenter_A
+    a bot:Site ;
+    rdfs:label "Main Data Center A"@en ;
+    rdfs:comment "Primary data center located in Paris."@en ;
+    noria:siteId "DC-A-PARIS"^^xsd:string ;
+    noria:siteType "Data Center"@en ;
+    noria:sitePrincipalAddress "123 Rue de la Paix"^^xsd:string ;
+    noria:sitePrincipalAddressCityName "Paris"^^xsd:string ;
+    noria:sitePrincipalAddressPostalCode "75002"^^xsd:string ;
+    noria:sitePrincipalAddressCountry "FR"^^xsd:string .
+
+ex:DataCenter_A_Room_1
+    a noria:Room ;
+    rdfs:label "Server Room 1, Data Center A"@en ;
+    rdfs:comment "Dedicated server room within Data Center A."@en ;
+    bot:hasSpace ex:Rack_A1_Locus .
+
+ex:Rack_A1_Locus
+    a noria:Locus ;
+    rdfs:label "Rack A1 Locus"@en ;
+    rdfs:comment "Specific location for Rack A1 within Server Room 1."@en ;
+    noria:locusLine "A"^^xsd:string ;
+    noria:locusRow "1"^^xsd:string .
+
+ex:Server_DB01
+    a noria:Resource ;
+    rdfs:label "Database Server DB01"@en ;
+    rdfs:comment "Dedicated server hosting the Core Banking Application database."@en ;
+    noria:resourceLogisticId "SRV-DB-001"^^xsd:string ;
+    noria:resourceHostName "db01.example.com"^^xsd:string ;
+    noria:resourceType [
+        a skos:Concept ;
+        skos:prefLabel "Database Server"@en ;
+        skos:inScheme <kos/Resource/type>
+    ] ;
+    noria:resourceSerialNumber "SN-DB01-XYZ"^^xsd:string ;
+    noria:resourceUsageState [
+        a skos:Concept ;
+        skos:prefLabel "In Production"@en ;
+        skos:inScheme <kos/Resource/LifecycleState>
+    ] ;
+    noria:resourceInstallationDate "2023-03-10T10:00:00Z"^^xsd:dateTime ;
+    noria:resourceForApplication ex:CoreBankingApp_Prod ;
+    noria:locatedAtLocus ex:Rack_A1_Locus ;
+    noria:resourceManagedBy ex:ITOperationsDept ;
+    noria:resourceManagementIPAddress <http://example.com/ip/192.168.1.10> .
+
+ex:Router_Edge01
+    a noria:Resource ;
+    rdfs:label "Edge Router 01"@en ;
+    rdfs:comment "Border router connecting the internal network to the internet."@en ;
+    noria:resourceLogisticId "RTR-EDGE-001"^^xsd:string ;
+    noria:resourceHostName "edge01.example.com"^^xsd:string ;
+    noria:resourceType [
+        a skos:Concept ;
+        skos:prefLabel "Network Router"@en ;
+        skos:inScheme <kos/Resource/type>
+    ] ;
+    noria:resourceSerialNumber "SN-RTR01-ABC"^^xsd:string ;
+    noria:resourceUsageState [
+        a skos:Concept ;
+        skos:prefLabel "In Production"@en ;
+        skos:inScheme <kos/Resource/LifecycleState>
+    ] ;
+    noria:resourceInstallationDate "2022-11-01T09:00:00Z"^^xsd:dateTime ;
+    noria:resourceManagedBy ex:NetworkTeam ;
+    noria:resourceManagementIPAddress <http://example.com/ip/10.0.0.1> .
+
+ex:Switch_Core01
+    a noria:Resource ;
+    rdfs:label "Core Switch 01"@en ;
+    rdfs:comment "Central switch for the data center network."@en ;
+    noria:resourceLogisticId "SW-CORE-001"^^xsd:string ;
+    noria:resourceHostName "core01.example.com"^^xsd:string ;
+    noria:resourceType [
+        a skos:Concept ;
+        skos:prefLabel "Network Switch"@en ;
+        skos:inScheme <kos/Resource/type>
+    ] ;
+    noria:resourceSerialNumber "SN-SW01-DEF"^^xsd:string ;
+    noria:resourceUsageState [
+        a skos:Concept ;
+        skos:prefLabel "In Production"@en ;
+        skos:inScheme <kos/Resource/LifecycleState>
+    ] ;
+    noria:resourceInstallationDate "2022-11-01T09:00:00Z"^^xsd:dateTime ;
+    noria:resourceManagedBy ex:NetworkTeam ;
+    noria:resourceManagementIPAddress <http://example.com/ip/10.0.0.2> .
+
+ex:NIC_DB01_Eth0
+    a noria:NetworkInterface ;
+    rdfs:label "eth0 on DB01"@en ;
+    rdfs:comment "Primary network interface for Database Server DB01."@en ;
+    noria:networkInterfaceOf ex:Server_DB01 ;
+    noria:networkInterfaceDescription "Main data interface for Core Banking App DB"^^xsd:string ;
+    noria:networkInterfaceAdministrativeStatus [
+        a skos:Concept ;
+        skos:prefLabel "up"@en ;
+        skos:inScheme <kos/Resource/AdministrativeState>
+    ] ;
+    noria:networkInterfaceOperationalStatus [
+        a skos:Concept ;
+        skos:prefLabel "up"@en ;
+        skos:inScheme <kos/Resource/OperationalState>
+    ] ;
+    noria:networkInterfaceType "physical"^^xsd:string ;
+    noria:networkInterfaceConnects ex:Link_DB01_Core01 .
+
+ex:NIC_Core01_Gi0_0_1
+    a noria:NetworkInterface ;
+    rdfs:label "GigabitEthernet0/0/1 on Core01"@en ;
+    rdfs:comment "Interface on Core Switch 01 connected to DB01."@en ;
+    noria:networkInterfaceOf ex:Switch_Core01 ;
+    noria:networkInterfaceDescription "Link to DB01"^^xsd:string ;
+    noria:networkInterfaceAdministrativeStatus [
+        a skos:Concept ;
+        skos:prefLabel "up"@en ;
+        skos:inScheme <kos/Resource/AdministrativeState>
+    ] ;
+    noria:networkInterfaceOperationalStatus [
+        a skos:Concept ;
+        skos:prefLabel "up"@en ;
+        skos:inScheme <kos/Resource/OperationalState>
+    ] ;
+    noria:networkInterfaceType "physical"^^xsd:string ;
+    noria:networkInterfaceConnects ex:Link_DB01_Core01 .
+
+ex:Link_DB01_Core01
+    a noria:NetworkLink ;
+    rdfs:label "Link between DB01 and Core01"@en ;
+    rdfs:comment "High-speed Ethernet link connecting Database Server DB01 to Core Switch 01."@en ;
+    noria:networkLinkId "LINK-DB01-CORE01"^^xsd:string ;
+    noria:networkLinkInstallationDate "2023-03-10T11:00:00Z"^^xsd:dateTime ;
+    noria:networkLinkType "Ethernet 10Gbps"^^xsd:string ;
+    noria:networkLinkTerminationResourceOrigin ex:Server_DB01 ;
+    noria:networkLinkTerminationResourceDestination ex:Switch_Core01 ;
+    noria:resourceManagedBy ex:NetworkTeam .
+
+# --- Dynamic Elements (Tickets and Events) ---
+
+ex:Event_DB_CPU_Spike
+    a noria:EventRecord ;
+    rdfs:label "CPU Spike Alert on DB01"@en ;
+    rdfs:comment "Automated alert indicating high CPU utilization on Database Server DB01."@en ;
+    noria:loggingTime "2024-05-15T09:30:00Z"^^xsd:dateTime ;
+    noria:logText "CPU utilization on db01.example.com exceeded 90% for 5 minutes."^^xsd:string ;
+    noria:logOriginatingManagedObject ex:Server_DB01 ;
+    noria:logOriginatingManagementSystem ex:MonitoringSystem ;
+    noria:alarmSeverity [
+        a skos:Concept ;
+        skos:prefLabel "Major"@en ;
+        skos:inScheme <Notification/Severity/PerceivedSeverity>
+    ] .
+
+ex:MonitoringSystem
+    a noria:Application ;
+    rdfs:label "Infrastructure Monitoring System"@en ;
+    rdfs:comment "System responsible for collecting metrics and generating alerts."@en ;
+    noria:applicationShortIdentifier "MONSYS"^^xsd:string .
+
+ex:TT_20240515_DBIssue
+    a noria:TroubleTicket ;
+    rdfs:label "Incident: High CPU on Core Banking DB"@en ;
+    rdfs:comment "Trouble ticket opened due to a major CPU spike affecting the Core Banking Application database."@en ;
+    dcterms:created "2024-05-15T09:35:00Z"^^xsd:dateTime ;
+    dcterms:identifier "TT-20240515-001"^^xsd:string ;
+    noria:documentExternalId "INC-98765"^^xsd:string ;
+    noria:documentHRef <http://itsm.example.com/tickets/TT-20240515-001> ;
+    noria:troubleTicketSeverity [
+        a skos:Concept ;
+        skos:prefLabel "Major"@en ;
+        skos:inScheme <kos/TroubleTicket/severity>
+    ] ;
+    noria:troubleTicketType [
+        a skos:Concept ;
+        skos:prefLabel "Failure"@en ;
+        skos:inScheme <kos/TroubleTicket/type>
+    ] ;
+    noria:troubleTicketPriority [
+        a skos:Concept ;
+        skos:prefLabel "P2"@en ;
+        skos:inScheme <kos/TroubleTicket/priority>
+    ] ;
+    noria:troubleTicketOrigin [
+        a skos:Concept ;
+        skos:prefLabel "Supervision"@en ;
+        skos:inScheme <kos/TroubleTicket/origin>
+    ] ;
+    noria:troubleTicketTrigger ex:Event_DB_CPU_Spike ;
+    noria:troubleTicketUrgency [
+        a skos:Concept ;
+        skos:prefLabel "Immediate Intervention"@en ;
+        skos:inScheme <kos/TroubleTicket/urgency>
+    ] ;
+    noria:troubleTicketSupervisionTool "Nagios"^^xsd:string ;
+    noria:troubleTicketCategory [
+        a skos:Concept ;
+        skos:prefLabel "Performance Degradation"@en ;
+        skos:inScheme <kos/TroubleTicket/trouble-category>
+    ] ;
+    noria:troubleTicketCause "Unexpected high load on database server."@en ;
+    noria:troubleTicketDetectionDateTime "2024-05-15T09:30:00Z"^^xsd:dateTime ;
+    noria:troubleTicketTargetRestorationDateTime "2024-05-15T12:00:00Z"^^xsd:dateTime ;
+    noria:troubleTicketStatusCurrent [
+        a skos:Concept ;
+        skos:prefLabel "InProgress"@en ;
+        skos:inScheme <kos/TroubleTicket/status>
+    ] ;
+    noria:troubleTicketRelatedParty ex:JaneSmith ;
+    noria:troubleTicketRelatedService ex:CoreBankingApp_Prod ;
+    noria:troubleTicketRelatedResource ex:Server_DB01 ;
+    noria:troubleTicketImpacts ex:CoreBankingApp_Prod, ex:Server_DB01 .
+
+ex:TTNote_DBIssue_1
+    a noria:TroubleTicketNote ;
+    rdfs:label "Initial Diagnosis Note for TT-20240515-001"@en ;
+    rdfs:comment "First note on the CPU spike incident, detailing initial findings."@en ;
+    dcterms:created "2024-05-15T09:40:00Z"^^xsd:dateTime ;
+    dcterms:creator ex:JaneSmith ;
+    dcterms:isPartOf ex:TT_20240515_DBIssue ;
+    noria:logText "Confirmed CPU spike. Investigating running processes. Database queries seem normal."^^xsd:string ;
+    noria:troubleTicketNoteCommentType [
+        a skos:Concept ;
+        skos:prefLabel "Internal"@en ;
+        skos:inScheme <kos/TroubleTicket/commentType>
+    ] ;
+    noria:troubleTicketNoteOperationType [
+        a skos:Concept ;
+        skos:prefLabel "Diagnosis"@en ;
+        skos:inScheme <kos/TroubleTicket/operationType>
+    ] .
+
+ex:CR_20240520_RouterUpgrade
+    a noria:ChangeRequest ;
+    rdfs:label "Router Firmware Upgrade - Edge01"@en ;
+    rdfs:comment "Planned firmware upgrade for Edge Router 01 to enhance security and performance."@en ;
+    dcterms:created "2024-05-10T14:00:00Z"^^xsd:dateTime ;
+    dcterms:identifier "CR-20240520-001"^^xsd:string ;
+    noria:documentHRef <http://itsm.example.com/changes/CR-20240520-001> ;
+    noria:changeRequestPlannedStartTime "2024-05-20T02:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestPlannedEndTime "2024-05-20T04:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestCategory [
+        a skos:Concept ;
+        skos:prefLabel "Internal intervention"@en ;
+        skos:inScheme <kos/ChangeRequest/category>
+    ] ;
+    noria:changeRequestType [
+        a skos:Concept ;
+        skos:prefLabel "Standard Change"@en ;
+        skos:inScheme <kos/ChangeRequest/type>
+    ] ;
+    noria:changeRequestChangeCause [
+        a skos:Concept ;
+        skos:prefLabel "Software upgrade"@en ;
+        skos:inScheme <kos/ChangeRequest/cause>
+    ] ;
+    noria:changeRequestImpact ex:Router_Edge01 ;
+    noria:changeRequestOutageDuration "PT2H"^^xsd:duration ;
+    noria:changeRequestStatusCurrent [
+        a skos:Concept ;
+        skos:prefLabel "Scheduled"@en ;
+        skos:inScheme <kos/ChangeRequest/status>
+    ] ;
+    noria:changeRequestInitiatorParty ex:JohnDoe ;
+    noria:changeRequestPilotParty ex:JohnDoe ;
+    noria:changeRequestActorParty ex:NetworkTeam ;
+    noria:changeRequestIsRegulated false^^xsd:boolean .
+
+ex:RouterUpgradePlan
+    a noria:OperationPlan ;
+    rdfs:label "Edge Router Firmware Upgrade Procedure"@en ;
+    rdfs:comment "Standard operating procedure for upgrading firmware on edge routers."@en ;
+    noria:operationPlanPreCondition ex:RouterUpgradePreCheck ;
+    noria:operationPlanPostCondition ex:RouterUpgradePostCheck .
+
+ex:RouterUpgradePreCheck
+    a noria:ActionPreCondition ;
+    rdfs:label "Router Upgrade Pre-Conditions"@en ;
+    rdfs:comment "Checks to perform before initiating a router firmware upgrade."@en ;
+    dcterms:description "Verify device health, backup configuration, confirm maintenance window."@en .
+
+ex:RouterUpgradePostCheck
+    a noria:ActionPostCondition ;
+    rdfs:label "Router Upgrade Post-Conditions"@en ;
+    rdfs:comment "Checks to perform after a router firmware upgrade to confirm success."@en ;
+    dcterms:description "Verify network connectivity, check log for errors, confirm service restoration."@en .
+

@@ -1,0 +1,131 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.com/Entity1> a noria:ManagedElement ;
+  rdfs:label "Main Router"@en ;
+  rdfs:comment "Core routing device in the data center."@en ;
+  noria:elementDistinguishedName "Router-DC1-01" ;
+  noria:elementManagedBy <https://example.com/OrgSupportTeam> ;
+  noria:structuralElementObservable noria:structuralObservableOf ;
+  noria:locatedAtLocus <https://example.com/Locus1> .
+
+<https://example.com/Entity2> a noria:StructuralElement ;
+  rdfs:label "Data Center Switch"@en ;
+  rdfs:comment "Switch connecting servers within the data center."@en ;
+  noria:structuralElementDistinguishedName "Switch-DC1-01" ;
+  noria:structuralObservableOf <https://example.com/ObservableSwitchStatus> ;
+  noria:elementManagedBy <https://example.com/OrgSupportTeam> .
+
+<https://example.com/Entity3> a noria:Resource ;
+  rdfs:label "Server-01"@en ;
+  rdfs:comment "Application server hosting web services."@en ;
+  noria:resourceLogisticId "SRV-DC1-01" ;
+  noria:resourceHostName "server01.dc1.example.com" ;
+  noria:resourceType <https://w3id.org/noria/kos/Resource/type/physical> ;
+  noria:locatedAtLocus <https://example.com/Locus2> ;
+  noria:resourceManagedBy <https://example.com/OrgSupportTeam> .
+
+<https://example.com/Entity4> a noria:NetworkLink ;
+  rdfs:label "Fiber Link DC1 to DC2"@en ;
+  rdfs:comment "Optical fiber connection between data centers."@en ;
+  noria:networkLinkId "Link-DC1-DC2" ;
+  noria:networkLinkType "Optical fiber"@en ;
+  noria:networkLinkInstallationDate "2022-03-15T10:00:00"^^xsd:dateTime ;
+  noria:networkLinkTerminationResourceOrigin <https://example.com/Entity1> ;
+  noria:networkLinkTerminationResourceDestination <https://example.com/Entity3> .
+
+<https://example.com/ObservableSwitchStatus> a noria:StructuralObservable ;
+  rdfs:label "Switch Operational Status"@en ;
+  rdfs:comment "Current operational status of the switch."@en ;
+  noria:structuralElementObservableData "up"^^xsd:string .
+
+<https://example.com/Locus1> a noria:Locus ;
+  rdfs:label "Main Data Center"@en ;
+  rdfs:comment "Primary data center location."@en .
+
+<https://example.com/Locus2> a noria:Locus ;
+  rdfs:label "Secondary Data Center"@en ;
+  rdfs:comment "Backup data center location."@en .
+
+<https://example.com/OrgSupportTeam> a org:OrganizationalUnit ;
+  rdfs:label "Data Center Support Team"@en ;
+  rdfs:comment "Support team responsible for data center infrastructure."@en .
+
+<https://example.com/Entity5> a noria:Application ;
+  rdfs:label "Web Application"@en ;
+  rdfs:comment "Customer-facing web application."@en ;
+  noria:applicationModelIdentifier "WebApp-Model-01" ;
+  noria:applicationNumericalIdentifier 101 ;
+  noria:applicationShortIdentifier "WebApp01" ;
+  noria:applicationType <https://w3id.org/noria/kos/application/type/customer-facing> ;
+  noria:applicationBusinessImportance <https://w3id.org/noria/kos/application/business-importance/high> ;
+  noria:resourceForApplication <https://example.com/Entity3> .
+
+<https://example.com/TroubleTicket1> a noria:TroubleTicket ;
+  rdfs:label "TT-2024-0001"@en ;
+  rdfs:comment "Network outage affecting web application."@en ;
+  noria:troubleTicketSeverity <https://w3id.org/noria/kos/TroubleTicket/severity/Major> ;
+  noria:troubleTicketType <https://w3id.org/noria/kos/TroubleTicket/type/Failure> ;
+  noria:troubleTicketCriticity <https://w3id.org/noria/kos/TroubleTicket/category/ServiceImpact> ;
+  noria:troubleTicketPriority <https://w3id.org/noria/kos/TroubleTicket/priority/P1> ;
+  noria:troubleTicketOrigin <https://example.com/Entity5> ;
+  noria:troubleTicketTrigger <https://example.com/Event1> ;
+  noria:troubleTicketImpacts <https://example.com/Entity3> ;
+  noria:troubleTicketRelatedResource <https://example.com/Entity3> ;
+  noria:troubleTicketStatusCurrent <https://w3id.org/noria/kos/TroubleTicket/status/InProgress> ;
+  noria:troubleTicketDetectionDateTime "2024-04-10T14:30:00"^^xsd:dateTime .
+
+<https://example.com/Event1> a noria:EventRecord ;
+  rdfs:label "Network Outage Event"@en ;
+  rdfs:comment "Detected network outage affecting web application."@en ;
+  noria:loggingTime "2024-04-10T14:30:00"^^xsd:dateTime ;
+  noria:logText "Detected network outage affecting server01."@en ;
+  noria:logOriginatingManagedObject <https://example.com/Entity3> ;
+  noria:logOriginatingManagementSystem <https://example.com/NMS> .
+
+<https://example.com/NMS> a noria:Application ;
+  rdfs:label "Network Management System"@en ;
+  rdfs:comment "System monitoring network devices."@en .
+
+<https://example.com/ChangeRequest1> a noria:ChangeRequest ;
+  rdfs:label "CR-2024-0001"@en ;
+  rdfs:comment "Scheduled software upgrade to fix outage."@en ;
+  noria:changeRequestId "CR-2024-0001" ;
+  noria:changeRequestCreationDateTime "2024-04-09T09:00:00"^^xsd:dateTime ;
+  noria:changeRequestActualStartTime "2024-04-10T15:00:00"^^xsd:dateTime ;
+  noria:changeRequestActualEndTime "2024-04-10T17:00:00"^^xsd:dateTime ;
+  noria:changeRequestImpact <https://example.com/Entity3> ;
+  noria:changeRequestChangeCause "Software bug fix"@en ;
+  noria:changeRequestStatusCurrent <https://w3id.org/noria/kos/ChangeRequest/status/Completed> .
+
+<https://example.com/Document1> a noria:DocumentAttachment ;
+  rdfs:label "Upgrade Script"@en ;
+  rdfs:comment "Script used for software upgrade."@en ;
+  noria:documentExternalId "DOC-2024-0001" ;
+  noria:documentHRef "http://docs.example.com/upgrade_script_v1.sh"^^xsd:anyURI .
+
+<https://example.com/Alarm1> a noria:EventRecord ;
+  rdfs:label "Critical Alarm"@en ;
+  rdfs:comment "Alarm indicating critical network failure."@en ;
+  noria:loggingTime "2024-04-10T14:35:00"^^xsd:dateTime ;
+  noria:alarmSeverity <Notification/Severity/Critical> ;
+  noria:alarmProposedRepairAction <https://example.com/Action1> ;
+  noria:alarmMitigatedBy <https://example.com/Procedure1> ;
+  noria:logText "Critical network failure detected."@en .
+
+<https://example.com/Procedure1> a noria:OperationPlan ;
+  rdfs:label "Network Failover Procedure"@en ;
+  rdfs:comment "Procedure to switch to backup network."@en .
+
+<https://example.com/Action1> a noria:CorrectiveMaintenanceAction ;
+  rdfs:label "Restart Network Service"@en ;
+  rdfs:comment "Restart network service to recover from failure."@en ;
+  noria:actionCorrelatedOperationPlan <https://example.com/Procedure1> .
