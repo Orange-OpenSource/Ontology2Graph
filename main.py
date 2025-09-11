@@ -52,8 +52,6 @@ if __name__ == '__main__':
     print(f'\nTTL FILES ARE STORED IN : {PATH_RESULT}\n')
     print('#### TTL FILE GENERATION PROCESS ENDED ####\n')
 
-    #print('MERGING TTL FILE PROCESS IS IN PROGRESS\n')
-
     #remove old files in the merge folfer
     if Path(PATH_MERGED).exists() and Path(PATH_MERGED).is_dir():
         for files in Path(PATH_MERGED).iterdir():
