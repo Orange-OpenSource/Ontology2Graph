@@ -107,11 +107,7 @@ def prepare_graph_to_display(file,log_html_folder,ontology):
                                         and (last_part_pred not in dtp)):
 
             digraph.add_edge(str(subj), str(obj), label=str(pred),color='white')
-            #digraph.add_node(str(subj),size=80,color='red')
-            #digraph.add_node(str(obj),size=80,color='blue')
-            #digraph.add_edge(str(subj),str(obj),label=str(pred))
-            #graph.add_edge(str(subj),str(obj),label=str(pred))
-
+            
     ### log nodes and Literals ###
     logger_file1.info('##################################################')
     logger_file1.info('%s',file)
