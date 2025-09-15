@@ -9,7 +9,7 @@ import subprocess
 from collections import Counter
 import networkx as nx
 import rdflib
-from rdflib import URIRef,Namespace
+from rdflib import URIRef,Namespace,BNode
 
 def remove_pred_obj(expr, graph, predi, obje):
     '''remove predicate and target object of an edge'''
@@ -153,6 +153,21 @@ def find_duplicates_nodes(path,ontology):
     nodes=[]
     rdf = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
     rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
+    
+    path_node_log=Path(f'{path}/nodes_log')
+    if os.path.exists(path_node_log):
+            shutil.rmtree(path_node_log)
+    os.makedirs(path_node_log)
+
+    #set logger
+    log_file=Path(f'{path_node_log}/node.log')
+    if log_file.is_file():
+        os.remove(log_file)
+
+    logger_node = logging.getLogger('Node_log')
+    handler = logging.FileHandler(log_file)
+    logger_node.setLevel(logging.INFO)
+    logger_node.addHandler(handler)
 
     for file in all_files :
 
@@ -160,6 +175,7 @@ def find_duplicates_nodes(path,ontology):
         g.parse(file, format="turtle")
 
         nx_graph = nx.DiGraph()
+        blank_nodes = []
 
         for subj, pred, obj in g:
             #last_part_pred=get_last_folder_part(pred,'/')
@@ -177,16 +193,45 @@ def find_duplicates_nodes(path,ontology):
             #    last_part_obj=get_last_folder_part(obj,'/')
             #    nx_graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
 
-            if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type)
-                                and (pred != rdfs.isDefinedBy) and pred not in datatypeproperties):
+            if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type)\
+                and (pred != rdfs.isDefinedBy) and pred not in datatypeproperties):
                 #print(subj, pred, obj)
                 nx_graph.add_edge(str(subj), str(obj), label=str(pred))
+                #print(f"subj {subj}")
+                #print(f"obj {obj}")
+
+            
+            if isinstance(subj, BNode) and (pred != rdf.type) and subj not in blank_nodes:
+                #and (pred != rdfs.isDefinedBy) and pred not in datatypeproperties:
+                #print(rdf.type)
+                logger_node.info('Subject is a BN : %s, pred %s, object %s, file : %s',subj,pred,obj,file)
+                #logger_node.info('Blank node (pred) : %s',pred)
+                blank_nodes.append(subj)
+                #blank_nodes.append(file)
+                
+            if isinstance(obj, BNode) and (pred != rdf.type) and obj not in blank_nodes:
+                #and (pred != rdfs.isDefinedBy) and pred not in datatypeproperties:
+                #print(rdf.type)
+                logger_node.info('Object is a BN : %s, pred %s, object %s, file : %s',subj,pred,obj,file)
+                blank_nodes.append(obj)
+                #blank_nodes.append(file)
+                #logger_node.info('Blank node (pred) : %s',pred)
+                #logger_node.info('Blank node (object) : %s',obj)
+                #for p, o in g.predicate_objects(subj):
+                #    print(f"  - {p} {o}")
+                #print(f"triples with blank node: {subj} {pred} {obj}")
 
         nodes=list(nx_graph.nodes)
+        #print(file)
+        #print(nodes)
+        #print("\nGraph in Turtle format:")
+        #print(g.serialize(format="turtle").encode("utf-8").decode("utf-8"))
 
         ### for gemini 2.5 flash ###
         nodes_no_url=[Path(nodes).name for nodes in nodes]
         all_nodes.append(nodes_no_url)
+        all_nodes.append(blank_nodes)
+        #print(file)
 
         ### for gpt-4.1-nano ###
         #nodes_with_bracket = [f"<{nodes}>" for nodes in nodes]
@@ -194,14 +239,21 @@ def find_duplicates_nodes(path,ontology):
 
     # Transform list of list into a simple list
     all_nodes_list = [item for sublist in all_nodes for item in sublist]
-    
+    logger_node.info('\n all nodes list %s :',all_nodes_list)
+    #logger_node.info('\n blank nodes list %s :',blank_nodes)
+    #logger_node.info('\n blank nodes[0] %s type %s :',blank_nodes[0],type(blank_nodes[0]))
+
+    #BNF = [node for node in blank_nodes if isinstance(node,BNode)]
+
+    #logger_node.info('\n blank nodes filtered] %s  :',BNF)
+
     #all_nodes_list_unique = list(set(all_nodes_list))
     #print(f'NODES OF FINAL GRAPH : {all_nodes_list_unique} \n')
 
     counts=Counter(all_nodes_list)
-    print('COUNTS',counts['CustomerPortal'])
+    #print('COUNTS',counts['CustomerPortal'])
     dupplicate_nodes=[item for item, count in counts.items() if count > 1]
-    #print('dupplicates_nodes',dupplicate_nodes)
+    #print('dupplicates_nodes_from_find',dupplicate_nodes)
 
     #print('duplicate_nodes',dupplicate_nodes)
     #print(f'NODE WITH DUPLICATE IN THE GENERATED GRAPH: {dupplicate_nodes} \n ' )
@@ -212,7 +264,8 @@ def occurence_duplicate(duplicates_nodes,path_result):
     '''compute the occurence of duplicates all over the ttl files once a node appear in a ttl file
     occu_duplicates is increased by 1'''
     occu_duplicates=[[duplicates_nodes[i],0] for i in range(0,len(duplicates_nodes))]
-    print('occu_duplicate',occu_duplicates)
+    #print('duplicates_nodes',duplicates_nodes)
+    #print('occu_duplicate',occu_duplicates)
 
     #List all the ttl graph files in PATH except folder
     all_files = [f.name for f in Path(path_result).iterdir() if f.is_file()]
@@ -230,8 +283,6 @@ def occurence_duplicate(duplicates_nodes,path_result):
             if re.search(r'\b' + re.escape(item[0]) + r'\b', content):
             #if item[0] in content:
                 item[1]=item[1]+1
-
-        #print(occu_duplicates)
 
         file.close()
     return occu_duplicates
@@ -266,10 +317,8 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
     logger_merge.addHandler(handler)
 
     remain_occ=0
-    treated_ttl_file_index=0
-    nbr_file_treated=0
 
-    occ_dup=occurence_duplicate(duplicates_nodes,path_result)
+    #occ_dup=occurence_duplicate(duplicates_nodes,path_result)
 
     while remain_occ != nbr_occ_max + 1:
 
@@ -277,6 +326,7 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
         #print('occ_dup',occ_dup)
 
         #nbr_file_to_treat=nbr_occ_max-remain_occ
+        occ_dup=occurence_duplicate(duplicates_nodes,path_result)
         nbr_file_treated=0
         os.makedirs(Path(f'{path_llm_graphs_dup_treated}/{remain_occ}'),exist_ok=True)
 
@@ -285,11 +335,8 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
 
         for ttl_file in all_ttl_files :
             dup_treated_list=[]
-            nbr_file_treated=nbr_file_treated+1
 
             logger_merge.info('##################################################')
-
-            treated_ttl_file_index=treated_ttl_file_index+1
 
             logger_merge.info('### REMAIN OCC ### = %s , nbr_occ_max = %s',remain_occ, nbr_occ_max)
             logger_merge.info('#### FILE ####: %s ', ttl_file)
@@ -298,7 +345,6 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
                  open(f'{Path(path_llm_graphs_dup_treated)}/{remain_occ}/Treated_{remain_occ}_'\
                       f'{ttl_file}','w',encoding='utf-8') as outfile:
 
-                logger_merge.info('treated_ttl_file_index : %s',treated_ttl_file_index)
                 logger_merge.info("nbr file treated %s",nbr_file_treated)
                 #logger_merge.info('nbr_file_to_treat %s',nbr_file_to_treat)
                 for line in infile:
@@ -388,6 +434,7 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
 
             #if dup1_treated is True:
             #    nbr_file_treated=nbr_file_treated+1
+            nbr_file_treated=nbr_file_treated+1
 
         all_new_ttl_files = [f for f in Path(f'{path_llm_graphs_dup_treated}/{remain_occ}').iterdir() if f.is_file()]
         #print(all_new_ttl_files)

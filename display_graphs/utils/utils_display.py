@@ -4,7 +4,7 @@ import logging
 import webbrowser
 import os
 from pathlib import Path
-from rdflib import URIRef, Literal, Namespace
+from rdflib import URIRef, Literal, Namespace,BNode
 from pyvis.network import Network
 import networkx as nx
 from networkx.classes.function import density, degree_histogram, number_of_selfloops
@@ -97,17 +97,25 @@ def prepare_graph_to_display(file,log_html_folder,ontology):
     ### populate graph with nodes and relations only ###
     for subj, pred, obj in g:
 
-        last_part_pred=[]
-        last_part_pred=Path(pred).name
+        short_pred=Path(pred).name
+        short_subj=Path(subj).name
+        short_obj=Path(obj).name
         dtp = retreive_datatype_properties(ontology)
 
-        if (isinstance(subj, URIRef) and isinstance(obj, URIRef)
-                                        and (pred != rdf.type)
-                                        and (pred != rdfs.isDefinedBy)
-                                        and (last_part_pred not in dtp)):
+        if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type)
+            and (pred != rdfs.isDefinedBy) and (short_pred not in dtp)):
+            digraph.add_edge(str(short_subj), str(short_obj), label=str(short_pred),color='white')
 
-            digraph.add_edge(str(subj), str(obj), label=str(pred),color='white')
-            
+        if isinstance(subj, BNode):# and (pred != rdf.type):
+            for subj, pred in g.subject_predicates(subj):
+                logger_file1.info('Blank Node Subject : %s',subj)
+                logger_file1.info('Blank Node Predictate : %s',pred)
+                logger_file1.info('Blank Node object : %s',obj)
+                digraph.add_edge(str(short_subj),str(short_obj),label=str(short_pred),color='white')
+                
+        #if isinstance(obj, BNode) and (pred != rdf.type):
+        #    digraph.add_edge(str(short_subj), str(short_obj), label=str(short_pred),color='white')            
+
     ### log nodes and Literals ###
     logger_file1.info('##################################################')
     logger_file1.info('%s',file)
