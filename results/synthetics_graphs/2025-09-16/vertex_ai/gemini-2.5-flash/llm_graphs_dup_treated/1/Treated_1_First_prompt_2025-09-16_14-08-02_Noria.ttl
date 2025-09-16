@@ -1,0 +1,552 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix bot: <https://w3id.org/bot#> .
+@prefix observable: <https://unifiedcyberontology.org/ontology/uco/observable#> .
+@prefix pep: <https://w3id.org/pep/> .
+@prefix log: <https://w3id.org/sepses/ns/log#> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix ex: <http://example.com/noria/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+
+# --- Organizations and Agents ---
+ex:OrangeCorp_extra_node_8 a org:Organization ;
+    rdfs:label "Orange Corporation" ;
+    rdfs:comment "The main organization managing the IT infrastructure for example.com." ;
+    noria:agentWorkingHours "24/7" ;
+    noria:agentPreferredContactMethod [
+        a skos:Concept ;
+        skos:prefLabel "Email" ;
+        skos:inScheme <http://example.com/noria/kos/org/agent-contact-method_extra_node_8>
+    ] ;
+    noria:agentInstructions "Contact via ticketing system for all issues." .
+
+ex:NOC_Team_extra_node_8 a org:OrganizationalUnit ;
+    rdfs:label "Network Operations Center Team" ;
+    rdfs:comment "Team responsible for 24/7 network monitoring and first-level incident response." ;
+    org:unitOf ex:OrangeCorp_extra_node_8 ;
+    noria:agentWorkingHours "24/7 Shift" ;
+    noria:agentPreferredContactMethod [
+        a skos:Concept ;
+        skos:prefLabel "Phone" ;
+        skos:inScheme <http://example.com/noria/kos/org/agent-contact-method_extra_node_8>
+    ] ;
+    noria:agentInstructions "For critical issues, call the hotline directly." .
+
+ex:AppSupport_Team a org:OrganizationalUnit ;
+    rdfs:label "Application Support Team" ;
+    rdfs:comment "Team responsible for supporting critical business applications." ;
+    org:unitOf ex:OrangeCorp_extra_node_8 ;
+    noria:agentWorkingHours "Mon-Fri 9:00-17:00" ;
+    noria:agentPreferredContactMethod [
+        a skos:Concept ;
+        skos:prefLabel "Ticketing System" ;
+        skos:inScheme <http://example.com/noria/kos/org/agent-contact-method_extra_node_8>
+    ] .
+
+ex:JohnDoe_extra_node_8 a foaf:Person ;
+    rdfs:label "John Doe" ;
+    rdfs:comment "Lead Engineer for the NOC Team." ;
+    org:memberOf ex:NOC_Team_extra_node_8 ;
+    noria:agentWorkingHours "Mon-Fri 9:00-17:00" ;
+    noria:agentPreferredContactMethod [
+        a skos:Concept ;
+        skos:prefLabel "Email" ;
+        skos:inScheme <http://example.com/noria/kos/org/agent-contact-method_extra_node_8>
+    ] .
+
+ex:JaneSmith_extra_node_8 a foaf:Person ;
+    rdfs:label "Jane Smith" ;
+    rdfs:comment "Application Manager for the Customer Portal." ;
+    org:memberOf ex:AppSupport_Team ;
+    noria:agentWorkingHours "Mon-Fri 9:00-17:00" ;
+    noria:agentPreferredContactMethod [
+        a skos:Concept ;
+        skos:prefLabel "Email" ;
+        skos:inScheme <http://example.com/noria/kos/org/agent-contact-method_extra_node_8>
+    ] .
+
+# --- Locations ---
+ex:DataCenter_Paris_extra_node_8 a bot:Site ;
+    rdfs:label "Paris Data Center" ;
+    rdfs:comment "Main data center located in Paris, France." ;
+    noria:siteId "DC-PAR-01" ;
+    noria:siteType "data center" ;
+    noria:sitePrincipalAddress "123 Rue de la Paix" ;
+    noria:sitePrincipalAddressCityName "Paris" ;
+    noria:sitePrincipalAddressPostalCode "75001" ;
+    noria:sitePrincipalAddressCountry "FR" .
+
+ex:ServerRoom_A1_extra_node_8 a noria:Room ;
+    rdfs:label "Server Room A1" ;
+    rdfs:comment "A server room within the Paris Data Center, housing critical infrastructure." ;
+    seas:subSystemOf ex:DataCenter_Paris_extra_node_8 .
+
+ex:Rack_A1_L5 a noria:Locus ;
+    rdfs:label "Rack A1, Line 5" ;
+    rdfs:comment "Specific location for equipment in Server Room A1, identified by its line and row." ;
+    noria:locusLine "A1" ;
+    noria:locusRow "5" ;
+    seas:subSystemOf ex:ServerRoom_A1_extra_node_8 .
+
+# --- Product Models ---
+ex:Cisco_ASR9K_extra_node_8 a noria:ProductModel ;
+    rdfs:label "Cisco_extra_node_8 ASR 9000 Series" ;
+    rdfs:comment "Product model for high-end Cisco_extra_node_8 routers, used in core network infrastructure." ;
+    noria:productManufacturedBy ex:CiscoSystems_extra_node_8 .
+
+ex:Dell_PowerEdge_R740 a noria:ProductModel ;
+    rdfs:label "Dell PowerEdge R740" ;
+    rdfs:comment "Product model for Dell rack servers, commonly used for application hosting." ;
+    noria:productManufacturedBy ex:DellTechnologies .
+
+ex:CiscoSystems_extra_node_8 a org:Organization ;
+    rdfs:label "Cisco_extra_node_8 Systems" ;
+    rdfs:comment "Manufacturer of network equipment, including routers and switches." .
+
+ex:DellTechnologies a org:Organization ;
+    rdfs:label "Dell Technologies" ;
+    rdfs:comment "Manufacturer of server and IT equipment." .
+
+# --- Resources ---
+ex:Router_Core_01_extra_node_8 a noria:Resource ;
+    rdfs:label "Core Router 01" ;
+    rdfs:comment "Main core router in the Paris Data Center, handling critical network traffic." ;
+    noria:resourceHostName "router-core-par-01" ;
+    noria:resourceLogisticId "LOG-RTR-001" ;
+    noria:resourceProductModel ex:Cisco_ASR9K_extra_node_8 ;
+    noria:resourceType [
+        a skos:Concept ;
+        skos:prefLabel "Router" ;
+        skos:inScheme <http://example.com/noria/kos/Resource/type_extra_node_8>
+    ] ;
+    noria:resourceSerialNumber "SN-RTR-001-XYZ" ;
+    noria:resourceUsageState [
+        a skos:Concept ;
+        skos:prefLabel "In Production" ;
+        skos:inScheme <http://example.com/noria/kos/Resource/LifecycleState_extra_node_8>
+    ] ;
+    noria:resourceInstallationDate "2020-01-15T10:00:00Z"^^xsd:dateTime ;
+    noria:resourceManagedBy ex:NOC_Team_extra_node_8 ;
+    noria:locatedAtLocus ex:Rack_A1_L5 ;
+    noria:resourceManagementIPAddress ex:IP_10_0_0_1_extra_node_8 .
+
+ex:Server_App_01 a noria:Resource ;
+    rdfs:label "Application Server 01" ;
+    rdfs:comment "Server hosting the Customer Portal application, a critical business service." ;
+    noria:resourceHostName "app-server-par-01" ;
+    noria:resourceLogisticId "LOG-SRV-001" ;
+    noria:resourceProductModel ex:Dell_PowerEdge_R740 ;
+    noria:resourceType [
+        a skos:Concept ;
+        skos:prefLabel "Physical Server" ;
+        skos:inScheme <http://example.com/noria/kos/Resource/type_extra_node_8>
+    ] ;
+    noria:resourceSerialNumber "SN-SRV-001-ABC" ;
+    noria:resourceUsageState [
+        a skos:Concept ;
+        skos:prefLabel "In Production" ;
+        skos:inScheme <http://example.com/noria/kos/Resource/LifecycleState_extra_node_8>
+    ] ;
+    noria:resourceInstallationDate "2021-03-20T14:30:00Z"^^xsd:dateTime ;
+    noria:resourceManagedBy ex:AppSupport_Team ;
+    noria:locatedAtLocus ex:Rack_A1_L5 ;
+    noria:resourceManagementIPAddress ex:IP_10_0_0_2_extra_node_8 ;
+    noria:resourceForApplication ex:CustomerPortal_App .
+
+ex:IP_10_0_0_1_extra_node_8 a observable:IPAddress ;
+    rdfs:label "10.0.0.1" ;
+    rdfs:comment "Management IP address for Core Router 01, used for remote administration." ;
+    observable:ipAddressValue "10.0.0.1" .
+
+ex:IP_10_0_0_2_extra_node_8 a observable:IPAddress ;
+    rdfs:label "10.0.0.2" ;
+    rdfs:comment "Management IP address for Application Server 01." ;
+    observable:ipAddressValue "10.0.0.2" .
+
+# --- Network Interfaces ---
+ex:Router_Core_01_GE0_0_0 a noria:NetworkInterface ;
+    rdfs:label "GE0/0/0 on Core Router 01" ;
+    rdfs:comment "Gigabit Ethernet interface connecting Core Router 01 to the WAN, critical for external connectivity." ;
+    noria:networkInterfaceOf ex:Router_Core_01_extra_node_8 ;
+    noria:networkInterfaceType [
+        a skos:Concept ;
+        skos:prefLabel "Physical" ;
+        skos:inScheme <http://example.com/noria/kos/NetworkInterface/type_extra_node_8>
+    ] ;
+    noria:networkInterfaceAdministrativeStatus [
+        a skos:Concept ;
+        skos:prefLabel "up_extra_node_8" ;
+        skos:inScheme <http://example.com/noria/kos/Resource/AdministrativeState_extra_node_8>
+    ] ;
+    noria:networkInterfaceOperationalStatus [
+        a skos:Concept ;
+        skos:prefLabel "up_extra_node_8" ;
+        skos:inScheme <http://example.com/noria/kos/Resource/OperationalState_extra_node_8>
+    ] ;
+    noria:networkInterfaceDescription "WAN Uplink to Provider A" .
+
+ex:Server_App_01_Eth0 a noria:NetworkInterface ;
+    rdfs:label "Eth0 on Application Server 01" ;
+    rdfs:comment "Ethernet interface for application traffic on Server_App_01, connecting it to the internal network." ;
+    noria:networkInterfaceOf ex:Server_App_01 ;
+    noria:networkInterfaceType [
+        a skos:Concept ;
+        skos:prefLabel "Physical" ;
+        skos:inScheme <http://example.com/noria/kos/NetworkInterface/type_extra_node_8>
+    ] ;
+    noria:networkInterfaceAdministrativeStatus [
+        a skos:Concept ;
+        skos:prefLabel "up_extra_node_8" ;
+        skos:inScheme <http://example.com/noria/kos/Resource/AdministrativeState_extra_node_8>
+    ] ;
+    noria:networkInterfaceOperationalStatus [
+        a skos:Concept ;
+        skos:prefLabel "up_extra_node_8" ;
+        skos:inScheme <http://example.com/noria/kos/Resource/OperationalState_extra_node_8>
+    ] ;
+    noria:networkInterfaceDescription "Main application network interface" .
+
+# --- Network Links ---
+ex:WAN_Link_Paris_ProviderA a noria:NetworkLink ;
+    rdfs:label "WAN Link Paris - Provider A" ;
+    rdfs:comment "High-speed fiber optic WAN link from Paris Data Center to external provider A, providing internet backbone." ;
+    noria:networkLinkId "WAN-PAR-PA-001" ;
+    noria:networkLinkType "Fiber Optic" ;
+    noria:networkLinkInstallationDate "2019-11-01T08:00:00Z"^^xsd:dateTime ;
+    noria:networkLinkTerminationResourceOrigin ex:Router_Core_01_extra_node_8 ;
+    noria:networkLinkTerminationResourceDestination ex:ProviderA_Router_Edge ;
+    noria:networkInterfaceConnects ex:Router_Core_01_GE0_0_0 .
+
+ex:ProviderA_Router_Edge a noria:Resource ;
+    rdfs:label "Provider A Edge Router" ;
+    rdfs:comment "External router managed by Provider A, serving as the termination point for the WAN link." ;
+    noria:resourceHostName "providerA-edge-rtr" ;
+    noria:resourceType [
+        a skos:Concept ;
+        skos:prefLabel "External Router" ;
+        skos:inScheme <http://example.com/noria/kos/Resource/type_extra_node_8>
+    ] ;
+    noria:resourceManagedBy ex:ProviderA_Org .
+
+ex:ProviderA_Org a org:Organization ;
+    rdfs:label "Provider A Telecom" ;
+    rdfs:comment "External telecommunication provider for WAN services." .
+
+# --- Applications and Modules ---
+ex:CustomerPortal_App a noria:Application ;
+    rdfs:label "Customer Portal Application" ;
+    rdfs:comment "Web application allowing customers to manage their services and accounts." ;
+    noria:applicationModelIdentifier "CP-V2" ;
+    noria:applicationNumericalIdentifier 1001 ;
+    noria:applicationShortIdentifier "CustPortal" ;
+    noria:applicationType [
+        a skos:Concept ;
+        skos:prefLabel "Web Application" ;
+        skos:inScheme <http://example.com/noria/kos/application/type_extra_node_8>
+    ] ;
+    noria:applicationBusinessImportance [
+        a skos:Concept ;
+        skos:prefLabel "Critical_extra_node_8" ;
+        skos:inScheme <http://example.com/noria/kos/application/business-importance_extra_node_8>
+    ] ;
+    noria:applicationFunctionalDomain "Customer Relationship Management" ;
+    noria:applicationFunctionalSubDomain "Online Self-Service" .
+
+ex:CustomerPortal_Prod_Module a noria:ApplicationModule ;
+    rdfs:label "Customer Portal Production Module" ;
+    rdfs:comment "The live production instance of the Customer Portal application, serving end-users." ;
+    noria:applicationModuleOf ex:CustomerPortal_App ;
+    noria:applicationModuleName "CustPortal_PROD" ;
+    noria:applicationModuleIdentifier "CP-PROD-01" ;
+    noria:applicationModuleAdministrationTeam ex:AppSupport_Team ;
+    noria:applicationModuleAdministrationLeader ex:JaneSmith_extra_node_8 ;
+    noria:applicationModuleSupportTeam ex:AppSupport_Team ;
+    noria:applicationModuleSupportLeader ex:JaneSmith_extra_node_8 ;
+    noria:applicationModuleStatus [
+        a skos:Concept ;
+        skos:prefLabel "In Production" ;
+        skos:inScheme <https://w3id.org/noria/kos/application/status_extra_node_8>
+    ] ;
+    noria:applicationModuleSlaLevel [
+        a skos:Concept ;
+        skos:prefLabel "Platinum" ;
+        skos:inScheme <https://w3id.org/noria/kos/application/sla-level>
+    ] ;
+    noria:applicationModuleSlaLevelDate "2023-01-01T00:00:00Z"^^xsd:dateTime .
+
+# --- Services ---
+ex:InternetAccess_Service a noria:Service ;
+    rdfs:label "Corporate Internet Access Service" ;
+    rdfs:comment "Provides internet access for corporate users and external services, relying on the WAN infrastructure." ;
+    noria:serviceType [
+        a skos:Concept ;
+        skos:prefLabel "Customer Facing Service" ;
+        skos:inScheme <http://example.com/noria/kos/service/type_extra_node_8>
+    ] ;
+    seas:subSystemOf ex:OrangeCorp_extra_node_8 .
+
+# --- Event Records ---
+ex:Event_RouterInterfaceDown a noria:EventRecord ;
+    rdfs:label "Router Interface Down Event" ;
+    rdfs:comment "Log entry indicating a network interface on Core Router 01 went down_extra_node_8, detected by the NMS." ;
+    noria:loggingTime "2024-04-23T10:05:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagedObject ex:Router_Core_01_extra_node_8 ;
+    noria:logOriginatingManagementSystem ex:NMS_System ;
+    noria:logText "LINEPROTO-5-UPDOWN: Interface GE0/0/0, changed state to down_extra_node_8" ;
+    noria:alarmSeverity [
+        a skos:Concept ;
+        skos:prefLabel "Critical_extra_node_8" ;
+        skos:inScheme <http://example.com/noria/kos/Notification/Severity/PerceivedSeverity_extra_node_8>
+    ] .
+
+ex:NMS_System a noria:Application ;
+    rdfs:label "Network Monitoring System" ;
+    rdfs:comment "Application responsible for monitoring network devices and generating alerts." ;
+    noria:applicationShortIdentifier "NMS" ;
+    noria:applicationType [
+        a skos:Concept ;
+        skos:prefLabel "Monitoring Tool" ;
+        skos:inScheme <http://example.com/noria/kos/application/type_extra_node_8>
+    ] .
+
+ex:Event_AppErrorLog a noria:EventRecord ;
+    rdfs:label "Application Error Log" ;
+    rdfs:comment "Log entry indicating an error in the Customer Portal application, potentially impacting user experience." ;
+    noria:loggingTime "2024-04-23T10:10:30Z"^^xsd:dateTime ;
+    noria:logOriginatingManagedObject ex:Server_App_01 ;
+    noria:logOriginatingManagementSystem ex:AppLog_System ;
+    noria:logText "ERROR: Customer transaction failed for user 'testuser'." ;
+    noria:alarmSeverity [
+        a skos:Concept ;
+        skos:prefLabel "Major" ;
+        skos:inScheme <http://example.com/noria/kos/Notification/Severity/PerceivedSeverity_extra_node_8>
+    ] .
+
+ex:AppLog_System a noria:Application ;
+    rdfs:label "Application Logging System" ;
+    rdfs:comment "System collecting and centralizing logs from various applications." ;
+    noria:applicationShortIdentifier "AppLog" ;
+    noria:applicationType [
+        a skos:Concept ;
+        skos:prefLabel "Logging System" ;
+        skos:inScheme <http://example.com/noria/kos/application/type_extra_node_8>
+    ] .
+
+# --- Trouble Ticket ---
+ex:TT_20240423_001 a noria:TroubleTicket ;
+    rdfs:label "WAN Link Down Incident" ;
+    rdfs:comment "Trouble ticket created due to WAN link failure, impacting the Corporate Internet Access Service." ;
+    dcterms:created "2024-04-23T10:15:00Z"^^xsd:dateTime ;
+    noria:documentExternalId "INC-2024-001" ;
+    noria:documentHRef "http://itsm.example.com/tickets/INC-2024-001"^^xsd:anyURI ;
+    noria:troubleTicketSeverity [
+        a skos:Concept ;
+        skos:prefLabel "Blocking" ;
+        skos:inScheme <http://example.com/noria/kos/TroubleTicket/severity_extra_node_8>
+    ] ;
+    noria:troubleTicketType [
+        a skos:Concept ;
+        skos:prefLabel "Failure" ;
+        skos:inScheme <http://example.com/noria/kos/TroubleTicket/type_extra_node_8>
+    ] ;
+    noria:troubleTicketPriority [
+        a skos:Concept ;
+        skos:prefLabel "P1" ;
+        skos:inScheme <http://example.com/noria/kos/TroubleTicket/priority_extra_node_8>
+    ] ;
+    noria:troubleTicketOrigin [
+        a skos:Concept ;
+        skos:prefLabel "Supervision" ;
+        skos:inScheme <http://example.com/noria/kos/TroubleTicket/origin_extra_node_8>
+    ] ;
+    noria:troubleTicketTrigger ex:Event_RouterInterfaceDown ;
+    noria:troubleTicketStatusCurrent [
+        a skos:Concept ;
+        skos:prefLabel "InProgress" ;
+        skos:inScheme <http://example.com/noria/kos/TroubleTicket/status_extra_node_8>
+    ] ;
+    noria:troubleTicketRelatedParty ex:NOC_Team_extra_node_8 ;
+    noria:troubleTicketRelatedService ex:InternetAccess_Service ;
+    noria:troubleTicketRelatedResource ex:Router_Core_01_extra_node_8 ;
+    noria:troubleTicketCause "Physical fiber cut on WAN link, requiring external provider intervention." ;
+    noria:troubleTicketDetectionDateTime "2024-04-23T10:05:00Z"^^xsd:dateTime ;
+    noria:troubleTicketTargetRestorationDateTime "2024-04-23T14:00:00Z"^^xsd:dateTime .
+
+ex:TT_20240423_001_Note1 a noria:TroubleTicketNote ;
+    rdfs:label "Initial Diagnosis Note" ;
+    rdfs:comment "Confirmed interface down_extra_node_8 on router-core-par-01 GE0/0/0. Escalating to L2 for physical inspection and coordination with Provider A." ;
+    dcterms:created "2024-04-23T10:20:00Z"^^xsd:dateTime ;
+    dcterms:creator ex:JohnDoe_extra_node_8 ;
+    dcterms:isPartOf ex:TT_20240423_001 ;
+    noria:troubleTicketNoteCommentType [
+        a skos:Concept ;
+        skos:prefLabel "Internal" ;
+        skos:inScheme <http://example.com/noria/kos/TroubleTicket/commentType_extra_node_8>
+    ] ;
+    noria:troubleTicketNoteOperationType [
+        a skos:Concept ;
+        skos:prefLabel "Diagnosis" ;
+        skos:inScheme <http://example.com/noria/kos/TroubleTicket/operationType_extra_node_8>
+    ] .
+
+# --- Change Request ---
+ex:CR_20240501_001 a noria:ChangeRequest ;
+    rdfs:label "Customer Portal Database Upgrade" ;
+    rdfs:comment "Planned upgrade of the Customer Portal database for performance improvements and security patches." ;
+    dcterms:created "2024-04-15T09:00:00Z"^^xsd:dateTime ;
+    noria:documentExternalId "CRQ-2024-005" ;
+    noria:documentHRef "http://itsm.example.com/changes/CRQ-2024-005"^^xsd:anyURI ;
+    noria:changeRequestPlannedStartTime "2024-05-01T02:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestPlannedEndTime "2024-05-01T04:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestCategory [
+        a skos:Concept ;
+        skos:prefLabel "Internal intervention" ;
+        skos:inScheme <http://example.com/noria/kos/ChangeRequest/category_extra_node_8>
+    ] ;
+    noria:changeRequestType [
+        a skos:Concept ;
+        skos:prefLabel "Standard" ;
+        skos:inScheme <http://example.com/noria/kos/ChangeRequest/type_extra_node_8>
+    ] ;
+    noria:changeRequestChangeCause [
+        a skos:Concept ;
+        skos:prefLabel "Software upgrade" ;
+        skos:inScheme <http://example.com/noria/kos/ChangeRequest/cause_extra_node_8>
+    ] ;
+    noria:changeRequestImpact ex:CustomerPortal_Prod_Module ;
+    noria:changeRequestStatusCurrent [
+        a skos:Concept ;
+        skos:prefLabel "Scheduled" ;
+        skos:inScheme <http://example.com/noria/kos/ChangeRequest/status_extra_node_8>
+    ] ;
+    noria:changeRequestInitiatorParty ex:JaneSmith_extra_node_8 ;
+    noria:changeRequestPilotParty ex:JaneSmith_extra_node_8 ;
+    noria:changeRequestOutageDuration "PT2H"^^xsd:duration .
+
+# --- Operation Plan ---
+ex:DBUpgrade_OperationPlan a noria:OperationPlan ;
+    rdfs:label "Database Upgrade Procedure" ;
+    rdfs:comment "Standard operating procedure for upgrading the Customer Portal database, including backup and verification steps." ;
+    noria:operationPlanPreCondition ex:DBUpgrade_PreCondition ;
+    noria:operationPlanPostCondition ex:DBUpgrade_PostCondition .
+
+ex:DBUpgrade_PreCondition a noria:ActionPreCondition ;
+    rdfs:label "Database Backup Verified" ;
+    rdfs:comment "Ensure a full database backup is completed and verified before starting the upgrade to allow for rollback." .
+
+ex:DBUpgrade_PostCondition a noria:ActionPostCondition ;
+    rdfs:label "Application Functionality Verified" ;
+    rdfs:comment "Verify all critical functionalities of the Customer Portal application after the database upgrade to confirm success." .
+
+ex:CR_20240501_001 noria:actionCorrelatedOperationPlan ex:DBUpgrade_OperationPlan .
+
+# --- KOS (Knowledge Organization System) for concepts ---
+# These are concept schemes and concepts used as values for various properties.
+
+<http://example.com/noria/kos/org/agent-contact-method_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Agent Contact Method" .
+<http://example.com/noria/kos/org/agent-contact-method_extra_node_8/Email> a skos:Concept ; skos:prefLabel "Email" ; skos:inScheme <http://example.com/noria/kos/org/agent-contact-method_extra_node_8> .
+<http://example.com/noria/kos/org/agent-contact-method_extra_node_8/Phone> a skos:Concept ; skos:prefLabel "Phone" ; skos:inScheme <http://example.com/noria/kos/org/agent-contact-method_extra_node_8> .
+<http://example.com/noria/kos/org/agent-contact-method_extra_node_8/TicketingSystem> a skos:Concept ; skos:prefLabel "Ticketing System" ; skos:inScheme <http://example.com/noria/kos/org/agent-contact-method_extra_node_8> .
+
+<http://example.com/noria/kos/Resource/type_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Resource Type" .
+<http://example.com/noria/kos/Resource/type_extra_node_8/Router> a skos:Concept ; skos:prefLabel "Router" ; skos:inScheme <http://example.com/noria/kos/Resource/type_extra_node_8> .
+<http://example.com/noria/kos/Resource/type_extra_node_8/PhysicalServer> a skos:Concept ; skos:prefLabel "Physical Server" ; skos:inScheme <http://example.com/noria/kos/Resource/type_extra_node_8> .
+<http://example.com/noria/kos/Resource/type_extra_node_8/ExternalRouter> a skos:Concept ; skos:prefLabel "External Router" ; skos:inScheme <http://example.com/noria/kos/Resource/type_extra_node_8> .
+
+<http://example.com/noria/kos/Resource/LifecycleState_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Resource Lifecycle State" .
+<http://example.com/noria/kos/Resource/LifecycleState_extra_node_8/InProduction> a skos:Concept ; skos:prefLabel "In Production" ; skos:inScheme <http://example.com/noria/kos/Resource/LifecycleState_extra_node_8> .
+
+<http://example.com/noria/kos/NetworkInterface/type_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Network Interface Type" .
+<http://example.com/noria/kos/NetworkInterface/type_extra_node_8/Physical> a skos:Concept ; skos:prefLabel "Physical" ; skos:inScheme <http://example.com/noria/kos/NetworkInterface/type_extra_node_8> .
+
+<http://example.com/noria/kos/Resource/AdministrativeState_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Resource Administrative State" .
+<http://example.com/noria/kos/Resource/AdministrativeState_extra_node_8/up_extra_node_8> a skos:Concept ; skos:prefLabel "up_extra_node_8" ; skos:inScheme <http://example.com/noria/kos/Resource/AdministrativeState_extra_node_8> .
+<http://example.com/noria/kos/Resource/AdministrativeState_extra_node_8/down_extra_node_8> a skos:Concept ; skos:prefLabel "down_extra_node_8" ; skos:inScheme <http://example.com/noria/kos/Resource/AdministrativeState_extra_node_8> .
+
+<http://example.com/noria/kos/Resource/OperationalState_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Resource Operational State" .
+<http://example.com/noria/kos/Resource/OperationalState_extra_node_8/up_extra_node_8> a skos:Concept ; skos:prefLabel "up_extra_node_8" ; skos:inScheme <http://example.com/noria/kos/Resource/OperationalState_extra_node_8> .
+<http://example.com/noria/kos/Resource/OperationalState_extra_node_8/down_extra_node_8> a skos:Concept ; skos:prefLabel "down_extra_node_8" ; skos:inScheme <http://example.com/noria/kos/Resource/OperationalState_extra_node_8> .
+
+<http://example.com/noria/kos/application/type_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Application Type" .
+<http://example.com/noria/kos/application/type_extra_node_8/WebApplication> a skos:Concept ; skos:prefLabel "Web Application" ; skos:inScheme <http://example.com/noria/kos/application/type_extra_node_8> .
+<http://example.com/noria/kos/application/type_extra_node_8/MonitoringTool> a skos:Concept ; skos:prefLabel "Monitoring Tool" ; skos:inScheme <http://example.com/noria/kos/application/type_extra_node_8> .
+<http://example.com/noria/kos/application/type_extra_node_8/LoggingSystem> a skos:Concept ; skos:prefLabel "Logging System" ; skos:inScheme <http://example.com/noria/kos/application/type_extra_node_8> .
+
+<http://example.com/noria/kos/application/business-importance_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Application Business Importance" .
+<http://example.com/noria/kos/application/business-importance_extra_node_8/Critical_extra_node_8> a skos:Concept ; skos:prefLabel "Critical_extra_node_8" ; skos:inScheme <http://example.com/noria/kos/application/business-importance_extra_node_8> .
+
+<https://w3id.org/noria/kos/application/status_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Application Module Status" .
+<https://w3id.org/noria/kos/application/status_extra_node_8/InProduction> a skos:Concept ; skos:prefLabel "In Production" ; skos:inScheme <https://w3id.org/noria/kos/application/status_extra_node_8> .
+
+<https://w3id.org/noria/kos/application/sla-level> a skos:ConceptScheme ;
+    dcterms:title "Application Module SLA Level" .
+<https://w3id.org/noria/kos/application/sla-level/Platinum> a skos:Concept ; skos:prefLabel "Platinum" ; skos:inScheme <https://w3id.org/noria/kos/application/sla-level> .
+
+<http://example.com/noria/kos/service/type_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Service Type" .
+<http://example.com/noria/kos/service/type_extra_node_8/CustomerFacingService> a skos:Concept ; skos:prefLabel "Customer Facing Service" ; skos:inScheme <http://example.com/noria/kos/service/type_extra_node_8> .
+
+<http://example.com/noria/kos/Notification/Severity/PerceivedSeverity_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Perceived Severity" .
+<http://example.com/noria/kos/Notification/Severity/PerceivedSeverity_extra_node_8/Critical_extra_node_8> a skos:Concept ; skos:prefLabel "Critical_extra_node_8" ; skos:inScheme <http://example.com/noria/kos/Notification/Severity/PerceivedSeverity_extra_node_8> .
+<http://example.com/noria/kos/Notification/Severity/PerceivedSeverity_extra_node_8/Major> a skos:Concept ; skos:prefLabel "Major" ; skos:inScheme <http://example.com/noria/kos/Notification/Severity/PerceivedSeverity_extra_node_8> .
+
+<http://example.com/noria/kos/TroubleTicket/severity_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Trouble Ticket Severity" .
+<http://example.com/noria/kos/TroubleTicket/severity_extra_node_8/Blocking> a skos:Concept ; skos:prefLabel "Blocking" ; skos:inScheme <http://example.com/noria/kos/TroubleTicket/severity_extra_node_8> .
+
+<http://example.com/noria/kos/TroubleTicket/type_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Trouble Ticket Type" .
+<http://example.com/noria/kos/TroubleTicket/type_extra_node_8/Failure> a skos:Concept ; skos:prefLabel "Failure" ; skos:inScheme <http://example.com/noria/kos/TroubleTicket/type_extra_node_8> .
+
+<http://example.com/noria/kos/TroubleTicket/priority_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Trouble Ticket Priority" .
+<http://example.com/noria/kos/TroubleTicket/priority_extra_node_8/P1> a skos:Concept ; skos:prefLabel "P1" ; skos:inScheme <http://example.com/noria/kos/TroubleTicket/priority_extra_node_8> .
+
+<http://example.com/noria/kos/TroubleTicket/origin_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Trouble Ticket Origin" .
+<http://example.com/noria/kos/TroubleTicket/origin_extra_node_8/Supervision> a skos:Concept ; skos:prefLabel "Supervision" ; skos:inScheme <http://example.com/noria/kos/TroubleTicket/origin_extra_node_8> .
+
+<http://example.com/noria/kos/TroubleTicket/status_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Trouble Ticket Status" .
+<http://example.com/noria/kos/TroubleTicket/status_extra_node_8/InProgress> a skos:Concept ; skos:prefLabel "InProgress" ; skos:inScheme <http://example.com/noria/kos/TroubleTicket/status_extra_node_8> .
+
+<http://example.com/noria/kos/TroubleTicket/commentType_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Trouble Ticket Comment Type" .
+<http://example.com/noria/kos/TroubleTicket/commentType_extra_node_8/Internal> a skos:Concept ; skos:prefLabel "Internal" ; skos:inScheme <http://example.com/noria/kos/TroubleTicket/commentType_extra_node_8> .
+
+<http://example.com/noria/kos/TroubleTicket/operationType_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Trouble Ticket Operation Type" .
+<http://example.com/noria/kos/TroubleTicket/operationType_extra_node_8/Diagnosis> a skos:Concept ; skos:prefLabel "Diagnosis" ; skos:inScheme <http://example.com/noria/kos/TroubleTicket/operationType_extra_node_8> .
+
+<http://example.com/noria/kos/ChangeRequest/category_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Change Request Category" .
+<http://example.com/noria/kos/ChangeRequest/category_extra_node_8/InternalIntervention> a skos:Concept ; skos:prefLabel "Internal intervention" ; skos:inScheme <http://example.com/noria/kos/ChangeRequest/category_extra_node_8> .
+
+<http://example.com/noria/kos/ChangeRequest/type_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Change Request Type" .
+<http://example.com/noria/kos/ChangeRequest/type_extra_node_8/Standard> a skos:Concept ; skos:prefLabel "Standard" ; skos:inScheme <http://example.com/noria/kos/ChangeRequest/type_extra_node_8> .
+
+<http://example.com/noria/kos/ChangeRequest/cause_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Change Request Cause" .
+<http://example.com/noria/kos/ChangeRequest/cause_extra_node_8/SoftwareUpgrade> a skos:Concept ; skos:prefLabel "Software upgrade" ; skos:inScheme <http://example.com/noria/kos/ChangeRequest/cause_extra_node_8> .
+
+<http://example.com/noria/kos/ChangeRequest/status_extra_node_8> a skos:ConceptScheme ;
+    dcterms:title "Change Request Status" .
+<http://example.com/noria/kos/ChangeRequest/status_extra_node_8/Scheduled> a skos:Concept ; skos:prefLabel "Scheduled" ; skos:inScheme <http://example.com/noria/kos/ChangeRequest/status_extra_node_8> .

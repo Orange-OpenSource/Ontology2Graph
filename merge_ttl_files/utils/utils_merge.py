@@ -9,7 +9,7 @@ import subprocess
 from collections import Counter
 import networkx as nx
 import rdflib
-from rdflib import URIRef,Namespace,BNode
+from rdflib import URIRef,Namespace
 
 def remove_pred_obj(expr, graph, predi, obje):
     '''remove predicate and target object of an edge'''
@@ -153,10 +153,10 @@ def find_duplicates_nodes(path,ontology):
     nodes=[]
     rdf = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
     rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
-    
+
     path_node_log=Path(f'{path}/nodes_log')
     if os.path.exists(path_node_log):
-            shutil.rmtree(path_node_log)
+        shutil.rmtree(path_node_log)
     os.makedirs(path_node_log)
 
     #set logger
@@ -200,20 +200,21 @@ def find_duplicates_nodes(path,ontology):
                 #print(f"subj {subj}")
                 #print(f"obj {obj}")
 
-            
-            if isinstance(subj, BNode) and (pred != rdf.type) and subj not in blank_nodes:
+            #if isinstance(subj, BNode) and (pred != rdf.type) and subj not in blank_nodes:
                 #and (pred != rdfs.isDefinedBy) and pred not in datatypeproperties:
                 #print(rdf.type)
-                logger_node.info('Subject is a BN : %s, pred %s, object %s, file : %s',subj,pred,obj,file)
+                #logger_node.info('Subject is a BN : %s, pred %s, object %s, file : %s',\
+                    #subj,pred,obj,file)
                 #logger_node.info('Blank node (pred) : %s',pred)
-                blank_nodes.append(subj)
+                #blank_nodes.append(subj)
                 #blank_nodes.append(file)
-                
-            if isinstance(obj, BNode) and (pred != rdf.type) and obj not in blank_nodes:
+
+            #if isinstance(obj, BNode) and (pred != rdf.type) and obj not in blank_nodes:
                 #and (pred != rdfs.isDefinedBy) and pred not in datatypeproperties:
                 #print(rdf.type)
-                logger_node.info('Object is a BN : %s, pred %s, object %s, file : %s',subj,pred,obj,file)
-                blank_nodes.append(obj)
+                #logger_node.info('Object is a BN : %s, pred %s, subject %s, file : %s'\
+                    #,obj,pred,subj,file)
+                #blank_nodes.append(obj)
                 #blank_nodes.append(file)
                 #logger_node.info('Blank node (pred) : %s',pred)
                 #logger_node.info('Blank node (object) : %s',obj)
@@ -230,7 +231,7 @@ def find_duplicates_nodes(path,ontology):
         ### for gemini 2.5 flash ###
         nodes_no_url=[Path(nodes).name for nodes in nodes]
         all_nodes.append(nodes_no_url)
-        all_nodes.append(blank_nodes)
+        #all_nodes.append(blank_nodes)
         #print(file)
 
         ### for gpt-4.1-nano ###
@@ -293,7 +294,8 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
 
     all_ttl_files = [f.name for f in Path(path_result).iterdir() if f.is_file()]
 
-    shutil.rmtree(path_merged)
+    if os.path.exists(path_merged):
+        shutil.rmtree(path_merged)
     os.makedirs(Path(path_merged))
 
     path_llm_graphs_dup_treated=f'{Path(path_result)}/llm_graphs_dup_treated'
@@ -316,7 +318,7 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
     logger_merge.setLevel(logging.INFO)
     logger_merge.addHandler(handler)
 
-    remain_occ=0
+    remain_occ=1
 
     #occ_dup=occurence_duplicate(duplicates_nodes,path_result)
 
@@ -324,6 +326,7 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
 
         #occ_dup=occurence_duplicate(duplicates_nodes,path_result)
         #print('occ_dup',occ_dup)
+        print('Treatment in progress for remain_occ =%s',remain_occ)
 
         #nbr_file_to_treat=nbr_occ_max-remain_occ
         occ_dup=occurence_duplicate(duplicates_nodes,path_result)
@@ -436,7 +439,8 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
             #    nbr_file_treated=nbr_file_treated+1
             nbr_file_treated=nbr_file_treated+1
 
-        all_new_ttl_files = [f for f in Path(f'{path_llm_graphs_dup_treated}/{remain_occ}').iterdir() if f.is_file()]
+        all_new_ttl_files = [f for f in Path(f'{path_llm_graphs_dup_treated}/{remain_occ}')\
+            .iterdir() if f.is_file()]
         #print(all_new_ttl_files)
         #print(Path(path_llm_graphs_dup_treated))
 

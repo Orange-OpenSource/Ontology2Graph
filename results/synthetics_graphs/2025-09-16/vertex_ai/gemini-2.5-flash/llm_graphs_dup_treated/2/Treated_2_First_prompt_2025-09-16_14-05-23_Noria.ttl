@@ -1,0 +1,498 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix bot: <https://w3id.org/bot#> .
+@prefix observable: <https://unifiedcyberontology.org/ontology/uco/observable#> .
+@prefix pep: <https://w3id.org/pep/> .
+@prefix log: <https://w3id.org/sepses/ns/log#> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix ex: <http://example.com/noria/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+
+# --- Organizations and Agents ---
+ex:OrangeCorp_extra_node_7 a org:Organization ;
+    rdfs:label "Orange Corporation" ;
+    rdfs:comment "The main organization managing the IT infrastructure." ;
+    noria:agentWorkingHours "24/7" ;
+    noria:agentPreferredContactMethod [
+        a skos:Concept ;
+        skos:prefLabel "Email" ;
+        skos:inScheme <kos/org/agent-contact-method_extra_node_7>
+    ] ;
+    noria:agentInstructions "Contact via corporate ticketing system for all issues." .
+
+ex:NetworkOpsTeam a org:OrganizationalUnit ;
+    rdfs:label "Network Operations Team" ;
+    rdfs:comment "Team responsible for managing network infrastructure." ;
+    org:unitOf ex:OrangeCorp_extra_node_7 ;
+    noria:agentWorkingHours "Mon-Fri, 9:00-17:00" ;
+    noria:agentPreferredContactMethod [
+        a skos:Concept ;
+        skos:prefLabel "Phone" ;
+        skos:inScheme <kos/org/agent-contact-method_extra_node_7>
+    ] ;
+    noria:agentManagesResource ex:CoreRouter01_extra_node_7, ex:EdgeSwitch05 .
+
+ex:AppSupportTeam_extra_node_7 a org:OrganizationalUnit ;
+    rdfs:label "Application Support Team" ;
+    rdfs:comment "Team responsible for supporting critical business applications." ;
+    org:unitOf ex:OrangeCorp_extra_node_7 ;
+    noria:agentWorkingHours "Mon-Sun, 8:00-20:00" ;
+    noria:agentManagesResource ex:WebAppServer01 .
+
+ex:JohnDoe_extra_node_7 a foaf:Person ;
+    rdfs:label "John Doe" ;
+    rdfs:comment "Network Engineer, pilot for network changes." ;
+    org:memberOf ex:NetworkOpsTeam ;
+    noria:agentWorkingHours "Mon-Fri, 9:00-17:00" ;
+    noria:agentPreferredContactMethod [
+        a skos:Concept ;
+        skos:prefLabel "Internal Chat" ;
+        skos:inScheme <kos/org/agent-contact-method_extra_node_7>
+    ] .
+
+ex:JaneSmith_extra_node_7 a foaf:Person ;
+    rdfs:label "Jane Smith" ;
+    rdfs:comment "Application Manager, initiator of application changes." ;
+    org:memberOf ex:AppSupportTeam_extra_node_7 ;
+    noria:agentWorkingHours "Mon-Fri, 9:00-17:00" .
+
+# --- Locations ---
+ex:DataCenterParis a bot:Site ;
+    rdfs:label "Paris Data Center" ;
+    rdfs:comment "Main data center facility in Paris." ;
+    noria:siteId "DC-PAR-01" ;
+    noria:siteType "data center" ;
+    noria:sitePrincipalAddress "123 Rue de la Paix" ;
+    noria:sitePrincipalAddressCityName "Paris" ;
+    noria:sitePrincipalAddressPostalCode "75002" ;
+    noria:sitePrincipalAddressCountry "FR" .
+
+ex:ServerRoomA a noria:Room ;
+    rdfs:label "Server Room A" ;
+    rdfs:comment "A server room within the Paris Data Center." ;
+    bot:hasSpace ex:DataCenterParis .
+
+ex:RackL06 a noria:Locus ;
+    rdfs:label "Rack L06" ;
+    rdfs:comment "Specific rack location L06 in Server Room A." ;
+    noria:locusLine "L" ;
+    noria:locusRow "06" ;
+    bot:hasSpace ex:ServerRoomA .
+
+# --- Applications ---
+ex:CriticalWebApp a noria:Application ;
+    rdfs:label "Critical_extra_node_7 Web Application" ;
+    rdfs:comment "A business-critical web application for customer services." ;
+    noria:applicationModelIdentifier "CWA-001" ;
+    noria:applicationNumericalIdentifier 1001 ;
+    noria:applicationShortIdentifier "CWA" ;
+    noria:applicationType [
+        a skos:Concept ;
+        skos:prefLabel "Customer-Facing Service" ;
+        skos:inScheme <kos/application/type_extra_node_7>
+    ] ;
+    noria:applicationBusinessImportance [
+        a skos:Concept ;
+        skos:prefLabel "High" ;
+        skos:inScheme <kos/application/business-importance_extra_node_7>
+    ] ;
+    noria:applicationFunctionalDomain "Customer Relationship Management" ;
+    noria:applicationFunctionalSubDomain "Online Services" .
+
+ex:CWA_ProdModule a noria:ApplicationModule ;
+    rdfs:label "Critical_extra_node_7 Web Application Production Module" ;
+    rdfs:comment "The production instance of the Critical_extra_node_7 Web Application." ;
+    noria:applicationModuleOf ex:CriticalWebApp ;
+    noria:applicationModuleName "CWA_PROD" ;
+    noria:applicationModuleIdentifier "PROD-001" ;
+    noria:applicationModuleAdministrationTeam ex:AppSupportTeam_extra_node_7 ;
+    noria:applicationModuleSupportTeam ex:AppSupportTeam_extra_node_7 ;
+    noria:applicationModuleStatus [
+        a skos:Concept ;
+        skos:prefLabel "In Production" ;
+        skos:inScheme <https://w3id.org/noria/kos/application/status_extra_node_7>
+    ] .
+
+# --- Resources ---
+ex:WebAppServer01 a noria:Resource ;
+    rdfs:label "Web App Server 01" ;
+    rdfs:comment "Primary server hosting the Critical_extra_node_7 Web Application production module." ;
+    noria:resourceLogisticId "ASSET-CWA-001" ;
+    noria:resourceHostName "webapp-prod-01" ;
+    noria:resourceProductModel ex:HPProLiantDL380_extra_node_7 ;
+    noria:resourceType [
+        a skos:Concept ;
+        skos:prefLabel "Server" ;
+        skos:inScheme <kos/Resource/type_extra_node_7>
+    ] ;
+    noria:resourceSerialNumber "SN-HP-001-XYZ" ;
+    noria:resourceUsageState [
+        a skos:Concept ;
+        skos:prefLabel "In Use" ;
+        skos:inScheme <kos/Resource/LifecycleState_extra_node_7>
+    ] ;
+    noria:resourceInstallationDate "2022-01-15T10:00:00Z"^^xsd:dateTime ;
+    noria:resourceForApplication ex:CriticalWebApp ; # Corrected to point to the Application, not ApplicationModule
+    noria:locatedAtLocus ex:RackL06 ;
+    noria:resourceManagementIPAddress ex:IP_192_168_1_10 ;
+    noria:resourceManagedBy ex:AppSupportTeam_extra_node_7 .
+
+ex:CoreRouter01_extra_node_7 a noria:Resource ;
+    rdfs:label "Core Router 01" ;
+    rdfs:comment "Main router for the data center network." ;
+    noria:resourceLogisticId "ASSET-CR-001" ;
+    noria:resourceHostName "core-router-01" ;
+    noria:resourceProductModel ex:CiscoASR9K_extra_node_7 ;
+    noria:resourceType [
+        a skos:Concept ;
+        skos:prefLabel "Router" ;
+        skos:inScheme <kos/Resource/type_extra_node_7>
+    ] ;
+    noria:resourceSerialNumber "SN-CISCO-001-ABC" ;
+    noria:resourceUsageState [
+        a skos:Concept ;
+        skos:prefLabel "In Use" ;
+        skos:inScheme <kos/Resource/LifecycleState_extra_node_7>
+    ] ;
+    noria:resourceInstallationDate "2021-03-20T14:30:00Z"^^xsd:dateTime ;
+    noria:locatedAtLocus ex:RackL06 ;
+    noria:resourceManagementIPAddress ex:IP_10_0_0_1_extra_node_7 ;
+    noria:resourceManagedBy ex:NetworkOpsTeam .
+
+ex:EdgeSwitch05 a noria:Resource ;
+    rdfs:label "Edge Switch 05" ;
+    rdfs:comment "Edge switch connecting web app servers to the core network." ;
+    noria:resourceLogisticId "ASSET-ES-005" ;
+    noria:resourceHostName "edge-switch-05" ;
+    noria:resourceProductModel ex:JuniperEX4600 ;
+    noria:resourceType [
+        a skos:Concept ;
+        skos:prefLabel "Switch" ;
+        skos:inScheme <kos/Resource/type_extra_node_7>
+    ] ;
+    noria:resourceSerialNumber "SN-JUNIPER-005-DEF" ;
+    noria:resourceUsageState [
+        a skos:Concept ;
+        skos:prefLabel "In Use" ;
+        skos:inScheme <kos/Resource/LifecycleState_extra_node_7>
+    ] ;
+    noria:resourceInstallationDate "2022-06-01T09:00:00Z"^^xsd:dateTime ;
+    noria:locatedAtLocus ex:RackL06 ;
+    noria:resourceManagementIPAddress ex:IP_10_0_0_5 ;
+    noria:resourceManagedBy ex:NetworkOpsTeam .
+
+# --- Product Models ---
+ex:HPProLiantDL380_extra_node_7 a noria:ProductModel ;
+    rdfs:label "HP ProLiant DL380" ;
+    rdfs:comment "Product model for HP ProLiant DL380 servers." ;
+    noria:productManufacturedBy ex:HPE_extra_node_7 .
+
+ex:CiscoASR9K_extra_node_7 a noria:ProductModel ;
+    rdfs:label "Cisco_extra_node_7 ASR 9000 Series" ;
+    rdfs:comment "Product model for Cisco_extra_node_7 ASR 9000 Series routers." ;
+    noria:productManufacturedBy ex:Cisco_extra_node_7 .
+
+ex:JuniperEX4600 a noria:ProductModel ;
+    rdfs:label "Juniper EX4600" ;
+    rdfs:comment "Product model for Juniper EX4600 switches." ;
+    noria:productManufacturedBy ex:Juniper .
+
+ex:HPE_extra_node_7 a org:Organization ;
+    rdfs:label "Hewlett Packard Enterprise" ;
+    rdfs:comment "Manufacturer of HP servers." .
+
+ex:Cisco_extra_node_7 a org:Organization ;
+    rdfs:label "Cisco_extra_node_7 Systems" ;
+    rdfs:comment "Manufacturer of Cisco_extra_node_7 networking equipment." .
+
+ex:Juniper a org:Organization ;
+    rdfs:label "Juniper Networks" ;
+    rdfs:comment "Manufacturer of Juniper networking equipment." .
+
+# --- IP Addresses (as observable:IPAddress) ---
+ex:IP_192_168_1_10 a observable:IPAddress ;
+    rdfs:label "192.168.1.10" ;
+    rdfs:comment "Management IP address for WebAppServer01." ;
+    observable:ipAddressValue "192.168.1.10" .
+
+ex:IP_10_0_0_1_extra_node_7 a observable:IPAddress ;
+    rdfs:label "10.0.0.1" ;
+    rdfs:comment "Management IP address for CoreRouter01_extra_node_7." ;
+    observable:ipAddressValue "10.0.0.1" .
+
+ex:IP_10_0_0_5 a observable:IPAddress ;
+    rdfs:label "10.0.0.5" ;
+    rdfs:comment "Management IP address for EdgeSwitch05." ;
+    observable:ipAddressValue "10.0.0.5" .
+
+# --- Network Interfaces ---
+ex:WebAppServer01_Eth0 a noria:NetworkInterface ;
+    rdfs:label "webapp-prod-01:eth0" ;
+    rdfs:comment "Ethernet interface 0 on WebAppServer01." ;
+    noria:networkInterfaceOf ex:WebAppServer01 ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus [
+        a skos:Concept ;
+        skos:prefLabel "up_extra_node_7" ;
+        skos:inScheme <kos/Resource/AdministrativeState_extra_node_7>
+    ] ;
+    noria:networkInterfaceOperationalStatus [
+        a skos:Concept ;
+        skos:prefLabel "up_extra_node_7" ;
+        skos:inScheme <kos/Resource/OperationalState_extra_node_7>
+    ] ;
+    noria:networkInterfaceConnects ex:Link_WebAppServer01_EdgeSwitch05 .
+
+ex:EdgeSwitch05_Gi0_1 a noria:NetworkInterface ;
+    rdfs:label "edge-switch-05:GigabitEthernet0/1" ;
+    rdfs:comment "GigabitEthernet interface 0/1 on EdgeSwitch05, connected to WebAppServer01 and CoreRouter01_extra_node_7." ;
+    noria:networkInterfaceOf ex:EdgeSwitch05 ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus [
+        a skos:Concept ;
+        skos:prefLabel "up_extra_node_7" ;
+        skos:inScheme <kos/Resource/AdministrativeState_extra_node_7>
+    ] ;
+    noria:networkInterfaceOperationalStatus [
+        a skos:Concept ;
+        skos:prefLabel "up_extra_node_7" ;
+        skos:inScheme <kos/Resource/OperationalState_extra_node_7>
+    ] ;
+    noria:networkInterfaceConnects ex:Link_WebAppServer01_EdgeSwitch05, ex:Link_EdgeSwitch05_CoreRouter01 .
+
+ex:CoreRouter01_Gi0_0_0 a noria:NetworkInterface ;
+    rdfs:label "core-router-01:GigabitEthernet0/0/0" ;
+    rdfs:comment "GigabitEthernet interface 0/0/0 on CoreRouter01_extra_node_7, connected to EdgeSwitch05." ;
+    noria:networkInterfaceOf ex:CoreRouter01_extra_node_7 ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus [
+        a skos:Concept ;
+        skos:prefLabel "up_extra_node_7" ;
+        skos:inScheme <kos/Resource/AdministrativeState_extra_node_7>
+    ] ;
+    noria:networkInterfaceOperationalStatus [
+        a skos:Concept ;
+        skos:prefLabel "up_extra_node_7" ;
+        skos:inScheme <kos/Resource/OperationalState_extra_node_7>
+    ] ;
+    noria:networkInterfaceConnects ex:Link_EdgeSwitch05_CoreRouter01 .
+
+# --- Network Links ---
+ex:Link_WebAppServer01_EdgeSwitch05 a noria:NetworkLink ;
+    rdfs:label "Link: WebAppServer01 to EdgeSwitch05" ;
+    rdfs:comment "Physical link between WebAppServer01 and EdgeSwitch05." ;
+    noria:networkLinkId "LINK-CWA-ES-001" ;
+    noria:networkLinkTerminationResource ex:WebAppServer01, ex:EdgeSwitch05 ;
+    noria:networkLinkInstallationDate "2022-06-01T09:15:00Z"^^xsd:dateTime ;
+    noria:networkLinkType "Ethernet 10Gbps" .
+
+ex:Link_EdgeSwitch05_CoreRouter01 a noria:NetworkLink ;
+    rdfs:label "Link: EdgeSwitch05 to CoreRouter01_extra_node_7" ;
+    rdfs:comment "Physical link between EdgeSwitch05 and CoreRouter01_extra_node_7." ;
+    noria:networkLinkId "LINK-ES-CR-001" ;
+    noria:networkLinkTerminationResource ex:EdgeSwitch05, ex:CoreRouter01_extra_node_7 ;
+    noria:networkLinkInstallationDate "2022-06-01T09:30:00Z"^^xsd:dateTime ;
+    noria:networkLinkType "Fiber Optic 40Gbps" .
+
+# --- Event Records ---
+ex:Event_InterfaceDown_extra_node_7 a noria:EventRecord ;
+    rdfs:label "Event: Interface Down on CoreRouter01_extra_node_7" ;
+    rdfs:comment "Log record indicating a network interface went down_extra_node_7." ;
+    noria:loggingTime "2023-10-26T10:00:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagedObject ex:CoreRouter01_Gi0_0_0 ;
+    noria:logOriginatingManagementSystem ex:NMS_System ;
+    noria:logText "LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/0, changed state to down_extra_node_7" ;
+    noria:alarmSeverity [
+        a skos:Concept ;
+        skos:prefLabel "Critical_extra_node_7" ;
+        skos:inScheme <Notification/Severity/PerceivedSeverity_extra_node_7>
+    ] .
+
+ex:Event_AppError a noria:EventRecord ;
+    rdfs:label "Event: Application Error on WebAppServer01" ;
+    rdfs:comment "Log record indicating a critical application error." ;
+    noria:loggingTime "2023-10-26T10:05:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagedObject ex:WebAppServer01 ;
+    noria:logOriginatingManagementSystem ex:APM_System ;
+    noria:logText "CRITICAL: WebApp 'CWA_PROD' experienced database connection failure." ;
+    noria:alarmSeverity [
+        a skos:Concept ;
+        skos:prefLabel "Major" ;
+        skos:inScheme <Notification/Severity/PerceivedSeverity_extra_node_7>
+    ] .
+
+ex:NMS_System a noria:Application ;
+    rdfs:label "Network Monitoring System" ;
+    rdfs:comment "Application for monitoring network devices." ;
+    noria:applicationShortIdentifier "NMS" .
+
+ex:APM_System a noria:Application ;
+    rdfs:label "Application Performance Monitoring" ;
+    rdfs:comment "Application for monitoring application performance." ;
+    noria:applicationShortIdentifier "APM" .
+
+# --- Trouble Ticket ---
+ex:TT_20231026_001_extra_node_7 a noria:TroubleTicket ;
+    rdfs:label "TT-20231026-001: Critical_extra_node_7 Web App Outage" ;
+    rdfs:comment "Trouble ticket opened for the critical web application outage." ;
+    dcterms:created "2023-10-26T10:10:00Z"^^xsd:dateTime ;
+    noria:documentExternalId "INC-CWA-2023-001" ;
+    noria:documentHRef "http://ticketing.example.com/TT-20231026-001" ;
+    noria:troubleTicketSeverity [
+        a skos:Concept ;
+        skos:prefLabel "Blocking" ;
+        skos:inScheme <kos/TroubleTicket/severity_extra_node_7>
+    ] ;
+    noria:troubleTicketType [
+        a skos:Concept ;
+        skos:prefLabel "Failure" ;
+        skos:inScheme <kos/TroubleTicket/type_extra_node_7>
+    ] ;
+    noria:troubleTicketPriority [
+        a skos:Concept ;
+        skos:prefLabel "P1" ;
+        skos:inScheme <kos/TroubleTicket/priority_extra_node_7>
+    ] ;
+    noria:troubleTicketOrigin [
+        a skos:Concept ;
+        skos:prefLabel "Supervision" ;
+        skos:inScheme <kos/TroubleTicket/origin_extra_node_7>
+    ] ;
+    noria:troubleTicketTrigger ex:Event_InterfaceDown_extra_node_7 ;
+    noria:troubleTicketStatusCurrent [
+        a skos:Concept ;
+        skos:prefLabel "InProgress" ;
+        skos:inScheme <kos/TroubleTicket/status_extra_node_7>
+    ] ;
+    noria:troubleTicketRelatedParty ex:NetworkOpsTeam, ex:AppSupportTeam_extra_node_7 ;
+    noria:troubleTicketRelatedService ex:CriticalWebApp ;
+    noria:troubleTicketRelatedResource ex:CoreRouter01_extra_node_7, ex:WebAppServer01 ;
+    noria:troubleTicketCause "Network interface failure leading to application outage." ;
+    noria:troubleTicketDetectionDateTime "2023-10-26T10:00:00Z"^^xsd:dateTime ;
+    noria:documentStatusHistory ex:Event_TT_StatusChange_InProgress, ex:Event_TT_StatusChange_Resolved .
+
+# --- Change Request ---
+ex:CR_20231101_001 a noria:ChangeRequest ;
+    rdfs:label "CR-20231101-001: Core Router Firmware Upgrade" ;
+    rdfs:comment "Change request for upgrading firmware on Core Router 01." ;
+    dcterms:created "2023-10-28T15:00:00Z"^^xsd:dateTime ;
+    noria:documentExternalId "CHG-NET-2023-005" ;
+    noria:documentHRef "http://changemgmt.example.com/CR-20231101-001" ;
+    noria:changeRequestPlannedStartTime "2023-11-01T02:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestPlannedEndTime "2023-11-01T04:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestCategory [
+        a skos:Concept ;
+        skos:prefLabel "Internal intervention" ;
+        skos:inScheme <kos/ChangeRequest/category_extra_node_7>
+    ] ;
+    noria:changeRequestType [
+        a skos:Concept ;
+        skos:prefLabel "Standard" ;
+        skos:inScheme <kos/ChangeRequest/type_extra_node_7>
+    ] ;
+    noria:changeRequestChangeCause [
+        a skos:Concept ;
+        skos:prefLabel "Software upgrade" ;
+        skos:inScheme <kos/ChangeRequest/cause_extra_node_7>
+    ] ;
+    noria:changeRequestImpact ex:CoreRouter01_extra_node_7 ;
+    noria:changeRequestOutageDuration "PT2H"^^xsd:duration ; # 2 hours
+    noria:changeRequestStatusCurrent [
+        a skos:Concept ;
+        skos:prefLabel "Scheduled" ;
+        skos:inScheme <kos/ChangeRequest/status_extra_node_7>
+    ] ;
+    noria:changeRequestInitiatorParty ex:JaneSmith_extra_node_7 ;
+    noria:changeRequestPilotParty ex:JohnDoe_extra_node_7 ;
+    noria:changeRequestIsRegulated "false"^^xsd:boolean ;
+    noria:actionCorrelatedOperationPlan ex:FirmwareUpgradePlan .
+
+# --- Operation Plan and Conditions ---
+ex:FirmwareUpgradePlan a noria:OperationPlan ;
+    rdfs:label "Core Router Firmware Upgrade Procedure" ;
+    rdfs:comment "Standard operating procedure for upgrading firmware on core routers." ;
+    noria:operationPlanPreCondition ex:RouterReachabilityCheck ;
+    noria:operationPlanPostCondition ex:RouterFunctionalityCheck .
+
+ex:RouterReachabilityCheck a noria:ActionPreCondition ;
+    rdfs:label "Router Reachability Check" ;
+    rdfs:comment "Verify that the router is reachable via management interface before starting upgrade." .
+
+ex:RouterFunctionalityCheck a noria:ActionPostCondition ;
+    rdfs:label "Router Functionality Check" ;
+    rdfs:comment "Verify router functionality and network connectivity after upgrade." .
+
+# --- Trouble Ticket Notes and related actions ---
+ex:TT_20231026_001_Note1 a noria:TroubleTicketNote ;
+    rdfs:label "TT-20231026-001 Note 1" ;
+    rdfs:comment "Initial diagnosis note for the web app outage." ;
+    dcterms:created "2023-10-26T10:15:00Z"^^xsd:dateTime ;
+    dcterms:creator ex:JohnDoe_extra_node_7 ;
+    dcterms:isPartOf ex:TT_20231026_001_extra_node_7 ;
+    noria:troubleTicketNoteCommentType [
+        a skos:Concept ;
+        skos:prefLabel "Internal" ;
+        skos:inScheme <kos/TroubleTicket/commentType_extra_node_7>
+    ] ;
+    noria:troubleTicketNoteOperationType [
+        a skos:Concept ;
+        skos:prefLabel "Diagnosis" ;
+        skos:inScheme <kos/TroubleTicket/operationType_extra_node_7>
+    ] ;
+    dcterms:description "Initial checks show CoreRouter01_extra_node_7 interface Gi0/0/0 is down_extra_node_7. Investigating further." .
+
+ex:TT_2231026_001_Note2 a noria:TroubleTicketNote ;
+    rdfs:label "TT-20231026-001 Note 2" ;
+    rdfs:comment "Resolution note for the web app outage." ;
+    dcterms:created "2023-10-26T11:30:00Z"^^xsd:dateTime ;
+    dcterms:creator ex:JohnDoe_extra_node_7 ;
+    dcterms:isPartOf ex:TT_20231026_001_extra_node_7 ;
+    noria:troubleTicketNoteCommentType [
+        a skos:Concept ;
+        skos:prefLabel "Internal" ;
+        skos:inScheme <kos/TroubleTicket/commentType_extra_node_7>
+    ] ;
+    noria:troubleTicketNoteOperationType [
+        a skos:Concept ;
+        skos:prefLabel "Corrective Action" ;
+        skos:inScheme <kos/TroubleTicket/operationType_extra_node_7>
+    ] ;
+    dcterms:description "Interface Gi0/0/0 on CoreRouter01_extra_node_7 brought back up_extra_node_7. Service restored. Monitoring." ;
+    noria:troubleTicketNoteCorrelatedExecution ex:InterfaceUpAction .
+
+ex:InterfaceUpAction a pep:ProcedureExecutionContainer ;
+    rdfs:label "Interface Up Action" ;
+    rdfs:comment "Container for the actions taken to bring the interface up_extra_node_7." ;
+    dcterms:created "2023-10-26T11:20:00Z"^^xsd:dateTime ;
+    pep:hasProcedure ex:NetworkInterfaceRestoreProcedure .
+
+ex:NetworkInterfaceRestoreProcedure a pep:Procedure ;
+    rdfs:label "Network Interface Restore Procedure" ;
+    rdfs:comment "Procedure to restore a network interface." .
+
+# --- Trouble Ticket Status History Events ---
+ex:Event_TT_StatusChange_InProgress a noria:EventRecord ;
+    rdfs:label "TT Status Change: InProgress" ;
+    rdfs:comment "Event recording the status_extra_node_7 change of TT-20231026-001 to InProgress." ;
+    noria:loggingTime "2023-10-26T10:10:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagementSystem ex:TicketingSystem ;
+    noria:logText "Trouble Ticket TT-20231026-001 status_extra_node_7 changed to InProgress." .
+
+ex:Event_TT_StatusChange_Resolved a noria:EventRecord ;
+    rdfs:label "TT Status Change: Resolved" ;
+    rdfs:comment "Event recording the status_extra_node_7 change of TT-20231026-001 to Resolved." ;
+    noria:loggingTime "2023-10-26T11:45:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagementSystem ex:TicketingSystem ;
+    noria:logText "Trouble Ticket TT-20231026-001 status_extra_node_7 changed to Resolved." .
+
+ex:TicketingSystem a noria:Application ;
+    rdfs:label "ITSM Ticketing System" ;
+    rdfs:comment "Application used for IT Service Management ticketing." ;
+    noria:applicationShortIdentifier "ITSM-TS" .
