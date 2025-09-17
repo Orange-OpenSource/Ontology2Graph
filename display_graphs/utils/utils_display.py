@@ -151,7 +151,7 @@ def prepare_graph_to_display(file,log_html_folder,ontology):
         dtp = retreive_datatype_properties(ontology)
     #    blank_node_to_repalce = None
 
-        if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type)
+        if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) and (pred != skos.inScheme)
             and (pred != rdfs.isDefinedBy) and (short_pred not in dtp)):
             digraph.add_edge(str(short_subj), str(short_obj), label=str(short_pred),color='white')
 
@@ -160,7 +160,7 @@ def prepare_graph_to_display(file,log_html_folder,ontology):
                 short_subjbn=Path(subjbn).name
                 short_predbn=Path(predbn).name
                 #blank_node_to_repalce = subj
-                #logger_file1.info('Blank Node Subject:%s,Predicate :%s,Object : %s',subj,pred,obj)
+                logger_file1.info('Blank Node Subject:%s,Predicate :%s,Object : %s',subj,pred,obj)
                 #logger_file1.info('Blank Node Predictate : %s',pred)
                 #logger_file1.info('Blank Node object : %s',obj)
                 digraph.add_edge(str(short_subjbn),str(short_obj),label=str(short_predbn),color='white')
@@ -176,6 +176,8 @@ def prepare_graph_to_display(file,log_html_folder,ontology):
             logger_file1.info('URIRef Subject : %s',s)
         if isinstance(o, Literal):
             logger_file1.info('Literal Object : %s',o)
+        if isinstance(s,BNode):
+            logger_file1.info('BNode Subject : %s',s)
     logger_file1.info('##################################################')
 
     ## sort and remove duplicate lines ##
