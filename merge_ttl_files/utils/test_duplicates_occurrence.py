@@ -29,10 +29,8 @@ logger_test.addHandler(handler)
 
 os.system("clear")
 PATH_GRAPH_LLM=f'{Path(path).parent.parent}/'
-#logger_merge.info('path_graph_llm : ',PATH_GRAPH_LLM)
 
 duplicates_nodes_llm=find_duplicates_nodes(PATH_GRAPH_LLM,ontology)
-
 duplicates_nodes_treated=find_duplicates_nodes(path,ontology)
 
 occ_dup_llm_graph=occurence_duplicate(duplicates_nodes_llm,PATH_GRAPH_LLM)
@@ -57,9 +55,6 @@ if not duplicates_nodes_treated:
     print(path,'\n')
 
 else:
-    #print('\nDUPLICATED NODES AFTER TREATMENT DETECTED FOR REMAI_OCC=',REMAIN_OCC,'\n'\
-    #      'SEE ',test_dup_log_file,' FOR MORE INFORMATION')
-
     logger_test.info('DUPLICATES NODES DETECTED in %s \n',path)
     logger_test.info('occurence duplicate nodes llm : %s \n',occ_dup_llm_graph)
     logger_test.info('Max node occurence before treatment : %s %s \n',node_max_occ_llm,m_n_o_v_llm)

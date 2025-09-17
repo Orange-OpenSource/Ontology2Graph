@@ -1,0 +1,129 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+# Hub Node: Central Network Hub
+<https://example.com/Hub1> a noria:ManagedElement ;
+  rdfs:label "Main Network Hub"@en ;
+  rdfs:comment "The central hub connecting multiple network segments."@en ;
+  noria:elementManagedBy <https://example.com/OrgOrange> .
+
+# Organization responsible for the Hub
+<https://example.com/OrgOrange> a org:Organization ;
+  rdfs:label "Orange Network Operations"@en ;
+  rdfs:comment "The organization managing core network infrastructure."@en .
+
+# High-Degree Node: Core Router
+<https://example.com/RouterCore> a noria:StructuralElement, seas:System ;
+  rdfs:label "Core Router"@en ;
+  rdfs:comment "The high-capacity core router handling main traffic."@en ;
+  noria:elementManagedBy <https://example.com/OrgOrange> ;
+  noria:structuralElementObservable <https://example.com/ObservableRouterStatus> .
+
+# Observable for Router Status
+<https://example.com/ObservableRouterStatus> a noria:StructuralObservable ;
+  rdfs:label "Router Operational Status"@en ;
+  rdfs:comment "Current operational status of the core router."@en .
+
+# Connector Node: Network Interface on Router
+<https://example.com/Interface1> a noria:NetworkInterface ;
+  rdfs:label "GigabitEthernet0/0/1"@en ;
+  rdfs:comment "Primary interface connecting to the distribution switch."@en ;
+  noria:networkInterfaceOf <https://example.com/RouterCore> ;
+  noria:networkInterfaceOperationalStatus <https://example.com/StatusUp> ;
+  noria:networkInterfaceType "physical" .
+
+# Status node for network interface
+<https://example.com/StatusUp> a skos:Concept ;
+  rdfs:label "Up"@en ;
+  skos:inScheme <http://example.com/scheme/status> .
+
+# Intermediary Node: Resource representing a Virtual Machine
+<https://example.com/VM1> a noria:StructuralElement, seas:System ;
+  rdfs:label "Virtual Machine 1"@en ;
+  rdfs:comment "A virtual machine hosting critical services."@en ;
+  noria:elementManagedBy <https://example.com/OrgOrange> ;
+  noria:structuralElementObservable <https://example.com/VM1Status> .
+
+# Observable for VM status
+<https://example.com/VM1Status> a noria:StructuralObservable ;
+  rdfs:label "VM1 Status"@en ;
+  rdfs:comment "Operational status of Virtual Machine 1."@en .
+
+# Multiplex Node: Resource with multiple roles (e.g., a server_extra_node_2 acting as storage and compute)
+<https://example.com/ServerStorage> a noria:Resource ;
+  rdfs:label "Storage Server"@en ;
+  rdfs:comment "A server_extra_node_2 acting as both storage and compute resource."@en ;
+  noria:resourceManagedBy <https://example.com/OrgOrange> ;
+  noria:resourceType <https://example.com/type/Server> .
+
+# Super Node: Entire Data Center
+<https://example.com/DataCenter1> a noria:StructuralElement, seas:System ;
+  rdfs:label "Main Data Center"@en ;
+  rdfs:comment "The primary data center housing core infrastructure."@en ;
+  noria:elementManagedBy <https://example.com/OrgOrange> ;
+  noria:structuralElementObservable <https://example.com/DataCenterStatus> .
+
+# Observable for Data Center status
+<https://example.com/DataCenterStatus> a noria:StructuralObservable ;
+  rdfs:label "Data Center Status"@en ;
+  rdfs:comment "Overall operational status of the data center."@en .
+
+# Connector Node: Link between Data Center and Router
+<https://example.com/LinkDC-Router> a noria:NetworkLink ;
+  rdfs:label "Link DataCenter to Router"@en ;
+  rdfs:comment "Physical link connecting data center to core router."@en ;
+  noria:networkLinkId "Link-DC-Router-001" ;
+  noria:networkLinkInstallationDate "2022-01-15T10:00:00"^^xsd:dateTime ;
+  noria:networkLinkType "optical fiber" ;
+  noria:networkLinkTerminationResource <https://example.com/DataCenter1> ;
+  noria:networkLinkTerminationResourceDestination <https://example.com/RouterCore> .
+
+# Intermediary Node: Event Record for a network event
+<https://example.com/Event1_extra_node_2> a noria:EventRecord ;
+  rdfs:label "Link Failure Event"@en ;
+  rdfs:comment "Event indicating failure of the link between Data Center and Router."@en ;
+  noria:loggingTime "2023-10-10T14:30:00"^^xsd:dateTime ;
+  noria:logText "Optical link between Data Center and Router failed."@en ;
+  noria:logOriginatingManagedObject <https://example.com/LinkDC-Router> ;
+  noria:logOriginatingManagementSystem <https://example.com/NMS1> ;
+  noria:alarmSeverity <https://example.com/AlarmCritical> .
+
+# Status node for alarm severity
+<https://example.com/AlarmCritical> a skos:Concept ;
+  rdfs:label "Critical"@en ;
+  skos:inScheme <http://example.com/scheme/severity> .
+
+# Connector Node: Resource representing a network device
+<https://example.com/Firewall1> a noria:StructuralElement, seas:System ;
+  rdfs:label "Firewall Device"@en ;
+  rdfs:comment "Firewall device providing security boundary."@en ;
+  noria:elementManagedBy <https://example.com/OrgOrange> ;
+  noria:structuralElementObservable <https://example.com/FirewallStatus> .
+
+# Observable for Firewall status
+<https://example.com/FirewallStatus> a noria:StructuralObservable ;
+  rdfs:label "Firewall Status"@en ;
+  rdfs:comment "Operational status of the Firewall."@en .
+
+# Connector Node: Resource with relation to a resource
+<https://example.com/Resource1_extra_node_2> a noria:Resource ;
+  rdfs:label "Resource 1"@en ;
+  rdfs:comment "Generic resource node."@en ;
+  noria:resourceManagedBy <https://example.com/OrgOrange> .
+
+# Relationship: Resource linked to a Resource (e.g., part of a cluster)
+<https://example.com/Resource1_extra_node_2> noria:structuralElementObservable <https://example.com/Resource1_extra_node_2Status> .
+
+<https://example.com/Resource1Status> a noria:StructuralObservable ;
+  rdfs:label "Resource1_extra_node_2 Status"@en ;
+  rdfs:comment "Status of Resource 1."@en .
+
+# Dismiss isolated nodes: All nodes are linked via at least one relation, fulfilling the requirement.

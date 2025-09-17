@@ -63,11 +63,6 @@ def visu_graph(graph,file,html_folder):
     net.from_nx(graph)
     #net.show_buttons(filter_=['physics'])
 
-
-    #for edge in net.edges:
-    #    edge["arrows"] = {"to": {"enabled": True, "scaleFactor": 1}}
-        #edge["smooth"] = {"enabled": False}
-
     net.set_options("""{
         "physics": {
             "solver": "barnesHut",
@@ -84,7 +79,6 @@ def visu_graph(graph,file,html_folder):
     os.makedirs(html_folder,exist_ok=True)
 
     html_file = f'{html_folder}/{Path(file).stem}.html'
-    #print('html_file',html_file)
 
     net.save_graph(html_file)
 
@@ -113,35 +107,6 @@ def prepare_graph_to_display(file,log_html_folder,ontology):
     g = rdflib.Graph()
     g.parse(f'{file}', format='turtle')
 
-    #ex = Namespace("http://blanknode.org/")
-
-    ### Replace blank node with URI ###
-    #for subj, pred, obj in g:
-    #    blank_node_to_replace = None
-    #    if isinstance(subj, BNode):
-    #        blank_node_to_replace = subj
-    #    logger_file1.info('Blank Node to replace  %s',blank_node_to_replace)
-    #
-    #    for label in g.objects(subj, predicate=rdfs.label):
-    #        logger_file1.info("The label of the blank node %s is: %s",subj,label)
-    #
-    #    if blank_node_to_replace:
-    #        bn_uri = ex.BlankNodeResource
-
-            #for triple in list(g.triples((blank_node_to_replace, None, None))):
-            #    g.remove(triple)
-            #    g.add((label, triple[1], triple[2]))
-            #    logger_file1.info('blank node %s replaced by sbn : %s, pbn : %s, obn %s ',\
-                # blank_node_to_replace,label, triple[1], triple[2])
-
-    #        for triple in list(g.triples((None, None, blank_node_to_replace))):
-    #            g.remove(triple)
-    #            g.add((triple[0], triple[1], label))
-    #            logger_file1.info('blank node %s replaced by sbn : %s, pbn : %s, obn %s ', \
-        # blank_node_to_replace,triple[0], triple[1],label)
-
-            #logger_file1.info('Blank Node : %s replaced with : %s ',blank_node_to_replace,label)
-
     ### populate graph with nodes and relations only ###
     for subj, pred, obj in g:
 
@@ -149,24 +114,18 @@ def prepare_graph_to_display(file,log_html_folder,ontology):
         short_subj=Path(subj).name
         short_obj=Path(obj).name
         dtp = retreive_datatype_properties(ontology)
-    #    blank_node_to_repalce = None
 
-        if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) and (pred != skos.inScheme)
+        if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) #and (pred != skos.inScheme)
             and (pred != rdfs.isDefinedBy) and (short_pred not in dtp)):
             digraph.add_edge(str(short_subj), str(short_obj), label=str(short_pred),color='white')
 
-        if isinstance(subj, BNode) and (pred != rdf.type) and (pred != skos.inScheme):
-            for subjbn, predbn in g.subject_predicates(subj):
-                short_subjbn=Path(subjbn).name
-                short_predbn=Path(predbn).name
-                #blank_node_to_repalce = subj
-                logger_file1.info('Blank Node Subject:%s,Predicate :%s,Object : %s',subj,pred,obj)
-                #logger_file1.info('Blank Node Predictate : %s',pred)
-                #logger_file1.info('Blank Node object : %s',obj)
-                digraph.add_edge(str(short_subjbn),str(short_obj),label=str(short_predbn),color='white')
-
-        #if isinstance(obj, BNode) and (pred != rdf.type):
-        #    digraph.add_edge(str(short_subj), str(short_obj),label=str(short_pred),color='white')
+        #if isinstance(subj, BNode) and (pred != rdf.type) and (pred != skos.inScheme):
+        #    for subjbn, predbn in g.subject_predicates(subj):
+        #        short_subjbn=Path(subjbn).name
+        #        short_predbn=Path(predbn).name
+        #        logger_file1.info('Blank Node Subject:%s,Predicate :%s,Object : %s',subj,pred,obj)
+        #        digraph.add_edge(str(short_subjbn),str(short_obj),label=str(short_predbn),\
+        #            color='white')
 
     ### log nodes and Literals ###
     logger_file1.info('##################################################')
@@ -186,7 +145,6 @@ def prepare_graph_to_display(file,log_html_folder,ontology):
         log.close()
 
     sorted_lines=sorted(unique_lines)  # sort in alphabetical order
-
     os.remove(log_file)
 
     with open(log_file_sorted, 'a',encoding='utf-8') as log_sorted:
