@@ -107,6 +107,9 @@ def prepare_graph_to_display(file,log_html_folder,ontology):
     g = rdflib.Graph()
     g.parse(f'{file}', format='turtle')
 
+    logger_file1.info('##################################################')
+    logger_file1.info('%s',file)
+
     ### populate graph with nodes and relations only ###
     for subj, pred, obj in g:
 
@@ -115,28 +118,35 @@ def prepare_graph_to_display(file,log_html_folder,ontology):
         short_obj=Path(obj).name
         dtp = retreive_datatype_properties(ontology)
 
-        if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) #and (pred != skos.inScheme)
-            and (pred != rdfs.isDefinedBy) and (short_pred not in dtp)):
+        if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) and\
+            (pred != skos.inScheme) and (pred != rdfs.isDefinedBy) and\
+                (short_pred not in dtp)):
             digraph.add_edge(str(short_subj), str(short_obj), label=str(short_pred),color='white')
+            logger_file1.info('URIRef Subject : %s',subj)
 
-        #if isinstance(subj, BNode) and (pred != rdf.type) and (pred != skos.inScheme):
-        #    for subjbn, predbn in g.subject_predicates(subj):
-        #        short_subjbn=Path(subjbn).name
-        #        short_predbn=Path(predbn).name
-        #        logger_file1.info('Blank Node Subject:%s,Predicate :%s,Object : %s',subj,pred,obj)
-        #        digraph.add_edge(str(short_subjbn),str(short_obj),label=str(short_predbn),\
-        #            color='white')
+        if isinstance(obj, Literal):
+            logger_file1.info('Literal Object : %s',obj)
+
+        if isinstance(subj, BNode) and (pred != rdf.type) and (pred != skos.inScheme):
+            logger_file1.info('Blank Node Subject :%s',subj)
+            for subjbn, predbn in g.subject_predicates(subj):
+                short_subjbn=Path(subjbn).name
+                short_predbn=Path(predbn).name
+                digraph.add_edge(str(short_subjbn),str(short_obj),label=str(short_predbn),\
+                    color='white')
+                logger_file1.info('Blank Node Subject :%s,Predicate :%s,Object : %s',short_subjbn,\
+                    short_predbn,short_obj)
 
     ### log nodes and Literals ###
-    logger_file1.info('##################################################')
-    logger_file1.info('%s',file)
-    for s, p, o in g:
-        if isinstance(s, URIRef):
-            logger_file1.info('URIRef Subject : %s',s)
-        if isinstance(o, Literal):
-            logger_file1.info('Literal Object : %s',o)
-        if isinstance(s,BNode):
-            logger_file1.info('BNode Subject : %s',s)
+    #logger_file1.info('##################################################')
+    #logger_file1.info('%s',file)
+    #for s, p, o in g:
+    #    if isinstance(s, URIRef):
+    #        logger_file1.info('URIRef Subject : %s',s)
+    #    if isinstance(o, Literal):
+    #        logger_file1.info('Literal Object : %s',o)
+    #    if isinstance(s,BNode):
+    #        logger_file1.info('BNode Subject : %s',s)
     logger_file1.info('##################################################')
 
     ## sort and remove duplicate lines ##

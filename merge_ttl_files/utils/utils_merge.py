@@ -139,7 +139,7 @@ def find_duplicates_nodes(path,ontology):
     # List all the ttl graph files in PATH except folder
     all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
 
-    datatypeproperties=retreive_datatype_properties(ontology)
+    dtp=retreive_datatype_properties(ontology)
     skos = Namespace("http://www.w3.org/2004/02/skos/core#")
 
     # Rebuild complete file path (folder/file)
@@ -175,23 +175,23 @@ def find_duplicates_nodes(path,ontology):
 
         for subj, pred, obj in g:
 
-            if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) #and (pred != skos.inScheme)
-                and (pred != rdfs.isDefinedBy) and pred not in datatypeproperties):
+            if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) and\
+                (pred != skos.inScheme) and (pred != rdfs.isDefinedBy) and pred not in dtp):
                 nx_graph.add_edge(str(subj), str(obj), label=str(pred))
 
-        #if isinstance(subj, BNode) and (pred != rdf.type) and (pred != skos.inScheme):
-        #    for subjbn, predbn in g.subject_predicates(subj):
-                #short_subjbn=Path(subjbn).name
-                #short_predbn=Path(predbn).name
-                #logger_file1.info('Blank Node Subject:%s,Predicate :%s,Object : %s',subj,pred,obj)
-        #        nx_graph.add_edge(str(subjbn),str(obj),label=str(predbn),\
-        #            color='white')
+            #if isinstance(subj, BNode) and (pred != rdf.type) and (pred != skos.inScheme):
+            #    for subjbn, predbn in g.subject_predicates(subj):
+            #        short_subjbn=Path(subjbn).name
+            #        short_predbn=Path(predbn).name
+            #        logger_node.info('Blank Node Subject:%s,Predicate :%s,Object : %s',\
+            #            short_subjbn,short_predbn,obj)
+            #        nx_graph.add_edge(str(subjbn),str(obj),label=str(predbn),color='white')
 
         nodes=list(nx_graph.nodes)
 
         ### for gemini 2.5 flash ###
-        nodes_no_url=[Path(nodes).name for nodes in nodes]
-        all_nodes.append(nodes_no_url)
+        nodes_name=[Path(nodes).name for nodes in nodes]
+        all_nodes.append(nodes_name)
 
         ### for gpt-4.1-nano ###
         #nodes_with_bracket = [f"<{nodes}>" for nodes in nodes]
