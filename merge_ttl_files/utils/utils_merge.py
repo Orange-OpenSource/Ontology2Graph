@@ -166,31 +166,39 @@ def find_duplicates_nodes(path,ontology):
     logger_node.setLevel(logging.INFO)
     logger_node.addHandler(handler)
 
+    skosnumber=0
+
     for file in all_files :
 
         g = rdflib.Graph()
         g.parse(file, format="turtle")
 
         nx_graph = nx.DiGraph()
+        nx_graphBN = nx.DiGraph()
 
         for subj, pred, obj in g:
 
             if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) and\
                 (pred != skos.inScheme) and (pred != rdfs.isDefinedBy) and pred not in dtp):
                 nx_graph.add_edge(str(subj), str(obj), label=str(pred))
+            
+            if not isinstance(subj, BNode) and pred == skos.inScheme:
+                skosnumber=skosnumber+1
 
-            #if isinstance(subj, BNode) and (pred != rdf.type) and (pred != skos.inScheme):
-            #    for subjbn, predbn in g.subject_predicates(subj):
-            #        short_subjbn=Path(subjbn).name
-            #        short_predbn=Path(predbn).name
-            #        logger_node.info('Blank Node Subject:%s,Predicate :%s,Object : %s',\
-            #            short_subjbn,short_predbn,obj)
-            #        nx_graph.add_edge(str(subjbn),str(obj),label=str(predbn),color='white')
+            if isinstance(subj, BNode) and (pred != rdf.type) and (pred != skos.inScheme):
+                for subjbn, predbn in g.subject_predicates(subj):
+                    short_subjbn=Path(subjbn).name
+                    short_predbn=Path(predbn).name
+                    logger_node.info('Blank Node Subject:%s,Predicate :%s,Object : %s',\
+                        short_subjbn,short_predbn,obj)
+                    nx_graphBN.add_edge(str(subjbn),str(obj),label=str(predbn),color='white')
 
-        nodes=list(nx_graph.nodes)
+        #nodes=list(nx_graph.nodes)
+        nodesBN=list(nx_graphBN.nodes)
+        print('skosnumber : %s',skosnumber)
 
         ### for gemini 2.5 flash ###
-        nodes_name=[Path(nodes).name for nodes in nodes]
+        nodes_name=[Path(nodes).name for nodes in nodesBN]
         all_nodes.append(nodes_name)
 
         ### for gpt-4.1-nano ###
@@ -228,6 +236,10 @@ def occurence_duplicate(duplicates_nodes,path_result):
                 item[1]=item[1]+1
 
         file.close()
+    print('occu%s  ',occu_duplicates)
+
+    print('len occu %s',len(occu_duplicates))
+    
     return occu_duplicates
 
 def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
@@ -269,6 +281,8 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
         occ_dup=occurence_duplicate(duplicates_nodes,path_result)
         nbr_file_treated=0
         os.makedirs(Path(f'{path_llm_graphs_dup_treated}/{remain_occ}'),exist_ok=True)
+
+        logger_merge.info('occ_dup_BN %s',occ_dup)
 
         for ttl_file in all_ttl_files :
             dup_treated_list=[]
