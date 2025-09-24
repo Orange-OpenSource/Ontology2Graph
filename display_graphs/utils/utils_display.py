@@ -60,8 +60,7 @@ def visu_graph(graph,file,html_folder):
     net = Network(height="1300px", width="100%", bgcolor="#222222", font_color="white",
                   directed=True)
     net.barnes_hut()
-    net.from_nx(graph)
-    #net.show_buttons(filter_=['physics'])
+    #net.repulsion()
 
     net.set_options("""{
         "physics": {
@@ -73,8 +72,24 @@ def visu_graph(graph,file,html_folder):
                 "springConstant": 0.04,
                 "damping": 0.09
                 }
+            },
+        "edges":{
+            "color": {
+                "color": "#ff0000",
+                "highlight": "#ff0000",
+                "hover": "#ff0000",
+                "inherit": false,
+                "opacity": 1.0
+                    }
             }
         }""")
+
+    #net.set_options(options)
+    net.from_nx(graph)
+    #net.show_buttons(filter_=['physics'])
+
+    #for edges in net.edges:
+    #    edges["color"]="green"
 
     os.makedirs(html_folder,exist_ok=True)
 
