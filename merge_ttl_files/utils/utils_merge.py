@@ -174,14 +174,14 @@ def find_duplicates_nodes(path,ontology):
         g.parse(file, format="turtle")
 
         nx_graph = nx.DiGraph()
-        nx_graphBN = nx.DiGraph()
+        nx_graphbn = nx.DiGraph()
 
         for subj, pred, obj in g:
 
             if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) and\
                 (pred != skos.inScheme) and (pred != rdfs.isDefinedBy) and pred not in dtp):
                 nx_graph.add_edge(str(subj), str(obj), label=str(pred))
-            
+
             if not isinstance(subj, BNode) and pred == skos.inScheme:
                 skosnumber=skosnumber+1
 
@@ -191,14 +191,14 @@ def find_duplicates_nodes(path,ontology):
                     short_predbn=Path(predbn).name
                     logger_node.info('Blank Node Subject:%s,Predicate :%s,Object : %s',\
                         short_subjbn,short_predbn,obj)
-                    nx_graphBN.add_edge(str(subjbn),str(obj),label=str(predbn),color='white')
+                    nx_graphbn.add_edge(str(subjbn),str(obj),label=str(predbn),color='white')
 
         #nodes=list(nx_graph.nodes)
-        nodesBN=list(nx_graphBN.nodes)
+        nodes_bn=list(nx_graphbn.nodes)
         print('skosnumber : %s',skosnumber)
 
         ### for gemini 2.5 flash ###
-        nodes_name=[Path(nodes).name for nodes in nodesBN]
+        nodes_name=[Path(nodes).name for nodes in nodes_bn]
         all_nodes.append(nodes_name)
 
         ### for gpt-4.1-nano ###
@@ -239,7 +239,7 @@ def occurence_duplicate(duplicates_nodes,path_result):
     print('occu%s  ',occu_duplicates)
 
     print('len occu %s',len(occu_duplicates))
-    
+
     return occu_duplicates
 
 def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
