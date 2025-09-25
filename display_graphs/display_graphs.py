@@ -13,6 +13,7 @@ arg = sys.argv[1:]
 PATH= arg[0]
 ONTOLOGY = os.path.expanduser('../generate_ttl_files/ontologies/Noria.ttl')
 CUMUL_NODES=0
+CUMUL_DENSITY=0
 
 ### create new log_html_folder and clean old logs ###
 if Path(PATH).is_file():
@@ -41,7 +42,7 @@ if Path(PATH).is_file():
 
     Digraph = prepare_graph_to_display(PATH,log_html_folder,ONTOLOGY)
 
-    log_kpis(file_name,Digraph,CUMUL_NODES)
+    log_kpis(file_name,Digraph,CUMUL_NODES,CUMUL_DENSITY)
 
     visu_graph(Digraph,absolute_file_name,log_html_folder)
 
@@ -56,7 +57,7 @@ else :
 
         Digraph = prepare_graph_to_display(file,log_html_folder,ONTOLOGY)
 
-        CUMUL_NODES = log_kpis(file,Digraph,CUMUL_NODES)
+        CUMUL_NODES,CUMUL_DENSITY = log_kpis(file,Digraph,CUMUL_NODES,CUMUL_DENSITY)
 
         visu_graph(Digraph,file,log_html_folder)
 

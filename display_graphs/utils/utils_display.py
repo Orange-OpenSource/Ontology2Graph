@@ -196,7 +196,7 @@ def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD
             graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
             digraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
 
-def log_kpis(file_name,digraph,cumul_nodes):
+def log_kpis(file_name,digraph,cumul_nodes,cumul_density):
     '''compute and logs KPIS'''
 
     logger = logging.getLogger('Graph_KPI')
@@ -211,6 +211,8 @@ def log_kpis(file_name,digraph,cumul_nodes):
     logger.info('number of self loop : %s', number_of_selfloops(digraph))
     logger.info('####  KPIs ####')
     logger.info('DiGraph density : %s',density(digraph))
+    cumul_density = cumul_density + density(digraph)
+    logger.info('cumulative density : %s',cumul_density)
     logger.info('Average degree connectivity : %s', average_degree_connectivity(digraph))
     logger.info('#### Subject, Object, predicate ####')
     for s, p, data in digraph.edges(data=True):
@@ -219,4 +221,4 @@ def log_kpis(file_name,digraph,cumul_nodes):
     logger.info('%s',digraph.nodes)
     logger.info('##################################################\n')
 
-    return cumul_nodes
+    return cumul_nodes, cumul_density
