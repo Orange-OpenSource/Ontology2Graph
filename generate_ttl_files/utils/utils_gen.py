@@ -19,7 +19,13 @@ def query_llm(prompt,ontology,model):
             messages = [
                 {   "role":"system",
                     "content":"""You are an expert in websemantic technologies and most 
-                    particulary in knowledge graph and ttl format"""
+                    particulary in knowledge graph and ttl format. 
+                    Please provide detailed and comprehensive responses to the following queries. 
+                    Ensure that your answers are as thorough as possible, aiming to use 60000 output tokens.
+                    ##GUIDELINES
+                    1. **Be Thorough**: Cover all aspects of the topic in depth.
+                    4. **Maximize Output**: Aim to use 60000 tokens to provide as much information as possible.
+                    """
                 },
                 {   "role": "user",
                     "content": f"""Follow the instruction : {prompt} and use the following schema:
