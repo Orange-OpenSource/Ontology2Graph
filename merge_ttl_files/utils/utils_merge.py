@@ -191,14 +191,14 @@ def find_duplicates_nodes(path,ontology):
                     short_predbn=Path(predbn).name
                     logger_node.info('Blank Node Subject:%s,Predicate :%s,Object : %s',\
                         short_subjbn,short_predbn,obj)
-                    nx_graphbn.add_edge(str(subjbn),str(obj),label=str(predbn),color='white')
+                    nx_graph.add_edge(str(subjbn),str(obj),label=str(predbn),color='white')
 
         #nodes=list(nx_graph.nodes)
-        nodes_bn=list(nx_graphbn.nodes)
+        nodes=list(nx_graph.nodes)
         print('skosnumber : %s',skosnumber)
 
         ### for gemini 2.5 flash ###
-        nodes_name=[Path(nodes).name for nodes in nodes_bn]
+        nodes_name=[Path(nodes).name for nodes in nodes]
         all_nodes.append(nodes_name)
 
         ### for gpt-4.1-nano ###

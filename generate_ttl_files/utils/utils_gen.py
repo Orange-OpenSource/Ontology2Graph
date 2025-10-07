@@ -16,15 +16,15 @@ def query_llm(prompt,ontology,model):
             model=model,
             temperature=0.1, # model's creativity
             top_p=0.4, # model's creativity
+            #frequency_penalty=1, #Applies a penalty to repeated tokens, reducing the likelihood of repetition in the generated text.
+            #presence_penalty=1, # Applies a penalty to tokens that have already appeared in the generated text, further reducing repetition.
+            #reasoning_effort="high",
             messages = [
                 {   "role":"system",
                     "content":"""You are an expert in websemantic technologies and most 
                     particulary in knowledge graph and ttl format. 
                     Please provide detailed and comprehensive responses to the following queries. 
-                    Ensure that your answers are as thorough as possible, aiming to use 60000 output tokens.
-                    ##GUIDELINES
-                    1. **Be Thorough**: Cover all aspects of the topic in depth.
-                    4. **Maximize Output**: Aim to use 60000 tokens to provide as much information as possible.
+                    Ensure that your answers are as thorough as possible, using near 60 000 output tokens to maximise your response.
                     """
                 },
                 {   "role": "user",
