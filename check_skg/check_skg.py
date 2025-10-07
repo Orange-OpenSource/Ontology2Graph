@@ -48,15 +48,30 @@ for cls in onto.classes():
 #SKG = owlready2.get_ontology(graph).load()
 
 # Sync the reasoner with HermiT
-with onto:
-    try:
-        output = subprocess.check_output(owlready2.sync_reasoner_hermit(infer_property_values=True), stderr=subprocess.STDOUT)
-        print(output.decode('utf-8'))  # Print the output from HermiT
-    except subprocess.CalledProcessError as e:
-        print(e.output.decode('utf-8'))  # Print the error output from HermiT
-        raise
-    owlready2.sync_reasoner_hermit(infer_property_values=True)
-   
+
+command = ['java', '-Xmx2000M', '-cp', '/home/pdooze/DIGITAL_TWIN/gengraphllm/lib/python3.12/site-packages/owlready2/hermit/HermiT.jar', 'org.semanticweb.HermiT.cli.CommandLine', '-c', '-O', '-D', '-I', 'file:///home/pdooze/DIGITAL_TWIN/gengraphllm/check_skg/temp_ontology.owl', '-Y']
+
+_subprocess_kargs = {
+    'stdin': subprocess.PIPE,
+    #'stdout': subprocess.PIPE,
+    'stderr': subprocess.PIPE,
+    'cwd': '/home/pdooze/DIGITAL_TWIN/gengraphllm/check_skg',
+    'env': {'JAVA_HOME': '/usr/bin/java'},
+    'timeout': 60,  # Timeout in seconds
+    'universal_newlines': True,  # Use text mode
+    'text' : True
+}
+
+#output = subprocess.check_output(command,**_subprocess_kargs)
+#print(output.encode('utf-8'))
+#with onto:
+try:
+    output = subprocess.check_output(command,**_subprocess_kargs)
+    print(output.encode('utf-8'))# Print the output from HermiT
+except subprocess.CalledProcessError as e:
+    print(e.output.encode('utf-8'))  # Print the error output from HermiT
+    raise
+   #owlready2.sync_reasoner_hermit(infer_property_values=True)
 
 # Check for inconsistencies
 #inconsistencies = []
