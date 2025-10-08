@@ -1,87 +1,57 @@
 ''' This python script check the consistency of synthetic knowlege graph with his ontology
 You have to pass as parameter the graph and ontologie location '''
 
+from pathlib import Path
 import argparse
-import subprocess
+import sys
+import os
 import rdflib
 import owlready2
+
 parser = argparse.ArgumentParser()
 parser.add_argument("graph")
 parser.add_argument("ontology")
 args = parser.parse_args()
 
+#owlready2.JAVA_MEMORY = "4G"  # Set to 4 GB or more as needed
+
 graph=args.graph
 ontology=args.ontology
 
-# Parse the Turtle file with RDFLib
-ontol = rdflib.Graph()
-ontol.parse(f"file://{ontology}", format="turtle")
+path=Path(f'{os.getcwd()}')
+CONCAT = f'{path}/concat.ttl'
+
+#concat ontology and graph in the same file
+
+with open(CONCAT, 'w', encoding='utf-8') as target_file:
+    for source_file in [graph,ontology]:
+        with open(source_file, 'r', encoding='utf-8') as f:
+            for line in f:
+                target_file.write(line)
 
 skgraph = rdflib.Graph()
-skgraph.parse(f"file://{graph}", format="turtle")
 
-# Convert RDFLib ontology to OWL/XML format
-owl_xml = ontol.serialize(format="xml")
-encoded_onto = owl_xml.encode('utf-8')
+skgraph.parse(f"file://{CONCAT}", format="turtle")
 
 # Convert RDFLib graph to OWL/XML format
 graph_xml = skgraph.serialize(format="xml")
 encoded_graph = graph_xml.encode('utf-8')
 
-# Save the OWL/XML ontology to a temporary file
-with open("temp_ontology.owl", "wb") as f:
-    f.write(encoded_onto)
-
 # Save the OWL/XML graph to a temporary file
 with open("temp_graph.owl", "wb") as f:
     f.write(encoded_graph)
 
-# Load the OWL/XML ontology with owlready2
-onto = owlready2.get_ontology("file://temp_ontology.owl").load()
+OUTPUT_LOG = f'{path}/owlready_outpu.log'
+ERROR_LOG = f'{path}/owlready_error.log'
+
+if os.path.exists(OUTPUT_LOG):
+    os.remove(OUTPUT_LOG)
+
+if os.path.exists(ERROR_LOG):
+    os.remove(ERROR_LOG)
+
+sys.stdout = open('owlready_output.log', 'a', encoding='utf-8')
+sys.stderr = open('owlready_error.log', 'a', encoding='utf-8')
 
 graph = owlready2.get_ontology("file://temp_graph.owl").load()
-
-# Query the ontology
-for cls in onto.classes():
-    print(cls)
-
-#SKG = owlready2.get_ontology(graph).load()
-
-# Sync the reasoner with HermiT
-
-command = ['java', '-Xmx2000M', '-cp', '/home/pdooze/DIGITAL_TWIN/gengraphllm/lib/python3.12/site-packages/owlready2/hermit/HermiT.jar', 'org.semanticweb.HermiT.cli.CommandLine', '-c', '-O', '-D', '-I', 'file:///home/pdooze/DIGITAL_TWIN/gengraphllm/check_skg/temp_ontology.owl', '-Y']
-
-_subprocess_kargs = {
-    'stdin': subprocess.PIPE,
-    #'stdout': subprocess.PIPE,
-    'stderr': subprocess.PIPE,
-    'cwd': '/home/pdooze/DIGITAL_TWIN/gengraphllm/check_skg',
-    'env': {'JAVA_HOME': '/usr/bin/java'},
-    'timeout': 60,  # Timeout in seconds
-    'universal_newlines': True,  # Use text mode
-    'text' : True
-}
-
-#output = subprocess.check_output(command,**_subprocess_kargs)
-#print(output.encode('utf-8'))
-#with onto:
-try:
-    output = subprocess.check_output(command,**_subprocess_kargs)
-    print(output.encode('utf-8'))# Print the output from HermiT
-except subprocess.CalledProcessError as e:
-    print(e.output.encode('utf-8'))  # Print the error output from HermiT
-    raise
-   #owlready2.sync_reasoner_hermit(infer_property_values=True)
-
-# Check for inconsistencies
-#inconsistencies = []
-#for individual in ontology.individuals():
-#    if individual.is_a(owlready2.Thing):
-#        inconsistencies.append(individual)
-
-#if inconsistencies:
-#    print("Inconsistencies found:")
-#    for individual in inconsistencies:
-#        print(individual)
-#else:
-#    print("The knowledge graph is consistent with the ontology schema.")
+owlready2.sync_reasoner()
