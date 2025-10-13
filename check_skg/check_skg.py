@@ -1,12 +1,19 @@
 ''' This python script check the consistency of synthetic knowlege graph with his ontology
 You have to pass as parameter the graph and ontologie location '''
 
+import logging
 from pathlib import Path
 import argparse
 import sys
 import os
 import rdflib
 import owlready2
+
+#logging.basicConfig(
+#    level=logging.DEBUG,
+#    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+#)
+#owlready2.set_log_level(4)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("graph")
@@ -24,7 +31,7 @@ CONCAT = f'{path}/concat.ttl'
 #concat ontology and graph in the same file
 
 with open(CONCAT, 'w', encoding='utf-8') as target_file:
-    for source_file in [graph,ontology]:
+    for source_file in [ontology,graph]:
         with open(source_file, 'r', encoding='utf-8') as f:
             for line in f:
                 target_file.write(line)
@@ -41,7 +48,7 @@ encoded_graph = graph_xml.encode('utf-8')
 with open("temp_graph.owl", "wb") as f:
     f.write(encoded_graph)
 
-OUTPUT_LOG = f'{path}/owlready_outpu.log'
+OUTPUT_LOG = f'{path}/owlready_output.log'
 ERROR_LOG = f'{path}/owlready_error.log'
 
 if os.path.exists(OUTPUT_LOG):

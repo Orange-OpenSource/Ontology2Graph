@@ -15,7 +15,7 @@ def query_llm(prompt,ontology,model):
         response = client.chat.completions.create(
             model=model,
             temperature=0.1, # model's creativity
-            top_p=0.4, # model's creativity
+            top_p=1, # model's creativity
             #frequency_penalty=1, #Applies a penalty to repeated tokens, reducing the likelihood of repetition in the generated text.
             #presence_penalty=1, # Applies a penalty to tokens that have already appeared in the generated text, further reducing repetition.
             #reasoning_effort="high",
