@@ -6,6 +6,7 @@
 
 import argparse
 import os
+import time
 import datetime
 from pathlib import Path
 
@@ -39,7 +40,8 @@ def generate_ttl(path_gen,path_result,nbr_ttl,model):
     path_graph=f'{path_gen}/graph'
 
     ## PROMPT_TYPE to choose ##
-    prompt_type='First_prompt'
+    #prompt_type='First_prompt'
+    prompt_type='prompt_optim_llm'
     #PROMPT_TYPE='Second_prompt'
     #PROMPT_TYPE='Third_prompt'
 
@@ -113,8 +115,12 @@ def generate_ttl(path_gen,path_result,nbr_ttl,model):
 
         print("Prompt tokens : ",response.usage.prompt_tokens)
         print("Output response tokens", response.usage.completion_tokens)
+        print("Output response tokens details : ",response.usage.completion_tokens_details)
 
         number_of_graph += 1
+        print("Sleeping 60 sec to reset the context")
+        time.sleep(60)
+        print("Awake !")
 
     #check_identical_file()  TBD
 

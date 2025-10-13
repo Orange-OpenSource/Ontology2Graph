@@ -6,16 +6,25 @@ from pathlib import Path
 import subprocess
 from openai import OpenAI, OpenAIError
 
+
 def query_llm(prompt,ontology,model):
     '''quey llm API'''
 
+    #client = genai.Client()
     client = OpenAI(api_key=os.environ.get("LLM_PROXY_KEY"),base_url="https://llmproxy.ai.orange")
 
     try:
         response = client.chat.completions.create(
+        #response  = client.models.generate_content(
+       # response = client.completions.create(
             model=model,
             temperature=0.1, # model's creativity
-            top_p=1, # model's creativity
+            top_p=0.4, # model's creativity
+            reasoning_effort="low",
+            
+            
+            max_tokens=60000, # sum of reasoning tokens and text tokens
+            #max_completion_tokens=60000,
             #frequency_penalty=1, #Applies a penalty to repeated tokens, reducing the likelihood of repetition in the generated text.
             #presence_penalty=1, # Applies a penalty to tokens that have already appeared in the generated text, further reducing repetition.
             #reasoning_effort="high",
@@ -34,9 +43,12 @@ def query_llm(prompt,ontology,model):
                         ]
                                                 )
 
+            #prompt=f"""Follow the instruction : {prompt} and use the following schema: {ontology} 
+            #to generate a new graph in turtle format""")
     except OpenAIError as e:
         print(f"An error occured: {e}")
 
+    #print(response)
     return response
 
 def storing_results(response,temp_file,file_result):
@@ -44,6 +56,7 @@ def storing_results(response,temp_file,file_result):
 
     with open(temp_file,'x',encoding='utf-8') as filetemp:
         filetemp.write(response.choices[0].message.content)
+        #filetemp.write(response.choices[0].text)
         filetemp.close()
 
     #with open(temp_file, 'r',encoding='utf-8') as infile, open(file_result, 'w',encoding='utf-8')\
