@@ -42,6 +42,8 @@ def generate_ttl(path_gen,path_result,nbr_ttl,model):
     ## PROMPT_TYPE to choose ##
     #prompt_type='First_prompt'
     prompt_type='prompt_optim_llm'
+    #prompt_type='prompt_optim_generated_by_AI'
+    
     #PROMPT_TYPE='Second_prompt'
     #PROMPT_TYPE='Third_prompt'
 
