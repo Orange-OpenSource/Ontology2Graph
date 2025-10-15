@@ -5,6 +5,7 @@
     before launching'''
 
 import argparse
+import logging
 import os
 import time
 import datetime
@@ -40,9 +41,10 @@ def generate_ttl(path_gen,path_result,nbr_ttl,model):
     path_graph=f'{path_gen}/graph'
 
     ## PROMPT_TYPE to choose ##
-    #prompt_type='First_prompt'
-    prompt_type='prompt_optim_llm'
-    #prompt_type='prompt_optim_generated_by_AI'
+    #rompt_type='1_initial_prompt_ip'
+    #prompt_type='2_ip_enhanced_manually_ipem'
+    prompt_type='3_ipem_enhanced_by_AI'
+    #prompt_type='4_prompt_fully_created_by_AI.txt'
     
     #PROMPT_TYPE='Second_prompt'
     #PROMPT_TYPE='Third_prompt'
@@ -79,7 +81,8 @@ def generate_ttl(path_gen,path_result,nbr_ttl,model):
     #with open(f'{PATH_GRAPH}/full_graph.ttl','rt',encoding='utf-8') as graph:
     #    GRAPH = ','.join(str(x) for x in graph.readlines())
 
-    os.makedirs(f'{path_result}', exist_ok=True)
+    #os.makedirs(f'{path_result}', exist_ok=True)
+    os.makedirs(f'{path_result}/nodes_log', exist_ok=True)
     os.makedirs(f'{bad_path_result}', exist_ok=True)
 
     #arg = sys.argv[1:]
@@ -88,18 +91,27 @@ def generate_ttl(path_gen,path_result,nbr_ttl,model):
     nbr_ttl_int = int(nbr_ttl)
 
     # remove the old files in path_result and bad_path_result
-    if Path(path_result).exists() and Path(path_result).is_dir():
-        for files in Path(path_result).iterdir():
-            if files.is_file():
-                files.unlink()
+    #if Path(path_result).exists() and Path(path_result).is_dir():
+    #    for files in Path(path_result).iterdir():
+    #        if files.is_file():
+    #            files.unlink()
 
-    if Path(bad_path_result).exists() and Path(bad_path_result).is_dir():
-        for files in Path(bad_path_result).iterdir():
-            if files.is_file():
-                files.unlink()
+    #if Path(bad_path_result).exists() and Path(bad_path_result).is_dir():
+    #    for files in Path(bad_path_result).iterdir():
+    #        if files.is_file():
+    #            files.unlink(
 
     ## Generate graphs ##
+    date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
+    log_file=f'{Path(path_result)}/nodes_log/generate_{date_time}.log'
+    logger_gen = logging.getLogger('Gen_log')
+    handler_gen = logging.FileHandler(log_file)
+    logger_gen.setLevel(logging.INFO)
+    logger_gen.addHandler(handler_gen)
+
+    logger_gen = logging.getLogger('Gen_log')
+   
     while number_of_graph != nbr_ttl_int:
 
         date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -115,15 +127,19 @@ def generate_ttl(path_gen,path_result,nbr_ttl,model):
         # Check Turtle syntax
         check_ttl(file_result,bad_file_result,bad_path_result,0)
 
-        print("Prompt tokens : ",response.usage.prompt_tokens)
-        print("Output response tokens", response.usage.completion_tokens)
-        print("Output response tokens details : ",response.usage.completion_tokens_details)
+        logger = logging.getLogger('Gen_log')
+
+        logger.info('Prompt tokens : %s',response.usage.prompt_tokens)
+        logger.info('Output response tokens : %s',response.usage.completion_tokens)
+        logger.info('Output responses tokens details : %s',response.usage.completion_tokens_details)
+        logger.info('##################################################\n')
+
+        #print("Prompt tokens : ",response.usage.prompt_tokens)
+        #print("Output response tokens", response.usage.completion_tokens)
+        #print("Output response tokens details : ",response.usage.completion_tokens_details)
 
         number_of_graph += 1
-        print("Sleeping 60 sec to reset the context")
-        time.sleep(60)
-        print("Awake !")
-
+        
     #check_identical_file()  TBD
 
     return f'{path_ontology}/Noria.ttl'

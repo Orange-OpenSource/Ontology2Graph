@@ -152,9 +152,9 @@ def find_duplicates_nodes(path,ontology):
     rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
 
     path_node_log=Path(f'{path}/nodes_log')
-    if os.path.exists(path_node_log):
-        shutil.rmtree(path_node_log)
-    os.makedirs(path_node_log)
+    #if os.path.exists(path_node_log):
+    #    shutil.rmtree(path_node_log)
+    #os.makedirs(path_node_log)
 
     #set logger
     log_file=Path(f'{path_node_log}/node.log')

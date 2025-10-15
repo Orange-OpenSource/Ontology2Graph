@@ -2,9 +2,12 @@
 
 import os
 import shutil
+import logging
 from pathlib import Path
 import subprocess
 from openai import OpenAI, OpenAIError
+
+
 
 
 def query_llm(prompt,ontology,model):
@@ -14,47 +17,47 @@ def query_llm(prompt,ontology,model):
     client = OpenAI(api_key=os.environ.get("LLM_PROXY_KEY"),base_url="https://llmproxy.ai.orange")
 
     try:
-        #response = client.chat.completions.create(
-        response = client.completions.create(
+        response = client.chat.completions.create(
+        #response = client.completions.create(
             model=model,
             temperature=0.1, # model's creativity
             top_p=0.4, # model's creativity
             #reasoning_effort="low",
             #reasoning_effort="medium",
             #reasoning_effort="high",
-            extra_body={
-                    'extra_body': {
-                        "google": {
-                            "thinking_config": {
-                                "thinking_budget": -1,
-                                "include_thoughts":True
-                            }
-                        }
-                    }
-            },
+            #extra_body={
+            #        'extra_body': {
+            #            "google": {
+            #                "thinking_config": {
+            #                    "thinking_budget": -1,
+            #                    "include_thoughts":True
+            #                }
+            #            }
+            #        }
+            #},
             #input=prompt)
-            max_tokens=60000, # sum of reasoning tokens and text tokens
+            #max_tokens=60000, # sum of reasoning tokens and text tokens
             #max_completion_tokens=60000,
             #frequency_penalty=1, #Applies a penalty to repeated tokens, reducing the likelihood of repetition in the generated text.
             #presence_penalty=1, # Applies a penalty to tokens that have already appeared in the generated text, further reducing repetition.
             #reasoning_effort="high",
-            #messages = [
-            #    {   "role":"system",
-            #        "content":"""You are an expert in websemantic technologies and most 
-            #        particulary in knowledge graph and ttl format. 
-            #        Please provide detailed and comprehensive responses to the following queries. 
-            #        Ensure that your answers are as thorough as possible, using near 60 000 output tokens to maximise your response.
-            #        """
-            #    },
-            #    {   "role": "user",
-            #        "content": f"""Follow the instruction : {prompt} and use the following schema:
-            #        {ontology} to generate a new graph in turtle format"""
-            #    }
-            #           ]
-            #)
+            messages = [
+                {   "role":"system",
+                    "content":"""You are an expert in websemantic technologies and most 
+                    particulary in knowledge graph and ttl format. 
+                    Please provide detailed and comprehensive responses to the following queries. 
+                    Ensure that your answers are as thorough as possible, using near 60 000 output tokens to maximise your response.
+                    """
+                },
+                {   "role": "user",
+                    "content": f"""Follow the instruction : {prompt} and use the following schema:
+                    {ontology} to generate a new graph in turtle format"""
+                }
+                       ]
+            )
 
-            prompt=f"""Follow the instruction : {prompt} and use the following schema: {ontology} 
-            to generate a new graph in turtle format""")
+            #prompt=f"""Follow the instruction : {prompt} and use the following schema: {ontology} 
+            #to generate a new graph in turtle format""")
     except OpenAIError as e:
         print(f"An error occured: {e}")
 
@@ -66,8 +69,8 @@ def storing_results(response,temp_file,file_result):
     '''store and clean results'''
 
     with open(temp_file,'x',encoding='utf-8') as filetemp:
-        #filetemp.write(response.choices[0].message.content)
-        filetemp.write(response.choices[0].text)
+        filetemp.write(response.choices[0].message.content)
+        #filetemp.write(response.choices[0].text)
         #filetemp.write(response)
         
         filetemp.close()
@@ -100,11 +103,15 @@ def check_ttl(file_result, bad_file_result, bad_path_result,merged):
     command=["ttl",file_result]
     ttlvalidator = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
     stdout, stderr = ttlvalidator.communicate()
+    logger = logging.getLogger('Gen_log')
+    logger.info('##################################################')
 
     if stdout!='Validator finished with 0 warnings and 0 errors.\n' :
     # move bad file in bad folder and Save logs
 
         print(f'\nFILE {Path(file_result).name} has been generated with errors')
+        file=Path(file_result).name
+        logger.info('\nFILE %s :',file)
 
         os.makedirs(f'{bad_path_result}', exist_ok=True)
         shutil.move(file_result, bad_file_result)
@@ -118,11 +125,14 @@ def check_ttl(file_result, bad_file_result, bad_path_result,merged):
         #os.makedirs(folder_path, exist_ok=True)
         #shutil.copy(file_result,folder_path)
         print(f'\nFILE {Path(file_result).name} has been generated succesffully without errors')
+        logger.info('\nFILE : %s has been generated succesffully without errors',Path(file_result).name)
 
     if merged==1:
         print(f'Merged graph : Turtle validator Result: {stdout}'.rstrip('\n'))
+        logger.info('Merged graph : Turtle validator Result: %s',stdout.rstrip('\n'))
     else:
         print(f'Turtle validator Result: {stdout}'.rstrip('\n'))
+        logger.info('Turtle validator Result : %s',stdout.rstrip('\n'))
 
 def ttl_validator(path):
     '''validate ttl merged graph'''
