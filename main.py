@@ -67,17 +67,17 @@ if __name__ == '__main__':
                 files.unlink()
 
     # find max number of duplicates nodes
-    max_node_occ_value = max_node_occ_value(PATH_RESULT,ONTOLOGY)
+    #max_node_occ_value = max_node_occ_value(PATH_RESULT,ONTOLOGY)
 
-    print('max_node_occ_value:', max_node_occ_value)
+    #print('max_node_occ_value:', max_node_occ_value)
 
-    nbr_occ_max=max_node_occ_value[0]
-    node_max_occ=max_node_occ_value[1]
+    #nbr_occ_max=max_node_occ_value[0]
+    #node_max_occ=max_node_occ_value[1]
 
-    print('max_node_occ_value',max_node_occ_value)
+    #print('max_node_occ_value',max_node_occ_value)
 
-    if max_node_occ_value[1] != 'NULL':
-        print(f'\nNode {node_max_occ} appears {nbr_occ_max} times in {nbr_occ_max} TTL files\n')
+    #if max_node_occ_value[1] != 'NULL':
+        #print(f'\nNode {node_max_occ} appears {nbr_occ_max} times in {nbr_occ_max} TTL files\n')
         #print(nbr_occ_max)
 
         #REMAIN_OCC=0

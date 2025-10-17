@@ -46,7 +46,8 @@ def generate_ttl(path_gen,path_result,nbr_ttl,model):
     #prompt_type='2_1_ip_enhanced_manually_ipem'
     #prompt_type='3_ipem_enhanced_by_AI'
     #prompt_type='3_1_ip_enhanced_manually_ipem_enhanced_by_AI'
-    prompt_type='4_prompt_fully_created_by_AI'
+    #prompt_type='4_prompt_fully_created_by_AI'
+    prompt_type='4_1_prompt_fully_created_by_AI'
     #PROMPT_TYPE='Second_prompt'
     #PROMPT_TYPE='Third_prompt'
 
