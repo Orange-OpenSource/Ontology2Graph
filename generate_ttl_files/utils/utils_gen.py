@@ -25,18 +25,18 @@ def query_llm(prompt,ontology,model):
             #reasoning_effort="low",
             #reasoning_effort="medium",
             #reasoning_effort="high",
-            #extra_body={
-            #        'extra_body': {
-            #            "google": {
-            #                "thinking_config": {
-            #                    "thinking_budget": -1,
-            #                    "include_thoughts":True
-            #                }
-            #            }
-            #        }
-            #},
+            extra_body={
+                    'extra_body': {
+                        "google": {
+                            "thinking_config": {
+                                "thinking_budget": -1,
+                                "include_thoughts":True
+                            }
+                        }
+                    }
+            },
             #input=prompt)
-            #max_tokens=60000, # sum of reasoning tokens and text tokens
+            max_tokens=60000, # sum of reasoning tokens and text tokens
             #max_completion_tokens=60000,
             #frequency_penalty=1, #Applies a penalty to repeated tokens, reducing the likelihood of repetition in the generated text.
             #presence_penalty=1, # Applies a penalty to tokens that have already appeared in the generated text, further reducing repetition.
@@ -55,6 +55,18 @@ def query_llm(prompt,ontology,model):
                 }
                        ]
             )
+
+        #for part in response.candidates[0].content.parts:
+        #    if not part.text:
+        #        continue
+        #    if part.thought:
+        #        print("Thought summary:")
+        #        print(part.text)
+        #        print()
+        #    else:
+        #        print("Answer:")
+        #        print(part.text)
+        #        print()
 
             #prompt=f"""Follow the instruction : {prompt} and use the following schema: {ontology} 
             #to generate a new graph in turtle format""")

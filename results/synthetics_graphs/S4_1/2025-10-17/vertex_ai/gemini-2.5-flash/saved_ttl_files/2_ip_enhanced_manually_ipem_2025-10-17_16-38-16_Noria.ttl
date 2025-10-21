@@ -1,0 +1,1323 @@
+# Copyright (c) 2022-2023 Orange. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+#     1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+#     2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+#     3. All advertising materials mentioning features or use of this software must display the following acknowledgement:
+#     This product includes software developed by Orange.
+#     4. Neither the name of Orange nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY Orange "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL Orange BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# === PREFIXES ================================================================
+
+# --- Basic ---
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+# --- Ontology management ---
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix voaf: <http://purl.org/vocommons/voaf#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix schema: <https://schema.org/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# --- Domain specific ---
+@prefix qudt: <http://data.qudt.org/qudt/owl/1.0.0/qudt.owl#> .  # Quantities, Units, Dimensions and Types (QUDT)
+@prefix qudt-unit: <http://data.qudt.org/qudt/owl/1.0.0/unit.owl#> .  #QUDT units
+@prefix time: <http://www.w3.org/2006/time#> .  # OWL-Time
+
+@prefix bot:  <https://w3id.org/bot#> .  # Building Topology Ontology
+@prefix gn: <https://www.geonames.org/ontology#> .  # GeoNames Ontology
+@prefix wgs84_pos: <http://www.w3.org/2003/01/geo/wgs84_pos#> .  # WGS84 Geo Positioning
+
+@prefix BBO: <https://www.irit.fr/recherches/MELODI/ontologies/BBO#> .  # BPMN 2.0 Based Ontology for Business Process Representation
+@prefix org: <http://www.w3.org/ns/org#> .  # The Organization Ontology
+
+@prefix log: <https://w3id.org/sepses/ns/log#> .  # a.k.a. SLOGERT
+@prefix folio: <http://IBCNServices.github.io/Folio-Ontology/Folio.owl#> .  # Failure Mode and Effect Analysis combined with Anomaly Ontology (FOLIO)
+
+@prefix ssn: <http://www.w3.org/ns/ssn/> .  # Semantic Sensor Network (SSN) Ontology
+@prefix seas: <https://w3id.org/seas/> .  # Smart Energy Aware Systems (SEAS)
+@prefix pep: <https://w3id.org/pep/> .  # SEAS Procedure Execution ontology
+@prefix saref: <http://ontology.tno.nl/saref#> .  #SAREF smart building appliances ontology
+
+@prefix observable: <https://unifiedcyberontology.org/ontology/uco/observable#> . # Unified Cybersecurity Ontology (UCO)
+
+@prefix devopsprod: <http://w3id.org/devops-infra/product#> .  # DevOps-Infra, Ontology for the representation of the business offering of a company, including the offered services and microservices
+
+# --- NORIA ---
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@base <https://w3id.org/noria/data/> .
+
+# --- Synthetic Data Namespace ---
+@prefix noria-data: <https://w3id.org/noria/data/> .
+@prefix noria-kos: <https://w3id.org/noria/kos/> .
+
+# =============================================================================
+# Synthetic Knowledge Graph Instances
+# =============================================================================
+
+# --- SKOS Concepts for ObjectProperty Ranges ---
+# These are typically external KOS, but for this exercise, we define them inline.
+
+noria-kos:agent-contact-method
+    a skos:ConceptScheme ;
+    rdfs:label "Agent Contact Method Scheme"@en ;
+    rdfs:comment "A scheme for classifying preferred contact methods for agents."@en .
+
+noria-kos:agent-contact-method:Email
+    a skos:Concept ;
+    skos:prefLabel "Email"@en ;
+    skos:inScheme noria-kos:agent-contact-method .
+
+noria-kos:agent-contact-method:Phone
+    a skos:Concept ;
+    skos:prefLabel "Phone"@en ;
+    skos:inScheme noria-kos:agent-contact-method .
+
+noria-kos:agent-contact-method:Chat
+    a skos:Concept ;
+    skos:prefLabel "Chat"@en ;
+    skos:inScheme noria-kos:agent-contact-method .
+
+noria-kos:application-type
+    a skos:ConceptScheme ;
+    rdfs:label "Application Type Scheme"@en ;
+    rdfs:comment "A scheme for classifying types of applications."@en .
+
+noria-kos:application-type:ServicePlatform
+    a skos:Concept ;
+    skos:prefLabel "Service Platform"@en ;
+    skos:inScheme noria-kos:application-type .
+
+noria-kos:application-type:Infrastructure
+    a skos:Concept ;
+    skos:prefLabel "Infrastructure"@en ;
+    skos:inScheme noria-kos:application-type .
+
+noria-kos:application-type:BusinessApp
+    a skos:Concept ;
+    skos:prefLabel "Business Application"@en ;
+    skos:inScheme noria-kos:application-type .
+
+noria-kos:application-business-importance
+    a skos:ConceptScheme ;
+    rdfs:label "Application Business Importance Scheme"@en ;
+    rdfs:comment "A scheme for classifying the business importance of applications."@en .
+
+noria-kos:application-business-importance:Critical
+    a skos:Concept ;
+    skos:prefLabel "Critical"@en ;
+    skos:inScheme noria-kos:application-business-importance .
+
+noria-kos:application-business-importance:High
+    a skos:Concept ;
+    skos:prefLabel "High"@en ;
+    skos:inScheme noria-kos:application-business-importance .
+
+noria-kos:application-business-importance:Medium
+    a skos:Concept ;
+    skos:prefLabel "Medium"@en ;
+    skos:inScheme noria-kos:application-business-importance .
+
+noria-kos:application-sla-level
+    a skos:ConceptScheme ;
+    rdfs:label "Application SLA Level Scheme"@en ;
+    rdfs:comment "A scheme for classifying SLA levels for application modules."@en .
+
+noria-kos:application-sla-level:Platinum
+    a skos:Concept ;
+    skos:prefLabel "Platinum"@en ;
+    skos:inScheme noria-kos:application-sla-level .
+
+noria-kos:application-sla-level:Gold
+    a skos:Concept ;
+    skos:prefLabel "Gold"@en ;
+    skos:inScheme noria-kos:application-sla-level .
+
+noria-kos:application-status
+    a skos:ConceptScheme ;
+    rdfs:label "Application Status Scheme"@en ;
+    rdfs:comment "A scheme for classifying the operational status of application modules."@en .
+
+noria-kos:application-status:InProduction
+    a skos:Concept ;
+    skos:prefLabel "In Production"@en ;
+    skos:inScheme noria-kos:application-status .
+
+noria-kos:application-status:Maintenance
+    a skos:Concept ;
+    skos:prefLabel "Under Maintenance"@en ;
+    skos:inScheme noria-kos:application-status .
+
+noria-kos:service-type
+    a skos:ConceptScheme ;
+    rdfs:label "Service Type Scheme"@en ;
+    rdfs:comment "A scheme for classifying types of services."@en .
+
+noria-kos:service-type:CustomerFacing
+    a skos:Concept ;
+    skos:prefLabel "Customer Facing Service"@en ;
+    skos:inScheme noria-kos:service-type .
+
+noria-kos:service-type:ResourceFacing
+    a skos:Concept ;
+    skos:prefLabel "Resource Facing Service"@en ;
+    skos:inScheme noria-kos:service-type .
+
+noria-kos:TroubleTicket-severity
+    a skos:ConceptScheme ;
+    rdfs:label "Trouble Ticket Severity Scheme"@en ;
+    rdfs:comment "A scheme for classifying the severity of trouble tickets."@en .
+
+noria-kos:TroubleTicket-severity:Critical
+    a skos:Concept ;
+    skos:prefLabel "Critical"@en ;
+    skos:inScheme noria-kos:TroubleTicket-severity .
+
+noria-kos:TroubleTicket-severity:Major
+    a skos:Concept ;
+    skos:prefLabel "Major"@en ;
+    skos:inScheme noria-kos:TroubleTicket-severity .
+
+noria-kos:TroubleTicket-type
+    a skos:ConceptScheme ;
+    rdfs:label "Trouble Ticket Type Scheme"@en ;
+    rdfs:comment "A scheme for classifying types of trouble tickets."@en .
+
+noria-kos:TroubleTicket-type:Failure
+    a skos:Concept ;
+    skos:prefLabel "Failure"@en ;
+    skos:inScheme noria-kos:TroubleTicket-type .
+
+noria-kos:TroubleTicket-type:Assistance
+    a skos:Concept ;
+    skos:prefLabel "Assistance"@en ;
+    skos:inScheme noria-kos:TroubleTicket-type .
+
+noria-kos:TroubleTicket-criticity
+    a skos:ConceptScheme ;
+    rdfs:label "Trouble Ticket Criticity Scheme"@en ;
+    rdfs:comment "A scheme for classifying the criticity of trouble tickets from customer impact."@en .
+
+noria-kos:TroubleTicket-criticity:InterruptedService
+    a skos:Concept ;
+    skos:prefLabel "Interrupted Service"@en ;
+    skos:inScheme noria-kos:TroubleTicket-criticity .
+
+noria-kos:TroubleTicket-priority
+    a skos:ConceptScheme ;
+    rdfs:label "Trouble Ticket Priority Scheme"@en ;
+    rdfs:comment "A scheme for classifying the priority of trouble tickets."@en .
+
+noria-kos:TroubleTicket-priority:P1
+    a skos:Concept ;
+    skos:prefLabel "P1"@en ;
+    skos:inScheme noria-kos:TroubleTicket-priority .
+
+noria-kos:TroubleTicket-origin
+    a skos:ConceptScheme ;
+    rdfs:label "Trouble Ticket Origin Scheme"@en ;
+    rdfs:comment "A scheme for classifying the origin of trouble tickets."@en .
+
+noria-kos:TroubleTicket-origin:Customer
+    a skos:Concept ;
+    skos:prefLabel "Customer"@en ;
+    skos:inScheme noria-kos:TroubleTicket-origin .
+
+noria-kos:TroubleTicket-urgency
+    a skos:ConceptScheme ;
+    rdfs:label "Trouble Ticket Urgency Scheme"@en ;
+    rdfs:comment "A scheme for classifying the urgency of trouble tickets."@en .
+
+noria-kos:TroubleTicket-urgency:ImmediateIntervention
+    a skos:Concept ;
+    skos:prefLabel "Immediate Intervention"@en ;
+    skos:inScheme noria-kos:TroubleTicket-urgency .
+
+noria-kos:TroubleTicket-trouble-category
+    a skos:ConceptScheme ;
+    rdfs:label "Trouble Ticket Category Scheme"@en ;
+    rdfs:comment "A scheme for classifying the category of trouble tickets."@en .
+
+noria-kos:TroubleTicket-trouble-category:TotalBreakdown
+    a skos:Concept ;
+    skos:prefLabel "Total Breakdown"@en ;
+    skos:inScheme noria-kos:TroubleTicket-trouble-category .
+
+noria-kos:TroubleTicket-problemResponsibility
+    a skos:ConceptScheme ;
+    rdfs:label "Trouble Ticket Problem Responsibility Scheme"@en ;
+    rdfs:comment "A scheme for classifying the responsibility for a problem."@en .
+
+noria-kos:TroubleTicket-problemResponsibility:ManagedBackbone
+    a skos:Concept ;
+    skos:prefLabel "Managed Backbone Networks"@en ;
+    skos:inScheme noria-kos:TroubleTicket-problemResponsibility .
+
+noria-kos:TroubleTicket-status
+    a skos:ConceptScheme ;
+    rdfs:label "Trouble Ticket Status Scheme"@en ;
+    rdfs:comment "A scheme for classifying the current status of trouble tickets."@en .
+
+noria-kos:TroubleTicket-status:InProgress
+    a skos:Concept ;
+    skos:prefLabel "In Progress"@en ;
+    skos:inScheme noria-kos:TroubleTicket-status .
+
+noria-kos:TroubleTicket-commentType
+    a skos:ConceptScheme ;
+    rdfs:label "Trouble Ticket Note Comment Type Scheme"@en ;
+    rdfs:comment "A scheme for classifying the provenance type of trouble ticket notes."@en .
+
+noria-kos:TroubleTicket-commentType:Internal
+    a skos:Concept ;
+    skos:prefLabel "Internal"@en ;
+    skos:inScheme noria-kos:TroubleTicket-commentType .
+
+noria-kos:TroubleTicket-operationType
+    a skos:ConceptScheme ;
+    rdfs:label "Trouble Ticket Note Operation Type Scheme"@en ;
+    rdfs:comment "A scheme for classifying the operation type of trouble ticket notes."@en .
+
+noria-kos:TroubleTicket-operationType:Diagnosis
+    a skos:Concept ;
+    skos:prefLabel "Diagnosis"@en ;
+    skos:inScheme noria-kos:TroubleTicket-operationType .
+
+noria-kos:ChangeRequest-category
+    a skos:ConceptScheme ;
+    rdfs:label "Change Request Category Scheme"@en ;
+    rdfs:comment "A scheme for classifying the category of change requests."@en .
+
+noria-kos:ChangeRequest-category:InternalIntervention
+    a skos:Concept ;
+    skos:prefLabel "Internal Intervention"@en ;
+    skos:inScheme noria-kos:ChangeRequest-category .
+
+noria-kos:ChangeRequest-type
+    a skos:ConceptScheme ;
+    rdfs:label "Change Request Type Scheme"@en ;
+    rdfs:comment "A scheme for classifying the type of change requests."@en .
+
+noria-kos:ChangeRequest-type:Standard
+    a skos:Concept ;
+    skos:prefLabel "Standard Change"@en ;
+    skos:inScheme noria-kos:ChangeRequest-type .
+
+noria-kos:ChangeRequest-cause
+    a skos:ConceptScheme ;
+    rdfs:label "Change Request Cause Scheme"@en ;
+    rdfs:comment "A scheme for classifying the cause of change requests."@en .
+
+noria-kos:ChangeRequest-cause:SoftwareUpgrade
+    a skos:Concept ;
+    skos:prefLabel "Software Upgrade"@en ;
+    skos:inScheme noria-kos:ChangeRequest-cause .
+
+noria-kos:ChangeRequest-status
+    a skos:ConceptScheme ;
+    rdfs:label "Change Request Status Scheme"@en ;
+    rdfs:comment "A scheme for classifying the current status of change requests."@en .
+
+noria-kos:ChangeRequest-status:Approved
+    a skos:Concept ;
+    skos:prefLabel "Approved"@en ;
+    skos:inScheme noria-kos:ChangeRequest-status .
+
+noria-kos:ChangeRequest-specification
+    a skos:ConceptScheme ;
+    rdfs:label "Change Request Specification Scheme"@en ;
+    rdfs:comment "A scheme for classifying the specification of change requests."@en .
+
+noria-kos:ChangeRequest-specification:RoutineMaintenance
+    a skos:Concept ;
+    skos:prefLabel "Routine Maintenance"@en ;
+    skos:inScheme noria-kos:ChangeRequest-specification .
+
+noria-kos:Notification-Severity-PerceivedSeverity
+    a skos:ConceptScheme ;
+    rdfs:label "Notification Perceived Severity Scheme"@en ;
+    rdfs:comment "A scheme for classifying the perceived severity of notifications/alarms."@en .
+
+noria-kos:Notification-Severity-PerceivedSeverity:Critical
+    a skos:Concept ;
+    skos:prefLabel "Critical"@en ;
+    skos:inScheme noria-kos:Notification-Severity-PerceivedSeverity .
+
+noria-kos:Resource-OperationalState
+    a skos:ConceptScheme ;
+    rdfs:label "Resource Operational State Scheme"@en ;
+    rdfs:comment "A scheme for classifying the operational state of resources."@en .
+
+noria-kos:Resource-OperationalState:Up
+    a skos:Concept ;
+    skos:prefLabel "Up"@en ;
+    skos:inScheme noria-kos:Resource-OperationalState .
+
+noria-kos:Resource-OperationalState:Down
+    a skos:Concept ;
+    skos:prefLabel "Down"@en ;
+    skos:inScheme noria-kos:Resource-OperationalState .
+
+noria-kos:Resource-AdministrativeState
+    a skos:ConceptScheme ;
+    rdfs:label "Resource Administrative State Scheme"@en ;
+    rdfs:comment "A scheme for classifying the administrative state of resources."@en .
+
+noria-kos:Resource-AdministrativeState:Enabled
+    a skos:Concept ;
+    skos:prefLabel "Enabled"@en ;
+    skos:inScheme noria-kos:Resource-AdministrativeState .
+
+noria-kos:Resource-AdministrativeState:Disabled
+    a skos:Concept ;
+    skos:prefLabel "Disabled"@en ;
+    skos:inScheme noria-kos:Resource-AdministrativeState .
+
+noria-kos:Resource-type
+    a skos:ConceptScheme ;
+    rdfs:label "Resource Type Scheme"@en ;
+    rdfs:comment "A scheme for classifying types of resources."@en .
+
+noria-kos:Resource-type:Router
+    a skos:Concept ;
+    skos:prefLabel "Router"@en ;
+    skos:inScheme noria-kos:Resource-type .
+
+noria-kos:Resource-type:Server
+    a skos:Concept ;
+    skos:prefLabel "Server"@en ;
+    skos:inScheme noria-kos:Resource-type .
+
+noria-kos:Resource-type:Switch
+    a skos:Concept ;
+    skos:prefLabel "Switch"@en ;
+    skos:inScheme noria-kos:Resource-type .
+
+noria-kos:Resource-LifecycleState
+    a skos:ConceptScheme ;
+    rdfs:label "Resource Lifecycle State Scheme"@en ;
+    rdfs:comment "A scheme for classifying the lifecycle state of resources."@en .
+
+noria-kos:Resource-LifecycleState:InProduction
+    a skos:Concept ;
+    skos:prefLabel "In Production"@en ;
+    skos:inScheme noria-kos:Resource-LifecycleState .
+
+noria-kos:Resource-LifecycleState:Decommissioned
+    a skos:Concept ;
+    skos:prefLabel "Decommissioned"@en ;
+    skos:inScheme noria-kos:Resource-LifecycleState .
+
+# --- foaf:Agent and org:OrganizationalUnit instances ---
+noria-data:Agent_Alice
+    a foaf:Person ;
+    rdfs:label "Alice Smith"@en ;
+    rdfs:comment "An IT administrator responsible for network infrastructure."@en ;
+    foaf:name "Alice Smith"^^xsd:string ;
+    foaf:mbox "mailto:alice.smith@example.com"^^xsd:anyURI ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri"^^xsd:string ;
+    noria:agentInstructions "Contact via email for non-urgent issues, phone for critical alerts."^^xsd:string ;
+    noria:agentPreferredContactMethod noria-kos:agent-contact-method:Email .
+
+noria-data:Agent_Bob
+    a foaf:Person ;
+    rdfs:label "Bob Johnson"@en ;
+    rdfs:comment "A software developer working on the core application."@en ;
+    foaf:name "Bob Johnson"^^xsd:string ;
+    foaf:mbox "mailto:bob.johnson@example.com"^^xsd:anyURI ;
+    noria:agentWorkingHours "10:00-18:00 Mon-Fri"^^xsd:string ;
+    noria:agentInstructions "Use internal chat for quick questions, ticketing system for bugs."^^xsd:string ;
+    noria:agentPreferredContactMethod noria-kos:agent-contact-method:Chat .
+
+noria-data:OrgUnit_NetworkOps
+    a org:OrganizationalUnit ;
+    rdfs:label "Network Operations Team"@en ;
+    rdfs:comment "Team responsible for managing the network infrastructure."@en ;
+    org:unitOf noria-data:Org_ITDepartment .
+
+noria-data:OrgUnit_AppDev
+    a org:OrganizationalUnit ;
+    rdfs:label "Application Development Team"@en ;
+    rdfs:comment "Team responsible for developing and maintaining core applications."@en ;
+    org:unitOf noria-data:Org_ITDepartment .
+
+noria-data:Org_ITDepartment
+    a org:Organization ;
+    rdfs:label "IT Department"@en ;
+    rdfs:comment "The main IT department of the company."@en .
+
+noria-data:CUid_Alice
+    a noria:CorporateUserIdentifier ;
+    rdfs:label "Alice's Corporate ID"@en ;
+    rdfs:comment "Corporate user identifier for Alice Smith."@en ;
+    foaf:accountName "asmith"^^xsd:string ;
+    observable:accountIdentifier "CU-ASMITH-001"^^xsd:string ;
+    foaf:holdsAccount noria-data:Agent_Alice .
+
+# --- noria:Room and noria:Locus instances ---
+noria-data:Room_ServerRoom314
+    a noria:Room ;
+    rdfs:label "Server Room 314"@en ;
+    rdfs:comment "Main data center server room."@en ;
+    bot:hasSpace noria-data:Locus_RackA01 .
+
+noria-data:Room_EdgeLocationParis
+    a noria:Room ;
+    rdfs:label "Edge Location Paris"@en ;
+    rdfs:comment "Small server room at Paris edge location."@en ;
+    bot:hasSpace noria-data:Locus_RackB05 .
+
+noria-data:Locus_RackA01
+    a noria:Locus ;
+    rdfs:label "Rack A01 in Server Room 314"@en ;
+    rdfs:comment "Specific rack location for servers."@en ;
+    noria:locusLine "A"^^xsd:string ;
+    noria:locusRow "01"^^xsd:string .
+
+noria-data:Locus_RackB05
+    a noria:Locus ;
+    rdfs:label "Rack B05 in Edge Location Paris"@en ;
+    rdfs:comment "Specific rack location for edge devices."@en ;
+    noria:locusLine "B"^^xsd:string ;
+    noria:locusRow "05"^^xsd:string .
+
+noria-data:Site_MainDC
+    a bot:Site ;
+    rdfs:label "Main Data Center Site"@en ;
+    rdfs:comment "The primary data center facility."@en ;
+    noria:siteId "DC-MAIN-01"^^xsd:string ;
+    noria:siteType "data center"^^xsd:string ;
+    noria:sitePrincipalAddress "123 Datacenter Ave"^^xsd:string ;
+    noria:sitePrincipalAddressPostalCode "10001"^^xsd:string ;
+    noria:sitePrincipalAddressCityName "New York"^^xsd:string ;
+    noria:sitePrincipalAddressCountry "US"^^xsd:string ;
+    noria:sitePrincipalAddressStreet "Datacenter Avenue"^^xsd:string ;
+    bot:hasSpace noria-data:Room_ServerRoom314 .
+
+# --- noria:ProductModel instances ---
+noria-data:ProductModel_Cisco3850
+    a noria:ProductModel ;
+    rdfs:label "Cisco Catalyst 3850"@en ;
+    rdfs:comment "Product model for Cisco Catalyst 3850 series switches."@en ;
+    noria:productManufacturedBy noria-data:Org_Cisco .
+
+noria-data:ProductModel_DellPowerEdgeR740
+    a noria:ProductModel ;
+    rdfs:label "Dell PowerEdge R740"@en ;
+    rdfs:comment "Product model for Dell PowerEdge R740 servers."@en ;
+    noria:productManufacturedBy noria-data:Org_Dell .
+
+noria-data:Org_Cisco
+    a org:Organization ;
+    rdfs:label "Cisco Systems Inc."@en ;
+    rdfs:comment "Manufacturer of network equipment."@en .
+
+noria-data:Org_Dell
+    a org:Organization ;
+    rdfs:label "Dell Technologies"@en ;
+    rdfs:comment "Manufacturer of computer hardware."@en .
+
+# --- noria:Resource instances ---
+noria-data:Resource_RouterCore1
+    a noria:Resource ;
+    rdfs:label "Core Router 1"@en ;
+    rdfs:comment "Primary core router in the main data center."@en ;
+    noria:resourceLogisticId "LOG-RT-001"^^xsd:string ;
+    noria:resourceHostName "core-router-01"^^xsd:string ;
+    noria:resourceSerialNumber "SN-CR01-XYZ"^^xsd:string ;
+    noria:resourceInstallationDate "2022-01-15T10:00:00Z"^^xsd:dateTime ;
+    noria:resourceManagementIPAddress observable:ipAddress_10-0-0-1 ;
+    noria:resourceManagedBy noria-data:OrgUnit_NetworkOps ;
+    noria:resourceProductModel noria-data:ProductModel_Cisco3850 ;
+    noria:resourceType noria-kos:Resource-type:Router ;
+    noria:resourceUsageState noria-kos:Resource-LifecycleState:InProduction ;
+    noria:locatedAtLocus noria-data:Locus_RackA01 ;
+    noria:clusterController noria-data:Resource_ClusterManager1 .
+
+noria-data:Resource_ServerAppDB
+    a noria:Resource ;
+    rdfs:label "Application Database Server"@en ;
+    rdfs:comment "Server hosting the main application database."@en ;
+    noria:resourceLogisticId "LOG-DB-002"^^xsd:string ;
+    noria:resourceHostName "app-db-server-02"^^xsd:string ;
+    noria:resourceSerialNumber "SN-DB02-ABC"^^xsd:string ;
+    noria:resourceInstallationDate "2022-03-20T14:30:00Z"^^xsd:dateTime ;
+    noria:resourceManagementIPAddress observable:ipAddress_10-0-0-2 ;
+    noria:resourceManagedBy noria-data:OrgUnit_AppDev ;
+    noria:resourceProductModel noria-data:ProductModel_DellPowerEdgeR740 ;
+    noria:resourceType noria-kos:Resource-type:Server ;
+    noria:resourceUsageState noria-kos:Resource-LifecycleState:InProduction ;
+    noria:locatedAtLocus noria-data:Locus_RackA01 ;
+    noria:virtualServerStatus noria-kos:Resource-OperationalState:Up .
+
+noria-data:Resource_EdgeSwitchParis
+    a noria:Resource ;
+    rdfs:label "Paris Edge Switch"@en ;
+    rdfs:comment "Network switch at the Paris edge location."@en ;
+    noria:resourceLogisticId "LOG-ES-003"^^xsd:string ;
+    noria:resourceHostName "paris-edge-sw-03"^^xsd:string ;
+    noria:resourceSerialNumber "SN-ES03-DEF"^^xsd:string ;
+    noria:resourceInstallationDate "2023-05-10T09:00:00Z"^^xsd:dateTime ;
+    noria:resourceManagementIPAddress observable:ipAddress_10-0-0-3 ;
+    noria:resourceManagedBy noria-data:OrgUnit_NetworkOps ;
+    noria:resourceProductModel noria-data:ProductModel_Cisco3850 ;
+    noria:resourceType noria-kos:Resource-type:Switch ;
+    noria:resourceUsageState noria-kos:Resource-LifecycleState:InProduction ;
+    noria:locatedAtLocus noria-data:Locus_RackB05 .
+
+noria-data:Resource_ClusterManager1
+    a noria:Resource ;
+    rdfs:label "Cluster Manager 1"@en ;
+    rdfs:comment "Manages a cluster of resources."@en ;
+    noria:resourceHostName "cluster-manager-01"^^xsd:string ;
+    noria:resourceType noria-kos:Resource-type:Server ;
+    noria:resourceUsageState noria-kos:Resource-LifecycleState:InProduction .
+
+observable:ipAddress_10-0-0-1
+    a observable:IPAddress ;
+    observable:ipAddressValue "10.0.0.1"^^xsd:string .
+
+observable:ipAddress_10-0-0-2
+    a observable:IPAddress ;
+    observable:ipAddressValue "10.0.0.2"^^xsd:string .
+
+observable:ipAddress_10-0-0-3
+    a observable:IPAddress ;
+    observable:ipAddressValue "10.0.0.3"^^xsd:string .
+
+# --- noria:NetworkInterface instances ---
+noria-data:NetworkInterface_CR1_Eth0-0-1
+    a noria:NetworkInterface ;
+    rdfs:label "Core Router 1 Ethernet 0/0/1"@en ;
+    rdfs:comment "Interface connecting Core Router 1 to the internal network."@en ;
+    noria:networkInterfaceDescription "Uplink to internal network segment A"^^xsd:string ;
+    noria:networkInterfaceType "physical"^^xsd:string ;
+    noria:networkInterfaceOf noria-data:Resource_RouterCore1 ;
+    noria:networkInterfaceConnects noria-data:NetworkLink_CoreInternalA ;
+    noria:networkInterfaceAdministrativeStatus noria-kos:Resource-AdministrativeState:Enabled ;
+    noria:networkInterfaceOperationalStatus noria-kos:Resource-OperationalState:Up ;
+    noria:networkInterfaceRoutingPriorityMetric "100"^^xsd:int ;
+    noria:networkInterfaceLaserTxOpticalPower "-5"^^xsd:int ;
+    noria:networkInterfaceLaserRxOpticalPower "-8"^^xsd:int ;
+    noria:networkInterfaceLaserRxOpticalPowerAverage "-7"^^xsd:int ;
+    noria:networkInterfaceLaserRxHighPowerWarningThreshold "-3"^^xsd:int ;
+    noria:networkInterfaceLaserRxLowPowerWarningThreshold "-15"^^xsd:int .
+
+noria-data:NetworkInterface_DB_Eth0
+    a noria:NetworkInterface ;
+    rdfs:label "DB Server Ethernet 0"@en ;
+    rdfs:comment "Main network interface for the application database server."@en ;
+    noria:networkInterfaceDescription "Primary interface for database traffic"^^xsd:string ;
+    noria:networkInterfaceType "physical"^^xsd:string ;
+    noria:networkInterfaceOf noria-data:Resource_ServerAppDB ;
+    noria:networkInterfaceConnects noria-data:NetworkLink_DBInternal ;
+    noria:networkInterfaceAdministrativeStatus noria-kos:Resource-AdministrativeState:Enabled ;
+    noria:networkInterfaceOperationalStatus noria-kos:Resource-OperationalState:Up .
+
+noria-data:NetworkInterface_ES_Eth1-0-1
+    a noria:NetworkInterface ;
+    rdfs:label "Paris Edge Switch Ethernet 1/0/1"@en ;
+    rdfs:comment "Interface connecting Paris Edge Switch to external WAN."@en ;
+    noria:networkInterfaceDescription "WAN uplink to ISP"^^xsd:string ;
+    noria:networkInterfaceType "physical"^^xsd:string ;
+    noria:networkInterfaceOf noria-data:Resource_EdgeSwitchParis ;
+    noria:networkInterfaceConnects noria-data:NetworkLink_ParisWAN .
+
+# --- noria:NetworkLink instances ---
+noria-data:NetworkLink_CoreInternalA
+    a noria:NetworkLink ;
+    rdfs:label "Core Internal Link A"@en ;
+    rdfs:comment "High-speed link within the core data center network."@en ;
+    noria:networkLinkId "NL-CIA-001"^^xsd:string ;
+    noria:networkLinkInstallationDate "2022-01-15T10:15:00Z"^^xsd:dateTime ;
+    noria:networkLinkType "fiber optic"^^xsd:string ;
+    noria:networkLinkTerminationResourceOrigin noria-data:Resource_RouterCore1 ;
+    noria:networkLinkTerminationResourceDestination noria-data:Resource_EdgeSwitchParis ;
+    noria:resourceManagedBy noria-data:OrgUnit_NetworkOps .
+
+noria-data:NetworkLink_DBInternal
+    a noria:NetworkLink ;
+    rdfs:label "Database Internal Link"@en ;
+    rdfs:comment "Link between application server and database server."@en ;
+    noria:networkLinkId "NL-DBI-002"^^xsd:string ;
+    noria:networkLinkInstallationDate "2022-03-20T14:45:00Z"^^xsd:dateTime ;
+    noria:networkLinkType "ethernet"^^xsd:string ;
+    noria:networkLinkTerminationResourceOrigin noria-data:Resource_ServerAppDB ;
+    noria:networkLinkTerminationResourceDestination noria-data:Resource_RouterCore1 .
+
+noria-data:NetworkLink_ParisWAN
+    a noria:NetworkLink ;
+    rdfs:label "Paris WAN Link"@en ;
+    rdfs:comment "WAN link connecting Paris edge location to the main data center."@en ;
+    noria:networkLinkId "NL-PWAN-003"^^xsd:string ;
+    noria:networkLinkInstallationDate "2023-05-10T09:30:00Z"^^xsd:dateTime ;
+    noria:networkLinkType "MPLS"^^xsd:string ;
+    noria:networkLinkTerminationResourceOrigin noria-data:Resource_EdgeSwitchParis ;
+    noria:networkLinkTerminationResourceDestination noria-data:Resource_RouterCore1 .
+
+# --- noria:Application instances ---
+noria-data:Application_CoreBanking
+    a noria:Application ;
+    rdfs:label "Core Banking Application"@en ;
+    rdfs:comment "The primary application for banking operations."@en ;
+    noria:applicationModelIdentifier "CBA-V2.1"^^xsd:string ;
+    noria:applicationNumericalIdentifier "1001"^^xsd:int ;
+    noria:applicationShortIdentifier "CBA"^^xsd:string ;
+    noria:applicationType noria-kos:application-type:BusinessApp ;
+    noria:applicationBusinessImportance noria-kos:application-business-importance:Critical ;
+    noria:applicationFunctionalDomain "Financial Services"^^xsd:string ;
+    noria:applicationFunctionalSubDomain "Account Management"^^xsd:string ;
+    noria:resourceForApplication noria-data:Resource_ServerAppDB .
+
+noria-data:Application_MonitoringSystem
+    a noria:Application ;
+    rdfs:label "Network Monitoring System"@en ;
+    rdfs:comment "Application for monitoring network health and performance."@en ;
+    noria:applicationModelIdentifier "NMS-PRO-V3.0"^^xsd:string ;
+    noria:applicationNumericalIdentifier "1002"^^xsd:int ;
+    noria:applicationShortIdentifier "NMS"^^xsd:string ;
+    noria:applicationType noria-kos:application-type:ServicePlatform ;
+    noria:applicationBusinessImportance noria-kos:application-business-importance:High ;
+    noria:applicationFunctionalDomain "IT Operations"^^xsd:string ;
+    noria:applicationFunctionalSubDomain "Performance Monitoring"^^xsd:string ;
+    noria:resourceForApplication noria-data:Resource_RouterCore1 .
+
+# --- noria:ApplicationModule instances ---
+noria-data:ApplicationModule_CBA_Prod
+    a noria:ApplicationModule ;
+    rdfs:label "Core Banking Production Module"@en ;
+    rdfs:comment "Production instance of the Core Banking Application."@en ;
+    noria:applicationModuleOf noria-data:Application_CoreBanking ;
+    noria:applicationModuleName "CBA_PROD"^^xsd:string ;
+    noria:applicationModuleIdentifier "CBA-PROD-001"^^xsd:string ;
+    noria:applicationModuleAdministrationTeam noria-data:OrgUnit_AppDev ;
+    noria:applicationModuleAdministrationLeader noria-data:Agent_Bob ;
+    noria:applicationModuleSupportTeam noria-data:OrgUnit_AppDev ;
+    noria:applicationModuleSupportLeader noria-data:Agent_Bob ;
+    noria:applicationModuleSupportGroup noria-data:OrgUnit_AppDev ;
+    noria:applicationModuleHotlineGroup noria-data:OrgUnit_AppDev ;
+    noria:applicationModuleSlaLevel noria-kos:application-sla-level:Platinum ;
+    noria:applicationModuleSlaLevelDate "2023-01-01T00:00:00Z"^^xsd:dateTime ;
+    noria:applicationModuleHotlineEnabled "true"^^xsd:boolean ;
+    noria:applicationModuleStatus noria-kos:application-status:InProduction .
+
+noria-data:ApplicationModule_NMS_Dev
+    a noria:ApplicationModule ;
+    rdfs:label "NMS Development Module"@en ;
+    rdfs:comment "Development instance of the Network Monitoring System."@en ;
+    noria:applicationModuleOf noria-data:Application_MonitoringSystem ;
+    noria:applicationModuleName "NMS_DEV"^^xsd:string ;
+    noria:applicationModuleIdentifier "NMS-DEV-001"^^xsd:string ;
+    noria:applicationModuleAdministrationTeam noria-data:OrgUnit_NetworkOps ;
+    noria:applicationModuleAdministrationLeader noria-data:Agent_Alice ;
+    noria:applicationModuleSlaLevel noria-kos:application-sla-level:Gold ;
+    noria:applicationModuleSlaLevelDate "2023-06-01T00:00:00Z"^^xsd:dateTime ;
+    noria:applicationModuleHotlineEnabled "false"^^xsd:boolean ;
+    noria:applicationModuleStatus noria-kos:application-status:Maintenance .
+
+# --- noria:Service instances ---
+noria-data:Service_InternetAccess
+    a noria:Service ;
+    rdfs:label "Corporate Internet Access"@en ;
+    rdfs:comment "Provides internet access for all corporate users."@en ;
+    noria:serviceType noria-kos:service-type:CustomerFacing ;
+    seas:subSystemOf noria-data:ApplicationModule_CBA_Prod . # Example of linking to an ApplicationModule
+
+noria-data:Service_VPNConnectivity
+    a noria:Service ;
+    rdfs:label "VPN Connectivity Service"@en ;
+    rdfs:comment "Secure VPN connectivity for remote employees."@en ;
+    noria:serviceType noria-kos:service-type:ResourceFacing ;
+    seas:subSystemOf noria-data:ApplicationModule_NMS_Dev . # Example of linking to an ApplicationModule
+
+# --- noria:EventRecord instances ---
+noria-data:EventRecord_LinkDown
+    a noria:EventRecord ;
+    rdfs:label "Network Link Down Event"@en ;
+    rdfs:comment "An event indicating a network link has gone down."@en ;
+    noria:loggingTime "2024-01-20T10:05:00Z"^^xsd:dateTime ;
+    noria:logText "LINEPROTO-5-UPDOWN: Interface GigabitEthernet0/0/1, changed state to down"^^xsd:string ;
+    noria:logOriginatingManagedObject noria-data:Resource_RouterCore1 ;
+    noria:logOriginatingManagementSystem noria-data:Application_MonitoringSystem ;
+    noria:alarmSeverity noria-kos:Notification-Severity-PerceivedSeverity:Critical ;
+    noria:alarmProposedRepairAction noria-data:OperationPlan_RestartInterface ;
+    noria:alarmMonitoredAttribute noria-data:NetworkInterface_CR1_Eth0-0-1 .
+
+noria-data:EventRecord_DBError
+    a noria:EventRecord ;
+    rdfs:label "Database Connection Error"@en ;
+    rdfs:comment "An event indicating a database connection failure."@en ;
+    noria:loggingTime "2024-01-20T10:10:00Z"^^xsd:dateTime ;
+    noria:logText "SQLSTATE[HY000]: General error: 2006 MySQL server has gone away"^^xsd:string ;
+    noria:logOriginatingManagedObject noria-data:Resource_ServerAppDB ;
+    noria:logOriginatingManagementSystem noria-data:Application_CoreBanking ;
+    noria:alarmSeverity noria-kos:Notification-Severity-PerceivedSeverity:Critical ;
+    noria:logOriginatingAgent noria-data:Agent_Bob .
+
+noria-data:EventRecord_ConfigChange
+    a noria:EventRecord ;
+    rdfs:label "Configuration Change Event"@en ;
+    rdfs:comment "An event recording a configuration change on a network device."@en ;
+    noria:loggingTime "2024-01-19T15:30:00Z"^^xsd:dateTime ;
+    noria:logText "SYS-5-CONFIG_I: Configured from console by vty0 (192.168.1.10)"^^xsd:string ;
+    noria:logOriginatingManagedObject noria-data:Resource_RouterCore1 ;
+    noria:logOriginatingManagementSystem noria-data:Application_MonitoringSystem ;
+    noria:logOriginatingAgent noria-data:Agent_Alice .
+
+# --- noria:TroubleTicket instances ---
+noria-data:TroubleTicket_TT001
+    a noria:TroubleTicket ;
+    rdfs:label "Critical Network Outage"@en ;
+    rdfs:comment "Trouble ticket for a critical network outage affecting core services."@en ;
+    dcterms:identifier "TT-2024-001"^^xsd:string ;
+    dcterms:created "2024-01-20T10:15:00Z"^^xsd:dateTime ;
+    dcterms:modified "2024-01-20T11:30:00Z"^^xsd:dateTime ;
+    dcterms:title "Core Network Link Down"^^xsd:string ;
+    dcterms:description "A critical network link has gone down, impacting multiple services."^^xsd:string ;
+    noria:documentExternalId "CUST-INC-9876"^^xsd:string ;
+    noria:documentHRef "https://ticketing.example.com/TT001"^^xsd:anyURI ;
+    noria:troubleTicketSeverity noria-kos:TroubleTicket-severity:Critical ;
+    noria:troubleTicketType noria-kos:TroubleTicket-type:Failure ;
+    noria:troubleTicketCriticity noria-kos:TroubleTicket-criticity:InterruptedService ;
+    noria:troubleTicketPriority noria-kos:TroubleTicket-priority:P1 ;
+    noria:troubleTicketOrigin noria-kos:TroubleTicket-origin:Customer ;
+    noria:troubleTicketTrigger noria-data:EventRecord_LinkDown ;
+    noria:troubleTicketUrgency noria-kos:TroubleTicket-urgency:ImmediateIntervention ;
+    noria:troubleTicketSupervisionTool "Nagios"^^xsd:string ;
+    noria:troubleTicketCategory noria-kos:TroubleTicket-trouble-category:TotalBreakdown ;
+    noria:problemCategory noria-kos:TroubleTicket-trouble-category:TotalBreakdown ;
+    noria:troubleTicketCause "Fiber cut suspected"^^xsd:string ;
+    noria:problemResponsibility noria-kos:TroubleTicket-problemResponsibility:ManagedBackbone ;
+    noria:troubleTicketDetectionDateTime "2024-01-20T10:05:00Z"^^xsd:dateTime ;
+    noria:troubleTicketTargetRestorationDateTime "2024-01-20T12:00:00Z"^^xsd:dateTime ;
+    noria:troubleTicketPlannedRestorationDateTime "2024-01-20T11:45:00Z"^^xsd:dateTime ;
+    noria:troubleTicketCommittedRestorationDateTime "2024-01-20T13:00:00Z"^^xsd:dateTime ;
+    noria:troubleTicketIsNotificationEnable "true"^^xsd:boolean ;
+    noria:troubleTicketStatusCurrent noria-kos:TroubleTicket-status:InProgress ;
+    noria:troubleTicketRelatedParty noria-data:Agent_Alice ;
+    noria:troubleTicketPartyIntervention noria-data:OrgUnit_NetworkOps ;
+    noria:troubleTicketRelatedService noria-data:Service_InternetAccess ;
+    noria:troubleTicketRelatedResource noria-data:Resource_RouterCore1 ;
+    noria:troubleTicketImpacts noria-data:Application_CoreBanking ;
+    noria:troubleTicketCharacteristic noria-data:Property_HighImpact ;
+    noria:troubleTicketFreezeItem noria-data:EventRecord_TT001_FreezeStart ;
+    noria:documentStatusHistory noria-data:EventRecord_TT001_StatusUpdate .
+
+noria-data:TroubleTicket_TT002
+    a noria:TroubleTicket ;
+    rdfs:label "Database Performance Issue"@en ;
+    rdfs:comment "Trouble ticket for a performance degradation on the application database."@en ;
+    dcterms:identifier "TT-2024-002"^^xsd:string ;
+    dcterms:created "2024-01-20T10:20:00Z"^^xsd:dateTime ;
+    dcterms:modified "2024-01-20T11:00:00Z"^^xsd:dateTime ;
+    dcterms:title "Slow Database Queries"^^xsd:string ;
+    dcterms:description "Users reporting slow response times from the application, traced to database queries."^^xsd:string ;
+    noria:documentExternalId "CUST-REQ-1234"^^xsd:string ;
+    noria:documentHRef "https://ticketing.example.com/TT002"^^xsd:anyURI ;
+    noria:troubleTicketSeverity noria-kos:TroubleTicket-severity:Major ;
+    noria:troubleTicketType noria-kos:TroubleTicket-type:Assistance ;
+    noria:troubleTicketCriticity noria-kos:TroubleTicket-criticity:InterruptedService ;
+    noria:troubleTicketPriority noria-kos:TroubleTicket-priority:P2 ;
+    noria:troubleTicketOrigin noria-kos:TroubleTicket-origin:Customer ;
+    noria:troubleTicketTrigger noria-data:EventRecord_DBError ;
+    noria:troubleTicketUrgency noria-kos:TroubleTicket-urgency:ImmediateIntervention ;
+    noria:troubleTicketSupervisionTool "AppDynamics"^^xsd:string ;
+    noria:troubleTicketCategory noria-kos:TroubleTicket-trouble-category:TotalBreakdown ;
+    noria:problemCategory noria-kos:TroubleTicket-trouble-category:TotalBreakdown ;
+    noria:troubleTicketCause "High CPU utilization on DB server"^^xsd:string ;
+    noria:problemResponsibility noria-kos:TroubleTicket-problemResponsibility:ManagedBackbone ;
+    noria:troubleTicketDetectionDateTime "2024-01-20T10:10:00Z"^^xsd:dateTime ;
+    noria:troubleTicketTargetRestorationDateTime "2024-01-20T14:00:00Z"^^xsd:dateTime ;
+    noria:troubleTicketPlannedRestorationDateTime "2024-01-20T13:30:00Z"^^xsd:dateTime ;
+    noria:troubleTicketCommittedRestorationDateTime "2024-01-20T15:00:00Z"^^xsd:dateTime ;
+    noria:troubleTicketIsNotificationEnable "true"^^xsd:boolean ;
+    noria:troubleTicketStatusCurrent noria-kos:TroubleTicket-status:InProgress ;
+    noria:troubleTicketRelatedParty noria-data:Agent_Bob ;
+    noria:troubleTicketPartyIntervention noria-data:OrgUnit_AppDev ;
+    noria:troubleTicketRelatedService noria-data:Application_CoreBanking ;
+    noria:troubleTicketRelatedResource noria-data:Resource_ServerAppDB ;
+    noria:troubleTicketImpacts noria-data:ApplicationModule_CBA_Prod .
+
+noria-data:Property_HighImpact
+    a noria:Property ;
+    rdfs:label "High Impact Characteristic"@en ;
+    rdfs:comment "Indicates a characteristic of high business impact."@en .
+
+noria-data:EventRecord_TT001_FreezeStart
+    a noria:EventRecord ;
+    rdfs:label "TT001 Freeze Start"@en ;
+    rdfs:comment "Event marking the start of a freeze period for TT001."@en ;
+    noria:loggingTime "2024-01-20T10:30:00Z"^^xsd:dateTime ;
+    noria:logText "Trouble ticket TT-2024-001 status changed to Frozen due to external dependency."^^xsd:string .
+
+noria-data:EventRecord_TT001_StatusUpdate
+    a noria:EventRecord ;
+    rdfs:label "TT001 Status Update"@en ;
+    rdfs:comment "Event marking a status update for TT001."@en ;
+    noria:loggingTime "2024-01-20T11:00:00Z"^^xsd:dateTime ;
+    noria:logText "Trouble ticket TT-2024-001 status changed to InProgress."^^xsd:string .
+
+# --- noria:TroubleTicketNote instances ---
+noria-data:TroubleTicketNote_TT001_Note1
+    a noria:TroubleTicketNote ;
+    rdfs:label "TT001 Initial Diagnosis Note"@en ;
+    rdfs:comment "First note on TT001, detailing initial diagnosis steps."@en ;
+    dcterms:created "2024-01-20T10:25:00Z"^^xsd:dateTime ;
+    dcterms:creator noria-data:Agent_Alice ;
+    dcterms:description "Confirmed link down on ge-0/0/1 of core-router-01. Initiated remote diagnostics."^^xsd:string ;
+    noria:troubleTicketNoteCommentType noria-kos:TroubleTicket-commentType:Internal ;
+    noria:troubleTicketNoteOperationType noria-kos:TroubleTicket-operationType:Diagnosis ;
+    noria:troubleTicketNoteCorrelatedExecution noria-data:EventRecord_LinkDown .
+
+noria-data:TroubleTicketNote_TT002_Note1
+    a noria:TroubleTicketNote ;
+    rdfs:label "TT002 Initial Investigation Note"@en ;
+    rdfs:comment "First note on TT002, detailing initial investigation."@en ;
+    dcterms:created "2024-01-20T10:35:00Z"^^xsd:dateTime ;
+    dcterms:creator noria-data:Agent_Bob ;
+    dcterms:description "Checked DB server metrics, high CPU and I/O observed. Investigating query logs."^^xsd:string ;
+    noria:troubleTicketNoteCommentType noria-kos:TroubleTicket-commentType:Internal ;
+    noria:troubleTicketNoteOperationType noria-kos:TroubleTicket-operationType:Diagnosis ;
+    noria:troubleTicketNoteCorrelatedExecution noria-data:EventRecord_DBError .
+
+# --- noria:ChangeRequest instances ---
+noria-data:ChangeRequest_CR001
+    a noria:ChangeRequest ;
+    rdfs:label "Core Router Software Upgrade"@en ;
+    rdfs:comment "Change request for upgrading software on Core Router 1."@en ;
+    dcterms:identifier "CR-2024-001"^^xsd:string ;
+    dcterms:created "2024-01-15T09:00:00Z"^^xsd:dateTime ;
+    dcterms:modified "2024-01-18T16:00:00Z"^^xsd:dateTime ;
+    dcterms:description "Upgrade IOS-XE on core-router-01 to address security vulnerabilities."^^xsd:string ;
+    noria:documentExternalId "PROJ-SEC-005"^^xsd:string ;
+    noria:documentHRef "https://changemanagement.example.com/CR001"^^xsd:anyURI ;
+    noria:changeRequestPlannedStartTime "2024-01-25T02:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestPlannedEndTime "2024-01-25T04:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestActualStartTime "2024-01-25T02:05:00Z"^^xsd:dateTime ;
+    noria:changeRequestActualEndTime "2024-01-25T03:45:00Z"^^xsd:dateTime ;
+    noria:changeRequestCategory noria-kos:ChangeRequest-category:InternalIntervention ;
+    noria:changeRequestType noria-kos:ChangeRequest-type:Standard ;
+    noria:changeRequestChangeCause noria-kos:ChangeRequest-cause:SoftwareUpgrade ;
+    noria:changeRequestImpact noria-data:Resource_RouterCore1 ;
+    noria:changeRequestOutageDuration "PT1H30M"^^xsd:duration ;
+    noria:changeRequestStatusCurrent noria-kos:ChangeRequest-status:Approved ;
+    noria:changeRequestSpecification noria-kos:ChangeRequest-specification:RoutineMaintenance ;
+    noria:changeRequestInitiatorParty noria-data:Agent_Alice ;
+    noria:changeRequestPilotParty noria-data:Agent_Alice ;
+    noria:changeRequestActorParty noria-data:Agent_Alice ;
+    noria:changeRequestIsRegulated "false"^^xsd:boolean ;
+    noria:documentStatusHistory noria-data:EventRecord_CR001_StatusUpdate .
+
+noria-data:ChangeRequest_CR002
+    a noria:ChangeRequest ;
+    rdfs:label "Database Schema Update"@en ;
+    rdfs:comment "Change request for updating the database schema for Core Banking Application."@en ;
+    dcterms:identifier "CR-2024-002"^^xsd:string ;
+    dcterms:created "2024-01-16T11:00:00Z"^^xsd:dateTime ;
+    dcterms:modified "2024-01-19T10:00:00Z"^^xsd:dateTime ;
+    dcterms:description "Implement new schema changes for transaction logging feature."^^xsd:string ;
+    noria:documentExternalId "PROJ-FEAT-010"^^xsd:string ;
+    noria:documentHRef "https://changemanagement.example.com/CR002"^^xsd:anyURI ;
+    noria:changeRequestPlannedStartTime "2024-01-26T01:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestPlannedEndTime "2024-01-26T02:30:00Z"^^xsd:dateTime ;
+    noria:changeRequestCategory noria-kos:ChangeRequest-category:InternalIntervention ;
+    noria:changeRequestType noria-kos:ChangeRequest-type:Standard ;
+    noria:changeRequestChangeCause noria-kos:ChangeRequest-cause:SoftwareUpgrade ;
+    noria:changeRequestImpact noria-data:Application_CoreBanking ;
+    noria:changeRequestOutageDuration "PT1H"^^xsd:duration ;
+    noria:changeRequestStatusCurrent noria-kos:ChangeRequest-status:Approved ;
+    noria:changeRequestSpecification noria-kos:ChangeRequest-specification:RoutineMaintenance ;
+    noria:changeRequestInitiatorParty noria-data:Agent_Bob ;
+    noria:changeRequestPilotParty noria-data:Agent_Bob ;
+    noria:changeRequestActorParty noria-data:Agent_Bob ;
+    noria:changeRequestIsRegulated "true"^^xsd:boolean .
+
+noria-data:EventRecord_CR001_StatusUpdate
+    a noria:EventRecord ;
+    rdfs:label "CR001 Status Update"@en ;
+    rdfs:comment "Event marking a status update for CR001."@en ;
+    noria:loggingTime "2024-01-18T16:00:00Z"^^xsd:dateTime ;
+    noria:logText "Change request CR-2024-001 status changed to Approved."^^xsd:string .
+
+# --- noria:DocumentAttachment instances ---
+noria-data:DocumentAttachment_NetworkDiagram
+    a noria:DocumentAttachment ;
+    rdfs:label "Network Diagram v1.2"@en ;
+    rdfs:comment "Attachment: Network topology diagram related to TT001."@en ;
+    dcterms:identifier "DIAG-NET-V1.2"^^xsd:string ;
+    dcterms:format "application/pdf"^^xsd:string ;
+    dcterms:source "https://docs.example.com/network_diagram_v1.2.pdf"^^xsd:anyURI ;
+    dcterms:isPartOf noria-data:TroubleTicket_TT001 .
+
+noria-data:DocumentAttachment_UpgradePlan
+    a noria:DocumentAttachment ;
+    rdfs:label "Router Upgrade Plan"@en ;
+    rdfs:comment "Attachment: Detailed plan for CR001 software upgrade."@en ;
+    dcterms:identifier "PLAN-CR001-V1.0"^^xsd:string ;
+    dcterms:format "application/vnd.openxmlformats-officedocument.wordprocessingml.document"^^xsd:string ;
+    dcterms:source "https://docs.example.com/router_upgrade_plan.docx"^^xsd:anyURI ;
+    dcterms:isPartOf noria-data:ChangeRequest_CR001 .
+
+# --- noria:AnomalyPattern instances ---
+noria-data:AnomalyPattern_HighCPU
+    a noria:AnomalyPattern ;
+    rdfs:label "High CPU Anomaly Pattern"@en ;
+    rdfs:comment "Pattern indicating abnormally high CPU usage, potentially leading to performance issues."@en ;
+    folio:hasConsequence noria-data:TroubleTicket_TT002 .
+
+noria-data:AnomalyPattern_LinkFlap
+    a noria:AnomalyPattern ;
+    rdfs:label "Network Link Flap Anomaly Pattern"@en ;
+    rdfs:comment "Pattern indicating frequent up/down transitions on a network link."@en ;
+    folio:hasConsequence noria-data:TroubleTicket_TT001 .
+
+# --- noria:OperationPlan instances ---
+noria-data:OperationPlan_RestartInterface
+    a noria:OperationPlan ;
+    rdfs:label "Restart Network Interface Procedure"@en ;
+    rdfs:comment "Standard operating procedure to restart a faulty network interface."@en ;
+    pep:hasInput noria-data:ActionPreCondition_InterfaceDown ;
+    pep:hasOutput noria-data:ActionPostCondition_InterfaceUp .
+
+noria-data:OperationPlan_DBOptimization
+    a noria:OperationPlan ;
+    rdfs:label "Database Query Optimization Procedure"@en ;
+    rdfs:comment "Procedure for identifying and optimizing slow database queries."@en ;
+    pep:hasInput noria-data:ActionPreCondition_SlowQueries ;
+    pep:hasOutput noria-data:ActionPostCondition_ImprovedPerformance .
+
+# --- noria:ActionPreCondition and noria:ActionPostCondition instances ---
+noria-data:ActionPreCondition_InterfaceDown
+    a noria:ActionPreCondition ;
+    rdfs:label "Network Interface Down Pre-Condition"@en ;
+    rdfs:comment "Pre-condition: The target network interface is in a 'down' operational state."@en .
+
+noria-data:ActionPostCondition_InterfaceUp
+    a noria:ActionPostCondition ;
+    rdfs:label "Network Interface Up Post-Condition"@en ;
+    rdfs:comment "Post-condition: The target network interface is in an 'up' operational state."@en .
+
+noria-data:ActionPreCondition_SlowQueries
+    a noria:ActionPreCondition ;
+    rdfs:label "Slow Database Queries Pre-Condition"@en ;
+    rdfs:comment "Pre-condition: Database queries are executing slower than expected thresholds."@en .
+
+noria-data:ActionPostCondition_ImprovedPerformance
+    a noria:ActionPostCondition ;
+    rdfs:label "Improved Database Performance Post-Condition"@en ;
+    rdfs:comment "Post-condition: Database query response times are within acceptable limits."@en .
+
+# --- Linking actions to operation plans (using EventRecord as proxy for action) ---
+noria-data:EventRecord_LinkDown
+    noria:alarmMitigatedBy noria-data:EventRecord_InterfaceRestarted .
+
+noria-data:EventRecord_InterfaceRestarted
+    a noria:EventRecord ;
+    rdfs:label "Interface Restarted Event"@en ;
+    rdfs:comment "Event recording the successful restart of a network interface."@en ;
+    noria:loggingTime "2024-01-20T10:20:00Z"^^xsd:dateTime ;
+    noria:logText "Interface GigabitEthernet0/0/1 restarted successfully."^^xsd:string ;
+    noria:logOriginatingManagedObject noria-data:Resource_RouterCore1 ;
+    noria:logOriginatingManagementSystem noria-data:Application_MonitoringSystem ;
+    noria:logOriginatingAgent noria-data:Agent_Alice ;
+    pep:usedProcedure noria-data:OperationPlan_RestartInterface .
+
+noria-data:EventRecord_DBOptimizationAction
+    a noria:EventRecord ;
+    rdfs:label "DB Optimization Action Event"@en ;
+    rdfs:comment "Event recording an action taken for database optimization."@en ;
+    noria:loggingTime "2024-01-20T11:15:00Z"^^xsd:dateTime ;
+    noria:logText "Executed query optimization script on app-db-server-02."^^xsd:string ;
+    noria:logOriginatingManagedObject noria-data:Resource_ServerAppDB ;
+    noria:logOriginatingManagementSystem noria-data:Application_CoreBanking ;
+    noria:logOriginatingAgent noria-data:Agent_Bob ;
+    pep:usedProcedure noria-data:OperationPlan_DBOptimization .
+
+# Additional interconnections to ensure all nodes are linked
+noria-data:Agent_Alice
+    noria:agentManagesResource noria-data:Resource_RouterCore1, noria-data:Resource_EdgeSwitchParis .
+
+noria-data:Agent_Bob
+    noria:agentManagesResource noria-data:Resource_ServerAppDB .
+
+noria-data:OrgUnit_NetworkOps
+    noria:elementManagedBy noria-data:Resource_RouterCore1, noria-data:Resource_EdgeSwitchParis .
+
+noria-data:OrgUnit_AppDev
+    noria:elementManagedBy noria-data:Resource_ServerAppDB .
+
+noria-data:Application_CoreBanking
+    noria:elementManagedBy noria-data:OrgUnit_AppDev .
+
+noria-data:Application_MonitoringSystem
+    noria:elementManagedBy noria-data:OrgUnit_NetworkOps .
+
+noria-data:Service_InternetAccess
+    noria:elementManagedBy noria-data:OrgUnit_NetworkOps .
+
+noria-data:Service_VPNConnectivity
+    noria:elementManagedBy noria-data:OrgUnit_NetworkOps .
+
+noria-data:TroubleTicket_TT001
+    noria:eventRelatedParty noria-data:Agent_Alice ;
+    noria:eventRelatedElement noria-data:Resource_RouterCore1 .
+
+noria-data:TroubleTicket_TT002
+    noria:eventRelatedParty noria-data:Agent_Bob ;
+    noria:eventRelatedElement noria-data:Resource_ServerAppDB .
+
+noria-data:ChangeRequest_CR001
+    noria:eventRelatedParty noria-data:Agent_Alice ;
+    noria:eventRelatedElement noria-data:Resource_RouterCore1 .
+
+noria-data:ChangeRequest_CR002
+    noria:eventRelatedParty noria-data:Agent_Bob ;
+    noria:eventRelatedElement noria-data:Application_CoreBanking .
+
+noria-data:EventRecord_LinkDown
+    noria:eventRelatedElement noria-data:NetworkLink_CoreInternalA .
+
+noria-data:EventRecord_DBError
+    noria:eventRelatedElement noria-data:Resource_ServerAppDB .
+
+noria-data:EventRecord_ConfigChange
+    noria:eventRelatedElement noria-data:Resource_RouterCore1 .
+
+noria-data:OperationPlan_RestartInterface
+    noria:elementManagedBy noria-data:OrgUnit_NetworkOps .
+
+noria-data:OperationPlan_DBOptimization
+    noria:elementManagedBy noria-data:OrgUnit_AppDev .
+
+noria-data:AnomalyPattern_HighCPU
+    noria:elementProperty noria-data:Property_HighCPUThreshold .
+
+noria-data:Property_HighCPUThreshold
+    a noria:Property ;
+    rdfs:label "High CPU Threshold Property"@en ;
+    rdfs:comment "A property representing a threshold for high CPU usage."@en ;
+    noria:structuralElementObservableData "80"^^xsd:int .
+
+noria-data:AnomalyPattern_LinkFlap
+    noria:elementProperty noria-data:Property_LinkFlapCount .
+
+noria-data:Property_LinkFlapCount
+    a noria:Property ;
+    rdfs:label "Link Flap Count Property"@en ;
+    rdfs:comment "A property representing the number of link flaps within a time period."@en ;
+    noria:structuralElementObservableData "5"^^xsd:int .
+
+# Ensure all abstract classes have concrete instances or are covered by sub-classes
+# noria:ManagedElement -> covered by all concrete classes
+# noria:Property -> noria:ProductModel, noria:StructuralProperty (implicit), noria:Property_HighImpact, noria:Property_HighCPUThreshold, noria:Property_LinkFlapCount
+# noria:StructuralElement -> noria:Resource, noria:NetworkInterface, noria:NetworkLink
+# noria:StructuralObservable -> noria:ProductModel (ProductModel is subClassOf StructuralProperty, which is subClassOf StructuralObservable)
+# noria:FunctionalElement -> noria:Application, noria:ApplicationModule, noria:Service
+# noria:DynamicElement -> noria:CorporateUserIdentifier, noria:TroubleTicket, noria:TroubleTicketNote, noria:ChangeRequest, noria:DocumentAttachment, noria:EventRecord
+# noria:ProceduralElement -> noria:AnomalyPattern, noria:OperationPlan, noria:ActionPreCondition, noria:ActionPostCondition
+
+# Additional entities for variety and scale
+noria-data:Resource_LoadBalancer
+    a noria:Resource ;
+    rdfs:label "Web Load Balancer"@en ;
+    rdfs:comment "Distributes traffic to web servers."@en ;
+    noria:resourceHostName "lb-web-01"^^xsd:string ;
+    noria:resourceType noria-kos:Resource-type:Router ;
+    noria:resourceUsageState noria-kos:Resource-LifecycleState:InProduction ;
+    noria:resourceManagedBy noria-data:OrgUnit_NetworkOps ;
+    noria:locatedAtLocus noria-data:Locus_RackA01 .
+
+noria-data:Application_WebPortal
+    a noria:Application ;
+    rdfs:label "Customer Web Portal"@en ;
+    rdfs:comment "Public-facing web application for customer interaction."@en ;
+    noria:applicationShortIdentifier "CWP"^^xsd:string ;
+    noria:applicationType noria-kos:application-type:BusinessApp ;
+    noria:applicationBusinessImportance noria-kos:application-business-importance:High ;
+    noria:resourceForApplication noria-data:Resource_LoadBalancer .
+
+noria-data:ApplicationModule_CWP_Prod
+    a noria:ApplicationModule ;
+    rdfs:label "Customer Web Portal Production Module"@en ;
+    rdfs:comment "Production instance of the Customer Web Portal."@en ;
+    noria:applicationModuleOf noria-data:Application_WebPortal ;
+    noria:applicationModuleName "CWP_PROD"^^xsd:string ;
+    noria:applicationModuleIdentifier "CWP-PROD-001"^^xsd:string ;
+    noria:applicationModuleAdministrationTeam noria-data:OrgUnit_AppDev ;
+    noria:applicationModuleSlaLevel noria-kos:application-sla-level:Platinum ;
+    noria:applicationModuleStatus noria-kos:application-status:InProduction .
+
+noria-data:Service_WebHosting
+    a noria:Service ;
+    rdfs:label "Web Hosting Service"@en ;
+    rdfs:comment "Provides hosting for the customer web portal."@en ;
+    noria:serviceType noria-kos:service-type:CustomerFacing ;
+    seas:subSystemOf noria-data:ApplicationModule_CWP_Prod .
+
+noria-data:EventRecord_HighTraffic
+    a noria:EventRecord ;
+    rdfs:label "High Traffic Alert"@en ;
+    rdfs:comment "Alert for unusually high network traffic on the load balancer."@en ;
+    noria:loggingTime "2024-01-21T13:00:00Z"^^xsd:dateTime ;
+    noria:logText "Traffic on lb-web-01 exceeded 90% capacity."^^xsd:string ;
+    noria:logOriginatingManagedObject noria-data:Resource_LoadBalancer ;
+    noria:alarmSeverity noria-kos:Notification-Severity-PerceivedSeverity:Major ;
+    noria:eventRelatedElement noria-data:Resource_LoadBalancer .
+
+noria-data:TroubleTicket_TT003
+    a noria:TroubleTicket ;
+    rdfs:label "Web Portal Slow Response"@en ;
+    rdfs:comment "Trouble ticket for slow response times on the customer web portal."@en ;
+    dcterms:identifier "TT-2024-003"^^xsd:string ;
+    dcterms:created "2024-01-21T13:05:00Z"^^xsd:dateTime ;
+    noria:troubleTicketSeverity noria-kos:TroubleTicket-severity:Major ;
+    noria:troubleTicketOrigin noria-kos:TroubleTicket-origin:Customer ;
+    noria:troubleTicketTrigger noria-data:EventRecord_HighTraffic ;
+    noria:troubleTicketRelatedService noria-data:Service_WebHosting ;
+    noria:troubleTicketRelatedResource noria-data:Resource_LoadBalancer .
+
+noria-data:ChangeRequest_CR003
+    a noria:ChangeRequest ;
+    rdfs:label "Load Balancer Configuration Update"@en ;
+    rdfs:comment "Change request to update load balancer configuration for new web servers."@en ;
+    dcterms:identifier "CR-2024-003"^^xsd:string ;
+    dcterms:created "2024-01-22T09:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestType noria-kos:ChangeRequest-type:Standard ;
+    noria:changeRequestChangeCause noria-kos:ChangeRequest-cause:Configuration ;
+    noria:changeRequestImpact noria-data:Resource_LoadBalancer ;
+    noria:changeRequestInitiatorParty noria-data:Agent_Alice .
+
+noria-data:NetworkInterface_LB_Eth0
+    a noria:NetworkInterface ;
+    rdfs:label "Load Balancer Ethernet 0"@en ;
+    rdfs:comment "Main network interface for the load balancer."@en ;
+    noria:networkInterfaceDescription "External facing interface"^^xsd:string ;
+    noria:networkInterfaceType "physical"^^xsd:string ;
+    noria:networkInterfaceOf noria-data:Resource_LoadBalancer ;
+    noria:networkInterfaceAdministrativeStatus noria-kos:Resource-AdministrativeState:Enabled ;
+    noria:networkInterfaceOperationalStatus noria-kos:Resource-OperationalState:Up .
+
+noria-data:NetworkLink_LB_WAN
+    a noria:NetworkLink ;
+    rdfs:label "Load Balancer WAN Link"@en ;
+    rdfs:comment "Link connecting load balancer to external network."@en ;
+    noria:networkLinkId "NL-LBW-004"^^xsd:string ;
+    noria:networkLinkInstallationDate "2023-08-01T10:00:00Z"^^xsd:dateTime ;
+    noria:networkLinkType "internet"^^xsd:string ;
+    noria:networkLinkTerminationResourceOrigin noria-data:Resource_LoadBalancer ;
+    noria:networkLinkTerminationResourceDestination noria-data:Resource_EdgeSwitchParis .
+
+noria-data:Resource_LoadBalancer
+    noria:elementProperty noria-data:Property_TrafficVolume .
+
+noria-data:Property_TrafficVolume
+    a noria:Property ;
+    rdfs:label "Traffic Volume Property"@en ;
+    rdfs:comment "A property representing the current traffic volume."@en ;
+    noria:structuralElementObservableData "950"^^xsd:int . # e.g., Mbps
+
+noria-data:OrgUnit_SecurityOps
+    a org:OrganizationalUnit ;
+    rdfs:label "Security Operations Center"@en ;
+    rdfs:comment "Team responsible for cybersecurity monitoring and incident response."@en ;
+    org:unitOf noria-data:Org_ITDepartment .
+
+noria-data:Agent_Charlie
+    a foaf:Person ;
+    rdfs:label "Charlie Brown"@en ;
+    rdfs:comment "A security analyst."@en ;
+    foaf:name "Charlie Brown"^^xsd:string ;
+    foaf:mbox "mailto:charlie.brown@example.com"^^xsd:anyURI ;
+    noria:agentWorkingHours "24/7 On-Call"^^xsd:string ;
+    noria:agentInstructions "Escalate critical security incidents immediately."^^xsd:string ;
+    noria:agentPreferredContactMethod noria-kos:agent-contact-method:Phone .
+
+noria-data:CUid_Charlie
+    a noria:CorporateUserIdentifier ;
+    rdfs:label "Charlie's Corporate ID"@en ;
+    rdfs:comment "Corporate user identifier for Charlie Brown."@en ;
+    foaf:accountName "cbrown"^^xsd:string ;
+    observable:accountIdentifier "CU-CBROWN-003"^^xsd:string ;
+    foaf:holdsAccount noria-data:Agent_Charlie .
+
+noria-data:EventRecord_SecurityAlert
+    a noria:EventRecord ;
+    rdfs:label "Security Intrusion Alert"@en ;
+    rdfs:comment "An alert indicating a potential security intrusion attempt."@en ;
+    noria:loggingTime "2024-01-22T14:30:00Z"^^xsd:dateTime ;
+    noria:logText "Multiple failed login attempts detected from external IP 1.2.3.4 on app-db-server-02."^^xsd:string ;
+    noria:logOriginatingManagedObject noria-data:Resource_ServerAppDB ;
+    noria:logOriginatingManagementSystem noria-data:Application_MonitoringSystem ;
+    noria:alarmSeverity noria-kos:Notification-Severity-PerceivedSeverity:Critical ;
+    noria:logOriginatingAgent noria-data:Agent_Charlie .
+
+noria-data:TroubleTicket_TT004
+    a noria:TroubleTicket ;
+    rdfs:label "Security Incident: Brute Force Attack"@en ;
+    rdfs:comment "Trouble ticket for a detected brute force attack on a database server."@en ;
+    dcterms:identifier "TT-2024-004"^^xsd:string ;
+    dcterms:created "2024-01-22T14:35:00Z"^^xsd:dateTime ;
+    noria:troubleTicketSeverity noria-kos:TroubleTicket-severity:Critical ;
+    noria:troubleTicketOrigin noria-kos:TroubleTicket-origin:Supervision ;
+    noria:troubleTicketTrigger noria-data:EventRecord_SecurityAlert ;
+    noria:troubleTicketRelatedResource noria-data:Resource_ServerAppDB ;
+    noria:troubleTicketRelatedParty noria-data:Agent_Charlie .
+
+noria-data:AnomalyPattern_BruteForce
+    a noria:AnomalyPattern ;
+    rdfs:label "Brute Force Attack Pattern"@en ;
+    rdfs:comment "Pattern indicating a brute force attack attempt."@en ;
+    folio:hasConsequence noria-data:TroubleTicket_TT004 .
+
+noria-data:OperationPlan_BlockIP
+    a noria:OperationPlan ;
+    rdfs:label "Block Malicious IP Procedure"@en ;
+    rdfs:comment "Procedure to block a malicious IP address at the firewall."@en ;
+    pep:hasInput noria-data:ActionPreCondition_MaliciousIPDetected ;
+    pep:hasOutput noria-data:ActionPostCondition_IPBlocked .
+
+noria-data:ActionPreCondition_MaliciousIPDetected
+    a noria:ActionPreCondition ;
+    rdfs:label "Malicious IP Detected Pre-Condition"@en ;
+    rdfs:comment "Pre-condition: A malicious IP address has been identified as source of attack."@en .
+
+noria-data:ActionPostCondition_IPBlocked
+    a noria:ActionPostCondition ;
+    rdfs:label "IP Blocked Post-Condition"@en ;
+    rdfs:comment "Post-condition: The malicious IP address is successfully blocked."@en .
+
+noria-data:EventRecord_IPBlockedAction
+    a noria:EventRecord ;
+    rdfs:label "IP Blocked Action Event"@en ;
+    rdfs:comment "Event recording the action of blocking a malicious IP."@en ;
+    noria:loggingTime "2024-01-22T14:45:00Z"^^xsd:dateTime ;
+    noria:logText "Blocked IP 1.2.3.4 on perimeter firewall."^^xsd:string ;
+    noria:logOriginatingManagedObject noria-data:Resource_RouterCore1 ; # Assuming firewall is managed by core router or similar
+    noria:logOriginatingManagementSystem noria-data:Application_MonitoringSystem ;
+    noria:logOriginatingAgent noria-data:Agent_Charlie ;
+    pep:usedProcedure noria-data:OperationPlan_BlockIP .
+
+noria-data:TroubleTicketNote_TT004_Note1
+    a noria:TroubleTicketNote ;
+    rdfs:label "TT004 Initial Response Note"@en ;
+    rdfs:comment "First note on TT004, detailing initial response to security alert."@en ;
+    dcterms:created "2024-01-22T14:40:00Z"^^xsd:dateTime ;
+    dcterms:creator noria-data:Agent_Charlie ;
+    dcterms:description "Identified source IP 1.2.3.4. Initiated blocking procedure."^^xsd:string ;
+    noria:troubleTicketNoteCommentType noria-kos:TroubleTicket-commentType:Internal ;
+    noria:troubleTicketNoteOperationType noria-kos:TroubleTicket-operationType:Diagnosis ;
+    noria:troubleTicketNoteCorrelatedExecution noria-data:EventRecord_IPBlockedAction .
+
