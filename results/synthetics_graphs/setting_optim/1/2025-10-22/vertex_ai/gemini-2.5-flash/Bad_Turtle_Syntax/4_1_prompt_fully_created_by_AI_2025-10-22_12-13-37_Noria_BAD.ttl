@@ -1,0 +1,1750 @@
+# Copyright (c) 2022-2023 Orange. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+#     1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+#     2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+#     3. All advertising materials mentioning features or use of this software must display the following acknowledgement:
+#     This product includes software developed by Orange.
+#     4. Neither the name of Orange nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY Orange "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL Orange BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# === PREFIXES ================================================================
+
+# --- Basic ---
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+# --- Ontology management ---
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix voaf: <http://purl.org/vocommons/voaf#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix schema: <https://schema.org/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# --- Domain specific ---
+@prefix qudt: <http://data.qudt.org/qudt/owl/1.0.0/qudt.owl#> .  # Quantities, Units, Dimensions and Types (QUDT)
+@prefix qudt-unit: <http://data.qudt.org/qudt/owl/1.0.0/unit.owl#> .  #QUDT units
+@prefix time: <http://www.w3.org/2006/time#> .  # OWL-Time
+
+@prefix bot:  <https://w3id.org/bot#> .  # Building Topology Ontology
+@prefix gn: <https://www.geonames.org/ontology#> .  # GeoNames Ontology
+@prefix wgs84_pos: <http://www.w3.org/2003/01/geo/wgs84_pos#> .  # WGS84 Geo Positioning
+
+@prefix BBO: <https://www.irit.fr/recherches/MELODI/ontologies/BBO#> .  # BPMN 2.0 Based Ontology for Business Process Representation
+@prefix org: <http://www.w3.org/ns/org#> .  # The Organization Ontology
+
+@prefix log: <https://w3id.org/sepses/ns/log#> .  # a.k.a. SLOGERT
+@prefix folio: <http://IBCNServices.github.io/Folio-Ontology/Folio.owl#> .  # Failure Mode and Effect Analysis combined with Anomaly Ontology (FOLIO)
+
+@prefix ssn: <http://www.w3.org/ns/ssn/>.  # Semantic Sensor Network (SSN) Ontology
+@prefix seas: <https://w3id.org/seas/>.  # Smart Energy Aware Systems (SEAS)
+@prefix pep: <https://w3id.org/pep/>.  # SEAS Procedure Execution ontology
+@prefix saref: <http://ontology.tno.nl/saref#>.  #SAREF smart building appliances ontology
+
+@prefix observable: <https://unifiedcyberontology.org/ontology/uco/observable#> . # Unified Cybersecurity Ontology (UCO)
+
+@prefix devopsprod: <http://w3id.org/devops-infra/product#> .  # DevOps-Infra, Ontology for the representation of the business offering of a company, including the offered services and microservices
+
+# --- NORIA ---
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@base <https://w3id.org/noria/> .
+
+# =============================================================================
+# KOS (Knowledge Organization System) Concepts - Defined implicitly by NORIA schema
+# =============================================================================
+
+# Application Types
+<kos/application/type/infrastructure> a skos:Concept ; skos:prefLabel "Infrastructure Application"@en .
+<kos/application/type/business-critical> a skos:Concept ; skos:prefLabel "Business Critical Application"@en .
+<kos/application/type/monitoring> a skos:Concept ; skos:prefLabel "Monitoring Application"@en .
+<kos/application/type/database> a skos:Concept ; skos:prefLabel "Database Application"@en .
+<kos/application/type/web-service> a skos:Concept ; skos:prefLabel "Web Service Application"@en .
+<kos/application/type/messaging> a skos:Concept ; skos:prefLabel "Messaging Application"@en .
+<kos/application/type/security> a skos:Concept ; skos:prefLabel "Security Application"@en .
+<kos/application/type/storage> a skos:Concept ; skos:prefLabel "Storage Application"@en .
+<kos/application/type/virtualization> a skos:Concept ; skos:prefLabel "Virtualization Platform"@en .
+
+# Application Business Importance
+<kos/application/business-importance/high> a skos:Concept ; skos:prefLabel "High Business Importance"@en .
+<kos/application/business-importance/medium> a skos:Concept ; skos:prefLabel "Medium Business Importance"@en .
+<kos/application/business-importance/low> a skos:Concept ; skos:prefLabel "Low Business Importance"@en .
+
+# Application Module Status
+<https://w3id.org/noria/kos/application/status/InProduction> a skos:Concept ; skos:prefLabel "In Production"@en .
+<https://w3id.org/noria/kos/application/status/Development> a skos:Concept ; skos:prefLabel "Development"@en .
+<https://w3id.org/noria/kos/application/status/Staging> a skos:Concept ; skos:prefLabel "Staging"@en .
+<https://w3id.org/noria/kos/application/status/Decommissioned> a skos:Concept ; skos:prefLabel "Decommissioned"@en .
+<https://w3id.org/noria/kos/application/status/Maintenance> a skos:Concept ; skos:prefLabel "Under Maintenance"@en .
+
+# Application Module SLA Level
+<https://w3id.org/noria/kos/application/sla-level/Platinum> a skos:Concept ; skos:prefLabel "Platinum SLA Level"@en .
+<https://w3id.org/noria/kos/application/sla-level/Gold> a skos:Concept ; skos:prefLabel "Gold SLA Level"@en .
+<https://w3id.org/noria/kos/application/sla-level/Silver> a skos:Concept ; skos:prefLabel "Silver SLA Level"@en .
+<https://w3id.org/noria/kos/application/sla-level/Bronze> a skos:Concept ; skos:prefLabel "Bronze SLA Level"@en .
+
+# Service Types
+<kos/service/type/CustomerFacingService> a skos:Concept ; skos:prefLabel "Customer Facing Service"@en .
+<kos/service/type/ResourceFacingService> a skos:Concept ; skos:prefLabel "Resource Facing Service"@en .
+<kos/service/type/InternalService> a skos:Concept ; skos:prefLabel "Internal Service"@en .
+<kos/service/type/PlatformService> a skos:Concept ; skos:prefLabel "Platform Service"@en .
+
+# Trouble Ticket Severity
+<kos/TroubleTicket/severity/Critical> a skos:Concept ; skos:prefLabel "Critical Severity"@en .
+<kos/TroubleTicket/severity/Major> a skos:Concept ; skos:prefLabel "Major Severity"@en .
+<kos/TroubleTicket/severity/Minor> a skos:Concept ; skos:prefLabel "Minor Severity"@en .
+<kos/TroubleTicket/severity/Warning> a skos:Concept ; skos:prefLabel "Warning Severity"@en .
+
+# Trouble Ticket Type
+<kos/TroubleTicket/type/Failure> a skos:Concept ; skos:prefLabel "Failure Ticket"@en .
+<kos/TroubleTicket/type/Assistance> a skos:Concept ; skos:prefLabel "Assistance Ticket"@en .
+<kos/TroubleTicket/type/Maintenance> a skos:Concept ; skos:prefLabel "Maintenance Ticket"@en .
+<kos/TroubleTicket/type/Installation> a skos:Concept ; skos:prefLabel "Installation Ticket"@en .
+<kos/TroubleTicket/type/PerformanceIssue> a skos:Concept ; skos:prefLabel "Performance Issue Ticket"@en .
+
+# Trouble Ticket Criticity (Category)
+<kos/TroubleTicket/category/InterruptedService> a skos:Concept ; skos:prefLabel "Interrupted Service"@en .
+<kos/TroubleTicket/category/DegradedPerformance> a skos:Concept ; skos:prefLabel "Degraded Performance"@en .
+<kos/TroubleTicket/category/TotalBreakdown> a skos:Concept ; skos:prefLabel "Total Breakdown"@en .
+<kos/TroubleTicket/category/PartialOutage> a skos:Concept ; skos:prefLabel "Partial Outage"@en .
+<kos/TroubleTicket/category/SecurityBreach> a skos:Concept ; skos:prefLabel "Security Breach"@en .
+
+# Trouble Ticket Priority
+<kos/TroubleTicket/priority/P1> a skos:Concept ; skos:prefLabel "Priority 1 (Highest)"@en .
+<kos/TroubleTicket/priority/P2> a skos:Concept ; skos:prefLabel "Priority 2 (High)"@en .
+<kos/TroubleTicket/priority/P3> a skos:Concept ; skos:prefLabel "Priority 3 (Medium)"@en .
+<kos/TroubleTicket/priority/P4> a skos:Concept ; skos:prefLabel "Priority 4 (Low)"@en .
+
+# Trouble Ticket Origin
+<kos/TroubleTicket/origin/Customer> a skos:Concept ; skos:prefLabel "Customer Origin"@en .
+<kos/TroubleTicket/origin/Supervision> a skos:Concept ; skos:prefLabel "Supervision System Origin"@en .
+<kos/TroubleTicket/origin/Internal> a skos:Concept ; skos:prefLabel "Internal Team Origin"@en .
+<kos/TroubleTicket/origin/Carrier> a skos:Concept ; skos:prefLabel "Carrier Origin"@en .
+<kos/TroubleTicket/origin/User> a skos:Concept ; skos:prefLabel "User Origin"@en .
+
+# Trouble Ticket Urgency
+<kos/TroubleTicket/urgency/ImmediateIntervention> a skos:Concept ; skos:prefLabel "Immediate Intervention"@en .
+<kos/TroubleTicket/urgency/DeferredIntervention> a skos:Concept ; skos:prefLabel "Deferred Intervention"@en .
+<kos/TroubleTicket/urgency/Emergency> a skos:Concept ; skos:prefLabel "Emergency Intervention"@en .
+<kos/TroubleTicket/urgency/NoIntervention> a skos:Concept ; skos:prefLabel "No Intervention Required"@en .
+
+# Trouble Ticket Problem Responsibility
+<kos/TroubleTicket/problemResponsibility/NetworkTeam> a skos:Concept ; skos:prefLabel "Network Team Responsibility"@en .
+<kos/TroubleTicket/problemResponsibility/ApplicationTeam> a skos:Concept ; skos:prefLabel "Application Team Responsibility"@en .
+<kos/TroubleTicket/problemResponsibility/Vendor> a skos:Concept ; skos:prefLabel "Vendor Responsibility"@en .
+<kos/TroubleTicket/problemResponsibility/Customer> a skos:Concept ; skos:prefLabel "Customer Responsibility"@en .
+<kos/TroubleTicket/problemResponsibility/InfrastructureTeam> a skos:Concept ; skos:prefLabel "Infrastructure Team Responsibility"@en .
+
+# Trouble Ticket Status
+<kos/TroubleTicket/status/Initialised> a skos:Concept ; skos:prefLabel "Initialised"@en .
+<kos/TroubleTicket/status/InProgress> a skos:Concept ; skos:prefLabel "In Progress"@en .
+<kos/TroubleTicket/status/Frozen> a skos:Concept ; skos:prefLabel "Frozen"@en .
+<kos/TroubleTicket/status/Restored> a skos:Concept ; skos:prefLabel "Restored"@en .
+<kos/TroubleTicket/status/Resolved> a skos:Concept ; skos:prefLabel "Resolved"@en .
+<kos/TroubleTicket/status/Closed> a skos:Concept ; skos:prefLabel "Closed"@en .
+<kos/TroubleTicket/status/PendingVendor> a skos:Concept ; skos:prefLabel "Pending Vendor"@en .
+
+# Trouble Ticket Note Comment Type
+<kos/TroubleTicket/commentType/Internal> a skos:Concept ; skos:prefLabel "Internal Comment"@en .
+<kos/TroubleTicket/commentType/CustomerFacing> a skos:Concept ; skos:prefLabel "Customer Facing Comment"@en .
+<kos/TroubleTicket/commentType/SystemGenerated> a skos:Concept ; skos:prefLabel "System Generated Comment"@en .
+<kos/TroubleTicket/commentType/VendorUpdate> a skos:Concept ; skos:prefLabel "Vendor Update"@en .
+
+# Trouble Ticket Note Operation Type
+<kos/TroubleTicket/operationType/Diagnosis> a skos:Concept ; skos:prefLabel "Diagnosis Operation"@en .
+<kos/TroubleTicket/operationType/Resolution> a skos:Concept ; skos:prefLabel "Resolution Operation"@en .
+<kos/TroubleTicket/operationType/Communication> a skos:Concept ; skos:prefLabel "Communication Operation"@en .
+<kos/TroubleTicket/operationType/Escalation> a skos:Concept ; skos:prefLabel "Escalation Operation"@en .
+<kos/TroubleTicket/operationType/Verification> a skos:Concept ; skos:prefLabel "Verification Operation"@en .
+
+# Change Request Category
+<kos/ChangeRequest/category/InternalIntervention> a skos:Concept ; skos:prefLabel "Internal Intervention"@en .
+<kos/ChangeRequest/category/ThirdPartyIntervention> a skos:Concept ; skos:prefLabel "Third Party Intervention"@en .
+<kos/ChangeRequest/category/CustomerIntervention> a skos:Concept ; skos:prefLabel "Customer Intervention"@en .
+<kos/ChangeRequest/category/SecurityUpdate> a skos:Concept ; skos:prefLabel "Security Update"@en .
+<kos/ChangeRequest/category/PerformanceImprovement> a skos:Concept ; skos:prefLabel "Performance Improvement"@en .
+
+# Change Request Type
+<kos/ChangeRequest/type/Standard> a skos:Concept ; skos:prefLabel "Standard Change"@en .
+<kos/ChangeRequest/type/Normal> a skos:Concept ; skos:prefLabel "Normal Change"@en .
+<kos/ChangeRequest/type/Emergency> a skos:Concept ; skos:prefLabel "Emergency Change"@en .
+<kos/ChangeRequest/type/Minor> a skos:Concept ; skos:prefLabel "Minor Change"@en .
+
+# Change Request Cause
+<kos/ChangeRequest/cause/Configuration> a skos:Concept ; skos:prefLabel "Configuration Change"@en .
+<kos/ChangeRequest/cause/SoftwareUpgrade> a skos:Concept ; skos:prefLabel "Software Upgrade"@en .
+<kos/ChangeRequest/cause/NetworkExtension> a skos:Concept ; skos:prefLabel "Network Extension"@en .
+<kos/ChangeRequest/cause/HardwareReplacement> a skos:Concept ; skos:prefLabel "Hardware Replacement"@en .
+<kos/ChangeRequest/cause/SecurityVulnerability> a skos:Concept ; skos:prefLabel "Security Vulnerability Fix"@en .
+
+# Change Request Status
+<kos/ChangeRequest/status/Planned> a skos:Concept ; skos:prefLabel "Planned"@en .
+<kos/ChangeRequest/status/InProgress> a skos:Concept ; skos:prefLabel "In Progress"@en .
+<kos/ChangeRequest/status/Completed> a skos:Concept ; skos:prefLabel "Completed"@en .
+<kos/ChangeRequest/status/Failed> a skos:Concept ; skos:prefLabel "Failed"@en .
+<kos/ChangeRequest/status/Approved> a skos:Concept ; skos:prefLabel "Approved"@en .
+<kos/ChangeRequest/status/Rejected> a skos:Concept ; skos:prefLabel "Rejected"@en .
+
+# Change Request Specification
+<kos/ChangeRequest/specification/RoutineMaintenance> a skos:Concept ; skos:prefLabel "Routine Maintenance"@en .
+<kos/ChangeRequest/specification/SecurityPatch> a skos:Concept ; skos:prefLabel "Security Patch Deployment"@en .
+<kos/ChangeRequest/specification/NewServiceDeployment> a skos:Concept ; skos:prefLabel "New Service Deployment"@en .
+
+# Resource Type
+<kos/Resource/type/Server> a skos:Concept ; skos:prefLabel "Server Resource"@en .
+<kos/Resource/type/Router> a skos:Concept ; skos:prefLabel "Router Resource"@en .
+<kos/Resource/type/Switch> a skos:Concept ; skos:prefLabel "Switch Resource"@en .
+<kos/Resource/type/Firewall> a skos:Concept ; skos:prefLabel "Firewall Resource"@en .
+<kos/Resource/type/LoadBalancer> a skos:Concept ; skos:prefLabel "Load Balancer Resource"@en .
+<kos/Resource/type/VirtualMachine> a skos:Concept ; skos:prefLabel "Virtual Machine Resource"@en .
+<kos/Resource/type/DatabaseServer> a skos:Concept ; skos:prefLabel "Database Server Resource"@en .
+<kos/Resource/type/StorageArray> a skos:Concept ; skos:prefLabel "Storage Array Resource"@en .
+<kos/Resource/type/Hypervisor> a skos:Concept ; skos:prefLabel "Hypervisor Host"@en .
+<kos/Resource/type/AccessPoint> a skos:Concept ; skos:prefLabel "Wireless Access Point"@en .
+
+# Resource Lifecycle State
+<kos/Resource/LifecycleState/InProduction> a skos:Concept ; skos:prefLabel "In Production"@en .
+<kos/Resource/LifecycleState/Staging> a skos:Concept ; skos:prefLabel "Staging"@en .
+<kos/Resource/LifecycleState/Development> a skos:Concept ; skos:prefLabel "Development"@en .
+<kos/Resource/LifecycleState/Decommissioned> a skos:Concept ; skos:prefLabel "Decommissioned"@en .
+<kos/Resource/LifecycleState/Maintenance> a skos:Concept ; skos:prefLabel "Under Maintenance"@en .
+<kos/Resource/LifecycleState/Testing> a skos:Concept ; skos:prefLabel "Testing Phase"@en .
+
+# Resource Operational State
+<kos/Resource/OperationalState/Up> a skos:Concept ; skos:prefLabel "Operational State Up"@en .
+<kos/Resource/OperationalState/Down> a skos:Concept ; skos:prefLabel "Operational State Down"@en .
+<kos/Resource/OperationalState/Degraded> a skos:Concept ; skos:prefLabel "Operational State Degraded"@en .
+<kos/Resource/OperationalState/Unknown> a skos:Concept ; skos:prefLabel "Operational State Unknown"@en .
+
+# Resource Administrative State
+<kos/Resource/AdministrativeState/Up> a skos:Concept ; skos:prefLabel "Administrative State Up"@en .
+<kos/Resource/AdministrativeState/Down> a skos:Concept ; skos:prefLabel "Administrative State Down"@en .
+
+# Agent Contact Method
+<kos/org/agent-contact-method/Email> a skos:Concept ; skos:prefLabel "Email"@en .
+<kos/org/agent-contact-method/Phone> a skos:Concept ; skos:prefLabel "Phone"@en .
+<kos/org/agent-contact-method/TicketingSystem> a skos:Concept ; skos:prefLabel "Ticketing System"@en .
+<kos/org/agent-contact-method/Chat> a skos:Concept ; skos:prefLabel "Chat System"@en .
+
+# Notification Severity (PerceivedSeverity)
+<Notification/Severity/PerceivedSeverity/Critical> a skos:Concept ; skos:prefLabel "Critical Perceived Severity"@en .
+<Notification/Severity/PerceivedSeverity/Major> a skos:Concept ; skos:prefLabel "Major Perceived Severity"@en .
+<Notification/Severity/PerceivedSeverity/Minor> a skos:Concept ; skos:prefLabel "Minor Perceived Severity"@en .
+<Notification/Severity/PerceivedSeverity/Warning> a skos:Concept ; skos:prefLabel "Warning Perceived Severity"@en .
+<Notification/Severity/PerceivedSeverity/Indeterminate> a skos:Concept ; skos:prefLabel "Indeterminate Perceived Severity"@en .
+<Notification/Severity/PerceivedSeverity/Cleared> a skos:Concept ; skos:prefLabel "Cleared Perceived Severity"@en .
+<Notification/Severity/PerceivedSeverity/Informational> a skos:Concept ; skos:prefLabel "Informational Perceived Severity"@en .
+
+# =============================================================================
+# Generated Knowledge Graph
+# =============================================================================
+
+# --- Organizational Units and Agents ---
+
+noria:OrgUnit_NetOps a org:OrganizationalUnit, foaf:Agent ;
+    rdfs:label "Network Operations Team"@en, "Équipe Opérations Réseau"@fr ;
+    rdfs:comment "Team responsible for the daily operation and maintenance of the network infrastructure, including routers, switches, and firewalls. They ensure network availability and performance."@en ;
+    noria:agentWorkingHours "24/7 Shift Rotation (3 shifts)"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/Phone> ;
+    noria:agentInstructions "For critical network issues (P1/P2), call the hotline immediately. For non-critical issues (P3/P4), open a ticket in the network management system. Ensure detailed logs are attached."@en .
+
+noria:OrgUnit_AppSupportL2 a org:OrganizationalUnit, foaf:Agent ;
+    rdfs:label "Application Support L2 Team"@en, "Équipe Support Applicatif N2"@fr ;
+    rdfs:comment "Second-level support team for business-critical applications. They handle complex application incidents and problems, often requiring deep technical knowledge of the application stack."@en ;
+    noria:agentWorkingHours "8:00 - 18:00 Mon-Fri, On-call for critical applications"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/TicketingSystem> ;
+    noria:agentInstructions "All application issues must be logged in the ticketing system with appropriate severity. Escalation to L3 (development team or vendor) via specific procedure documented in the internal wiki."@en .
+
+noria:OrgUnit_SecurityTeam a org:OrganizationalUnit, foaf:Agent ;
+    rdfs:label "Cyber Security Operations Center (CSOC)"@en, "Centre d'Opérations de Cybersécurité (CSOC)"@fr ;
+    rdfs:comment "Team responsible for monitoring, detecting, analyzing, and responding to cybersecurity incidents. They manage security tools, perform vulnerability assessments, and enforce security policies."@en ;
+    noria:agentWorkingHours "24/7 Dedicated Team with incident response capabilities"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/Email>, <kos/org/agent-contact-method/Phone> ;
+    noria:agentInstructions "Report all suspected security incidents via the dedicated security portal and email to 'security-incident@example.com'. For active attacks, call the security hotline immediately."@en .
+
+noria:OrgUnit_DBA_Team a org:OrganizationalUnit, foaf:Agent ;
+    rdfs:label "Database Administration Team"@en, "Équipe Administration Bases de Données"@fr ;
+    rdfs:comment "Team managing all corporate database systems, ensuring performance, availability, and security. This includes Oracle, SQL Server, and PostgreSQL databases."@en ;
+    noria:agentWorkingHours "9:00 - 17:00 Mon-Fri, On-call for critical issues (P1/P2)"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/TicketingSystem> ;
+    noria:agentInstructions "For database performance issues, open a P2 ticket. For outages or data corruption, call the on-call DBA immediately. Provide database logs and relevant application context."@en .
+
+noria:OrgUnit_InfraOps a org:OrganizationalUnit, foaf:Agent ;
+    rdfs:label "Infrastructure Operations Team"@en, "Équipe Opérations Infrastructure"@fr ;
+    rdfs:comment "Team responsible for server hardware, virtualization platforms, and storage systems. They ensure the underlying infrastructure for applications is stable and performant."@en ;
+    noria:agentWorkingHours "24/7 Shift Rotation"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/Phone> ;
+    noria:agentInstructions "For hardware failures or virtualization platform issues, contact the InfraOps hotline. For routine requests, use the ticketing system."@en .
+
+noria:OrgUnit_DevTeam_CRM a org:OrganizationalUnit, foaf:Agent ;
+    rdfs:label "CRM Development Team"@en, "Équipe Développement CRM"@fr ;
+    rdfs:comment "Software development team responsible for the CRM application lifecycle, including new features, bug fixes, and architecture."@en ;
+    noria:agentWorkingHours "9:00 - 18:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/Chat> ;
+    noria:agentInstructions "Escalations from L2 support should be via the dedicated Slack channel or Jira tickets. Avoid direct calls unless it's a P1 incident."@en .
+
+noria:Agent_JohnDoe a foaf:Agent ;
+    rdfs:label "John Doe"@en, "Jean Dupont"@fr ;
+    rdfs:comment "Senior Network Engineer, member of the Network Operations Team. Specializes in routing protocols and firewall management."@en ;
+    foaf:mbox <mailto:john.doe@example.com> ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/Email> .
+
+noria:Agent_JaneSmith a foaf:Agent ;
+    rdfs:label "Jane Smith"@en, "Jeanne Lefevre"@fr ;
+    rdfs:comment "Lead Application Support Engineer, member of the Application Support L2 Team. Expert in CRM and ERP application troubleshooting."@en ;
+    foaf:mbox <mailto:jane.smith@example.com> ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/Phone> .
+
+noria:Agent_AutomatedMonitor a foaf:Agent ;
+    rdfs:label "Automated Monitoring System"@en ;
+    rdfs:comment "Automated system responsible for generating alerts and events based on predefined thresholds and rules. It integrates with various infrastructure and application monitoring tools."@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/TicketingSystem> .
+
+noria:Agent_DBA_Alice a foaf:Agent ;
+    rdfs:label "Alice Wonderland"@en ;
+    rdfs:comment "Database Administrator, specializing in Oracle databases and performance tuning. Part of the DBA Team."@en ;
+    foaf:mbox <mailto:alice.wonderland@example.com> ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/Email> .
+
+noria:Agent_SecurityAnalyst_Bob a foaf:Agent ;
+    rdfs:label "Bob The Builder"@en ;
+    rdfs:comment "Security Analyst, responsible for incident response and threat hunting. Member of the CSOC team."@en ;
+    foaf:mbox <mailto:bob.builder@example.com> ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/Phone> .
+
+noria:Agent_InfraEngineer_Charlie a foaf:Agent ;
+    rdfs:label "Charlie Brown"@en ;
+    rdfs:comment "Infrastructure Engineer, specializing in VMware virtualization and Dell server hardware. Member of the Infra Operations Team."@en ;
+    foaf:mbox <mailto:charlie.brown@example.com> ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/Email> .
+
+noria:Agent_DevLead_David a foaf:Agent ;
+    rdfs:label "David Goliad"@en ;
+    rdfs:comment "Development Lead for the CRM application. Oversees the CRM Development Team."@en ;
+    foaf:mbox <mailto:david.goliad@example.com> ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/Chat> .
+
+# --- Locations ---
+
+noria:Site_DC_Paris a bot:Site ;
+    rdfs:label "Paris Data Center"@en, "Centre de Données de Paris"@fr ;
+    rdfs:comment "Primary data center for core business applications and infrastructure, providing high availability and disaster recovery capabilities."@en ;
+    noria:siteId "DC-PAR-01" ;
+    noria:siteType "data center" ;
+    noria:sitePrincipalAddressStreet "123 Rue de la Paix" ;
+    noria:sitePrincipalAddressCityName "Paris" ;
+    noria:sitePrincipalAddressPostalCode "75002" ;
+    noria:sitePrincipalAddressCountry "FR" .
+
+noria:Site_RO_Lyon a bot:Site ;
+    rdfs:label "Lyon Regional Office"@en, "Bureau Régional de Lyon"@fr ;
+    rdfs:comment "Regional office hosting local services, user workstations, and a small server room for branch applications."@en ;
+    noria:siteId "RO-LYN-01" ;
+    noria:siteType "office building" ;
+    noria:sitePrincipalAddressStreet "45 Avenue Jean Jaures" ;
+    noria:sitePrincipalAddressCityName "Lyon" ;
+    noria:sitePrincipalAddressPostalCode "69007" ;
+    noria:sitePrincipalAddressCountry "FR" .
+
+noria:Site_DR_Marseille a bot:Site ;
+    rdfs:label "Marseille Disaster Recovery Site"@en, "Site de Reprise après Sinistre de Marseille"@fr ;
+    rdfs:comment "Secondary data center for disaster recovery and business continuity, hosting replicated critical services."@en ;
+    noria:siteId "DR-MRS-01" ;
+    noria:siteType "disaster recovery site" ;
+    noria:sitePrincipalAddressStreet "8 Boulevard de la Liberté" ;
+    noria:sitePrincipalAddressCityName "Marseille" ;
+    noria:sitePrincipalAddressPostalCode "13001" ;
+    noria:sitePrincipalAddressCountry "FR" .
+
+noria:Room_DC_Paris_ServerRoom_A a noria:Room ;
+    rdfs:label "Paris DC Server Room A"@en, "Salle Serveurs DC Paris A"@fr ;
+    rdfs:comment "Main server room in the Paris Data Center, housing application servers, database servers, and storage arrays."@en ;
+    bot:hasSpace noria:Site_DC_Paris .
+
+noria:Room_DC_Paris_NetworkRoom_B a noria:Room ;
+    rdfs:label "Paris DC Network Room B"@en, "Salle Réseau DC Paris B"@fr ;
+    rdfs:comment "Dedicated network equipment room in the Paris Data Center, containing core routers, switches, and firewalls."@en ;
+    bot:hasSpace noria:Site_DC_Paris .
+
+noria:Room_RO_Lyon_CommsRoom_1 a noria:Room ;
+    rdfs:label "Lyon RO Comms Room 1"@en, "Salle Comms RO Lyon 1"@fr ;
+    rdfs:comment "Communication equipment room in the Lyon Regional Office, hosting edge routers, access switches, and local servers."@en ;
+    bot:hasSpace noria:Site_RO_Lyon .
+
+noria:Room_DR_Marseille_ServerRoom_C a noria:Room ;
+    rdfs:label "Marseille DR Server Room C"@en, "Salle Serveurs DR Marseille C"@fr ;
+    rdfs:comment "Server room in the Marseille DR site, containing replicated application and database servers."@en ;
+    bot:hasSpace noria:Site_DR_Marseille .
+
+# Generating 200 Locus entities for Paris DC Server Room A
+# (L1C1 to L10C20)
+<%
+  for (let i = 1; i <= 10; i++) {
+    for (let j = 1; j <= 20; j++) {
+%>
+noria:Locus_DC_Paris_SRA_L<%= i %>C<%= j %> a noria:Locus ;
+    rdfs:label "Locus L<%= i %>C<%= j %> in Paris DC Server Room A"@en ;
+    rdfs:comment "Specific location for rack L<%= i %>, column C<%= j %> within Paris DC Server Room A. This locus is designed to host high-density server equipment."@en ;
+    noria:locusLine "L<%= i %>" ;
+    noria:locusRow "C<%= j %>" ;
+    bot:containsZone noria:Room_DC_Paris_ServerRoom_A .
+<%
+    }
+  }
+%>
+
+# Generating 100 Locus entities for Paris DC Network Room B
+# (R1S1 to R5S20)
+<%
+  for (let i = 1; i <= 5; i++) {
+    for (let j = 1; j <= 20; j++) {
+%>
+noria:Locus_DC_Paris_NRB_R<%= i %>S<%= j %> a noria:Locus ;
+    rdfs:label "Locus R<%= i %>S<%= j %> in Paris DC Network Room B"@en ;
+    rdfs:comment "Specific location for rack R<%= i %>, shelf S<%= j %> within Paris DC Network Room B. Primarily used for network devices like routers, switches, and firewalls."@en ;
+    noria:locusLine "R<%= i %>" ;
+    noria:locusRow "S<%= j %>" ;
+    bot:containsZone noria:Room_DC_Paris_NetworkRoom_B .
+<%
+    }
+  }
+%>
+
+# Generating 50 Locus entities for Lyon RO Comms Room 1
+# (C1U1 to C5U10)
+<%
+  for (let i = 1; i <= 5; i++) {
+    for (let j = 1; j <= 10; j++) {
+%>
+noria:Locus_RO_Lyon_CR1_C<%= i %>U<%= j %> a noria:Locus ;
+    rdfs:label "Locus C<%= i %>U<%= j %> in Lyon RO Comms Room 1"@en ;
+    rdfs:comment "Specific location for cabinet C<%= i %>, unit U<%= j %> within Lyon RO Comms Room 1. This room hosts local network and server equipment for the regional office."@en ;
+    noria:locusLine "C<%= i %>" ;
+    noria:locusRow "U<%= j %>" ;
+    bot:containsZone noria:Room_RO_Lyon_CommsRoom_1 .
+<%
+    }
+  }
+%>
+
+# Generating 100 Locus entities for Marseille DR Server Room C
+# (DR1R1 to DR5R20)
+<%
+  for (let i = 1; i <= 5; i++) {
+    for (let j = 1; j <= 20; j++) {
+%>
+noria:Locus_DR_Marseille_SRC_DR<%= i %>R<%= j %> a noria:Locus ;
+    rdfs:label "Locus DR<%= i %>R<%= j %> in Marseille DR Server Room C"@en ;
+    rdfs:comment "Specific location for rack DR<%= i %>, row R<%= j %> within Marseille DR Server Room C. Dedicated to disaster recovery infrastructure."@en ;
+    noria:locusLine "DR<%= i %>" ;
+    noria:locusRow "R<%= j %>" ;
+    bot:containsZone noria:Room_DR_Marseille_ServerRoom_C .
+<%
+    }
+  }
+%>
+
+# --- Product Models ---
+
+noria:ProductModel_DellR750 a noria:ProductModel ;
+    rdfs:label "Dell PowerEdge R750"@en ;
+    rdfs:comment "High-performance rack server for enterprise applications, featuring dual Intel Xeon processors and extensive memory capacity. Ideal for virtualization and database workloads."@en ;
+    noria:productManufacturedBy noria:Org_Dell .
+
+noria:ProductModel_Cisco9300 a noria:ProductModel ;
+    rdfs:label "Cisco Catalyst 9300"@en ;
+    rdfs:comment "Enterprise-grade stackable access switch, offering high-density Gigabit Ethernet ports and advanced security features. Suitable for campus and data center access layers."@en ;
+    noria:productManufacturedBy noria:Org_Cisco .
+
+noria:ProductModel_JuniperMX204 a noria:ProductModel ;
+    rdfs:label "Juniper MX204"@en ;
+    rdfs:comment "Compact, high-density universal routing platform, designed for service provider and enterprise edge applications. Supports 400Gbps throughput in a 1U form factor."@en ;
+    noria:productManufacturedBy noria:Org_Juniper .
+
+noria:ProductModel_PaloAlto5220 a noria:ProductModel ;
+    rdfs:label "Palo Alto Networks PA-5220"@en ;
+    rdfs:comment "Next-generation firewall for data center security, providing advanced threat prevention, URL filtering, and application visibility. Essential for protecting critical assets."@en ;
+    noria:productManufacturedBy noria:Org_PaloAlto .
+
+noria:ProductModel_F5BigIP_i2800 a noria:ProductModel ;
+    rdfs:label "F5 BIG-IP i2800"@en ;
+    rdfs:comment "Application delivery controller and load balancer, ensuring high availability, performance, and security for web applications. Supports SSL offloading and traffic management."@en ;
+    noria:productManufacturedBy noria:Org_F5 .
+
+noria:ProductModel_VMwareESXi a noria:ProductModel ;
+    rdfs:label "VMware ESXi Hypervisor"@en ;
+    rdfs:comment "Industry-leading bare-metal hypervisor for virtualized environments, enabling efficient resource utilization and simplified management of virtual machines."@en ;
+    noria:productManufacturedBy noria:Org_VMware .
+
+noria:ProductModel_OracleDB_Server a noria:ProductModel ;
+    rdfs:label "Oracle Database Server"@en ;
+    rdfs:comment "High-performance database software for enterprise data management, supporting complex transactions and large datasets. Often deployed in a Real Application Clusters (RAC) configuration."@en ;
+    noria:productManufacturedBy noria:Org_Oracle .
+
+noria:ProductModel_HP_ProLiant_DL380 a noria:ProductModel ;
+    rdfs:label "HP ProLiant DL380 Gen10"@en ;
+    rdfs:comment "Versatile rack server for general-purpose computing and virtualization."@en ;
+    noria:productManufacturedBy noria:Org_HPE .
+
+noria:ProductModel_FortiGate_100F a noria:ProductModel ;
+    rdfs:label "Fortinet FortiGate 100F"@en ;
+    rdfs:comment "Next-generation firewall for mid-sized enterprises and branch offices."@en ;
+    noria:productManufacturedBy noria:Org_Fortinet .
+
+noria:ProductModel_NetApp_FAS8200 a noria:ProductModel ;
+    rdfs:label "NetApp FAS8200 Storage Array"@en ;
+    rdfs:comment "Hybrid flash storage system for enterprise data management, offering high performance and scalability."@en ;
+    noria:productManufacturedBy noria:Org_NetApp .
+
+# Manufacturers (Organizations)
+noria:Org_Dell a org:Organization ; rdfs:label "Dell Technologies"@en .
+noria:Org_Cisco a org:Organization ; rdfs:label "Cisco Systems"@en .
+noria:Org_Juniper a org:Organization ; rdfs:label "Juniper Networks"@en .
+noria:Org_PaloAlto a org:Organization ; rdfs:label "Palo Alto Networks"@en .
+noria:Org_F5 a org:Organization ; rdfs:label "F5 Networks"@en .
+noria:Org_VMware a org:Organization ; rdfs:label "VMware Inc."@en .
+noria:Org_Oracle a org:Organization ; rdfs:label "Oracle Corporation"@en .
+noria:Org_HPE a org:Organization ; rdfs:label "Hewlett Packard Enterprise"@en .
+noria:Org_Fortinet a org:Organization ; rdfs:label "Fortinet Inc."@en .
+noria:Org_NetApp a org:Organization ; rdfs:label "NetApp Inc."@en .
+
+# --- Applications ---
+
+noria:App_CRM_System a noria:Application ;
+    rdfs:label "Customer Relationship Management (CRM) System"@en, "Système de Gestion de la Relation Client (GRC)"@fr ;
+    rdfs:comment "Core application for managing customer interactions, sales processes, and marketing campaigns. It is a multi-tier application with web, application, and database layers."@en ;
+    noria:applicationModelIdentifier "CRM-V3.2" ;
+    noria:applicationNumericalIdentifier 1001 ;
+    noria:applicationShortIdentifier "CRM" ;
+    noria:applicationType <kos/application/type/business-critical> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/high> ;
+    noria:applicationFunctionalDomain "Market and Customer Relationship Management" ;
+    noria:applicationFunctionalSubDomain "Customer Order Management" .
+
+noria:App_ERP_Suite a noria:Application ;
+    rdfs:label "Enterprise Resource Planning (ERP) Suite"@en, "Suite Progiciel de Gestion Intégré (PGI)"@fr ;
+    rdfs:comment "Integrated software for managing business processes, including finance, HR, supply chain, and manufacturing. Essential for corporate operations."@en ;
+    noria:applicationModelIdentifier "ERP-SAP-S4HANA" ;
+    noria:applicationNumericalIdentifier 1002 ;
+    noria:applicationShortIdentifier "ERP" ;
+    noria:applicationType <kos/application/type/business-critical> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/high> ;
+    noria:applicationFunctionalDomain "Resource Development, Management and Operations" ;
+    noria:applicationFunctionalSubDomain "Financial Management" .
+
+noria:App_MonitoringPlatform a noria:Application ;
+    rdfs:label "Central Monitoring Platform"@en, "Plateforme de Supervision Centrale"@fr ;
+    rdfs:comment "Application responsible for collecting metrics, logs, and alerts from all IT infrastructure components and applications. Provides dashboards and notification services."@en ;
+    noria:applicationModelIdentifier "MON-ZABBIX-V5" ;
+    noria:applicationNumericalIdentifier 1003 ;
+    noria:applicationShortIdentifier "MON" ;
+    noria:applicationType <kos/application/type/monitoring> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/high> ;
+    noria:applicationFunctionalDomain "Service Development, Management and Operations" ;
+    noria:applicationFunctionalSubDomain "Service Problem Management" .
+
+noria:App_InternalWiki a noria:Application ;
+    rdfs:label "Internal Knowledge Base Wiki"@en, "Wiki Base de Connaissances Interne"@fr ;
+    rdfs:comment "Collaborative platform for internal documentation, knowledge sharing, and procedural guidelines. Used by all IT teams."@en ;
+    noria:applicationModelIdentifier "WIKI-CONFLUENCE-V7" ;
+    noria:applicationNumericalIdentifier 1004 ;
+    noria:applicationShortIdentifier "WIKI" ;
+    noria:applicationType <kos/application/type/infrastructure> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/medium> ;
+    noria:applicationFunctionalDomain "Service Development, Management and Operations" ;
+    noria:applicationFunctionalSubDomain "Knowledge Management" .
+
+noria:App_DatabaseService a noria:Application ;
+    rdfs:label "Corporate Database Service"@en, "Service de Bases de Données d'Entreprise"@fr ;
+    rdfs:comment "Centralized database service providing data storage and retrieval for various applications. Includes Oracle RAC and PostgreSQL clusters."@en ;
+    noria:applicationModelIdentifier "DB-ORACLE-RAC" ;
+    noria:applicationNumericalIdentifier 1005 ;
+    noria:applicationShortIdentifier "DBS" ;
+    noria:applicationType <kos/application/type/database> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/high> ;
+    noria:applicationFunctionalDomain "Resource Development, Management and Operations" ;
+    noria:applicationFunctionalSubDomain "Database Management" .
+
+noria:App_EmailService a noria:Application ;
+    rdfs:label "Corporate Email Service"@en, "Service de Messagerie d'Entreprise"@fr ;
+    rdfs:comment "Primary communication platform for internal and external correspondence. Hosted on a hybrid cloud infrastructure."@en ;
+    noria:applicationModelIdentifier "EMAIL-EXCHANGE-HYBRID" ;
+    noria:applicationNumericalIdentifier 1006 ;
+    noria:applicationShortIdentifier "MAIL" ;
+    noria:applicationType <kos/application/type/messaging> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/high> ;
+    noria:applicationFunctionalDomain "Service Development, Management and Operations" ;
+    noria:applicationFunctionalSubDomain "Communication Management" .
+
+noria:App_VirtualizationPlatform a noria:Application ;
+    rdfs:label "VMware vSphere Platform"@en, "Plateforme VMware vSphere"@fr ;
+    rdfs:comment "The core virtualization platform managing all virtual machines across data centers. Provides compute, storage, and network virtualization."@en ;
+    noria:applicationModelIdentifier "VMWARE-VSPHERE-7" ;
+    noria:applicationNumericalIdentifier 1007 ;
+    noria:applicationShortIdentifier "VSPHERE" ;
+    noria:applicationType <kos/application/type/virtualization> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/high> ;
+    noria:applicationFunctionalDomain "Resource Development, Management and Operations" ;
+    noria:applicationFunctionalSubDomain "Virtualization Management" .
+
+noria:App_StorageService a noria:Application ;
+    rdfs:label "Enterprise Storage Service"@en, "Service de Stockage d'Entreprise"@fr ;
+    rdfs:comment "Centralized storage service providing block and file storage for applications and user data. Based on NetApp FAS arrays."@en ;
+    noria:applicationModelIdentifier "NETAPP-STORAGE-ONTAP" ;
+    noria:applicationNumericalIdentifier 1008 ;
+    noria:applicationShortIdentifier "STORAGE" ;
+    noria:applicationType <kos/application/type/storage> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/high> ;
+    noria:applicationFunctionalDomain "Resource Development, Management and Operations" ;
+    noria:applicationFunctionalSubDomain "Storage Management" .
+
+# --- Application Modules ---
+
+noria:AppMod_CRM_Prod a noria:ApplicationModule ;
+    rdfs:label "CRM Production Module"@en, "Module CRM Production"@fr ;
+    rdfs:comment "Production instance of the CRM system, serving live customer data and handling all critical customer-facing operations. Requires 24/7 availability."@en ;
+    noria:applicationModuleOf noria:App_CRM_System ;
+    noria:applicationModuleName "CRM_PROD" ;
+    noria:applicationModuleIdentifier "CRM-PROD-01" ;
+    noria:applicationModuleStatus <https://w3id.org/noria/kos/application/status/InProduction> ;
+    noria:applicationModuleSlaLevel <https://w3id.org/noria/kos/application/sla-level/Platinum> ;
+    noria:applicationModuleSlaLevelDate "2023-01-01T00:00:00Z"^^xsd:dateTime ;
+    noria:applicationModuleHotlineEnabled true ;
+    noria:applicationModuleAdministrationTeam noria:OrgUnit_AppSupportL2 ;
+    noria:applicationModuleSupportTeam noria:OrgUnit_AppSupportL2 ;
+    noria:applicationModuleHotlineGroup noria:OrgUnit_AppSupportL2 .
+
+noria:AppMod_CRM_Dev a noria:ApplicationModule ;
+    rdfs:label "CRM Development Module"@en, "Module CRM Développement"@fr ;
+    rdfs:comment "Development instance of the CRM system, used for new feature development, unit testing, and integration testing. Not customer-facing."@en ;
+    noria:applicationModuleOf noria:App_CRM_System ;
+    noria:applicationModuleName "CRM_DEV" ;
+    noria:applicationModuleIdentifier "CRM-DEV-01" ;
+    noria:applicationModuleStatus <https://w3id.org/noria/kos/application/status/Development> ;
+    noria:applicationModuleSlaLevel <https://w3id.org/noria/kos/application/sla-level/Silver> ;
+    noria:applicationModuleSlaLevelDate "2023-03-15T00:00:00Z"^^xsd:dateTime ;
+    noria:applicationModuleHotlineEnabled false ;
+    noria:applicationModuleAdministrationTeam noria:OrgUnit_DevTeam_CRM .
+
+noria:AppMod_ERP_Finance_Prod a noria:ApplicationModule ;
+    rdfs:label "ERP Finance Production Module"@en, "Module ERP Finance Production"@fr ;
+    rdfs:comment "Production instance of the ERP Finance module, handling critical financial transactions, payroll, and accounting. Any outage has severe business impact."@en ;
+    noria:applicationModuleOf noria:App_ERP_Suite ;
+    noria:applicationModuleName "ERP_FIN_PROD" ;
+    noria:applicationModuleIdentifier "ERP-FIN-PROD-01" ;
+    noria:applicationModuleStatus <https://w3id.org/noria/kos/application/status/InProduction> ;
+    noria:applicationModuleSlaLevel <https://w3id.org/noria/kos/application/sla-level/Platinum> ;
+    noria:applicationModuleSlaLevelDate "2023-01-01T00:00:00Z"^^xsd:dateTime ;
+    noria:applicationModuleHotlineEnabled true ;
+    noria:applicationModuleAdministrationTeam noria:OrgUnit_AppSupportL2 ;
+    noria:applicationModuleSupportTeam noria:OrgUnit_AppSupportL2 ;
+    noria:applicationModuleHotlineGroup noria:OrgUnit_AppSupportL2 .
+
+noria:AppMod_Monitoring_Core a noria:ApplicationModule ;
+    rdfs:label "Monitoring Core Module"@en, "Module Coeur Supervision"@fr ;
+    rdfs:comment "Core components of the Central Monitoring Platform, including data collectors, alert engines, and visualization services. Critical for detecting issues across the IT landscape."@en ;
+    noria:applicationModuleOf noria:App_MonitoringPlatform ;
+    noria:applicationModuleName "MON_CORE" ;
+    noria:applicationModuleIdentifier "MON-CORE-01" ;
+    noria:applicationModuleStatus <https://w3id.org/noria/kos/application/status/InProduction> ;
+    noria:applicationModuleSlaLevel <https://w3id.org/noria/kos/application/sla-level/Gold> ;
+    noria:applicationModuleSlaLevelDate "2023-02-01T00:00:00Z"^^xsd:dateTime ;
+    noria:applicationModuleHotlineEnabled true ;
+    noria:applicationModuleAdministrationTeam noria:OrgUnit_NetOps ;
+    noria:applicationModuleSupportTeam noria:OrgUnit_NetOps ;
+    noria:applicationModuleHotlineGroup noria:OrgUnit_NetOps .
+
+noria:AppMod_DB_Prod_Cluster1 a noria:ApplicationModule ;
+    rdfs:label "Production Database Cluster 1"@en, "Cluster Base de Données Production 1"@fr ;
+    rdfs:comment "Primary Oracle RAC cluster for production databases, supporting CRM and ERP applications. Configured for high availability and performance."@en ;
+    noria:applicationModuleOf noria:App_DatabaseService ;
+    noria:applicationModuleName "DB_PROD_C1" ;
+    noria:applicationModuleIdentifier "DB-PROD-C1-01" ;
+    noria:applicationModuleStatus <https://w3id.org/noria/kos/application/status/InProduction> ;
+    noria:applicationModuleSlaLevel <https://w3id.org/noria/kos/application/sla-level/Platinum> ;
+    noria:applicationModuleSlaLevelDate "2023-01-01T00:00:00Z"^^xsd:dateTime ;
+    noria:applicationModuleHotlineEnabled true ;
+    noria:applicationModuleAdministrationTeam noria:OrgUnit_DBA_Team ;
+    noria:applicationModuleSupportTeam noria:OrgUnit_DBA_Team ;
+    noria:applicationModuleHotlineGroup noria:OrgUnit_DBA_Team .
+
+noria:AppMod_Email_Prod a noria:ApplicationModule ;
+    rdfs:label "Corporate Email Production Module"@en, "Module Messagerie d'Entreprise Production"@fr ;
+    rdfs:comment "Production instance of the corporate email service, handling all employee email communications. Critical for business operations."@en ;
+    noria:applicationModuleOf noria:App_EmailService ;
+    noria:applicationModuleName "EMAIL_PROD" ;
+    noria:applicationModuleIdentifier "EMAIL-PROD-01" ;
+    noria:applicationModuleStatus <https://w3id.org/noria/kos/application/status/InProduction> ;
+    noria:applicationModuleSlaLevel <https://w3id.org/noria/kos/application/sla-level/Platinum> ;
+    noria:applicationModuleSlaLevelDate "2023-04-01T00:00:00Z"^^xsd:dateTime ;
+    noria:applicationModuleHotlineEnabled true ;
+    noria:applicationModuleAdministrationTeam noria:OrgUnit_InfraOps ;
+    noria:applicationModuleSupportTeam noria:OrgUnit_InfraOps ;
+    noria:applicationModuleHotlineGroup noria:OrgUnit_InfraOps .
+
+noria:AppMod_vSphere_Cluster_DC_Paris a noria:ApplicationModule ;
+    rdfs:label "vSphere Cluster DC Paris"@en, "Cluster vSphere DC Paris"@fr ;
+    rdfs:comment "VMware vSphere cluster managing virtual machines in the Paris Data Center. Provides resource pooling and high availability for VMs."@en ;
+    noria:applicationModuleOf noria:App_VirtualizationPlatform ;
+    noria:applicationModuleName "VSPHERE_DC_PARIS" ;
+    noria:applicationModuleIdentifier "VSPHERE-DC-PARIS-01" ;
+    noria:applicationModuleStatus <https://w3id.org/noria/kos/application/status/InProduction> ;
+    noria:applicationModuleSlaLevel <https://w3id.org/noria/kos/application/sla-level/Gold> ;
+    noria:applicationModuleSlaLevelDate "2022-11-01T00:00:00Z"^^xsd:dateTime ;
+    noria:applicationModuleHotlineEnabled true ;
+    noria:applicationModuleAdministrationTeam noria:OrgUnit_InfraOps ;
+    noria:applicationModuleSupportTeam noria:OrgUnit_InfraOps ;
+    noria:applicationModuleHotlineGroup noria:OrgUnit_InfraOps .
+
+noria:AppMod_Storage_Prod_NetApp a noria:ApplicationModule ;
+    rdfs:label "Production NetApp Storage Module"@en, "Module Stockage NetApp Production"@fr ;
+    rdfs:comment "Production storage array providing shared storage for critical applications and databases. Configured with RAID and replication."@en ;
+    noria:applicationModuleOf noria:App_StorageService ;
+    noria:applicationModuleName "STORAGE_NETAPP_PROD" ;
+    noria:applicationModuleIdentifier "STORAGE-NETAPP-PROD-01" ;
+    noria:applicationModuleStatus <https://w3id.org/noria/kos/application/status/InProduction> ;
+    noria:applicationModuleSlaLevel <https://w3id.org/noria/kos/application/sla-level/Platinum> ;
+    noria:applicationModuleSlaLevelDate "2023-06-01T00:00:00Z"^^xsd:dateTime ;
+    noria:applicationModuleHotlineEnabled true ;
+    noria:applicationModuleAdministrationTeam noria:OrgUnit_InfraOps ;
+    noria:applicationModuleSupportTeam noria:OrgUnit_InfraOps ;
+    noria:applicationModuleHotlineGroup noria:OrgUnit_InfraOps .
+
+# --- Services ---
+
+noria:Service_CustomerInternetAccess a noria:Service ;
+    rdfs:label "Customer Internet Access Service"@en, "Service d'Accès Internet Client"@fr ;
+    rdfs:comment "End-to-end service providing internet connectivity to corporate customers. This service relies on core network infrastructure and DMZ applications."@en ;
+    noria:serviceType <kos/service/type/CustomerFacingService> ;
+    seas:subSystemOf noria:AppMod_CRM_Prod, noria:AppMod_Monitoring_Core .
+
+noria:Service_InternalVPN a noria:Service ;
+    rdfs:label "Internal VPN Service"@en, "Service VPN Interne"@fr ;
+    rdfs:comment "Secure VPN access for internal employees to corporate resources, enabling remote work and secure access to internal applications."@en ;
+    noria:serviceType <kos/service/type/ResourceFacingService> ;
+    seas:subSystemOf noria:AppMod_Monitoring_Core, noria:App_EmailService .
+
+noria:Service_CorporateEmail a noria:Service ;
+    rdfs:label "Corporate Email Service"@en, "Service de Messagerie d'Entreprise"@fr ;
+    rdfs:comment "Essential communication service for all employees, including email, calendar, and contacts. Integrated with other collaboration tools."@en ;
+    noria:serviceType <kos/service/type/InternalService> ;
+    seas:subSystemOf noria:AppMod_Email_Prod .
+
+noria:Service_DataBackup a noria:Service ;
+    rdfs:label "Enterprise Data Backup Service"@en, "Service de Sauvegarde de Données d'Entreprise"@fr ;
+    rdfs:comment "Centralized service for backing up critical application data and user files, ensuring data recovery capabilities."@en ;
+    noria:serviceType <kos/service/type/PlatformService> ;
+    seas:subSystemOf noria:AppMod_Storage_Prod_NetApp, noria:AppMod_DB_Prod_Cluster1 .
+
+# --- Resources ---
+
+# IP Addresses (observable:IPAddress) - Generating a large pool
+<%
+  for (let i = 0; i < 255; i++) {
+    for (let j = 0; j < 255; j++) {
+      if (i < 10 && j < 10) { // Limit the number of IPs to avoid excessive output
+%>
+observable:IPAddress_10_0_<%= i %>_<%= j %> a observable:IPAddress ; rdfs:label "10.0.<%= i %>.<%= j %>"@en .
+<%
+      }
+    }
+  }
+%>
+
+# Servers (100 instances)
+<%
+  for (let i = 1; i <= 100; i++) {
+    const appIndex = (i % 3) + 1; // Link to CRM, ERP, Monitoring
+    const app = appIndex === 1 ? noria:App_CRM_System : (appIndex === 2 ? noria:App_ERP_Suite : noria:App_MonitoringPlatform);
+    const appMod = appIndex === 1 ? noria:AppMod_CRM_Prod : (appIndex === 2 ? noria:AppMod_ERP_Finance_Prod : noria:AppMod_Monitoring_Core);
+    const locusIndex = (i % 200) + 1; // Distribute across 200 Locus in SRA
+    const locusLine = Math.floor((locusIndex - 1) / 20) + 1;
+    const locusCol = ((locusIndex - 1) % 20) + 1;
+    const ipLastOctet = 100 + i;
+    const ipSecondOctet = Math.floor(i / 25) + 1;
+    const hostname = `appserver${String(i).padStart(3, '0')}`;
+    const serial = `DELL-SN-APP${String(i).padStart(3, '0')}`;
+    const installDate = `2023-01-${String((i % 28) + 1).padStart(2, '0')}T10:00:00Z`;
+%>
+noria:Res_AppServer_<%= String(i).padStart(3, '0') %> a noria:Resource ;
+    rdfs:label "Application Server <%= String(i).padStart(3, '0') %>"@en, "Serveur Applicatif <%= String(i).padStart(3, '0') %>"@fr ;
+    rdfs:comment "A generic application server instance, part of the <%= app.split('/').pop() %> application stack. Hosts various microservices and backend processes."@en ;
+    noria:resourceLogisticId "SRV-APP-<%= String(i).padStart(3, '0') %>-LOG" ;
+    noria:resourceHostName "<%= hostname %>.corp.example.com" ;
+    noria:resourceProductModel noria:ProductModel_DellR750 ;
+    noria:resourceType <kos/Resource/type/Server> ;
+    noria:resourceSerialNumber "<%= serial %>" ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "<%= installDate %>"^^xsd:dateTime ;
+    noria:resourceManagedBy noria:OrgUnit_AppSupportL2 ;
+    noria:locatedAtLocus noria:Locus_DC_Paris_SRA_L<%= locusLine %>C<%= locusCol %> ;
+    noria:resourceForApplication <%= app %> ;
+    noria:resourceManagementIPAddress observable:IPAddress_10_0_<%= ipSecondOctet %>_<%= ipLastOctet %> .
+<%
+  }
+%>
+
+# Database Servers (20 instances)
+<%
+  for (let i = 1; i <= 20; i++) {
+    const locusIndex = (i % 200) + 1; // Distribute across 200 Locus in SRA
+    const locusLine = Math.floor((locusIndex - 1) / 20) + 1;
+    const locusCol = ((locusIndex - 1) % 20) + 1;
+    const ipLastOctet = 200 + i;
+    const ipSecondOctet = Math.floor(i / 25) + 5;
+    const hostname = `oradb${String(i).padStart(2, '0')}`;
+    const serial = `DELL-SN-ORA${String(i).padStart(2, '0')}`;
+    const installDate = `2022-06-${String((i % 28) + 1).padStart(2, '0')}T11:00:00Z`;
+%>
+noria:Res_DBServer_Oracle_<%= String(i).padStart(2, '0') %> a noria:Resource ;
+    rdfs:label "Oracle Database Server <%= String(i).padStart(2, '0') %>"@en, "Serveur Base de Données Oracle <%= String(i).padStart(2, '0') %>"@fr ;
+    rdfs:comment "A node in the Oracle RAC cluster for production databases, supporting high-volume transactional data. Managed by the DBA team."@en ;
+    noria:resourceLogisticId "DB-ORA-<%= String(i).padStart(2, '0') %>-LOG" ;
+    noria:resourceHostName "<%= hostname %>.corp.example.com" ;
+    noria:resourceProductModel noria:ProductModel_DellR750 ;
+    noria:resourceType <kos/Resource/type/DatabaseServer> ;
+    noria:resourceSerialNumber "<%= serial %>" ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "<%= installDate %>"^^xsd:dateTime ;
+    noria:resourceManagedBy noria:OrgUnit_DBA_Team ;
+    noria:locatedAtLocus noria:Locus_DC_Paris_SRA_L<%= locusLine %>C<%= locusCol %> ;
+    noria:resourceForApplication noria:App_DatabaseService ;
+    noria:resourceManagementIPAddress observable:IPAddress_10_0_<%= ipSecondOctet %>_<%= ipLastOctet %> ;
+    noria:clusterController noria:Res_DBServer_Oracle_01 .
+<%
+  }
+%>
+
+# Routers (30 instances)
+<%
+  for (let i = 1; i <= 30; i++) {
+    const locusIndex = (i % 100) + 1; // Distribute across 100 Locus in NRB
+    const locusLine = Math.floor((locusIndex - 1) / 20) + 1;
+    const locusCol = ((locusIndex - 1) % 20) + 1;
+    const ipLastOctet = 1 + i;
+    const ipSecondOctet = Math.floor(i / 10) + 10;
+    const hostname = `rtr-core${String(i).padStart(2, '0')}`;
+    const serial = `JPR-SN-MX${String(i).padStart(2, '0')}`;
+    const installDate = `2021-01-${String((i % 28) + 1).padStart(2, '0')}T09:00:00Z`;
+%>
+noria:Res_Router_Core_<%= String(i).padStart(2, '0') %> a noria:Resource ;
+    rdfs:label "Core Router <%= String(i).padStart(2, '0') %>"@en, "Routeur Coeur <%= String(i).padStart(2, '0') %>"@fr ;
+    rdfs:comment "A core router in the data center network, responsible for high-speed routing between different network segments and external connectivity. Critical for all services."@en ;
+    noria:resourceLogisticId "RTR-CORE-<%= String(i).padStart(2, '0') %>-LOG" ;
+    noria:resourceHostName "<%= hostname %>.dc-par.example.com" ;
+    noria:resourceProductModel noria:ProductModel_JuniperMX204 ;
+    noria:resourceType <kos/Resource/type/Router> ;
+    noria:resourceSerialNumber "<%= serial %>" ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "<%= installDate %>"^^xsd:dateTime ;
+    noria:resourceManagedBy noria:OrgUnit_NetOps ;
+    noria:locatedAtLocus noria:Locus_DC_Paris_NRB_R<%= locusLine %>S<%= locusCol %> ;
+    noria:resourceForApplication noria:App_MonitoringPlatform ;
+    noria:resourceManagementIPAddress observable:IPAddress_10_0_<%= ipSecondOctet %>_<%= ipLastOctet %> .
+<%
+  }
+%>
+
+# Switches (50 instances)
+<%
+  for (let i = 1; i <= 50; i++) {
+    const locusIndex = (i % 200) + 1; // Distribute across 200 Locus in SRA
+    const locusLine = Math.floor((locusIndex - 1) / 20) + 1;
+    const locusCol = ((locusIndex - 1) % 20) + 1;
+    const ipLastOctet = 100 + i;
+    const ipSecondOctet = Math.floor(i / 25) + 20;
+    const hostname = `acc-sw${String(i).padStart(2, '0')}`;
+    const serial = `CISCO-SN-9300-${String(i).padStart(2, '0')}`;
+    const installDate = `2022-03-${String((i % 28) + 1).padStart(2, '0')}T14:00:00Z`;
+%>
+noria:Res_Switch_Access_<%= String(i).padStart(2, '0') %> a noria:Resource ;
+    rdfs:label "Access Switch <%= String(i).padStart(2, '0') %>"@en, "Commutateur d'Accès <%= String(i).padStart(2, '0') %>"@fr ;
+    rdfs:comment "An access layer switch in the data center, connecting application servers and other end devices to the network. Provides VLAN segmentation and PoE capabilities."@en ;
+    noria:resourceLogisticId "SW-ACC-<%= String(i).padStart(2, '0') %>-LOG" ;
+    noria:resourceHostName "<%= hostname %>.dc-par.example.com" ;
+    noria:resourceProductModel noria:ProductModel_Cisco9300 ;
+    noria:resourceType <kos/Resource/type/Switch> ;
+    noria:resourceSerialNumber "<%= serial %>" ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "<%= installDate %>"^^xsd:dateTime ;
+    noria:resourceManagedBy noria:OrgUnit_NetOps ;
+    noria:locatedAtLocus noria:Locus_DC_Paris_SRA_L<%= locusLine %>C<%= locusCol %> ;
+    noria:resourceForApplication noria:App_CRM_System ;
+    noria:resourceManagementIPAddress observable:IPAddress_10_0_<%= ipSecondOctet %>_<%= ipLastOctet %> .
+<%
+  }
+%>
+
+# Firewalls (10 instances)
+<%
+  for (let i = 1; i <= 10; i++) {
+    const locusIndex = (i % 100) + 1; // Distribute across 100 Locus in NRB
+    const locusLine = Math.floor((locusIndex - 1) / 20) + 1;
+    const locusCol = ((locusIndex - 1) % 20) + 1;
+    const ipLastOctet = 1 + i;
+    const ipSecondOctet = Math.floor(i / 10) + 30;
+    const hostname = `dmz-fw${String(i).padStart(2, '0')}`;
+    const serial = `PA-SN-5220-${String(i).padStart(2, '0')}`;
+    const installDate = `2021-08-${String((i % 28) + 1).padStart(2, '0')}T10:00:00Z`;
+%>
+noria:Res_Firewall_DMZ_<%= String(i).padStart(2, '0') %> a noria:Resource ;
+    rdfs:label "DMZ Firewall <%= String(i).padStart(2, '0') %>"@en, "Pare-feu DMZ <%= String(i).padStart(2, '0') %>"@fr ;
+    rdfs:comment "A next-generation firewall protecting the DMZ segment, enforcing security policies for public-facing applications. Provides intrusion prevention and application control."@en ;
+    noria:resourceLogisticId "FW-DMZ-<%= String(i).padStart(2, '0') %>-LOG" ;
+    noria:resourceHostName "<%= hostname %>.dc-par.example.com" ;
+    noria:resourceProductModel noria:ProductModel_PaloAlto5220 ;
+    noria:resourceType <kos/Resource/type/Firewall> ;
+    noria:resourceSerialNumber "<%= serial %>" ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "<%= installDate %>"^^xsd:dateTime ;
+    noria:resourceManagedBy noria:OrgUnit_SecurityTeam ;
+    noria:locatedAtLocus noria:Locus_DC_Paris_NRB_R<%= locusLine %>S<%= locusCol %> ;
+    noria:resourceForApplication noria:App_CRM_System ;
+    noria:resourceManagementIPAddress observable:IPAddress_10_0_<%= ipSecondOctet %>_<%= ipLastOctet %> .
+<%
+  }
+%>
+
+# Virtual Machines (200 instances)
+<%
+  for (let i = 1; i <= 200; i++) {
+    const appIndex = (i % 4) + 1; // Link to CRM, ERP, Monitoring, Wiki
+    const app = appIndex === 1 ? noria:App_CRM_System : (appIndex === 2 ? noria:App_ERP_Suite : (appIndex === 3 ? noria:App_MonitoringPlatform : noria:App_InternalWiki));
+    const appMod = appIndex === 1 ? noria:AppMod_CRM_Prod : (appIndex === 2 ? noria:AppMod_ERP_Finance_Prod : (appIndex === 3 ? noria:AppMod_Monitoring_Core : noria:App_InternalWiki));
+    const locusIndex = (i % 200) + 1; // Distribute across 200 Locus in SRA
+    const locusLine = Math.floor((locusIndex - 1) / 20) + 1;
+    const locusCol = ((locusIndex - 1) % 20) + 1;
+    const ipLastOctet = 1 + i;
+    const ipSecondOctet = Math.floor(i / 25) + 40;
+    const hostname = `vm-app${String(i).padStart(3, '0')}`;
+    const serial = `VM-UUID-APP${String(i).padStart(3, '0')}`;
+    const installDate = `2023-04-${String((i % 28) + 1).padStart(2, '0')}T09:00:00Z`;
+%>
+noria:Res_VM_App_<%= String(i).padStart(3, '0') %> a noria:Resource ;
+    rdfs:label "Virtual Machine for Application <%= String(i).padStart(3, '0') %>"@en, "Machine Virtuelle pour Application <%= String(i).padStart(3, '0') %>"@fr ;
+    rdfs:comment "A virtual machine hosting a component of the <%= app.split('/').pop() %> application. Runs on the VMware vSphere platform."@en ;
+    noria:resourceLogisticId "VM-APP-<%= String(i).padStart(3, '0') %>-LOG" ;
+    noria:resourceHostName "<%= hostname %>.corp.example.com" ;
+    noria:resourceProductModel noria:ProductModel_VMwareESXi ; # Represents the underlying hypervisor model
+    noria:resourceType <kos/Resource/type/VirtualMachine> ;
+    noria:resourceSerialNumber "<%= serial %>" ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "<%= installDate %>"^^xsd:dateTime ;
+    noria:resourceManagedBy noria:OrgUnit_InfraOps ;
+    noria:locatedAtLocus noria:Locus_DC_Paris_SRA_L<%= locusLine %>C<%= locusCol %> ;
+    noria:resourceForApplication <%= app %> ;
+    noria:resourceManagementIPAddress observable:IPAddress_10_0_<%= ipSecondOctet %>_<%= ipLastOctet %> ;
+    noria:clusterController noria:Res_Hypervisor_Host_01 .
+<%
+  }
+%>
+
+# Hypervisor Hosts (10 instances)
+<%
+  for (let i = 1; i <= 10; i++) {
+    const locusIndex = (i % 200) + 1; // Distribute across 200 Locus in SRA
+    const locusLine = Math.floor((locusIndex - 1) / 20) + 1;
+    const locusCol = ((locusIndex - 1) % 20) + 1;
+    const ipLastOctet = 1 + i;
+    const ipSecondOctet = Math.floor(i / 10) + 50;
+    const hostname = `esxi-host${String(i).padStart(2, '0')}`;
+    const serial = `HP-SN-DL380-${String(i).padStart(2, '0')}`;
+    const installDate = `2022-10-${String((i % 28) + 1).padStart(2, '0')}T10:00:00Z`;
+%>
+noria:Res_Hypervisor_Host_<%= String(i).padStart(2, '0') %> a noria:Resource ;
+    rdfs:label "Hypervisor Host <%= String(i).padStart(2, '0') %>"@en, "Hôte Hyperviseur <%= String(i).padStart(2, '0') %>"@fr ;
+    rdfs:comment "Physical server running VMware ESXi, hosting multiple virtual machines. Part of the vSphere cluster in Paris DC."@en ;
+    noria:resourceLogisticId "HV-ESXI-<%= String(i).padStart(2, '0') %>-LOG" ;
+    noria:resourceHostName "<%= hostname %>.dc-par.example.com" ;
+    noria:resourceProductModel noria:ProductModel_HP_ProLiant_DL380 ;
+    noria:resourceType <kos/Resource/type/Hypervisor> ;
+    noria:resourceSerialNumber "<%= serial %>" ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "<%= installDate %>"^^xsd:dateTime ;
+    noria:resourceManagedBy noria:OrgUnit_InfraOps ;
+    noria:locatedAtLocus noria:Locus_DC_Paris_SRA_L<%= locusLine %>C<%= locusCol %> ;
+    noria:resourceForApplication noria:App_VirtualizationPlatform ;
+    noria:resourceManagementIPAddress observable:IPAddress_10_0_<%= ipSecondOctet %>_<%= ipLastOctet %> .
+<%
+  }
+%>
+
+# Storage Arrays (5 instances)
+<%
+  for (let i = 1; i <= 5; i++) {
+    const locusIndex = (i % 200) + 1; // Distribute across 200 Locus in SRA
+    const locusLine = Math.floor((locusIndex - 1) / 20) + 1;
+    const locusCol = ((locusIndex - 1) % 20) + 1;
+    const ipLastOctet = 1 + i;
+    const ipSecondOctet = Math.floor(i / 5) + 60;
+    const hostname = `netapp-fas${String(i).padStart(2, '0')}`;
+    const serial = `NETAPP-SN-FAS${String(i).padStart(2, '0')}`;
+    const installDate = `2023-06-${String((i % 28) + 1).padStart(2, '0')}T10:00:00Z`;
+%>
+noria:Res_Storage_Array_<%= String(i).padStart(2, '0') %> a noria:Resource ;
+    rdfs:label "Storage Array <%= String(i).padStart(2, '0') %>"@en, "Baie de Stockage <%= String(i).padStart(2, '0') %>"@fr ;
+    rdfs:comment "NetApp FAS storage array providing shared storage for virtual machines and databases. Configured with high-speed Fibre Channel and NFS exports."@en ;
+    noria:resourceLogisticId "SA-NETAPP-<%= String(i).padStart(2, '0') %>-LOG" ;
+    noria:resourceHostName "<%= hostname %>.dc-par.example.com" ;
+    noria:resourceProductModel noria:ProductModel_NetApp_FAS8200 ;
+    noria:resourceType <kos/Resource/type/StorageArray> ;
+    noria:resourceSerialNumber "<%= serial %>" ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "<%= installDate %>"^^xsd:dateTime ;
+    noria:resourceManagedBy noria:OrgUnit_InfraOps ;
+    noria:locatedAtLocus noria:Locus_DC_Paris_SRA_L<%= locusLine %>C<%= locusCol %> ;
+    noria:resourceForApplication noria:App_StorageService ;
+    noria:resourceManagementIPAddress observable:IPAddress_10_0_<%= ipSecondOctet %>_<%= ipLastOctet %> .
+<%
+  }
+%>
+
+# --- Network Interfaces ---
+
+# For each of the 100 App Servers, 2 interfaces
+<%
+  for (let i = 1; i <= 100; i++) {
+    const resUri = `noria:Res_AppServer_${String(i).padStart(3, '0')}`;
+    const hostname = `appserver${String(i).padStart(3, '0')}`;
+%>
+noria:NI_<%= hostname %>_Eth0 a noria:NetworkInterface ;
+    rdfs:label "<%= hostname %> Ethernet0"@en ;
+    rdfs:comment "Main network interface for <%= hostname %>.corp.example.com, connected to the application VLAN."@en ;
+    noria:networkInterfaceOf <%= resUri %> ;
+    noria:networkInterfaceDescription "Ethernet interface connected to App VLAN 10" ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/Up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/Up> .
+
+noria:NI_<%= hostname %>_Eth1 a noria:NetworkInterface ;
+    rdfs:label "<%= hostname %> Ethernet1"@en ;
+    rdfs:comment "Secondary network interface for <%= hostname %>.corp.example.com, used for management or backup."@en ;
+    noria:networkInterfaceOf <%= resUri %> ;
+    noria:networkInterfaceDescription "Ethernet interface for management network" ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/Up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/Up> .
+<%
+  }
+%>
+
+# For each of the 20 DB Servers, 3 interfaces (data, interconnect, management)
+<%
+  for (let i = 1; i <= 20; i++) {
+    const resUri = `noria:Res_DBServer_Oracle_${String(i).padStart(2, '0')}`;
+    const hostname = `oradb${String(i).padStart(2, '0')}`;
+%>
+noria:NI_<%= hostname %>_Data a noria:NetworkInterface ;
+    rdfs:label "<%= hostname %> Data Interface"@en ;
+    rdfs:comment "Main data interface for Oracle Database Server <%= String(i).padStart(2, '0') %>, connected to database VLAN."@en ;
+    noria:networkInterfaceOf <%= resUri %> ;
+    noria:networkInterfaceDescription "Data interface for database traffic" ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/Up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/Up> .
+
+noria:NI_<%= hostname %>_Interconnect a noria:NetworkInterface ;
+    rdfs:label "<%= hostname %> Interconnect Interface"@en ;
+    rdfs:comment "Interconnect interface for Oracle RAC communication on <%= hostname %>.corp.example.com."@en ;
+    noria:networkInterfaceOf <%= resUri %> ;
+    noria:networkInterfaceDescription "High-speed interconnect for Oracle RAC" ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/Up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/Up> .
+
+noria:NI_<%= hostname %>_Mgmt a noria:NetworkInterface ;
+    rdfs:label "<%= hostname %> Management Interface"@en ;
+    rdfs:comment "Management interface for Oracle Database Server <%= String(i).padStart(2, '0') %>."@en ;
+    noria:networkInterfaceOf <%= resUri %> ;
+    noria:networkInterfaceDescription "Dedicated management interface" ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/Up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/Up> .
+<%
+  }
+%>
+
+# For each of the 30 Routers, 4 interfaces (2 uplinks, 2 internal SVIs)
+<%
+  for (let i = 1; i <= 30; i++) {
+    const resUri = `noria:Res_Router_Core_${String(i).padStart(2, '0')}`;
+    const hostname = `rtr-core${String(i).padStart(2, '0')}`;
+%>
+noria:NI_<%= hostname %>_Gi0_0_0 a noria:NetworkInterface ;
+    rdfs:label "<%= hostname %> GigabitEthernet0/0/0"@en ;
+    rdfs:comment "Primary uplink interface to ISP A for <%= hostname %>.dc-par.example.com."@en ;
+    noria:networkInterfaceOf <%= resUri %> ;
+    noria:networkInterfaceDescription "GigabitEthernet uplink to external network via ISP A" ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/Up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/Up> ;
+    noria:networkInterfaceRoutingPriorityMetric 100 .
+
+noria:NI_<%= hostname %>_Gi0_0_1 a noria:NetworkInterface ;
+    rdfs:label "<%= hostname %> GigabitEthernet0/0/1"@en ;
+    rdfs:comment "Secondary uplink interface to ISP B for <%= hostname %>.dc-par.example.com."@en ;
+    noria:networkInterfaceOf <%= resUri %> ;
+    noria:networkInterfaceDescription "GigabitEthernet uplink to external network via ISP B (redundant)" ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/Up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/Up> ;
+    noria:networkInterfaceRoutingPriorityMetric 200 .
+
+noria:NI_<%= hostname %>_Vlan10 a noria:NetworkInterface ;
+    rdfs:label "<%= hostname %> VLAN10 Interface"@en ;
+    rdfs:comment "Switched Virtual Interface (SVI) for Application VLAN 10 on <%= hostname %>.dc-par.example.com."@en ;
+    noria:networkInterfaceOf <%= resUri %> ;
+    noria:networkInterfaceDescription "Virtual interface for application servers VLAN" ;
+    noria:networkInterfaceType "virtual" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/Up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/Up> .
+
+noria:NI_<%= hostname %>_Vlan20 a noria:NetworkInterface ;
+    rdfs:label "<%= hostname %> VLAN20 Interface"@en ;
+    rdfs:comment "Switched Virtual Interface (SVI) for Database VLAN 20 on <%= hostname %>.dc-par.example.com."@en ;
+    noria:networkInterfaceOf <%= resUri %> ;
+    noria:networkInterfaceDescription "Virtual interface for database servers VLAN" ;
+    noria:networkInterfaceType "virtual" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/Up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/Up> .
+<%
+  }
+%>
+
+# For each of the 50 Switches, 2 uplinks and 24 access ports (simplified)
+<%
+  for (let i = 1; i <= 50; i++) {
+    const resUri = `noria:Res_Switch_Access_${String(i).padStart(2, '0')}`;
+    const hostname = `acc-sw${String(i).padStart(2, '0')}`;
+%>
+noria:NI_<%= hostname %>_Uplink1 a noria:NetworkInterface ;
+    rdfs:label "<%= hostname %> Uplink1"@en ;
+    rdfs:comment "Primary uplink to core network for access switch <%= String(i).padStart(2, '0') %>."@en ;
+    noria:networkInterfaceOf <%= resUri %> ;
+    noria:networkInterfaceDescription "Fiber uplink to core router" ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/Up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/Up> .
+
+noria:NI_<%= hostname %>_Uplink2 a noria:NetworkInterface ;
+    rdfs:label "<%= hostname %> Uplink2"@en ;
+    rdfs:comment "Secondary uplink to core network for access switch <%= String(i).padStart(2, '0') %>."@en ;
+    noria:networkInterfaceOf <%= resUri %> ;
+    noria:networkInterfaceDescription "Redundant fiber uplink to core router" ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/Up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/Up> .
+
+<%
+    for (let j = 1; j <= 24; j++) {
+%>
+noria:NI_<%= hostname %>_Gi1_0_<%= String(j).padStart(2, '0') %> a noria:NetworkInterface ;
+    rdfs:label "<%= hostname %> GigabitEthernet1/0/<%= String(j).padStart(2, '0') %>"@en ;
+    rdfs:comment "Access port <%= String(j).padStart(2, '0') %> on access switch <%= String(i).padStart(2, '0') %>, connecting to a server or VM."@en ;
+    noria:networkInterfaceOf <%= resUri %> ;
+    noria:networkInterfaceDescription "Access port for server connectivity" ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/Up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/Up> .
+<%
+    }
+  }
+%>
+
+# For each of the 200 Virtual Machines, 1 interface
+<%
+  for (let i = 1; i <= 200; i++) {
+    const resUri = `noria:Res_VM_App_${String(i).padStart(3, '0')}`;
+    const hostname = `vm-app${String(i).padStart(3, '0')}`;
+%>
+noria:NI_<%= hostname %>_vNIC0 a noria:NetworkInterface ;
+    rdfs:label "<%= hostname %> Virtual NIC 0"@en ;
+    rdfs:comment "Primary virtual network interface for virtual machine <%= hostname %>.corp.example.com."@en ;
+    noria:networkInterfaceOf <%= resUri %> ;
+    noria:networkInterfaceDescription "Virtual NIC connected to virtual switch" ;
+    noria:networkInterfaceType "virtual" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/Up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/Up> .
+<%
+  }
+%>
+
+# --- Network Links ---
+
+# Links between App Servers and Access Switches (100 links)
+<%
+  for (let i = 1; i <= 100; i++) {
+    const appServerUri = `noria:Res_AppServer_${String(i).padStart(3, '0')}`;
+    const appServerNI = `noria:NI_appserver${String(i).padStart(3, '0')}_Eth0`;
+    const switchIndex = (i % 50) + 1;
+    const accessSwitchUri = `noria:Res_Switch_Access_${String(switchIndex).padStart(2, '0')}`;
+    const accessSwitchNI = `noria:NI_acc-sw${String(switchIndex).padStart(2, '0')}_Gi1_0_${String((i % 24) + 1).padStart(2, '0')}`;
+    const linkId = `NL-APP${String(i).padStart(3, '0')}-SW${String(switchIndex).padStart(2, '0')}`;
+    const installDate = `2023-01-${String((i % 28) + 1).padStart(2, '0')}T10:05:00Z`;
+%>
+noria:NetLink_<%= linkId %> a noria:NetworkLink ;
+    rdfs:label "Link App Server <%= String(i).padStart(3, '0') %> to Access Switch <%= String(switchIndex).padStart(2, '0') %>"@en ;
+    rdfs:comment "Physical Ethernet link connecting application server <%= String(i).padStart(3, '0') %> to access switch <%= String(switchIndex).padStart(2, '0') %>."@en ;
+    noria:networkLinkId "<%= linkId %>" ;
+    noria:networkLinkType "Ethernet 1Gbps" ;
+    noria:networkLinkInstallationDate "<%= installDate %>"^^xsd:dateTime ;
+    noria:networkInterfaceConnects <%= appServerNI %> ;
+    noria:networkInterfaceConnects <%= accessSwitchNI %> ;
+    noria:networkLinkTerminationResource <%= appServerUri %> ;
+    noria:networkLinkTerminationResource <%= accessSwitchUri %> ;
+    noria:resourceManagedBy noria:OrgUnit_NetOps .
+<%
+  }
+%>
+
+# Links between Access Switches and Core Routers (50 links)
+<%
+  for (let i = 1; i <= 50; i++) {
+    const accessSwitchUri = `noria:Res_Switch_Access_${String(i).padStart(2, '0')}`;
+    const accessSwitchNI = `noria:NI_acc-sw${String(i).padStart(2, '0')}_Uplink1`;
+    const coreRouterIndex = (i % 30) + 1;
+    const coreRouterUri = `noria:Res_Router_Core_${String(coreRouterIndex).padStart(2, '0')}`;
+    const coreRouterNI = `noria:NI_rtr-core${String(coreRouterIndex).padStart(2, '0')}_Vlan10`; # Logical connection to SVI
+    const linkId = `NL-SW${String(i).padStart(2, '0')}-RTR${String(coreRouterIndex).padStart(2, '0')}`;
+    const installDate = `2022-03-${String((i % 28) + 1).padStart(2, '0')}T14:10:00Z`;
+%>
+noria:NetLink_<%= linkId %> a noria:NetworkLink ;
+    rdfs:label "Link Access Switch <%= String(i).padStart(2, '0') %> to Core Router <%= String(coreRouterIndex).padStart(2, '0') %>"@en ;
+    rdfs:comment "Uplink from access switch <%= String(i).padStart(2, '0') %> to core router <%= String(coreRouterIndex).padStart(2, '0') %>, carrying multiple VLANs."@en ;
+    noria:networkLinkId "<%= linkId %>" ;
+    noria:networkLinkType "Fiber Optic 10Gbps" ;
+    noria:networkLinkInstallationDate "<%= installDate %>"^^xsd:dateTime ;
+    noria:networkInterfaceConnects <%= accessSwitchNI %> ;
+    noria:networkInterfaceConnects <%= coreRouterNI %> ;
+    noria:networkLinkTerminationResource <%= accessSwitchUri %> ;
+    noria:networkLinkTerminationResource <%= coreRouterUri %> ;
+    noria:resourceManagedBy noria:OrgUnit_NetOps .
+<%
+  }
+%>
+
+# Links between Core Routers and ISPs (30 links)
+<%
+  for (let i = 1; i <= 30; i++) {
+    const coreRouterUri = `noria:Res_Router_Core_${String(i).padStart(2, '0')}`;
+    const coreRouterNI = `noria:NI_rtr-core${String(i).padStart(2, '0')}_Gi0_0_0`;
+    const linkId = `NL-RTR${String(i).padStart(2, '0')}-ISPA`;
+    const installDate = `2021-01-${String((i % 28) + 1).padStart(2, '0')}T09:15:00Z`;
+%>
+noria:NetLink_<%= linkId %> a noria:NetworkLink ;
+    rdfs:label "Link Core Router <%= String(i).padStart(2, '0') %> to ISP A"@en ;
+    rdfs:comment "External connectivity link from core router <%= String(i).padStart(2, '0') %> to Internet Service Provider A. This is a critical path for customer internet access."@en ;
+    noria:networkLinkId "<%= linkId %>" ;
+    noria:networkLinkType "MPLS VPN 100Mbps" ;
+    noria:networkLinkInstallationDate "<%= installDate %>"^^xsd:dateTime ;
+    noria:networkInterfaceConnects <%= coreRouterNI %> ;
+    noria:networkLinkTerminationResource <%= coreRouterUri %> ;
+    noria:resourceManagedBy noria:OrgUnit_NetOps .
+<%
+  }
+%>
+
+# Links between DB Servers and Storage Arrays (20 links)
+<%
+  for (let i = 1; i <= 20; i++) {
+    const dbServerUri = `noria:Res_DBServer_Oracle_${String(i).padStart(2, '0')}`;
+    const dbServerNI = `noria:NI_oradb${String(i).padStart(2, '0')}_Data`;
+    const storageArrayIndex = (i % 5) + 1;
+    const storageArrayUri = `noria:Res_Storage_Array_${String(storageArrayIndex).padStart(2, '0')}`;
+    const linkId = `NL-DB${String(i).padStart(2, '0')}-SA${String(storageArrayIndex).padStart(2, '0')}`;
+    const installDate = `2023-06-${String((i % 28) + 1).padStart(2, '0')}T10:15:00Z`;
+%>
+noria:NetLink_<%= linkId %> a noria:NetworkLink ;
+    rdfs:label "Link DB Server <%= String(i).padStart(2, '0') %> to Storage Array <%= String(storageArrayIndex).padStart(2, '0') %>"@en ;
+    rdfs:comment "High-speed Fibre Channel link connecting Oracle database server <%= String(i).padStart(2, '0') %> to NetApp storage array <%= String(storageArrayIndex).padStart(2, '0') %> for data access."@en ;
+    noria:networkLinkId "<%= linkId %>" ;
+    noria:networkLinkType "Fibre Channel 16Gbps" ;
+    noria:networkLinkInstallationDate "<%= installDate %>"^^xsd:dateTime ;
+    noria:networkInterfaceConnects <%= dbServerNI %> ;
+    noria:networkLinkTerminationResource <%= dbServerUri %> ;
+    noria:networkLinkTerminationResource <%= storageArrayUri %> ;
+    noria:resourceManagedBy noria:OrgUnit_InfraOps .
+<%
+  }
+%>
+
+# --- Event Records ---
+
+# Generating 2000 Event Records
+<%
+  for (let i = 1; i <= 2000; i++) {
+    const eventType = (i % 5);
+    let logText, alarmSeverity, originatingObject, originatingSystem, originatingAgent;
+    let year = 2024;
+    let month = String(Math.floor((i-1)/166) + 1).padStart(2, '0'); // Distribute over 12 months
+    let day = String((i % 28) + 1).padStart(2, '0');
+    let hour = String(Math.floor(Math.random() * 24)).padStart(2, '0');
+    let minute = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    let second = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    const loggingTime = `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
+
+    if (eventType === 0) { // CPU High Alert
+      const resIndex = (i % 100) + 1;
+      originatingObject = `noria:Res_AppServer_${String(resIndex).padStart(3, '0')}`;
+      logText = `CPU_UTILIZATION_HIGH: Host appserver${String(resIndex).padStart(3, '0')}.corp.example.com, Metric cpu.util, Value ${90 + (i % 9)}%`;
+      alarmSeverity = `<Notification/Severity/PerceivedSeverity/Major>`;
+      originatingSystem = `noria:App_MonitoringPlatform`;
+      originatingAgent = `noria:Agent_AutomatedMonitor`;
+    } else if (eventType === 1) { // Link Down Alert
+      const rtrIndex = (i % 30) + 1;
+      originatingObject = `noria:Res_Router_Core_${String(rtrIndex).padStart(2, '0')}`;
+      logText = `LINEPROTO-5-UPDOWN: Interface GigabitEthernet0/0/0, changed state to down on rtr-core${String(rtrIndex).padStart(2, '0')}.dc-par.example.com`;
+      alarmSeverity = `<Notification/Severity/PerceivedSeverity/Critical>`;
+      originatingSystem = `noria:App_MonitoringPlatform`;
+      originatingAgent = `noria:Agent_AutomatedMonitor`;
+    } else if (eventType === 2) { // Disk Full Alert
+      const dbIndex = (i % 20) + 1;
+      originatingObject = `noria:Res_DBServer_Oracle_${String(dbIndex).padStart(2, '0')}`;
+      logText = `DISK_SPACE_CRITICAL: Host oradb${String(dbIndex).padStart(2, '0')}.corp.example.com, Filesystem /u01, Used ${95 + (i % 4)}%`;
+      alarmSeverity = `<Notification/Severity/PerceivedSeverity/Major>`;
+      originatingSystem = `noria:App_MonitoringPlatform`;
+      originatingAgent = `noria:Agent_AutomatedMonitor`;
+    } else if (eventType === 3) { // Firewall Blocked Traffic
+      const fwIndex = (i % 10) + 1;
+      originatingObject = `noria:Res_Firewall_DMZ_${String(fwIndex).padStart(2, '0')}`;
+      logText = `FIREWALL_ALERT: High number of denied connections from external source ${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)} to DMZ.`;
+      alarmSeverity = `<Notification/Severity/PerceivedSeverity/Warning>`;
+      originatingSystem = `noria:App_MonitoringPlatform`;
+      originatingAgent = `noria:Agent_AutomatedMonitor`;
+    } else { // VM Reboot Event
+      const vmIndex = (i % 200) + 1;
+      originatingObject = `noria:Res_VM_App_${String(vmIndex).padStart(3, '0')}`;
+      logText = `VM_EVENT: Virtual machine vm-app${String(vmIndex).padStart(3, '0')} rebooted due to kernel panic.`;
+      alarmSeverity = `<Notification/Severity/PerceivedSeverity/Minor>`;
+      originatingSystem = `noria:App_VirtualizationPlatform`;
+      originatingAgent = `noria:Agent_InfraEngineer_Charlie`;
+    }
+%>
+noria:Event_<%= String(i).padStart(4, '0') %> a noria:EventRecord ;
+    rdfs:label "Event Record <%= String(i).padStart(4, '0') %>: <%= logText.substring(0, 50) %>..."@en ;
+    rdfs:comment "Detailed log entry for event <%= String(i).padStart(4, '0') %>. This record captures a specific occurrence within the IT infrastructure, providing context for troubleshooting and analysis."@en ;
+    noria:loggingTime "<%= loggingTime %>"^^xsd:dateTime ;
+    noria:logText "<%= logText %>" ;
+    noria:logOriginatingManagedObject <%= originatingObject %> ;
+    noria:logOriginatingManagementSystem <%= originatingSystem %> ;
+    noria:logOriginatingAgent <%= originatingAgent %> ;
+    noria:alarmSeverity <%= alarmSeverity %> .
+<%
+  }
+%>
+
+# --- Trouble Tickets ---
+
+# Generating 200 Trouble Tickets
+<%
+  for (let i = 1; i <= 200; i++) {
+    const severityType = (i % 4);
+    let severity, ttType, criticity, priority, origin, urgency, problemResponsibility;
+    let relatedService, relatedResource;
+    let triggerEvent = `noria:Event_${String((i % 2000) + 1).padStart(4, '0')}`; // Link to a random event
+
+    if (severityType === 0) { // Critical - CRM Outage
+      severity = `<kos/TroubleTicket/severity/Critical>`;
+      ttType = `<kos/TroubleTicket/type/Failure>`;
+      criticity = `<kos/TroubleTicket/category/InterruptedService>`;
+      priority = `<kos/TroubleTicket/priority/P1>`;
+      origin = `<kos/TroubleTicket/origin/Supervision>`;
+      urgency = `<kos/TroubleTicket/urgency/ImmediateIntervention>`;
+      problemResponsibility = `<kos/TroubleTicket/problemResponsibility/NetworkTeam>`;
+      relatedService = `noria:AppMod_CRM_Prod`;
+      relatedResource = `noria:Res_Router_Core_${String((i % 30) + 1).padStart(2, '0')}`;
+    } else if (severityType === 1) { // Major - DB Performance
+      severity = `<kos/TroubleTicket/severity/Major>`;
+      ttType = `<kos/TroubleTicket/type/PerformanceIssue>`;
+      criticity = `<kos/TroubleTicket/category/DegradedPerformance>`;
+      priority = `<kos/TroubleTicket/priority/P2>`;
+      origin = `<kos/TroubleTicket/origin/Internal>`;
+      urgency = `<kos/TroubleTicket/urgency/DeferredIntervention>`;
+      problemResponsibility = `<kos/TroubleTicket/problemResponsibility/ApplicationTeam>`;
+      relatedService = `noria:AppMod_DB_Prod_Cluster1`;
+      relatedResource = `noria:Res_DBServer_Oracle_${String((i % 20) + 1).padStart(2, '0')}`;
+    } else if (severityType === 2) { // Minor - VM Issue
+      severity = `<kos/TroubleTicket/severity/Minor>`;
+      ttType = `<kos/TroubleTicket/type/Assistance>`;
+      criticity = `<kos/TroubleTicket/category/PartialOutage>`;
+      priority = `<kos/TroubleTicket/priority/P3>`;
+      origin = `<kos/TroubleTicket/origin/User>`;
+      urgency = `<kos/TroubleTicket/urgency/DeferredIntervention>`;
+      problemResponsibility = `<kos/TroubleTicket/problemResponsibility/InfrastructureTeam>`;
+      relatedService = `noria:App_VirtualizationPlatform`;
+      relatedResource = `noria:Res_VM_App_${String((i % 200) + 1).padStart(3, '0')}`;
+    } else { // Warning - Security Alert
+      severity = `<kos/TroubleTicket/severity/Warning>`;
+      ttType = `<kos/TroubleTicket/type/Failure>`;
+      criticity = `<kos/TroubleTicket/category/SecurityBreach>`;
+      priority = `<kos/TroubleTicket/priority/P2>`;
+      origin = `<kos/TroubleTicket/origin/Supervision>`;
+      urgency = `<kos/TroubleTicket/urgency/ImmediateIntervention>`;
+      problemResponsibility = `<kos/TroubleTicket/problemResponsibility/SecurityTeam>`;
+      relatedService = `noria:App_CRM_System`;
+      relatedResource = `noria:Res_Firewall_DMZ_${String((i % 10) + 1).padStart(2, '0')}`;
+    }
+
+    let year = 2024;
+    let month = String(Math.floor((i-1)/16) + 1).padStart(2, '0'); // Distribute over 12 months
+    let day = String((i % 28) + 1).padStart(2, '0');
+    let hour = String(Math.floor(Math.random() * 24)).padStart(2, '0');
+    let minute = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    let second = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    const detectionTime = `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
+    const targetRestorationTime = `${year}-${month}-${day}T${String(parseInt(hour) + 2).padStart(2, '0')}:${minute}:${second}Z`;
+    const plannedRestorationTime = `${year}-${month}-${day}T${String(parseInt(hour) + 1).padStart(2, '0')}:${minute}:${second}Z`;
+    const committedRestorationTime = `${year}-${month}-${day}T${String(parseInt(hour) + 3).padStart(2, '0')}:${minute}:${second}Z`;
+    const status = (i % 3 === 0) ? `<kos/TroubleTicket/status/Resolved>` : `<kos/TroubleTicket/status/InProgress>`;
+    const externalId = `INC-${String(i).padStart(4, '0')}`;
+%>
+noria:TT_<%= externalId %> a noria:TroubleTicket ;
+    rdfs:label "Trouble Ticket <%= externalId %>: <%= criticity.split('/').pop() %> on <%= relatedService.split('/').pop() %>"@en, "Ticket Incident <%= externalId %>: <%= criticity.split('/').pop() %> sur <%= relatedService.split('/').pop() %>"@fr ;
+    rdfs:comment "This trouble ticket documents an incident affecting <%= relatedService.split('/').pop() %> due to a <%= criticity.split('/').pop() %> event. Initial diagnosis points to an issue with <%= relatedResource.split('/').pop() %>."@en ;
+    noria:documentExternalId "<%= externalId %>" ;
+    noria:documentHRef <https://ticketing.example.com/<%= externalId %>> ;
+    noria:troubleTicketSeverity <%= severity %> ;
+    noria:troubleTicketType <%= ttType %> ;
+    noria:troubleTicketCriticity <%= criticity %> ;
+    noria:troubleTicketPriority <%= priority %> ;
+    noria:troubleTicketOrigin <%= origin %> ;
+    noria:troubleTicketTrigger <%= triggerEvent %> ;
+    noria:troubleTicketUrgency <%= urgency %> ;
+    noria:troubleTicketSupervisionTool "Zabbix" ;
+    noria:troubleTicketCategory <%= criticity %> ;
+    noria:troubleTicketCause "Root cause analysis is ongoing, but initial indicators suggest a problem with <%= relatedResource.split('/').pop() %>."@en ;
+    noria:problemResponsibility <%= problemResponsibility %> ;
+    noria:troubleTicketDetectionDateTime "<%= detectionTime %>"^^xsd:dateTime ;
+    noria:troubleTicketTargetRestorationDateTime "<%= targetRestorationTime %>"^^xsd:dateTime ;
+    noria:troubleTicketPlannedRestorationDateTime "<%= plannedRestorationTime %>"^^xsd:dateTime ;
+    noria:troubleTicketCommittedRestorationDateTime "<%= committedRestorationTime %>"^^xsd:dateTime ;
+    noria:troubleTicketIsNotificationEnable true ;
+    noria:troubleTicketStatusCurrent <%= status %> ;
+    noria:troubleTicketRelatedParty noria:OrgUnit_NetOps, noria:OrgUnit_AppSupportL2 ;
+    noria:troubleTicketRelatedService <%= relatedService %> ;
+    noria:troubleTicketRelatedResource <%= relatedResource %> .
+<%
+  }
+%>
+
+# --- Trouble Ticket Notes ---
+
+# Generating 500 Trouble Ticket Notes
+<%
+  for (let i = 1; i <= 500; i++) {
+    const ttIndex = (i % 200) + 1;
+    const ttUri = `noria:TT_INC-${String(ttIndex).padStart(4, '0')}`;
+    const commentType = (i % 3);
+    let noteCommentType, noteOperationType, creatorAgent;
+
+    if (commentType === 0) {
+      noteCommentType = `<kos/TroubleTicket/commentType/Internal>`;
+      noteOperationType = `<kos/TroubleTicket/operationType/Diagnosis>`;
+      creatorAgent = `noria:Agent_JohnDoe`;
+    } else if (commentType === 1) {
+      noteCommentType = `<kos/TroubleTicket/commentType/CustomerFacing>`;
+      noteOperationType = `<kos/TroubleTicket/operationType/Communication>`;
+      creatorAgent = `noria:Agent_JaneSmith`;
+    } else {
+      noteCommentType = `<kos/TroubleTicket/commentType/SystemGenerated>`;
+      noteOperationType = `<kos/TroubleTicket/operationType/Verification>`;
+      creatorAgent = `noria:Agent_AutomatedMonitor`;
+    }
+
+    let year = 2024;
+    let month = String(Math.floor((i-1)/41) + 1).padStart(2, '0');
+    let day = String((i % 28) + 1).padStart(2, '0');
+    let hour = String(Math.floor(Math.random() * 24)).padStart(2, '0');
+    let minute = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    let second = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    const noteTime = `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
+    const correlatedEvent = `noria:Event_${String((i % 2000) + 1).padStart(4, '0')}`;
+%>
+noria:TTNote_<%= String(i).padStart(4, '0') %> a noria:TroubleTicketNote ;
+    rdfs:label "Trouble Ticket Note <%= String(i).padStart(4, '0') %> for <%= ttUri.split('/').pop() %>"@en ;
+    rdfs:comment "This note provides an update on the progress of trouble ticket <%= ttUri.split('/').pop() %>. It details the actions taken, observations made, or communications exchanged regarding the incident."@en ;
+    dcterms:isPartOf <%= ttUri %> ;
+    dcterms:created "<%= noteTime %>"^^xsd:dateTime ;
+    dcterms:creator <%= creatorAgent %> ;
+    noria:troubleTicketNoteCommentType <%= noteCommentType %> ;
+    noria:troubleTicketNoteOperationType <%= noteOperationType %> ;
+    noria:troubleTicketNoteCorrelatedExecution <%= correlatedEvent %> .
+<%
+  }
+%>
+
+# --- Change Requests ---
+
+# Generating 50 Change Requests
+<%
+  for (let i = 1; i <= 50; i++) {
+    const crType = (i % 3);
+    let category, type, cause, initiator, pilot, actor;
+    let impactResource, impactApplication, impactService;
+
+    if (crType === 0) { // Software Upgrade
+      category = `<kos/ChangeRequest/category/InternalIntervention>`;
+      type = `<kos/ChangeRequest/type/Normal>`;
+      cause = `<kos/ChangeRequest/cause/SoftwareUpgrade>`;
+      initiator = `noria:Agent_JohnDoe`;
+      pilot = `noria:Agent_JohnDoe`;
+      actor = `noria:OrgUnit_NetOps`;
+      impactResource = `noria:Res_Router_Core_${String((i % 30) + 1).padStart(2, '0')}`;
+      impactApplication = `noria:App_MonitoringPlatform`;
+      impactService = `noria:Service_CustomerInternetAccess`;
+    } else if (crType === 1) { // Hardware Replacement
+      category = `<kos/ChangeRequest/category/InternalIntervention>`;
+      type = `<kos/ChangeRequest/type/Normal>`;
+      cause = `<kos/ChangeRequest/cause/HardwareReplacement>`;
+      initiator = `noria:Agent_InfraEngineer_Charlie`;
+      pilot = `noria:Agent_InfraEngineer_Charlie`;
+      actor = `noria:OrgUnit_InfraOps`;
+      impactResource = `noria:Res_Hypervisor_Host_${String((i % 10) + 1).padStart(2, '0')}`;
+      impactApplication = `noria:App_VirtualizationPlatform`;
+      impactService = `noria:Service_DataBackup`;
+    } else { // Configuration Change
+      category = `<kos/ChangeRequest/category/CustomerIntervention>`;
+      type = `<kos/ChangeRequest/type/Standard>`;
+      cause = `<kos/ChangeRequest/cause/Configuration>`;
+      initiator = `noria:Agent_JaneSmith`;
+      pilot = `noria:Agent_JaneSmith`;
+      actor = `noria:OrgUnit_AppSupportL2`;
+      impactResource = `noria:Res_AppServer_${String((i % 100) + 1).padStart(3, '0')}`;
+      impactApplication = `noria:App_CRM_System`;
+      impactService = `noria:Service_CustomerInternetAccess`;
+    }
+
+    let year = 2024;
+    let month = String(Math.floor((i-1)/4) + 1).padStart(2, '0');
+    let day = String((i % 28) + 1).padStart(2, '0');
+    let plannedStartHour = String(Math.floor(Math.random() * 2) + 2).padStart(2, '0'); // 02:00-03:00
+    let plannedEndHour = String(parseInt(plannedStartHour) + 2).padStart(2, '0'); // 04:00-05:00
+    let actualStartHour = String(parseInt(plannedStartHour) + (Math.random() > 0.5 ? 0 : 1)).padStart(2, '0');
+    let actualEndHour = String(parseInt(plannedEndHour) + (Math.random() > 0.5 ? 0 : 1)).padStart(2, '0');
+    let minute = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    let second = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+
+    const plannedStartTime = `${year}-${month}-${day}T${plannedStartHour}:${minute}:${second}Z`;
+    const plannedEndTime = `${year}-${month}-${day}T${plannedEndHour}:${minute}:${second}Z`;
+    const actualStartTime = `${year}-${month}-${day}T${actualStartHour}:${minute}:${second}Z`;
+    const actualEndTime = `${year}-${month}-${day}T${actualEndHour}:${minute}:${second}Z`;
+    const status = (i % 2 === 0) ? `<kos/ChangeRequest/status/Completed>` : `<kos/ChangeRequest/status/Planned>`;
+    const externalId = `CR-${String(i).padStart(3, '0')}`;
+    const outageDuration = `PT${Math.floor(Math.random() * 4) + 1}H` ; // 1-4 hours
+%>
+noria:CR_<%= externalId %> a noria:ChangeRequest ;
+    rdfs:label "Change Request <%= externalId %>: <%= cause.split('/').pop() %> on <%= impactResource.split('/').pop() %>"@en, "Demande de Changement <%= externalId %>: <%= cause.split('/').pop() %> sur <%= impactResource.split('/').pop() %>"@fr ;
+    rdfs:comment "This change request outlines a planned <%= cause.split('/').pop() %> activity on <%= impactResource.split('/').pop() %>. The change aims to <%= (crType === 0 ? 'upgrade software for security and performance' : (crType === 1 ? 'replace faulty hardware' : 'implement a new configuration')) %>."@en ;
+    noria:documentExternalId "<%= externalId %>" ;
+    noria:documentHRef <https://changemgmt.example.com/<%= externalId %>> ;
+    noria:changeRequestPlannedStartTime "<%= plannedStartTime %>"^^xsd:dateTime ;
+    noria:changeRequestPlannedEndTime "<%= plannedEndTime %>"^^xsd:dateTime ;
+    noria:changeRequestActualStartTime "<%= actualStartTime %>"^^xsd:dateTime ;
+    noria:changeRequestActualEndTime "<%= actualEndTime %>"^^xsd:dateTime ;
+    noria:changeRequestCategory <%= category %> ;
+    noria:changeRequestType <%= type %> ;
+    noria:changeRequestChangeCause <%= cause %> ;
+    noria:changeRequestImpact <%= impactResource %>, <%= impactApplication %>, <%= impactService %> ;
+    noria:changeRequestOutageDuration "<%= outageDuration %>"^^xsd:duration ;
+    noria:changeRequestStatusCurrent <%= status %> ;
+    noria:changeRequestSpecification <kos/ChangeRequest/specification/RoutineMaintenance> ;
+    noria:changeRequestInitiatorParty <%= initiator %> ;
+    noria:changeRequestPilotParty <%= pilot %> ;
+    noria:changeRequestActorParty <%= actor %> ;
+    noria:changeRequestIsRegulated true .
+<%
+  }
+%>
+
+# --- Operation Plans, Pre/Post Conditions ---
+
+noria:OpPlan_CheckFiberLink a noria:OperationPlan ;
+    rdfs:label "Check Fiber Link Procedure"@en ;
+    rdfs:comment "Standard operating procedure for diagnosing and resolving fiber optic link issues. Includes steps for visual inspection, optical power measurement, and cable replacement."@en ;
+    noria:operationPlanPreCondition noria:PreCond_FiberLinkDown ;
+    noria:operationPlanPostCondition noria:PostCond_FiberLinkUp .
+
+noria:PreCond_FiberLinkDown a noria:ActionPreCondition ;
+    rdfs:label "Fiber Link Down Pre-Condition"@en ;
+    rdfs:comment "Condition: Network interface operational status is 'Down' and administrative status is 'Up', indicating a physical layer issue. Alarm severity is Critical or Major."@en ;
+    skos:example "Interface Gi0/0/0 on core-rtr01 reports 'link down' but is administratively enabled. Associated alarm: Event_0002."@en .
+
+noria:PostCond_FiberLinkUp a noria:ActionPostCondition ;
+    rdfs:label "Fiber Link Up Post-Condition"@en ;
+    rdfs:comment "Condition: Network interface operational status is 'Up', traffic flow is restored, and optical power levels are within acceptable thresholds. No packet loss observed."@en ;
+    skos:example "Interface Gi0/0/0 on core-rtr01 reports 'link up' and ping to external gateway is successful. Optical power Rx: -5dBm, Tx: -3dBm."@en .
+
+noria:OpPlan_ClearDBLogs a noria:OperationPlan ;
+    rdfs:label "Clear Database Logs Procedure"@en ;
+    rdfs:comment "Procedure to safely clear old database archive logs to free up disk space. Involves identifying and archiving logs before deletion to ensure recoverability."@en ;
+    noria:operationPlanPreCondition noria:PreCond_DBDiskFull ;
+    noria:operationPlanPostCondition noria:PostCond_DBDiskSpaceOK .
+
+noria:PreCond_DBDiskFull a noria:ActionPreCondition ;
+    rdfs:label "Database Disk Full Pre-Condition"@en ;
+    rdfs:comment "Condition: Database filesystem utilization exceeds 90%, leading to potential database stalls or crashes. Monitoring alert received."@en ;
+    skos:example "Filesystem /u01 on oradb01 is 98% full. Associated alarm: Event_0003."@en .
+
+noria:PostCond_DBDiskSpaceOK a noria:ActionPostCondition ;
+    rdfs:label "Database Disk Space OK Post-Condition"@en ;
+    rdfs:comment "Condition: Database filesystem utilization is below 80% and database operations are normal. No new disk full alerts generated for 30 minutes."@en ;
+    skos:example "Filesystem /u01 on oradb01 is 60% full after log cleanup. Database performance metrics are stable."@en .
+
+noria:OpPlan_VM_Reboot a noria:OperationPlan ;
+    rdfs:label "Virtual Machine Reboot Procedure"@en ;
+    rdfs:comment "Standard procedure for safely rebooting a virtual machine. Includes steps for notifying users, checking dependencies, and verifying service restoration."@en ;
+    noria:operationPlanPreCondition noria:PreCond_VM_Unresponsive ;
+    noria:operationPlanPostCondition noria:PostCond_VM_Running .
+
+noria:PreCond_VM_Unresponsive a noria:ActionPreCondition ;
+    rdfs:label "VM Unresponsive Pre-Condition"@en ;
+    rdfs:comment "Condition: Virtual machine is unresponsive to ping or SSH, and application hosted on it is down. No other underlying infrastructure issues detected."@en ;
+    skos:example "VM vm-app001.corp.example.com is not responding to network requests. Application status is 'Down'."@en .
+
+noria:PostCond_VM_Running a noria:ActionPostCondition ;
+    rdfs:label "VM Running Post-Condition"@en ;
+    rdfs:comment "Condition: Virtual machine has successfully rebooted, is reachable on the network, and the hosted application is running and accessible."@en ;
+    skos:example "VM vm-app001.corp.example.com is up and running. Application 'CRM Web' is accessible."@en .
+
+# --- Linking Event Records to Operation Plans (as actions) ---
+# Generating 100 Event Records representing execution of Operation Plans
+<%
+  for (let i = 1; i <= 100; i++) {
+    const opPlanType = (i % 3);
+    let opPlan, originatingObject, originatingAgent, logText;
+
+    if (opPlanType === 0) { // Fiber Link Check
+      opPlan = `noria:OpPlan_CheckFiberLink`;
+      originatingObject = `noria:Res_Router_Core_${String((i % 30) + 1).padStart(2, '0')}`;
+      originatingAgent = `noria:Agent_JohnDoe`;
+      logText = `Executed 'Check Fiber Link Procedure' on interface Gi0/0/0 of rtr-core${String((i % 30) + 1).padStart(2, '0')}. Optical power levels verified.`;
+    } else if (opPlanType === 1) { // DB Log Cleanup
+      opPlan = `noria:OpPlan_ClearDBLogs`;
+      originatingObject = `noria:Res_DBServer_Oracle_${String((i % 20) + 1).padStart(2, '0')}`;
+      originatingAgent = `noria:Agent_DBA_Alice`;
+      logText = `Executed 'Clear Database Logs Procedure' on oradb${String((i % 20) + 1).padStart(2, '0')}. Disk space recovered on /u01.`;
+    } else { // VM Reboot
+      opPlan = `noria:OpPlan_VM_Reboot`;
+      originatingObject = `noria:Res_VM_App_${String((i % 200) + 1).padStart(3, '0')}`;
+      originatingAgent = `noria:Agent_InfraEngineer_Charlie`;
+      logText = `Executed 'Virtual Machine Reboot Procedure' for vm-app${String((i % 200) + 1).padStart(3, '0')}. VM is now responsive.`;
+    }
+
+    let year = 2024;
+    let month = String(Math.floor((i-1)/8) + 1).padStart(2, '0');
+    let day = String((i % 28) + 1).padStart(2, '0');
+    let hour = String(Math.floor(Math.random() * 24)).padStart(2, '0');
+    let minute = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    let second = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    const loggingTime = `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
+%>
+noria:Event_Execution_<%= String(i).padStart(3, '0') %> a noria:EventRecord ;
+    rdfs:label "Execution Event <%= String(i).padStart(3, '0') %>: <%= opPlan.split('/').pop() %>"@en ;
+    rdfs:comment "This event record documents the execution of the operation plan '<%= opPlan.split('/').pop() %>' by <%= originatingAgent.split('/').pop() %> on <%= originatingObject.split('/').pop() %>."@en ;
+    noria:loggingTime "<%= loggingTime %>"^^xsd:dateTime ;
+    noria:logText "<%= logText %>" ;
+    noria:logOriginatingManagedObject <%= originatingObject %> ;
+    noria:logOriginatingManagementSystem noria:App_MonitoringPlatform ;
+    noria:logOriginatingAgent <%= originatingAgent %> ;
+    noria:actionCorrelatedOperationPlan <%= opPlan %> .
+<%
+  }
+%>
+
+# --- Document Status History (linking TT/CR to EventRecords) ---
+# Generating 300 status history events for Trouble Tickets and Change Requests
+<%
+  for (let i = 1; i <= 300; i++) {
+    const docType = (i % 2);
+    let docUri, docIdPrefix, docLabelPrefix;
+    let status;
+
+    if (docType === 0) { // Trouble Ticket
+      const ttIndex = (i % 200) + 1;
+      docUri = `noria:TT_INC-${String(ttIndex).padStart(4, '0')}`;
+      docIdPrefix = `INC-${String(ttIndex).padStart(4, '0')}`;
+      docLabelPrefix = `Trouble Ticket ${docIdPrefix}`;
+      status = (i % 3 === 0) ? "Resolved" : "InProgress";
+    } else { // Change Request
+      const crIndex = (i % 50) + 1;
+      docUri = `noria:CR_CR-${String(crIndex).padStart(3, '0')}`;
+      docIdPrefix = `CR-${String(crIndex).padStart(3, '0')}`;
+      docLabelPrefix = `Change Request ${docIdPrefix}`;
+      status = (i % 3 === 0) ? "Completed" : "Approved";
+    }
+
+    let year = 2024;
+    let month = String(Math.floor((i-1)/25) + 1).padStart(2, '0');
+    let day = String((i % 28) + 1).padStart(2, '0');
+    let hour = String(Math.floor(Math.random() * 24)).padStart(2, '0');
+    let minute = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    let second = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    const loggingTime = `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
+%>
+noria:Event_DocStatus_<%= String(i).padStart(4, '0') %> a noria:EventRecord ;
+    rdfs:label "<%= docLabelPrefix %> Status: <%= status %>"@en ;
+    rdfs:comment "Status change event for <%= docLabelPrefix %> to '<%= status %>'. This event is automatically logged by the ticketing/change management system."@en ;
+    noria:loggingTime "<%= loggingTime %>"^^xsd:dateTime ;
+    noria:logText "<%= docLabelPrefix %> status changed to <%= status %>." ;
+    noria:logOriginatingManagementSystem noria:App_MonitoringPlatform ;
+    noria:logOriginatingAgent noria:Agent_AutomatedMonitor ;
+    dcterms:references <%= docUri %> .
+
+<%= docUri %> noria:documentStatusHistory noria:Event_DocStatus_<%= String(i).padStart(4, '0') %> .
+<%
+  }
+%>
+
+# --- Document Attachments ---
+# Generating 50 Document Attachments
+<%
+  for (let i = 1; i <= 50; i++) {
+    const docType = (i % 2);
+    let parentDocUri, parentDocId;
+    let title, description, format;
+
+    if (docType === 0) { // Attached to Trouble Ticket
+      const ttIndex = (i % 200) + 1;
+      parentDocUri = `noria:TT_INC-${String(ttIndex).padStart(4, '0')}`;
+      parentDocId = `INC-${String(ttIndex).padStart(4, '0')}`;
+      title = `Trouble Ticket ${parentDocId} Log Analysis`;
+      description = `Detailed log analysis report for trouble ticket ${parentDocId}.`;
+      format = "application/pdf";
+    } else { // Attached to Change Request
+      const crIndex = (i % 50) + 1;
+      parentDocUri = `noria:CR_CR-${String(crIndex).padStart(3, '0')}`;
+      parentDocId = `CR-${String(crIndex).padStart(3, '0')}`;
+      title = `Change Request ${parentDocId} Implementation Plan`;
+      description = `Step-by-step implementation plan for change request ${parentDocId}.`;
+      format = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    }
+
+    let year = 2024;
+    let month = String(Math.floor((i-1)/4) + 1).padStart(2, '0');
+    let day = String((i % 28) + 1).padStart(2, '0');
+    let hour = String(Math.floor(Math.random() * 24)).padStart(2, '0');
+    let minute = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    let second = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    const createdTime = `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
+%>
+noria:DocAttach_<%= String(i).padStart(3, '0') %> a noria:DocumentAttachment ;
+    rdfs:label "Document Attachment <%= String(i).padStart(3, '0') %>: <%= title %>"@en ;
+    rdfs:comment "This document attachment provides supplementary information for <%= parentDocId %>. It contains <%= description.toLowerCase() %>."@en ;
+    dcterms:created "<%= createdTime %>"^^xsd:dateTime ;
+    dcterms:format "<%= format %>" ;
+    dcterms:title "<%= title %>" ;
+    dcterms:description "<%= description %>" ;
+    dcterms:isPartOf <%= parentDocUri %> .
+<%
+  }
+%>

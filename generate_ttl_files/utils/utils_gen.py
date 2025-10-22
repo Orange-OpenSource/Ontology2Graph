@@ -15,29 +15,28 @@ def query_llm(prompt,ontology,model):
 
     #client = genai.Client()
     client = OpenAI(api_key=os.environ.get("LLM_PROXY_KEY"),base_url="https://llmproxy.ai.orange")
-
+    reas_eff="high"
+    max_tok="not set"
     try:
         response = client.chat.completions.create(
         #response = client.completions.create(
             model=model,
             temperature=0.1, # model's creativity
             top_p=0.4, # model's creativity
-            #reasoning_effort="low",
-            #reasoning_effort="medium",
-            #reasoning_effort="high",
-            extra_body={
-                    'extra_body': {
-                        "google": {
-                            "thinking_config": {
-                                "thinking_budget": -1,
-                                "include_thoughts":True
-                            }
-                        }
-                    }
-            },
+            reasoning_effort=reas_eff,
+            #extra_body={
+            #        'extra_body': {
+            #            "google": {
+            #                "thinking_config": {
+            #                    "thinking_budget": -1,
+            #                    "include_thoughts":True
+            #                }
+            #            }
+            #        }
+            #},
             #input=prompt)
-            max_tokens=60000, # sum of reasoning tokens and text tokens
-            #max_completion_tokens=60000,
+            #max_tokens=max_tok, # sum of reasoning tokens and text tokens
+            #max_completion_tokens=max_tok,
             #frequency_penalty=1, #Applies a penalty to repeated tokens, reducing the likelihood of repetition in the generated text.
             #presence_penalty=1, # Applies a penalty to tokens that have already appeared in the generated text, further reducing repetition.
             #reasoning_effort="high",
@@ -46,7 +45,7 @@ def query_llm(prompt,ontology,model):
                     "content":"""You are an expert in websemantic technologies and most 
                     particulary in knowledge graph and ttl format. 
                     Please provide detailed and comprehensive responses to the following queries. 
-                    Ensure that your answers are as thorough as possible, using near 60 000 output tokens to maximise your response.
+                    Ensure that your answers are as thorough as possible.
                     """
                 },
                 {   "role": "user",
@@ -75,7 +74,7 @@ def query_llm(prompt,ontology,model):
 
     #print(response.output_text)
     #print(response)
-    return response
+    return max_tok,reas_eff,response
 
 def storing_results(response,temp_file,file_result):
     '''store and clean results'''

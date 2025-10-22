@@ -1,0 +1,907 @@
+# Copyright (c) 2022-2023 Orange. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+#     1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+#     2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+#     3. All advertising materials mentioning features or use of this software must display the following acknowledgement:
+#     This product includes software developed by Orange.
+#     4. Neither the name of Orange nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY Orange "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL Orange BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# === PREFIXES ================================================================
+
+# --- Basic ---
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+# --- Ontology management ---
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix voaf: <http://purl.org/vocommons/voaf#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix schema: <https://schema.org/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# --- Domain specific ---
+@prefix qudt: <http://data.qudt.org/qudt/owl/1.0.0/qudt.owl#> .  # Quantities, Units, Dimensions and Types (QUDT)
+@prefix qudt-unit: <http://data.qudt.org/qudt/owl/1.0.0/unit.owl#> .  #QUDT units
+@prefix time: <http://www.w3.org/2006/time#> .  # OWL-Time
+
+@prefix bot:  <https://w3id.org/bot#> .  # Building Topology Ontology
+@prefix gn: <https://www.geonames.org/ontology#> .  # GeoNames Ontology
+@prefix wgs84_pos: <http://www.w3.org/2003/01/geo/wgs84_pos#> .  # WGS84 Geo Positioning
+
+@prefix BBO: <https://www.irit.fr/recherches/MELODI/ontologies/BBO#> .  # BPMN 2.0 Based Ontology for Business Process Representation
+@prefix org: <http://www.w3.org/ns/org#> .  # The Organization Ontology
+
+@prefix log: <https://w3id.org/sepses/ns/log#> .  # a.k.a. SLOGERT
+@prefix folio: <http://IBCNServices.github.io/Folio-Ontology/Folio.owl#> .  # Failure Mode and Effect Analysis combined with Anomaly Ontology (FOLIO)
+
+@prefix ssn: <http://www.w3.org/ns/ssn/>.  # Semantic Sensor Network (SSN) Ontology
+@prefix seas: <https://w3id.org/seas/>.  # Smart Energy Aware Systems (SEAS)
+@prefix pep: <https://w3id.org/pep/>.  # SEAS Procedure Execution ontology
+@prefix saref: <http://ontology.tno.nl/saref#>.  #SAREF smart building appliances ontology
+
+@prefix observable: <https://unifiedcyberontology.org/ontology/uco/observable#> . # Unified Cybersecurity Ontology (UCO)
+
+@prefix devopsprod: <http://w3id.org/devops-infra/product#> .  # DevOps-Infra, Ontology for the representation of the business offering of a company, including the offered services and microservices
+
+# --- NORIA ---
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@base <https://w3id.org/noria/> .
+
+# =============================================================================
+# Ontology Metadata (as provided in the schema)
+# =============================================================================
+
+<https://w3id.org/noria/ontology/>
+	a voaf:Vocabulary, owl:Ontology ;
+	dcterms:title "The NORIA Ontology"@en ;
+    dcterms:description """The NORIA-O project is a data model for IT networks, events and operations information.
+The ontology is developed using web technologies (e.g. RDF, OWL, SKOS) and is intended as a structure for realizing an IT Service Management (ITSM) Knowledge Graph (KG) for Anomaly Detection (AD) and Risk Management applications.
+The model has been developed in collaboration with operational teams, and in connection with third parties linked vocabularies.
+
+Alignment with third parties vocabularies is implemented on a per class or per property basis when relevant (e.g. with `rdfs:subClassOf`, `owl:equivalentClass`).
+Directions for direct instanciation of these vocabularies are provided for cases where implementing a class/property alignment is redundant.
+Alignment holds for the following vocabulary releases:
+- [BBO](https://hal.archives-ouvertes.fr/hal-02365012/) 1.0.0
+- [BOT](https://w3id.org/bot/) 0.3.2
+- [DevOps-Infra](https://oeg-upm.github.io/devops-infra/) 1.0.0
+- [FOLIO](https://github.com/IBCNServices/Folio-Ontology) 1.0.0
+- [ORG](https://www.w3.org/TR/vocab-org/) 0.8
+- [PEP](https://w3id.org/pep/) 1.1
+- [SEAS](https://w3id.org/seas/) 1.1
+- [SLOGERT](https://sepses.ifs.tuwien.ac.at/ns/log/index-en.html) 1.1.0
+- [UCO](https://github.com/ucoProject/uco) Release-0.8.0
+"""@en ;
+    foaf:depiction <https://github.com/Orange-OpenSource/noria-ontology/raw/master/dataset/noria-0.2/noria-ontology-UC.png> ;
+    bibo:status <http://purl.org/ontology/bibo/status/accepted> ;  # https://www.dublincore.org/specifications/bibo/bibo/bibo.rdf.xml#
+	dcterms:creator "Lionel Tailhardat (https://orcid.org/0000-0001-5887-899X)" ;  # Lionel Tailhardat
+	dcterms:creator "Yoan Chabot (https://orcid.org/0000-0001-5639-1504)" ;  # Yoan Chabot
+	dcterms:creator "Raphaël Troncy (https://orcid.org/0000-0003-0457-1436)" ;  # Raphaël Troncy
+    dcterms:publisher <https://www.orange.com/> ;
+    dcterms:license <https://spdx.org/licenses/BSD-4-Clause> ;
+    vann:preferredNamespacePrefix "noria" ;
+    vann:preferredNamespaceUri "https://w3id.org/noria/ontology/" ;  # See https://dgarijo.github.io/Widoco/doc/bestPractices/index-en.html
+    dcterms:issued "2022-05-10"^^xsd:date ;
+	dcterms:modified "2024-03-15"^^xsd:date ;
+	skos:changeNote """Changes in v0.3:
+
+- Changed the ontology architecture from micro-architecture to single file.
+- Removed owl:imports for NORIA foundations.
+
+2024-03-15:
+
+- Changed bibo:status
+"""@en ;
+	owl:versionInfo "v0.3" ;
+	owl:versionIRI <ontology/noria-0.3> ;
+	owl:priorVersion <ontology/noria-0.2> ;
+    rdfs:seeAlso <https://w3id.org/noria/doc/> ;
+.
+
+# =============================================================================
+# Generated Knowledge Graph Instances
+# =============================================================================
+
+# --- Agents and Organizations ---
+# Creating 10 teams and 40 individuals (total 50 agents)
+
+# Organizational Units (Teams)
+org:Team_NetworkOperations a org:OrganizationalUnit ;
+    rdfs:label "Network Operations Team"@en, "Équipe Opérations Réseau"@fr ;
+    rdfs:comment "Responsible for the core network infrastructure and services."@en ;
+    noria:agentWorkingHours "24/7 Shift Rotation"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ;
+    noria:agentInstructions "For critical issues, call the hotline. For non-critical, use ticketing system."@en .
+
+org:Team_ServerAdmins a org:OrganizationalUnit ;
+    rdfs:label "Server Administration Team"@en, "Équipe Administration Serveurs"@fr ;
+    rdfs:comment "Manages all physical and virtual server resources."@en ;
+    noria:agentWorkingHours "8:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "Open a ticket for all requests. Urgent issues can be escalated via chat."@en .
+
+org:Team_DatabaseOps a org:OrganizationalUnit ;
+    rdfs:label "Database Operations Team"@en, "Équipe Opérations Bases de Données"@fr ;
+    rdfs:comment "Specialized in database management and support."@en ;
+    noria:agentWorkingHours "9:00-18:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/ticketing-system> ;
+    noria:agentInstructions "All database-related issues must be submitted via the DB ticketing portal."@en .
+
+org:Team_AppSupport_CRM a org:OrganizationalUnit ;
+    rdfs:label "CRM Application Support Team"@en, "Équipe Support Application CRM"@fr ;
+    rdfs:comment "Provides level 2 support for the Customer Relationship Management application."@en ;
+    noria:agentWorkingHours "8:30-17:30 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/ticketing-system> ;
+    noria:agentInstructions "Refer to the CRM support handbook for common issues."@en .
+
+org:Team_SecurityOps a org:OrganizationalUnit ;
+    rdfs:label "Security Operations Center (SOC)"@en, "Centre d'Opérations de Sécurité (SOC)"@fr ;
+    rdfs:comment "Monitors and responds to security incidents."@en ;
+    noria:agentWorkingHours "24/7"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ;
+    noria:agentInstructions "Report all suspected security breaches immediately via phone."@en .
+
+org:Team_CloudInfra a org:OrganizationalUnit ;
+    rdfs:label "Cloud Infrastructure Team"@en, "Équipe Infrastructure Cloud"@fr ;
+    rdfs:comment "Manages public and private cloud resources."@en ;
+    noria:agentWorkingHours "9:00-18:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/ticketing-system> ;
+    noria:agentInstructions "Use the cloud portal for all service requests."@en .
+
+org:Team_DevOps_Platform a org:OrganizationalUnit ;
+    rdfs:label "DevOps Platform Team"@en, "Équipe Plateforme DevOps"@fr ;
+    rdfs:comment "Develops and maintains the CI/CD pipelines and deployment platforms."@en ;
+    noria:agentWorkingHours "9:00-18:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/chat> ;
+    noria:agentInstructions "Consult the internal wiki for platform documentation."@en .
+
+org:Team_StorageAdmins a org:OrganizationalUnit ;
+    rdfs:label "Storage Administration Team"@en, "Équipe Administration Stockage"@fr ;
+    rdfs:comment "Manages all storage area networks (SAN) and network-attached storage (NAS)."@en ;
+    noria:agentWorkingHours "8:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "For storage capacity requests, submit a change request."@en .
+
+org:Team_HelpDesk a org:OrganizationalUnit ;
+    rdfs:label "IT Help Desk"@en, "Service d'Assistance Informatique"@fr ;
+    rdfs:comment "First line of support for all IT-related issues."@en ;
+    noria:agentWorkingHours "7:00-19:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ;
+    noria:agentInstructions "Contact the help desk for any user-facing IT problems."@en .
+
+org:Team_Monitoring a org:OrganizationalUnit ;
+    rdfs:label "Monitoring Team"@en, "Équipe Supervision"@fr ;
+    rdfs:comment "Manages and configures all monitoring systems and alerts."@en ;
+    noria:agentWorkingHours "24/7 Shift Rotation"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/ticketing-system> ;
+    noria:agentInstructions "For new monitoring requests, open a service request ticket."@en .
+
+# Individuals (foaf:Agent) - 40 individuals
+# 4 individuals per team
+foaf:Agent_Alice a foaf:Agent ;
+    rdfs:label "Alice Smith"@en, "Alice Dupont"@fr ;
+    rdfs:comment "Network Engineer, Team Network Operations."@en ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "Available for network design reviews."@en ;
+    org:memberOf org:Team_NetworkOperations .
+
+foaf:Agent_Bob a foaf:Agent ;
+    rdfs:label "Bob Johnson"@en, "Bob Martin"@fr ;
+    rdfs:comment "Senior Server Administrator, Team Server Admins."@en ;
+    noria:agentWorkingHours "8:00-16:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ;
+    noria:agentInstructions "Lead for virtualization projects."@en ;
+    org:memberOf org:Team_ServerAdmins .
+
+foaf:Agent_Charlie a foaf:Agent ;
+    rdfs:label "Charlie Brown"@en, "Charlie Lefebvre"@fr ;
+    rdfs:comment "Database Specialist, Team Database Ops."@en ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "Expert in PostgreSQL performance tuning."@en ;
+    org:memberOf org:Team_DatabaseOps .
+
+foaf:Agent_Diana a foaf:Agent ;
+    rdfs:label "Diana Prince"@en, "Diana Moreau"@fr ;
+    rdfs:comment "CRM Support Lead, Team App Support CRM."@en ;
+    noria:agentWorkingHours "8:30-16:30 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/ticketing-system> ;
+    noria:agentInstructions "Manages critical CRM incidents."@en ;
+    org:memberOf org:Team_AppSupport_CRM .
+
+foaf:Agent_Eve a foaf:Agent ;
+    rdfs:label "Eve Adams"@en, "Eve Dubois"@fr ;
+    rdfs:comment "Security Analyst, Team Security Ops."@en ;
+    noria:agentWorkingHours "Shift A (Day)"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ;
+    noria:agentInstructions "First responder for security alerts."@en ;
+    org:memberOf org:Team_SecurityOps .
+
+foaf:Agent_Frank a foaf:Agent ;
+    rdfs:label "Frank White"@en, "Frank Petit"@fr ;
+    rdfs:comment "Cloud Architect, Team Cloud Infra."@en ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/chat> ;
+    noria:agentInstructions "Designs and implements cloud solutions."@en ;
+    org:memberOf org:Team_CloudInfra .
+
+foaf:Agent_Grace a foaf:Agent ;
+    rdfs:label "Grace Hopper"@en, "Grace Bernard"@fr ;
+    rdfs:comment "DevOps Engineer, Team DevOps Platform."@en ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "Specializes in Kubernetes deployments."@en ;
+    org:memberOf org:Team_DevOps_Platform .
+
+foaf:Agent_Heidi a foaf:Agent ;
+    rdfs:label "Heidi Klum"@en, "Heidi Robert"@fr ;
+    rdfs:comment "Storage Engineer, Team Storage Admins."@en ;
+    noria:agentWorkingHours "8:00-16:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "Manages SAN/NAS provisioning."@en ;
+    org:memberOf org:Team_StorageAdmins .
+
+foaf:Agent_Ivan a foaf:Agent ;
+    rdfs:label "Ivan Petrov"@en, "Ivan Dubois"@fr ;
+    rdfs:comment "Help Desk Agent, Team Help Desk."@en ;
+    noria:agentWorkingHours "10:00-18:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ;
+    noria:agentInstructions "Handles first-level user support."@en ;
+    org:memberOf org:Team_HelpDesk .
+
+foaf:Agent_Judy a foaf:Agent ;
+    rdfs:label "Judy Garland"@en, "Judy Laurent"@fr ;
+    rdfs:comment "Monitoring Specialist, Team Monitoring."@en ;
+    noria:agentWorkingHours "Shift B (Night)"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/ticketing-system> ;
+    noria:agentInstructions "Configures new alerts and dashboards."@en ;
+    org:memberOf org:Team_Monitoring .
+
+# Additional Agents for variety (30 more, 3 per team)
+# Team_NetworkOperations
+foaf:Agent_Ken a foaf:Agent ; rdfs:label "Ken Thompson"@en, "Ken Fournier"@fr ; rdfs:comment "Senior Network Architect."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_NetworkOperations .
+foaf:Agent_Liam a foaf:Agent ; rdfs:label "Liam Neeson"@en, "Liam Dubois"@fr ; rdfs:comment "Network Security Engineer."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/chat> ; org:memberOf org:Team_NetworkOperations .
+foaf:Agent_Mia a foaf:Agent ; rdfs:label "Mia Wallace"@en, "Mia Leclerc"@fr ; rdfs:comment "WAN Specialist."@en ; noria:agentWorkingHours "8:00-16:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_NetworkOperations .
+
+# Team_ServerAdmins
+foaf:Agent_Nora a foaf:Agent ; rdfs:label "Nora Jones"@en, "Nora Petit"@fr ; rdfs:comment "Linux System Administrator."@en ; noria:agentWorkingHours "8:00-16:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_ServerAdmins .
+foaf:Agent_Oscar a foaf:Agent ; rdfs:label "Oscar Wilde"@en, "Oscar Leroy"@fr ; rdfs:comment "Windows Server Specialist."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ; org:memberOf org:Team_ServerAdmins .
+foaf:Agent_Pat a foaf:Agent ; rdfs:label "Pat Riley"@en, "Pat Dubois"@fr ; rdfs:comment "Virtualization Engineer."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/chat> ; org:memberOf org:Team_ServerAdmins .
+
+# Team_DatabaseOps
+foaf:Agent_Quinn a foaf:Agent ; rdfs:label "Quinn Fabray"@en, "Quinn Moreau"@fr ; rdfs:comment "SQL Database Administrator."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_DatabaseOps .
+foaf:Agent_Rachel a foaf:Agent ; rdfs:label "Rachel Green"@en, "Rachel Simon"@fr ; rdfs:comment "NoSQL Database Specialist."@en ; noria:agentWorkingHours "8:00-16:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_DatabaseOps .
+foaf:Agent_Sam a foaf:Agent ; rdfs:label "Samwise Gamgee"@en, "Sam Dubois"@fr ; rdfs:comment "Database Performance Analyst."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/ticketing-system> ; org:memberOf org:Team_DatabaseOps .
+
+# Team_AppSupport_CRM
+foaf:Agent_Tina a foaf:Agent ; rdfs:label "Tina Turner"@en, "Tina Leroy"@fr ; rdfs:comment "CRM Support Engineer L2."@en ; noria:agentWorkingHours "8:30-16:30 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/ticketing-system> ; org:memberOf org:Team_AppSupport_CRM .
+foaf:Agent_Uma a foaf:Agent ; rdfs:label "Uma Thurman"@en, "Uma Girard"@fr ; rdfs:comment "CRM Integration Specialist."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_AppSupport_CRM .
+foaf:Agent_Victor a foaf:Agent ; rdfs:label "Victor Hugo"@en, "Victor Bernard"@fr ; rdfs:comment "CRM Business Analyst."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/chat> ; org:memberOf org:Team_AppSupport_CRM .
+
+# Team_SecurityOps
+foaf:Agent_Wendy a foaf:Agent ; rdfs:label "Wendy Darling"@en, "Wendy Martin"@fr ; rdfs:comment "Security Incident Responder."@en ; noria:agentWorkingHours "Shift B (Night)"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ; org:memberOf org:Team_SecurityOps .
+foaf:Agent_Xavier a foaf:Agent ; rdfs:label "Xavier Cugat"@en, "Xavier Dubois"@fr ; rdfs:comment "Vulnerability Management Specialist."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_SecurityOps .
+foaf:Agent_Yara a foaf:Agent ; rdfs:label "Yara Shahidi"@en, "Yara Lefebvre"@fr ; rdfs:comment "Security Compliance Officer."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_SecurityOps .
+
+# Team_CloudInfra
+foaf:Agent_Zoe a foaf:Agent ; rdfs:label "Zoe Saldana"@en, "Zoe Moreau"@fr ; rdfs:comment "Cloud Platform Engineer."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/chat> ; org:memberOf org:Team_CloudInfra .
+foaf:Agent_Adam a foaf:Agent ; rdfs:label "Adam Sandler"@en, "Adam Dupont"@fr ; rdfs:comment "Cloud Network Specialist."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_CloudInfra .
+foaf:Agent_Beth a foaf:Agent ; rdfs:label "Beth Harmon"@en, "Beth Martin"@fr ; rdfs:comment "Cloud Security Architect."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_CloudInfra .
+
+# Team_DevOps_Platform
+foaf:Agent_Caleb a foaf:Agent ; rdfs:label "Caleb Followill"@en, "Caleb Lefebvre"@fr ; rdfs:comment "CI/CD Pipeline Engineer."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/chat> ; org:memberOf org:Team_DevOps_Platform .
+foaf:Agent_Dina a foaf:Agent ; rdfs:label "Dina Meyer"@en, "Dina Moreau"@fr ; rdfs:comment "Containerization Specialist."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_DevOps_Platform .
+foaf:Agent_Ethan a foaf:Agent ; rdfs:label "Ethan Hunt"@en, "Ethan Dubois"@fr ; rdfs:comment "Automation Engineer."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_DevOps_Platform .
+
+# Team_StorageAdmins
+foaf:Agent_Fiona a foaf:Agent ; rdfs:label "Fiona Apple"@en, "Fiona Petit"@fr ; rdfs:comment "SAN Administrator."@en ; noria:agentWorkingHours "8:00-16:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_StorageAdmins .
+foaf:Agent_George a foaf:Agent ; rdfs:label "George Clooney"@en, "George Bernard"@fr ; rdfs:comment "NAS Specialist."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ; org:memberOf org:Team_StorageAdmins .
+foaf:Agent_Hannah a foaf:Agent ; rdfs:label "Hannah Montana"@en, "Hannah Robert"@fr ; rdfs:comment "Backup and Recovery Engineer."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/ticketing-system> ; org:memberOf org:Team_StorageAdmins .
+
+# Team_HelpDesk
+foaf:Agent_Ian a foaf:Agent ; rdfs:label "Ian Somerhalder"@en, "Ian Dubois"@fr ; rdfs:comment "IT Support Technician L1."@en ; noria:agentWorkingHours "7:00-15:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ; org:memberOf org:Team_HelpDesk .
+foaf:Agent_Jenna a foaf:Agent ; rdfs:label "Jenna Ortega"@en, "Jenna Laurent"@fr ; rdfs:comment "IT Support Technician L1."@en ; noria:agentWorkingHours "11:00-19:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ; org:memberOf org:Team_HelpDesk .
+foaf:Agent_Kyle a foaf:Agent ; rdfs:label "Kyle MacLachlan"@en, "Kyle Leroy"@fr ; rdfs:comment "Desktop Support Specialist."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_HelpDesk .
+
+# Team_Monitoring
+foaf:Agent_Lisa a foaf:Agent ; rdfs:label "Lisa Kudrow"@en, "Lisa Simon"@fr ; rdfs:comment "Monitoring System Engineer."@en ; noria:agentWorkingHours "Shift C (Evening)"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/ticketing-system> ; org:memberOf org:Team_Monitoring .
+foaf:Agent_Mark a foaf:Agent ; rdfs:label "Mark Ruffalo"@en, "Mark Dubois"@fr ; rdfs:comment "Alert Management Specialist."@en ; noria:agentWorkingHours "Shift D (Early Morning)"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ; org:memberOf org:Team_Monitoring .
+foaf:Agent_Nina a foaf:Agent ; rdfs:label "Nina Simone"@en, "Nina Leroy"@fr ; rdfs:comment "Log Analysis Specialist."@en ; noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ; noria:agentPreferredContactMethod <kos/org/agent-contact-method/chat> ; org:memberOf org:Team_Monitoring .
+
+# Corporate User Identifiers (10 CUIDs for key individuals)
+noria:CUid_Alice a noria:CorporateUserIdentifier ;
+    rdfs:label "Alice Smith's Corporate User ID"@en ;
+    rdfs:comment "Unique identifier for Alice Smith's corporate account."@en ;
+    foaf:accountName "asmith" ;
+    observable:accountLogin "asmith" ;
+    observable:accountIdentifier "CU-ASMITH-001" ;
+    foaf:holdsAccount foaf:Agent_Alice .
+
+noria:CUid_Bob a noria:CorporateUserIdentifier ;
+    rdfs:label "Bob Johnson's Corporate User ID"@en ;
+    rdfs:comment "Unique identifier for Bob Johnson's corporate account."@en ;
+    foaf:accountName "bjohnson" ;
+    observable:accountLogin "bjohnson" ;
+    observable:accountIdentifier "CU-BJOHNSON-002" ;
+    foaf:holdsAccount foaf:Agent_Bob .
+
+noria:CUid_Charlie a noria:CorporateUserIdentifier ;
+    rdfs:label "Charlie Brown's Corporate User ID"@en ;
+    rdfs:comment "Unique identifier for Charlie Brown's corporate account."@en ;
+    foaf:accountName "cbrown" ;
+    observable:accountLogin "cbrown" ;
+    observable:accountIdentifier "CU-CBROWN-003" ;
+    foaf:holdsAccount foaf:Agent_Charlie .
+
+noria:CUid_Diana a noria:CorporateUserIdentifier ;
+    rdfs:label "Diana Prince's Corporate User ID"@en ;
+    rdfs:comment "Unique identifier for Diana Prince's corporate account."@en ;
+    foaf:accountName "dprince" ;
+    observable:accountLogin "dprince" ;
+    observable:accountIdentifier "CU-DPRINCE-004" ;
+    foaf:holdsAccount foaf:Agent_Diana .
+
+noria:CUid_Eve a noria:CorporateUserIdentifier ;
+    rdfs:label "Eve Adams' Corporate User ID"@en ;
+    rdfs:comment "Unique identifier for Eve Adams' corporate account."@en ;
+    foaf:accountName "eadams" ;
+    observable:accountLogin "eadams" ;
+    observable:accountIdentifier "CU-EADAMS-005" ;
+    foaf:holdsAccount foaf:Agent_Eve .
+
+noria:CUid_Frank a noria:CorporateUserIdentifier ;
+    rdfs:label "Frank White's Corporate User ID"@en ;
+    rdfs:comment "Unique identifier for Frank White's corporate account."@en ;
+    foaf:accountName "fwhite" ;
+    observable:accountLogin "fwhite" ;
+    observable:accountIdentifier "CU-FWHITE-006" ;
+    foaf:holdsAccount foaf:Agent_Frank .
+
+noria:CUid_Grace a noria:CorporateUserIdentifier ;
+    rdfs:label "Grace Hopper's Corporate User ID"@en ;
+    rdfs:comment "Unique identifier for Grace Hopper's corporate account."@en ;
+    foaf:accountName "ghopper" ;
+    observable:accountLogin "ghopper" ;
+    observable:accountIdentifier "CU-GHOPPER-007" ;
+    foaf:holdsAccount foaf:Agent_Grace .
+
+noria:CUid_Heidi a noria:CorporateUserIdentifier ;
+    rdfs:label "Heidi Klum's Corporate User ID"@en ;
+    rdfs:comment "Unique identifier for Heidi Klum's corporate account."@en ;
+    foaf:accountName "hklum" ;
+    observable:accountLogin "hklum" ;
+    observable:accountIdentifier "CU-HKLUM-008" ;
+    foaf:holdsAccount foaf:Agent_Heidi .
+
+noria:CUid_Ivan a noria:CorporateUserIdentifier ;
+    rdfs:label "Ivan Petrov's Corporate User ID"@en ;
+    rdfs:comment "Unique identifier for Ivan Petrov's corporate account."@en ;
+    foaf:accountName "ipetrov" ;
+    observable:accountLogin "ipetrov" ;
+    observable:accountIdentifier "CU-IPETROV-009" ;
+    foaf:holdsAccount foaf:Agent_Ivan .
+
+noria:CUid_Judy a noria:CorporateUserIdentifier ;
+    rdfs:label "Judy Garland's Corporate User ID"@en ;
+    rdfs:comment "Unique identifier for Judy Garland's corporate account."@en ;
+    foaf:accountName "jgarland" ;
+    observable:accountLogin "jgarland" ;
+    observable:accountIdentifier "CU-JGARLAND-010" ;
+    foaf:holdsAccount foaf:Agent_Judy .
+
+# --- Locations ---
+# Creating 10 sites, 5 rooms per site, 20 loci per room (total 10 sites, 50 rooms, 200 loci)
+
+# Sites
+bot:Site_HQ a bot:Site ;
+    rdfs:label "Headquarters Data Center"@en, "Centre de Données du Siège Social"@fr ;
+    rdfs:comment "Main data center for corporate operations."@en ;
+    noria:siteId "DC-HQ-01" ;
+    noria:siteType "data center" ;
+    noria:sitePrincipalAddress "123 Main Street" ;
+    noria:sitePrincipalAddressPostalCode "10001" ;
+    noria:sitePrincipalAddressCityName "New York" ;
+    noria:sitePrincipalAddressCountry "US" ;
+    noria:sitePrincipalAddressStreet "Main Street" .
+
+bot:Site_DR a bot:Site ;
+    rdfs:label "Disaster Recovery Site"@en, "Site de Reprise après Sinistre"@fr ;
+    rdfs:comment "Secondary data center for disaster recovery and business continuity."@en ;
+    noria:siteId "DC-DR-02" ;
+    noria:siteType "data center" ;
+    noria:sitePrincipalAddress "456 Backup Road" ;
+    noria:sitePrincipalAddressPostalCode "90210" ;
+    noria:sitePrincipalAddressCityName "Los Angeles" ;
+    noria:sitePrincipalAddressCountry "US" ;
+    noria:sitePrincipalAddressStreet "Backup Road" .
+
+bot:Site_BranchOffice_LON a bot:Site ;
+    rdfs:label "London Branch Office"@en, "Bureau Régional de Londres"@fr ;
+    rdfs:comment "Smaller office with local IT infrastructure in London."@en ;
+    noria:siteId "BO-LON-03" ;
+    noria:siteType "office building" ;
+    noria:sitePrincipalAddress "789 High Street" ;
+    noria:sitePrincipalAddressPostalCode "SW1A 0AA" ;
+    noria:sitePrincipalAddressCityName "London" ;
+    noria:sitePrincipalAddressCountry "UK" ;
+    noria:sitePrincipalAddressStreet "High Street" .
+
+bot:Site_BranchOffice_PAR a bot:Site ;
+    rdfs:label "Paris Branch Office"@en, "Bureau Régional de Paris"@fr ;
+    rdfs:comment "Smaller office with local IT infrastructure in Paris."@en ;
+    noria:siteId "BO-PAR-04" ;
+    noria:siteType "office building" ;
+    noria:sitePrincipalAddress "10 Rue de la Paix" ;
+    noria:sitePrincipalAddressPostalCode "75002" ;
+    noria:sitePrincipalAddressCityName "Paris" ;
+    noria:sitePrincipalAddressCountry "FR" ;
+    noria:sitePrincipalAddressStreet "Rue de la Paix" .
+
+bot:Site_EdgeLocation_NYC a bot:Site ;
+    rdfs:label "NYC Edge Location"@en, "Point d'Accès Edge NYC"@fr ;
+    rdfs:comment "Small edge data center for localized services in New York City."@en ;
+    noria:siteId "EDGE-NYC-05" ;
+    noria:siteType "edge data center" ;
+    noria:sitePrincipalAddress "500 Edge Avenue" ;
+    noria:sitePrincipalAddressPostalCode "10005" ;
+    noria:sitePrincipalAddressCityName "New York" ;
+    noria:sitePrincipalAddressCountry "US" ;
+    noria:sitePrincipalAddressStreet "Edge Avenue" .
+
+# Rooms (5 per site, 50 rooms total)
+for i in range(1, 11): # 10 sites
+    site_id = f"DC-HQ-01" if i == 1 else f"DC-DR-02" if i == 2 else f"BO-LON-03" if i == 3 else f"BO-PAR-04" if i == 4 else f"EDGE-NYC-05" if i == 5 else f"bot:Site_Generic_{i:02d}"
+    site_label = f"Site {i}"
+    if i > 5: # Create generic sites for scaling
+        print(f"""
+bot:Site_Generic_{i:02d} a bot:Site ;
+    rdfs:label "Generic Site {i}"@en, "Site Générique {i}"@fr ;
+    rdfs:comment "A generic branch office or small data center."@en ;
+    noria:siteId "GEN-SITE-{i:02d}" ;
+    noria:siteType "branch office" ;
+    noria:sitePrincipalAddress "{i*10} Generic Road" ;
+    noria:sitePrincipalAddressPostalCode "G{i:02d}001" ;
+    noria:sitePrincipalAddressCityName "GenericCity{i}" ;
+    noria:sitePrincipalAddressCountry "US" ;
+    noria:sitePrincipalAddressStreet "Generic Road" .
+""")
+        site_id = f"bot:Site_Generic_{i:02d}"
+
+    for j in range(1, 6): # 5 rooms per site
+        room_type = "ServerRoom" if j == 1 else "NetworkRoom" if j == 2 else "StorageRoom" if j == 3 else "CommsRoom" if j == 4 else "UtilityRoom"
+        room_label_en = f"{site_label} {room_type} {j}"
+        room_label_fr = f"Salle {room_type.replace('Room', '')} {site_label} {j}"
+        room_comment = f"Room {j} in {site_label}."
+        room_uri = f"noria:Room_{site_id.split(':')[-1]}_{room_type}{j}"
+        print(f"""
+{room_uri} a noria:Room ;
+    rdfs:label "{room_label_en}"@en, "{room_label_fr}"@fr ;
+    rdfs:comment "{room_comment}"@en ;
+    bot:hasSpace {site_id} .
+""")
+        # Loci (4 per room, 200 loci total)
+        for k in range(1, 5): # 4 loci per room
+            locus_uri = f"noria:Locus_{site_id.split(':')[-1]}_{room_type}{j}_Rack{k}"
+            locus_label_en = f"{room_label_en} Rack {k}"
+            locus_label_fr = f"{room_label_fr} Rack {k}"
+            locus_comment = f"Rack {k} in {room_label_en}."
+            print(f"""
+{locus_uri} a noria:Locus ;
+    rdfs:label "{locus_label_en}"@en, "{locus_label_fr}"@fr ;
+    rdfs:comment "{locus_comment}"@en ;
+    noria:locusLine "{chr(64 + (k%2)+1)}" ;
+    noria:locusRow "{k}" ;
+    bot:containsZone {room_uri} .
+""")
+
+# --- Product Models and Manufacturers ---
+# Creating 30 product models and 10 manufacturers
+
+# Manufacturers (10 organizations)
+<http://www.dell.com/organization> a org:Organization ; rdfs:label "Dell Technologies"@en ; rdfs:comment "Global technology company."@en .
+<http://www.cisco.com/organization> a org:Organization ; rdfs:label "Cisco Systems"@en ; rdfs:comment "Networking hardware and software."@en .
+<http://www.juniper.net/organization> a org:Organization ; rdfs:label "Juniper Networks"@en ; rdfs:comment "Networking products."@en .
+<http://www.hpe.com/organization> a org:Organization ; rdfs:label "Hewlett Packard Enterprise"@en ; rdfs:comment "Enterprise IT company."@en .
+<http://www.netapp.com/organization> a org:Organization ; rdfs:label "NetApp"@en ; rdfs:comment "Hybrid cloud data services."@en .
+<http://www.vmware.com/organization> a org:Organization ; rdfs:label "VMware"@en ; rdfs:comment "Cloud computing and virtualization."@en .
+<http://www.paloaltonetworks.com/organization> a org:Organization ; rdfs:label "Palo Alto Networks"@en ; rdfs:comment "Cybersecurity company."@en .
+<http://www.arista.com/organization> a org:Organization ; rdfs:label "Arista Networks"@en ; rdfs:comment "Computer networking company."@en .
+<http://www.ibm.com/organization> a org:Organization ; rdfs:label "IBM"@en ; rdfs:comment "Multinational technology and consulting."@en .
+<http://www.fortinet.com/organization> a org:Organization ; rdfs:label "Fortinet"@en ; rdfs:comment "Cybersecurity solutions."@en .
+
+# Product Models (30 models)
+product_models = [
+    ("Dell PowerEdge R740", "DellR740", <http://www.dell.com/organization>),
+    ("Cisco Nexus 9000 Series Switch", "CiscoNexus9K", <http://www.cisco.com/organization>),
+    ("Juniper MX480 Router", "JuniperMX480", <http://www.juniper.net/organization>),
+    ("HP ProLiant DL380 Gen10", "HPProLiantDL380", <http://www.hpe.com/organization>),
+    ("NetApp FAS8200 Storage System", "NetAppFAS8200", <http://www.netapp.com/organization>),
+    ("VMware ESXi Hypervisor", "VMwareESXi", <http://www.vmware.com/organization>),
+    ("Palo Alto Networks PA-5220 Firewall", "PaloAltoFW", <http://www.paloaltonetworks.com/organization>),
+    ("Arista 7050S-64 Switch", "Arista7050", <http://www.arista.com/organization>),
+    ("IBM Storwize V7000", "IBMStorwizeV7000", <http://www.ibm.com/organization>),
+    ("FortiGate 100F Firewall", "FortiGate100F", <http://www.fortinet.com/organization>),
+    ("Dell PowerEdge R640", "DellR640", <http://www.dell.com/organization>),
+    ("Cisco Catalyst 9300 Switch", "CiscoCat9300", <http://www.cisco.com/organization>),
+    ("Juniper SRX340 Firewall", "JuniperSRX340", <http://www.juniper.net/organization>),
+    ("HP ProLiant DL360 Gen10", "HPProLiantDL360", <http://www.hpe.com/organization>),
+    ("NetApp AFF A250", "NetAppAFFA250", <http://www.netapp.com/organization>),
+    ("Microsoft Hyper-V", "MicrosoftHyperV", <http://www.microsoft.com/organization>), # Assuming Microsoft as a manufacturer
+    ("Palo Alto Networks PA-220 Firewall", "PaloAltoPA220", <http://www.paloaltonetworks.com/organization>),
+    ("Arista 7280R2 Switch", "Arista7280R2", <http://www.arista.com/organization>),
+    ("IBM FlashSystem 5000", "IBMFlashSystem5000", <http://www.ibm.com/organization>),
+    ("FortiGate 60F Firewall", "FortiGate60F", <http://www.fortinet.com/organization>),
+    ("Dell PowerEdge T440", "DellT440", <http://www.dell.com/organization>),
+    ("Cisco ASR 9000 Router", "CiscoASR9K", <http://www.cisco.com/organization>),
+    ("Juniper EX4300 Switch", "JuniperEX4300", <http://www.juniper.net/organization>),
+    ("HP Synergy 480 Gen10", "HPSynergy480", <http://www.hpe.com/organization>),
+    ("NetApp E2800", "NetAppE2800", <http://www.netapp.com/organization>),
+    ("Citrix Hypervisor", "CitrixHypervisor", <http://www.citrix.com/organization>), # Assuming Citrix as a manufacturer
+    ("Check Point 1500 Series", "CheckPoint1500", <http://www.checkpoint.com/organization>), # Assuming Check Point as a manufacturer
+    ("Arista 7010T Switch", "Arista7010T", <http://www.arista.com/organization>),
+    ("IBM Power System E980", "IBMPowerE980", <http://www.ibm.com/organization>),
+    ("FortiAnalyzer 1000F", "FortiAnalyzer1000F", <http://www.fortinet.com/organization>)
+]
+
+for i, (label, uri_suffix, manufacturer) in enumerate(product_models):
+    print(f"""
+noria:ProductModel_{uri_suffix} a noria:ProductModel ;
+    rdfs:label "{label}"@en ;
+    rdfs:comment "Product model for {label}."@en ;
+    noria:productManufacturedBy {manufacturer} .
+""")
+    # Define manufacturers if not already defined (e.g., Microsoft, Citrix, Check Point)
+    if "microsoft" in str(manufacturer):
+        print(f"""
+<http://www.microsoft.com/organization> a org:Organization ;
+    rdfs:label "Microsoft Corporation"@en ;
+    rdfs:comment "American multinational technology corporation."@en .
+""")
+    if "citrix" in str(manufacturer):
+        print(f"""
+<http://www.citrix.com/organization> a org:Organization ;
+    rdfs:label "Citrix Systems"@en ;
+    rdfs:comment "American multinational software company."@en .
+""")
+    if "checkpoint" in str(manufacturer):
+        print(f"""
+<http://www.checkpoint.com/organization> a org:Organization ;
+    rdfs:label "Check Point Software Technologies"@en ;
+    rdfs:comment "Israeli-American multinational provider of IT security products."@en .
+""")
+
+# --- Applications ---
+# Creating 30 applications
+application_types = [
+    "<kos/application/type/business-critical>", "<kos/application/type/infrastructure>",
+    "<kos/application/type/communication>", "<kos/application/type/customer-facing>",
+    "<kos/application/type/internal-business>", "<kos/application/type/infrastructure-management>"
+]
+business_importance = [
+    "<kos/application/business-importance/high>", "<kos/application/business-importance/critical>",
+    "<kos/application/business-importance/medium>", "<kos/application/business-importance/low>"
+]
+functional_domains = [
+    "Market and Customer Relationship Management", "Service Development, Management and Operations",
+    "Resource Development, Management and Operations"
+]
+functional_subdomains = [
+    "Customer Order Management", "Financial Management", "Service Monitoring",
+    "Network Resource Management", "Customer Interaction Management", "Customer Self-Service",
+    "Human Resource Management", "Resource Inventory Management", "Data Protection",
+    "Incident Management", "Supply Chain Management", "Project Management"
+]
+
+for i in range(1, 31):
+    app_uri = f"noria:Application_{i:02d}"
+    app_label_en = f"Enterprise Application {i:02d}"
+    app_label_fr = f"Application d'Entreprise {i:02d}"
+    app_comment = f"A critical business application for enterprise operations."
+    app_model_id = f"APP-MOD-{i:02d}"
+    app_num_id = 1000 + i
+    app_short_id = f"APP{i:02d}"
+    app_type = application_types[i % len(application_types)]
+    app_biz_importance = business_importance[i % len(business_importance)]
+    app_func_domain = functional_domains[i % len(functional_domains)]
+    app_func_subdomain = functional_subdomains[i % len(functional_subdomains)]
+
+    print(f"""
+{app_uri} a noria:Application ;
+    rdfs:label "{app_label_en}"@en, "{app_label_fr}"@fr ;
+    rdfs:comment "{app_comment}"@en ;
+    noria:applicationModelIdentifier "{app_model_id}" ;
+    noria:applicationNumericalIdentifier {app_num_id} ;
+    noria:applicationShortIdentifier "{app_short_id}" ;
+    noria:applicationType {app_type} ;
+    noria:applicationBusinessImportance {app_biz_importance} ;
+    noria:applicationFunctionalDomain "{app_func_domain}" ;
+    noria:applicationFunctionalSubDomain "{app_func_subdomain}" .
+""")
+
+# --- Application Modules ---
+# Creating 3 modules per application (30 applications * 3 modules = 90 modules)
+app_module_statuses = [
+    "<https://w3id.org/noria/kos/application/status/InProduction>",
+    "<https://w3id.org/noria/kos/application/status/Development>",
+    "<https://w3id.org/noria/kos/application/status/Testing>",
+    "<https://w3id.org/noria/kos/application/status/Standby>"
+]
+sla_levels = [
+    "<https://w3id.org/noria/kos/application/sla-level/Platinum>",
+    "<https://w3id.org/noria/kos/application/sla-level/Gold>",
+    "<https://w3id.org/noria/kos/application/sla-level/Silver>",
+    "<https://w3id.org/noria/kos/application/sla-level/Bronze>"
+]
+admin_teams = [org.Team_AppSupport_CRM, org.Team_ServerAdmins, org.Team_DevOps_Platform]
+support_teams = [org.Team_AppSupport_CRM, org.Team_HelpDesk, org.Team_Monitoring]
+support_leaders = [foaf.Agent_Diana, foaf.Agent_Bob, foaf.Agent_Grace]
+hotline_groups = [org.Team_HelpDesk, org.Team_NetworkOperations, org.Team_SecurityOps]
+
+for i in range(1, 31): # 30 applications
+    app_uri = f"noria:Application_{i:02d}"
+    for j in range(1, 4): # 3 modules per application
+        module_type = "Prod" if j == 1 else "Dev" if j == 2 else "Test"
+        app_module_uri = f"noria:ApplicationModule_{i:02d}_{module_type}"
+        app_module_label_en = f"Application {i:02d} {module_type} Module"
+        app_module_label_fr = f"Module Application {i:02d} {module_type}"
+        app_module_comment = f"{module_type} instance of Application {i:02d}."
+        app_module_name = f"APP{i:02d}_{module_type}_MOD"
+        app_module_id = f"APP-MOD-{i:02d}-{j}"
+        app_module_status = app_module_statuses[j-1] if j <= 4 else app_module_statuses[0]
+        sla_level = sla_levels[j-1] if j <= 4 else sla_levels[0]
+        sla_date = f"2023-01-{(i%28)+1:02d}T00:00:00Z"
+        hotline_enabled = "true" if j == 1 else "false"
+        admin_team = admin_teams[i % len(admin_teams)]
+        support_team = support_teams[i % len(support_teams)]
+        support_leader = support_leaders[i % len(support_leaders)]
+        hotline_group = hotline_groups[i % len(hotline_groups)]
+
+        print(f"""
+{app_module_uri} a noria:ApplicationModule ;
+    rdfs:label "{app_module_label_en}"@en, "{app_module_label_fr}"@fr ;
+    rdfs:comment "{app_module_comment}"@en ;
+    noria:applicationModuleOf {app_uri} ;
+    noria:applicationModuleName "{app_module_name}" ;
+    noria:applicationModuleIdentifier "{app_module_id}" ;
+    noria:applicationModuleStatus {app_module_status} ;
+    noria:applicationModuleSlaLevel {sla_level} ;
+    noria:applicationModuleSlaLevelDate "{sla_date}"^^xsd:dateTime ;
+    noria:applicationModuleHotlineEnabled {hotline_enabled} ;
+    noria:applicationModuleAdministrationTeam {admin_team} ;
+    noria:applicationModuleSupportTeam {support_team} ;
+    noria:applicationModuleSupportLeader {support_leader} ;
+    noria:applicationModuleHotlineGroup {hotline_group} .
+""")
+
+# --- Services ---
+# Creating 10 services
+service_types = [
+    "<kos/service/type/ResourceFacingService>",
+    "<kos/service/type/CustomerFacingService>"
+]
+
+for i in range(1, 11):
+    service_uri = f"noria:Service_{i:02d}"
+    service_label_en = f"Enterprise Service {i:02d}"
+    service_label_fr = f"Service d'Entreprise {i:02d}"
+    service_comment = f"A key service provided to internal or external customers."
+    service_type = service_types[i % len(service_types)]
+
+    print(f"""
+{service_uri} a noria:Service ;
+    rdfs:label "{service_label_en}"@en, "{service_label_fr}"@fr ;
+    rdfs:comment "{service_comment}"@en ;
+    noria:serviceType {service_type} .
+""")
+
+# --- Resources ---
+# Creating 300 resources (mix of servers, network devices, virtual machines)
+# Each resource will have 2 network interfaces and 2 network links.
+# Total: 300 Resources, 600 Network Interfaces, 600 Network Links.
+
+resource_types = [
+    "<kos/Resource/type/server>", "<kos/Resource/type/router>", "<kos/Resource/type/switch>",
+    "<kos/Resource/type/virtual-machine>", "<kos/Resource/type/firewall>", "<kos/Resource/type/storage-array>"
+]
+usage_states = [
+    "<kos/Resource/LifecycleState/InProduction>", "<kos/Resource/LifecycleState/Staging>",
+    "<kos/Resource/LifecycleState/Decommissioned>"
+]
+admin_states = ["<kos/Resource/AdministrativeState/up>", "<kos/Resource/AdministrativeState/down>"]
+op_states = ["<kos/Resource/OperationalState/up>", "<kos/Resource/OperationalState/down>"]
+interface_types = ["<kos/Resource/network-interface-type/physical>", "<kos/Resource/network-interface-type/virtual>"]
+
+for i in range(1, 301): # 300 resources
+    resource_uri = f"noria:Resource_{i:03d}"
+    resource_label_en = f"IT Resource {i:03d}"
+    resource_label_fr = f"Ressource IT {i:03d}"
+    resource_comment = f"A generic IT resource in the infrastructure."
+    resource_logistic_id = f"RES-{i:05d}"
+    resource_hostname = f"res-{i:05d}.corp.example.com"
+    resource_product_model = product_models[i % len(product_models)][0].replace(" ", "") # Use URI suffix
+    resource_type = resource_types[i % len(resource_types)]
+    resource_serial_number = f"SN-RES-{i:07d}"
+    resource_usage_state = usage_states[i % len(usage_states)]
+    resource_install_date = f"2023-01-{(i%28)+1:02d}T{((i*2)%24):02d}:{((i*3)%60):02d}:{((i*5)%60):02d}Z"
+    resource_for_application = f"noria:Application_{((i-1)%30)+1:02d}"
+    resource_located_at_locus = f"noria:Locus_DC-HQ-01_ServerRoom1_Rack{((i-1)%4)+1}" # Distribute across HQ racks
+    resource_managed_by = org.Team_ServerAdmins if "server" in resource_type else org.Team_NetworkOperations if "router" in resource_type or "switch" in resource_type else org.Team_StorageAdmins if "storage" in resource_type else org.Team_SecurityOps if "firewall" in resource_type else org.Team_CloudInfra
+    resource_mgmt_ip = f"10.10.{((i-1)//25)+1}.{((i-1)%25)+10}"
+
+    print(f"""
+{resource_uri} a noria:Resource ;
+    rdfs:label "{resource_label_en}"@en, "{resource_label_fr}"@fr ;
+    rdfs:comment "{resource_comment}"@en ;
+    noria:resourceLogisticId "{resource_logistic_id}" ;
+    noria:resourceHostName "{resource_hostname}" ;
+    noria:resourceProductModel noria:ProductModel_{resource_product_model} ;
+    noria:resourceType {resource_type} ;
+    noria:resourceSerialNumber "{resource_serial_number}" ;
+    noria:resourceUsageState {resource_usage_state} ;
+    noria:resourceInstallationDate "{resource_install_date}"^^xsd:dateTime ;
+    noria:resourceForApplication {resource_for_application} ;
+    noria:locatedAtLocus {resource_located_at_locus} ;
+    noria:resourceManagedBy {resource_managed_by} ;
+    noria:resourceManagementIPAddress <observable:IPAddress_Res{i:03d}_Mgmt> .
+
+<observable:IPAddress_Res{i:03d}_Mgmt> a observable:IPAddress ;
+    rdfs:label "Management IP for {resource_hostname}"@en ;
+    observable:ipAddressValue "{resource_mgmt_ip}" .
+""")
+
+    for j in range(1, 3): # 2 network interfaces per resource
+        interface_uri = f"noria:NetworkInterface_Res{i:03d}_Eth{j-1}"
+        interface_label_en = f"{resource_hostname} Eth{j-1}"
+        interface_comment = f"Network interface {j-1} for {resource_hostname}."
+        interface_description = f"Interface for data traffic." if j == 1 else f"Interface for management/backup."
+        interface_type = interface_types[0] if "virtual-machine" not in resource_type else interface_types[1]
+        admin_status = admin_states[j % 2]
+        op_status = op_states[(j+1) % 2] # Vary operational status
+        link_uri = f"noria:NetworkLink_Res{i:03d}_Link{j-1}"
+        link_label_en = f"Link {resource_hostname} to Network {j-1}"
+        link_comment = f"Network link for interface Eth{j-1} of {resource_hostname}."
+        link_id = f"LINK-RES{i:05d}-ETH{j-1}"
+        link_type = "Ethernet" if "virtual-machine" not in resource_type else "Virtual Ethernet"
+
+        print(f"""
+{interface_uri} a noria:NetworkInterface ;
+    rdfs:label "{interface_label_en}"@en ;
+    rdfs:comment "{interface_comment}"@en ;
+    noria:networkInterfaceDescription "{interface_description}" ;
+    noria:networkInterfaceType {interface_type} ;
+    noria:networkInterfaceAdministrativeStatus {admin_status} ;
+    noria:networkInterfaceOperationalStatus {op_status} ;
+    noria:networkInterfaceRoutingPriorityMetric {100 + i} ;
+    noria:networkInterfaceLaserTxOpticalPower {-10 + (i%5)} ;
+    noria:networkInterfaceLaserRxOpticalPower {-15 + (i%5)} ;
+    noria:networkInterfaceOf {resource_uri} ;
+    noria:networkInterfaceConnects {link_uri} .
+
+{link_uri} a noria:NetworkLink ;
+    rdfs:label "{link_label_en}"@en ;
+    rdfs:comment "{link_comment}"@en ;
+    noria:networkLinkId "{link_id}" ;
+    noria:networkLinkType "{link_type}" ;
+    noria:networkLinkInstallationDate "{resource_install_date}"^^xsd:dateTime ;
+    noria:networkLinkTerminationResource {resource_uri} ;
+    noria:resourceManagedBy {resource_managed_by} .
+""")
+
+# --- Operation Plans and Conditions ---
+# Creating 10 operation plans with pre/post conditions
+operation_plans = [
+    ("Restart Application Service", "RestartService", "The application service is reported as down or unresponsive.", "The application service is confirmed to be running and accessible."),
+    ("Network Connectivity Troubleshoot", "NetworkTroubleshoot", "A network resource is unreachable or experiencing packet loss.", "Network connectivity to the resource is restored and stable."),
+    ("Database Restore from Backup", "DBRestore", "Database is corrupted, data loss detected, or service is unavailable.", "Database is restored to a consistent state and data integrity verified."),
+    ("Server Reboot Procedure", "ServerReboot", "Server is unresponsive or experiencing critical errors.", "Server has rebooted successfully and is accessible."),
+    ("Firewall Rule Update", "FirewallUpdate", "New network access is required or security vulnerability detected.", "Firewall rules are updated and verified to allow/block traffic as intended."),
+    ("Storage Volume Expansion", "StorageExpand", "Storage volume is nearing full capacity.", "Storage volume has been successfully expanded and is available."),
+    ("Cloud Instance Scaling", "CloudScale", "Application experiences high load or low utilization.", "Cloud instance scaled up/down and performance is optimized."),
+    ("Software Patch Deployment", "SoftwarePatch", "Security vulnerability or bug fix required.", "Software patch deployed successfully and system is stable."),
+    ("User Account Provisioning", "UserProvision", "New employee onboarding or access request.", "User account created and access rights granted."),
+    ("Log Rotation and Archiving", "LogArchive", "Log storage is reaching capacity limits.", "Logs rotated, archived, and storage space freed.")
+]
+
+for i, (op_label, op_suffix, pre_cond_text, post_cond_text) in enumerate(operation_plans):
+    op_uri = f"noria:OperationPlan_{op_suffix}"
+    pre_uri = f"noria:ActionPreCondition_{op_suffix}"
+    post_uri = f"noria:ActionPostCondition_{op_suffix}"
+
+    print(f"""
+{op_uri} a noria:OperationPlan ;
+    rdfs:label "{op_label}"@en, "{op_label.replace(' ', ' ')}"@fr ;
+    rdfs:comment "Standard operating procedure for {op_label.lower()}."@en ;
+    noria:operationPlanPreCondition {pre_uri} ;
+    noria:operationPlanPostCondition {post_uri} .
+
+{pre_uri} a noria:ActionPreCondition ;
+    rdfs:label "{op_label} Pre-Condition"@en ;
+    rdfs:comment "Condition: {pre_cond_text}"@en .
+
+{post_uri} a noria:ActionPostCondition ;
+    rdfs:label "{op_label} Post-Condition"@en ;
+    rdfs:comment "Outcome: {post_cond_text}"@en .
+""")
+
+# --- Event Records ---
+# Generating 1500 Event Records, linking to resources, applications, and agents
+# These will be used to trigger Trouble Tickets and Change Requests.
+
+severity_kos = ["<Notification/Severity/PerceivedSeverity/Critical>", "<Notification/Severity/PerceivedSeverity/Major>", "<Notification/Severity/PerceivedSeverity/Minor>", "<Notification/Severity/PerceivedSeverity/Warning>"]
+op_plans_uris = [f"noria:OperationPlan_{op[1]}" for op in operation_plans]
+agents_list = [f"foaf:Agent_{agent.split('_')[-1]}" for agent in dir(foaf) if agent.startswith("Agent_")]
+applications_list = [f"noria:Application_{i:02d}" for i in range(1, 31)]
+resources_list = [f"noria:Resource_{i:03d}" for i in range(1, 301)]
+
+for i in range(1, 1501): # 1500 event records
+    event_uri = f"noria:EventRecord_{i:04d}"
+    log_time = f"2024-04-{(i%30)+1:02d}T{((i*2)%24):02d}:{((i*3)%60):02d}:{((i*5)%60):02d}Z"
+    severity = severity_kos[i % len(severity_kos)]
+    
+    originating_object = ""
+    log_text = ""
+    comment = ""
+    originating_system = applications_list[i % len(applications_list)] # Random application as system
+    originating_agent = agents_list[i % len(agents_list)]
+    alarm_proposed_action = op_plans_uris[i % len(op_plans_uris)]
+
+    if i % 5 == 0: # Network event
+        originating_object = resources_list[i % len(resources_list)]
+        log_text = f"LINEPROTO-5-UPDOWN: Interface Eth0 on {originating_object.split('_')[-1]} changed state to down."
+        comment = f"Network interface down event on {originating_object.split('_')[-1]}."
+    elif i % 5 == 1: # Server event
+        originating_object = resources_list[i % len(resources_list)]
+        log_text = f"CRITICAL: Disk usage on {originating_object.split('_')[-1]} reached 95%."
+        comment = f"High disk usage alert on server {originating_object.split('_')[-1]}."
+    elif i % 5 == 2: # Application event
+        originating_object = applications_list[i % len(applications_list)]
+        log_text = f"ERROR: Application {originating_object.split('_')[-1]} experienced database connection timeout."
+        comment = f"Application error: database connection issue for {originating_object.split('_')[-1]}."
+    elif i % 5 == 3: # Security event
+        originating_object = resources_list[i % len(resources_list)]
+        log_text = f"ALERT: Multiple failed login attempts detected from external IP 203.0.113.{i} on {originating_object.split('_')[-1]}."
+        comment = f"Security alert: Brute force attempt detected on {originating_object.split('_')[-1]}."
+    else: # Generic system event
+        originating_object = resources_list[i % len(resources_list)]
+        log_text = f"INFO: System reboot initiated on {originating_object.split('_')[-1]} by scheduled task."
+        comment = f"Informational event: Scheduled reboot of {originating_object.split('_')[-1]}."
+
+    print(f"""
+{event_uri} a noria:EventRecord ;
+    rdfs:label "Event Record {i:04d}"@en ;
+    rdfs:comment "{comment}"@en ;
+    noria:logText "{log_text}"@en ;
+    noria:loggingTime "{log_time}"^^xsd:dateTime ;
+    noria:logOriginatingManagedObject {originating_object} ;
+    noria:logOriginatingManagementSystem {originating_system} ;
+    noria:logOriginatingAgent {originating_agent} ;
+    noria:alarmSeverity {severity} ;
+    noria:alarmProposedRepairAction {alarm_proposed_action} .
+""")
+
+# --- Trouble Tickets ---
+# Generating 700 Trouble Tickets, linking to events, resources, applications, and agents
+# Each TT will have 2 TroubleTicketNotes (total 1400 notes)
+
+severity_tt_kos = ["<kos/TroubleTicket/severity/Critical>", "<kos/TroubleTicket/severity/Major>", "<kos/TroubleTicket/severity/Minor>", "<kos/TroubleTicket/severity/Warning>"]
+type_tt_kos = ["<kos/TroubleTicket/type/Failure>", "<kos/TroubleTicket/type/Assistance>", "<kos/TroubleTicket/type/Maintenance>"]
+criticity_tt_kos = ["<kos/TroubleTicket/category/Interruptedservice>", "<kos/TroubleTicket/category/Corruptedservice>", "<kos/TroubleTicket/category/Workingbackup>"]
+priority_tt_kos = ["<kos/TroubleTicket/priority/P1>", "<kos/TroubleTicket/priority/P2>", "<kos/TroubleTicket/priority/P3>", "<kos/TroubleTicket/priority/P4>"]
+origin_tt_kos = ["<kos/TroubleTicket/origin/Customer>", "<kos/TroubleTicket/origin/Supervision>", "<kos/TroubleTicket/origin/Internal>"]
+urgency_tt_kos = ["<kos/TroubleTicket/urgency/ImmediateIntervention>", "<kos/TroubleTicket/urgency/DeferredIntervention>", "<kos/TroubleTicket/urgency/Nointervention>"]
+category_tt_kos = ["<kos/TroubleTicket/trouble-category/Isolatedcustomersite>", "<kos/TroubleTicket/trouble-category/Totalbreakdown>", "<kos/TroubleTicket/trouble-category/Downgradingequipment>"]
+problem_responsibility_tt_kos = ["<kos/TroubleTicket/problemResponsibility/Customer>", "<kos/TroubleTicket/problemResponsibility/Managedbackbonenetworks>", "<kos/TroubleTicket/problemResponsibility/Contractapplication-hostingservices>"]
+status_tt_kos = ["<kos/TroubleTicket/status/Initialised>", "<kos/TroubleTicket/status/InProgress>", "<kos/TroubleTicket/status/Resolved

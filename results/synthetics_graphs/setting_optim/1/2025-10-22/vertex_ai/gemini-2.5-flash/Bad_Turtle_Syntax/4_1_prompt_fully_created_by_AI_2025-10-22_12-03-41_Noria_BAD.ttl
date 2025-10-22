@@ -1,0 +1,974 @@
+# Copyright (c) 2022-2023 Orange. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+#     1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+#     2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+#     3. All advertising materials mentioning features or use of this software must display the following acknowledgement:
+#     This product includes software developed by Orange.
+#     4. Neither the name of Orange nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY Orange "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL Orange BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# === PREFIXES ================================================================
+
+# --- Basic ---
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+# --- Ontology management ---
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix voaf: <http://purl.org/vocommons/voaf#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix schema: <https://schema.org/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# --- Domain specific ---
+@prefix qudt: <http://data.qudt.org/qudt/owl/1.0.0/qudt.owl#> .  # Quantities, Units, Dimensions and Types (QUDT)
+@prefix qudt-unit: <http://data.qudt.org/qudt/owl/1.0.0/unit.owl#> .  #QUDT units
+@prefix time: <http://www.w3.org/2006/time#> .  # OWL-Time
+
+@prefix bot:  <https://w3id.org/bot#> .  # Building Topology Ontology
+@prefix gn: <https://www.geonames.org/ontology#> .  # GeoNames Ontology
+@prefix wgs84_pos: <http://www.w3.org/2003/01/geo/wgs84_pos#> .  # WGS84 Geo Positioning
+
+@prefix BBO: <https://www.irit.fr/recherches/MELODI/ontologies/BBO#> .  # BPMN 2.0 Based Ontology for Business Process Representation
+@prefix org: <http://www.w3.org/ns/org#> .  # The Organization Ontology
+
+@prefix log: <https://w3id.org/sepses/ns/log#> .  # a.k.a. SLOGERT
+@prefix folio: <http://IBCNServices.github.io/Folio-Ontology/Folio.owl#> .  # Failure Mode and Effect Analysis combined with Anomaly Ontology (FOLIO)
+
+@prefix ssn: <http://www.w3.org/ns/ssn/>.  # Semantic Sensor Network (SSN) Ontology
+@prefix seas: <https://w3id.org/seas/>.  # Smart Energy Aware Systems (SEAS)
+@prefix pep: <https://w3id.org/pep/>.  # SEAS Procedure Execution ontology
+@prefix saref: <http://ontology.tno.nl/saref#>.  #SAREF smart building appliances ontology
+
+@prefix observable: <https://unifiedcyberontology.org/ontology/uco/observable#> . # Unified Cybersecurity Ontology (UCO)
+
+@prefix devopsprod: <http://w3id.org/devops-infra/product#> .  # DevOps-Infra, Ontology for the representation of the business offering of a company, including the offered services and microservices
+
+# --- NORIA ---
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@base <https://w3id.org/noria/> .
+
+# =============================================================================
+# Ontology Metadata (from provided schema)
+# =============================================================================
+
+<https://w3id.org/noria/ontology/>
+	a voaf:Vocabulary, owl:Ontology ;
+	dcterms:title "The NORIA Ontology"@en ;
+    dcterms:description """The NORIA-O project is a data model for IT networks, events and operations information.
+The ontology is developed using web technologies (e.g. RDF, OWL, SKOS) and is intended as a structure for realizing an IT Service Management (ITSM) Knowledge Graph (KG) for Anomaly Detection (AD) and Risk Management applications.
+The model has been developed in collaboration with operational teams, and in connection with third parties linked vocabularies.
+
+Alignment with third parties vocabularies is implemented on a per class or per property basis when relevant (e.g. with `rdfs:subClassOf`, `owl:equivalentClass`).
+Directions for direct instanciation of these vocabularies are provided for cases where implementing a class/property alignment is redundant.
+Alignment holds for the following vocabulary releases:
+- [BBO](https://hal.archives-ouvertes.fr/hal-02365012/) 1.0.0
+- [BOT](https://w3id.org/bot/) 0.3.2
+- [DevOps-Infra](https://oeg-upm.github.io/devops-infra/) 1.0.0
+- [FOLIO](https://github.com/IBCNServices/Folio-Ontology) 1.0.0
+- [ORG](https://www.w3.org/TR/vocab-org/) 0.8
+- [PEP](https://w3id.org/pep/) 1.1
+- [SEAS](https://w3id.org/seas/) 1.1
+- [SLOGERT](https://sepses.ifs.tuwien.ac.at/ns/log/index-en.html) 1.1.0
+- [UCO](https://github.com/ucoProject/uco) Release-0.8.0
+"""@en ;
+    foaf:depiction <https://github.com/Orange-OpenSource/noria-ontology/raw/master/dataset/noria-0.2/noria-ontology-UC.png> ;
+    bibo:status <http://purl.org/ontology/bibo/status/accepted> ;  # https://www.dublincore.org/specifications/bibo/bibo/bibo.rdf.xml#
+	dcterms:creator "Lionel Tailhardat (https://orcid.org/0000-0001-5887-899X)" ;  # Lionel Tailhardat
+	dcterms:creator "Yoan Chabot (https://orcid.org/0000-0001-5639-1504)" ;  # Yoan Chabot
+	dcterms:creator "Raphaël Troncy (https://orcid.org/0000-0003-0457-1436)" ;  # Raphaël Troncy
+    dcterms:publisher <https://www.orange.com/> ;
+    dcterms:license <https://spdx.org/licenses/BSD-4-Clause> ;
+    vann:preferredNamespacePrefix "noria" ;
+    vann:preferredNamespaceUri "https://w3id.org/noria/ontology/" ;  # See https://dgarijo.github.io/Widoco/doc/bestPractices/index-en.html
+    dcterms:issued "2022-05-10"^^xsd:date ;
+	dcterms:modified "2024-03-15"^^xsd:date ;
+	skos:changeNote """Changes in v0.3:
+
+- Changed the ontology architecture from micro-architecture to single file.
+- Removed owl:imports for NORIA foundations.
+
+2024-03-15:
+
+- Changed bibo:status
+"""@en ;
+	owl:versionInfo "v0.3" ;
+	owl:versionIRI <ontology/noria-0.3> ;
+	owl:priorVersion <ontology/noria-0.2> ;
+    rdfs:seeAlso <https://w3id.org/noria/doc/> ;
+.
+
+# =============================================================================
+# Knowledge Graph Instances
+# =============================================================================
+
+# --- Helper for IP Addresses (not explicitly in NORIA, but observable:ipAddress is used) ---
+# Defining a generic class for IP Addresses as it's used as a range for observable:ipAddress
+observable:IPAddress a owl:Class ;
+    rdfs:label "IP Address"@en ;
+    rdfs:comment "Represents an IP address value."@en .
+
+# --- Agents and Organizations ---
+# Creating 10 Teams and 10 Individuals (foaf:Agent)
+foaf:Agent_Team_1 a foaf:Agent ;
+    rdfs:label "Network Operations Center Team"@en, "Équipe du Centre d'Opérations Réseau"@fr ;
+    rdfs:comment "Primary team responsible for monitoring and managing network infrastructure."@en ;
+    noria:agentWorkingHours "24/7"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ;
+    noria:agentInstructions "For critical network issues, call the hotline immediately. For non-critical, open a ticket."@en .
+
+foaf:Agent_Team_2 a foaf:Agent ;
+    rdfs:label "Application Support Team A"@en, "Équipe de Support Applicatif A"@fr ;
+    rdfs:comment "Team dedicated to supporting critical business applications."@en ;
+    noria:agentWorkingHours "8:00-18:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "Email support@appA.example.com for all inquiries."@en .
+
+foaf:Agent_Team_3 a foaf:Agent ;
+    rdfs:label "Database Administration Team"@en, "Équipe d'Administration de Bases de Données"@fr ;
+    rdfs:comment "Manages all corporate database systems."@en ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri, on-call 24/7"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/ticketing-system> ;
+    noria:agentInstructions "Open a ticket in the DB-Support queue."@en .
+
+foaf:Agent_Team_4 a foaf:Agent ;
+    rdfs:label "Security Operations Center"@en, "Centre d'Opérations de Sécurité"@fr ;
+    rdfs:comment "Monitors and responds to security incidents."@en ;
+    noria:agentWorkingHours "24/7"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/alert-system> ;
+    noria:agentInstructions "Automated alerts are sent for critical security events."@en .
+
+foaf:Agent_Team_5 a foaf:Agent ;
+    rdfs:label "Cloud Infrastructure Team"@en, "Équipe Infrastructure Cloud"@fr ;
+    rdfs:comment "Manages public and private cloud resources."@en ;
+    noria:agentWorkingHours "9:00-18:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/chat> ;
+    noria:agentInstructions "Contact via internal chat for urgent requests."@en .
+
+foaf:Agent_Team_6 a foaf:Agent ;
+    rdfs:label "DevOps Platform Team"@en, "Équipe Plateforme DevOps"@fr ;
+    rdfs:comment "Manages CI/CD pipelines and development environments."@en ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/chat> ;
+    noria:agentInstructions "Use dedicated chat channel for support."@en .
+
+foaf:Agent_Team_7 a foaf:Agent ;
+    rdfs:label "Storage Operations Team"@en, "Équipe Opérations Stockage"@fr ;
+    rdfs:comment "Manages all corporate storage systems."@en ;
+    noria:agentWorkingHours "8:30-17:30 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/ticketing-system> ;
+    noria:agentInstructions "Open a ticket in the Storage-Ops queue."@en .
+
+foaf:Agent_Team_8 a foaf:Agent ;
+    rdfs:label "Virtualization Platform Team"@en, "Équipe Plateforme Virtualisation"@fr ;
+    rdfs:comment "Manages hypervisors and virtual machine infrastructure."@en ;
+    noria:agentWorkingHours "9:00-18:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "Email for VM provisioning requests."@en .
+
+foaf:Agent_Team_9 a foaf:Agent ;
+    rdfs:label "Data Analytics Team"@en, "Équipe Analyse de Données"@fr ;
+    rdfs:comment "Provides data analysis and reporting services."@en ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "Contact for data pipeline issues."@en .
+
+foaf:Agent_Team_10 a foaf:Agent ;
+    rdfs:label "Service Desk L1"@en, "Service Desk N1"@fr ;
+    rdfs:comment "First line of support for all IT issues."@en ;
+    noria:agentWorkingHours "24/7"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ;
+    noria:agentInstructions "Call the main IT support number."@en .
+
+foaf:Agent_Person_1 a foaf:Agent ;
+    rdfs:label "Alice Smith"@en, "Alice Dupont"@fr ;
+    rdfs:comment "Lead Network Engineer."@en ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "Email for non-urgent matters."@en .
+noria:CUid_Person_1 a noria:CorporateUserIdentifier ;
+    foaf:accountName "asmith" ;
+    rdfs:label "Alice Smith's Corporate User ID"@en .
+foaf:Agent_Person_1 foaf:holdsAccount noria:CUid_Person_1 .
+
+foaf:Agent_Person_2 a foaf:Agent ;
+    rdfs:label "Bob Johnson"@en, "Bob Martin"@fr ;
+    rdfs:comment "Senior Application Developer for App A."@en ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "Contact for App A development issues."@en .
+noria:CUid_Person_2 a noria:CorporateUserIdentifier ;
+    foaf:accountName "bjohnson" ;
+    rdfs:label "Bob Johnson's Corporate User ID"@en .
+foaf:Agent_Person_2 foaf:holdsAccount noria:CUid_Person_2 .
+
+foaf:Agent_Person_3 a foaf:Agent ;
+    rdfs:label "Charlie Brown"@en, "Charlie Leblanc"@fr ;
+    rdfs:comment "Database Administrator."@en ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/ticketing-system> ;
+    noria:agentInstructions "Open a ticket for DB requests."@en .
+noria:CUid_Person_3 a noria:CorporateUserIdentifier ;
+    foaf:accountName "cbrown" ;
+    rdfs:label "Charlie Brown's Corporate User ID"@en .
+foaf:Agent_Person_3 foaf:holdsAccount noria:CUid_Person_3 .
+
+foaf:Agent_Person_4 a foaf:Agent ;
+    rdfs:label "Diana Prince"@en, "Diana Dubois"@fr ;
+    rdfs:comment "Security Analyst."@en ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "Email for security policy questions."@en .
+noria:CUid_Person_4 a noria:CorporateUserIdentifier ;
+    foaf:accountName "dprince" ;
+    rdfs:label "Diana Prince's Corporate User ID"@en .
+foaf:Agent_Person_4 foaf:holdsAccount noria:CUid_Person_4 .
+
+foaf:Agent_Person_5 a foaf:Agent ;
+    rdfs:label "Eve Adams"@en, "Eve Bernard"@fr ;
+    rdfs:comment "Cloud Architect."@en ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/chat> ;
+    noria:agentInstructions "Chat for cloud architecture discussions."@en .
+noria:CUid_Person_5 a noria:CorporateUserIdentifier ;
+    foaf:accountName "eadams" ;
+    rdfs:label "Eve Adams' Corporate User ID"@en .
+foaf:Agent_Person_5 foaf:holdsAccount noria:CUid_Person_5 .
+
+foaf:Agent_Person_6 a foaf:Agent ;
+    rdfs:label "Frank Green"@en, "Frank Vert"@fr ;
+    rdfs:comment "DevOps Engineer."@en ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/chat> ;
+    noria:agentInstructions "Contact for CI/CD pipeline issues."@en .
+noria:CUid_Person_6 a noria:CorporateUserIdentifier ;
+    foaf:accountName "fgreen" ;
+    rdfs:label "Frank Green's Corporate User ID"@en .
+foaf:Agent_Person_6 foaf:holdsAccount noria:CUid_Person_6 .
+
+foaf:Agent_Person_7 a foaf:Agent ;
+    rdfs:label "Grace Hall"@en, "Grace Salle"@fr ;
+    rdfs:comment "Storage Specialist."@en ;
+    noria:agentWorkingHours "8:30-17:30 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/ticketing-system> ;
+    noria:agentInstructions "Open a ticket for storage requests."@en .
+noria:CUid_Person_7 a noria:CorporateUserIdentifier ;
+    foaf:accountName "ghall" ;
+    rdfs:label "Grace Hall's Corporate User ID"@en .
+foaf:Agent_Person_7 foaf:holdsAccount noria:CUid_Person_7 .
+
+foaf:Agent_Person_8 a foaf:Agent ;
+    rdfs:label "Henry King"@en, "Henry Roi"@fr ;
+    rdfs:comment "Virtualization Engineer."@en ;
+    noria:agentWorkingHours "9:00-18:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "Email for VM performance issues."@en .
+noria:CUid_Person_8 a noria:CorporateUserIdentifier ;
+    foaf:accountName "hking" ;
+    rdfs:label "Henry King's Corporate User ID"@en .
+foaf:Agent_Person_8 foaf:holdsAccount noria:CUid_Person_8 .
+
+foaf:Agent_Person_9 a foaf:Agent ;
+    rdfs:label "Ivy Lee"@en, "Ivy Li"@fr ;
+    rdfs:comment "Data Scientist."@en ;
+    noria:agentWorkingHours "9:00-17:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "Email for data model inquiries."@en .
+noria:CUid_Person_9 a noria:CorporateUserIdentifier ;
+    foaf:accountName "ilee" ;
+    rdfs:label "Ivy Lee's Corporate User ID"@en .
+foaf:Agent_Person_9 foaf:holdsAccount noria:CUid_Person_9 .
+
+foaf:Agent_Person_10 a foaf:Agent ;
+    rdfs:label "Jack White"@en, "Jack Blanc"@fr ;
+    rdfs:comment "Service Desk Agent."@en ;
+    noria:agentWorkingHours "8:00-16:00 Mon-Fri"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ;
+    noria:agentInstructions "Handle initial user requests."@en .
+noria:CUid_Person_10 a noria:CorporateUserIdentifier ;
+    foaf:accountName "jwhite" ;
+    rdfs:label "Jack White's Corporate User ID"@en .
+foaf:Agent_Person_10 foaf:holdsAccount noria:CUid_Person_10 .
+
+# 5 Organizations
+org:Organization_ITDept a org:Organization ;
+    rdfs:label "IT Department"@en, "Département IT"@fr ;
+    rdfs:comment "Main IT department of Example Corp."@en .
+
+org:Organization_NetworkDiv a org:Organization ;
+    rdfs:label "Network Division"@en, "Division Réseau"@fr ;
+    rdfs:comment "Specialized division for network infrastructure management."@en .
+
+org:Organization_AppDev a org:Organization ;
+    rdfs:label "Application Development"@en, "Développement Applicatif"@fr ;
+    rdfs:comment "Division responsible for developing and maintaining business applications."@en .
+
+org:Organization_Security a org:Organization ;
+    rdfs:label "Security Operations"@en, "Opérations de Sécurité"@fr ;
+    rdfs:comment "Division handling cybersecurity monitoring and incident response."@en .
+
+org:Organization_Vendor_A a org:Organization ;
+    rdfs:label "Hardware Vendor A"@en, "Fournisseur Matériel A"@fr ;
+    rdfs:comment "Third-party vendor providing servers and network equipment to Example Corp."@en .
+
+# --- Locations ---
+# 5 Sites
+bot:Site_1 a bot:Site ;
+    rdfs:label "Main Data Center Paris"@en, "Centre de Données Principal Paris"@fr ;
+    noria:siteId "DC-PAR-01" ;
+    noria:siteType "data center" ;
+    noria:sitePrincipalAddressStreet "123 Rue de la Paix" ;
+    noria:sitePrincipalAddressCityName "Paris" ;
+    noria:sitePrincipalAddressPostalCode "75002" ;
+    noria:sitePrincipalAddressCountry "FR" ;
+    wgs84_pos:lat "48.867"^^xsd:float ;
+    wgs84_pos:long "2.333"^^xsd:float .
+
+bot:Site_2 a bot:Site ;
+    rdfs:label "Regional Office Lyon"@en, "Bureau Régional Lyon"@fr ;
+    noria:siteId "RO-LYO-01" ;
+    noria:siteType "office building" ;
+    noria:sitePrincipalAddressStreet "45 Avenue Jean Jaurès" ;
+    noria:sitePrincipalAddressCityName "Lyon" ;
+    noria:sitePrincipalAddressPostalCode "69007" ;
+    noria:sitePrincipalAddressCountry "FR" ;
+    wgs84_pos:lat "45.75"^^xsd:float ;
+    wgs84_pos:long "4.85"^^xsd:float .
+
+bot:Site_3 a bot:Site ;
+    rdfs:label "Cloud Region Frankfurt"@en, "Région Cloud Francfort"@fr ;
+    noria:siteId "CR-FRA-01" ;
+    noria:siteType "cloud region" ;
+    noria:sitePrincipalAddressStreet "Cloud Str. 1" ;
+    noria:sitePrincipalAddressCityName "Frankfurt" ;
+    noria:sitePrincipalAddressPostalCode "60313" ;
+    noria:sitePrincipalAddressCountry "DE" ;
+    wgs84_pos:lat "50.11"^^xsd:float ;
+    wgs84_pos:long "8.68"^^xsd:float .
+
+bot:Site_4 a bot:Site ;
+    rdfs:label "Disaster Recovery Site Marseille"@en, "Site de Reprise après Sinistre Marseille"@fr ;
+    noria:siteId "DR-MAR-01" ;
+    noria:siteType "data center" ;
+    noria:sitePrincipalAddressStreet "78 Boulevard de la Liberté" ;
+    noria:sitePrincipalAddressCityName "Marseille" ;
+    noria:sitePrincipalAddressPostalCode "13001" ;
+    noria:sitePrincipalAddressCountry "FR" ;
+    wgs84_pos:lat "43.296"^^xsd:float ;
+    wgs84_pos:long "5.37"^^xsd:float .
+
+bot:Site_5 a bot:Site ;
+    rdfs:label "Headquarters London"@en, "Siège Social Londres"@fr ;
+    noria:siteId "HQ-LDN-01" ;
+    noria:siteType "office building" ;
+    noria:sitePrincipalAddressStreet "10 Downing Street" ;
+    noria:sitePrincipalAddressCityName "London" ;
+    noria:sitePrincipalAddressPostalCode "SW1A 2AA" ;
+    noria:sitePrincipalAddressCountry "UK" ;
+    wgs84_pos:lat "51.503"^^xsd:float ;
+    wgs84_pos:long "-0.127"^^xsd:float .
+
+# 15 Rooms (3 rooms per site)
+noria:Room_1 a noria:Room ;
+    rdfs:label "Server Room A - DC-PAR-01"@en, "Salle Serveurs A - DC-PAR-01"@fr ;
+    rdfs:comment "Main server room in Paris Data Center."@en ;
+    bot:hasSpace bot:Site_1 .
+
+noria:Room_2 a noria:Room ;
+    rdfs:label "Network Room B - DC-PAR-01"@en, "Salle Réseau B - DC-PAR-01"@fr ;
+    rdfs:comment "Network equipment room in Paris Data Center."@en ;
+    bot:hasSpace bot:Site_1 .
+
+noria:Room_3 a noria:Room ;
+    rdfs:label "Storage Room C - DC-PAR-01"@en, "Salle Stockage C - DC-PAR-01"@fr ;
+    rdfs:comment "Storage area network equipment room in Paris Data Center."@en ;
+    bot:hasSpace bot:Site_1 .
+
+noria:Room_4 a noria:Room ;
+    rdfs:label "Server Room D - RO-LYO-01"@en, "Salle Serveurs D - RO-LYO-01"@fr ;
+    rdfs:comment "Server room in Lyon Regional Office."@en ;
+    bot:hasSpace bot:Site_2 .
+
+noria:Room_5 a noria:Room ;
+    rdfs:label "Network Closet E - RO-LYO-01"@en, "Placard Réseau E - RO-LYO-01"@fr ;
+    rdfs:comment "Network equipment closet in Lyon Regional Office."@en ;
+    bot:hasSpace bot:Site_2 .
+
+noria:Room_6 a noria:Room ;
+    rdfs:label "Virtual Rack F - CR-FRA-01"@en, "Rack Virtuel F - CR-FRA-01"@fr ;
+    rdfs:comment "Logical rack in Frankfurt Cloud Region."@en ;
+    bot:hasSpace bot:Site_3 .
+
+noria:Room_7 a noria:Room ;
+    rdfs:label "Virtual Rack G - CR-FRA-01"@en, "Rack Virtuel G - CR-FRA-01"@fr ;
+    rdfs:comment "Logical rack in Frankfurt Cloud Region."@en ;
+    bot:hasSpace bot:Site_3 .
+
+noria:Room_8 a noria:Room ;
+    rdfs:label "DR Server Room H - DR-MAR-01"@en, "Salle Serveurs DR H - DR-MAR-01"@fr ;
+    rdfs:comment "Server room in Marseille Disaster Recovery Site."@en ;
+    bot:hasSpace bot:Site_4 .
+
+noria:Room_9 a noria:Room ;
+    rdfs:label "DR Network Room I - DR-MAR-01"@en, "Salle Réseau DR I - DR-MAR-01"@fr ;
+    rdfs:comment "Network room in Marseille Disaster Recovery Site."@en ;
+    bot:hasSpace bot:Site_4 .
+
+noria:Room_10 a noria:Room ;
+    rdfs:label "Office Server Room J - HQ-LDN-01"@en, "Salle Serveurs Bureau J - HQ-LDN-01"@fr ;
+    rdfs:comment "Small server room in London Headquarters."@en ;
+    bot:hasSpace bot:Site_5 .
+
+noria:Room_11 a noria:Room ;
+    rdfs:label "Office Network Closet K - HQ-LDN-01"@en, "Placard Réseau Bureau K - HQ-LDN-01"@fr ;
+    rdfs:comment "Network closet in London Headquarters."@en ;
+    bot:hasSpace bot:Site_5 .
+
+noria:Room_12 a noria:Room ;
+    rdfs:label "Development Lab L - DC-PAR-01"@en, "Labo de Développement L - DC-PAR-01"@fr ;
+    rdfs:comment "Development and testing lab in Paris Data Center."@en ;
+    bot:hasSpace bot:Site_1 .
+
+noria:Room_13 a noria:Room ;
+    rdfs:label "Monitoring Center M - DC-PAR-01"@en, "Centre de Supervision M - DC-PAR-01"@fr ;
+    rdfs:comment "Network and Security Operations Center in Paris Data Center."@en ;
+    bot:hasSpace bot:Site_1 .
+
+noria:Room_14 a noria:Room ;
+    rdfs:label "Edge Data Center N - RO-LYO-01"@en, "Centre de Données Edge N - RO-LYO-01"@fr ;
+    rdfs:comment "Edge computing facility in Lyon Regional Office."@en ;
+    bot:hasSpace bot:Site_2 .
+
+noria:Room_15 a noria:Room ;
+    rdfs:label "Cloud Management Zone O - CR-FRA-01"@en, "Zone de Gestion Cloud O - CR-FRA-01"@fr ;
+    rdfs:comment "Management plane for cloud resources in Frankfurt."@en ;
+    bot:hasSpace bot:Site_3 .
+
+# 50 Locuses (~3 locus per room, distributed)
+noria:Locus_1 a noria:Locus ;
+    rdfs:label "Rack A1, Unit 1-10 - Server Room A"@en ;
+    rdfs:comment "Location for core servers."@en ;
+    noria:locusLine "A1" ;
+    noria:locusRow "1-10" ;
+    bot:hasSpace noria:Room_1 .
+
+noria:Locus_2 a noria:Locus ;
+    rdfs:label "Rack A2, Unit 1-10 - Server Room A"@en ;
+    rdfs:comment "Location for database servers."@en ;
+    noria:locusLine "A2" ;
+    noria:locusRow "1-10" ;
+    bot:hasSpace noria:Room_1 .
+
+noria:Locus_3 a noria:Locus ;
+    rdfs:label "Rack N1, Unit 1-5 - Network Room B"@en ;
+    rdfs:comment "Location for core routers."@en ;
+    noria:locusLine "N1" ;
+    noria:locusRow "1-5" ;
+    bot:hasSpace noria:Room_2 .
+
+noria:Locus_4 a noria:Locus ;
+    rdfs:label "Rack S1, Unit 1-15 - Storage Room C"@en ;
+    rdfs:comment "Location for SAN equipment."@en ;
+    noria:locusLine "S1" ;
+    noria:locusRow "1-15" ;
+    bot:hasSpace noria:Room_3 .
+
+noria:Locus_5 a noria:Locus ;
+    rdfs:label "Rack D1, Unit 1-5 - Server Room D"@en ;
+    rdfs:comment "Location for regional application servers."@en ;
+    noria:locusLine "D1" ;
+    noria:locusRow "1-5" ;
+    bot:hasSpace noria:Room_4 .
+
+noria:Locus_6 a noria:Locus ;
+    rdfs:label "Rack E1, Unit 1-3 - Network Closet E"@en ;
+    rdfs:comment "Location for regional network equipment."@en ;
+    noria:locusLine "E1" ;
+    noria:locusRow "1-3" ;
+    bot:hasSpace noria:Room_5 .
+
+noria:Locus_7 a noria:Locus ;
+    rdfs:label "Virtual Rack F, Zone A - CR-FRA-01"@en ;
+    rdfs:comment "Virtual location for cloud instances."@en ;
+    noria:locusLine "Zone A" ;
+    noria:locusRow "VRF1" ;
+    bot:hasSpace noria:Room_6 .
+
+noria:Locus_8 a noria:Locus ;
+    rdfs:label "Virtual Rack G, Zone B - CR-FRA-01"@en ;
+    rdfs:comment "Virtual location for cloud databases."@en ;
+    noria:locusLine "Zone B" ;
+    noria:locusRow "VRG1" ;
+    bot:hasSpace noria:Room_7 .
+
+noria:Locus_9 a noria:Locus ;
+    rdfs:label "Rack H1, Unit 1-10 - DR Server Room H"@en ;
+    rdfs:comment "Location for DR servers."@en ;
+    noria:locusLine "H1" ;
+    noria:locusRow "1-10" ;
+    bot:hasSpace noria:Room_8 .
+
+noria:Locus_10 a noria:Locus ;
+    rdfs:label "Rack I1, Unit 1-5 - DR Network Room I"@en ;
+    rdfs:comment "Location for DR network equipment."@en ;
+    noria:locusLine "I1" ;
+    noria:locusRow "1-5" ;
+    bot:hasSpace noria:Room_9 .
+
+noria:Locus_11 a noria:Locus ;
+    rdfs:label "Rack J1, Unit 1-3 - Office Server Room J"@en ;
+    rdfs:comment "Location for local office servers."@en ;
+    noria:locusLine "J1" ;
+    noria:locusRow "1-3" ;
+    bot:hasSpace noria:Room_10 .
+
+noria:Locus_12 a noria:Locus ;
+    rdfs:label "Rack K1, Unit 1-2 - Office Network Closet K"@en ;
+    rdfs:comment "Location for local office network equipment."@en ;
+    noria:locusLine "K1" ;
+    noria:locusRow "1-2" ;
+    bot:hasSpace noria:Room_11 .
+
+noria:Locus_13 a noria:Locus ;
+    rdfs:label "Rack L1, Unit 1-10 - Development Lab L"@en ;
+    rdfs:comment "Location for development servers."@en ;
+    noria:locusLine "L1" ;
+    noria:locusRow "1-10" ;
+    bot:hasSpace noria:Room_12 .
+
+noria:Locus_14 a noria:Locus ;
+    rdfs:label "Console Desk M1 - Monitoring Center M"@en ;
+    rdfs:comment "Operator console in the monitoring center."@en ;
+    noria:locusLine "M1" ;
+    noria:locusRow "Desk" ;
+    bot:hasSpace noria:Room_13 .
+
+noria:Locus_15 a noria:Locus ;
+    rdfs:label "Edge Rack N1, Unit 1-5 - Edge Data Center N"@en ;
+    rdfs:comment "Location for edge computing devices."@en ;
+    noria:locusLine "N1" ;
+    noria:locusRow "1-5" ;
+    bot:hasSpace noria:Room_14 .
+
+noria:Locus_16 a noria:Locus ;
+    rdfs:label "Cloud Control Plane O1 - Cloud Management Zone O"@en ;
+    rdfs:comment "Logical location for cloud control plane components."@en ;
+    noria:locusLine "O1" ;
+    noria:locusRow "Control" ;
+    bot:hasSpace noria:Room_15 .
+
+# Remaining 34 Locuses (simplified generation)
+@for $i from 17 to 50 {
+noria:Locus_{$i} a noria:Locus ;
+    rdfs:label "Generic Rack {$i}, Unit {($i % 10) + 1} - Room {($i % 15) + 1}"@en ;
+    rdfs:comment "A generic equipment location."@en ;
+    noria:locusLine "GR{($i % 10) + 1}" ;
+    noria:locusRow "U{($i % 10) + 1}" ;
+    bot:hasSpace noria:Room_{($i % 15) + 1} .
+}
+
+# --- Product Models ---
+# 10 Product Models
+noria:ProductModel_1 a noria:ProductModel ;
+    rdfs:label "Dell PowerEdge R750"@en ;
+    rdfs:comment "High-performance rack server."@en ;
+    noria:productManufacturedBy org:Organization_Vendor_A .
+
+noria:ProductModel_2 a noria:ProductModel ;
+    rdfs:label "Cisco Catalyst 9500"@en ;
+    rdfs:comment "Enterprise-grade network switch."@en ;
+    noria:productManufacturedBy org:Organization_Vendor_A .
+
+noria:ProductModel_3 a noria:ProductModel ;
+    rdfs:label "Juniper MX480"@en ;
+    rdfs:comment "Modular universal routing platform."@en ;
+    noria:productManufacturedBy org:Organization_Vendor_A .
+
+noria:ProductModel_4 a noria:ProductModel ;
+    rdfs:label "VMware ESXi Host"@en ;
+    rdfs:comment "Virtualization hypervisor host."@en ;
+    noria:productManufacturedBy org:Organization_Vendor_A .
+
+noria:ProductModel_5 a noria:ProductModel ;
+    rdfs:label "Oracle Database Appliance X9-2M"@en ;
+    rdfs:comment "Engineered system for Oracle Database."@en ;
+    noria:productManufacturedBy org:Organization_Vendor_A .
+
+noria:ProductModel_6 a noria:ProductModel ;
+    rdfs:label "Palo Alto Networks PA-5220"@en ;
+    rdfs:comment "Next-generation firewall appliance."@en ;
+    noria:productManufacturedBy org:Organization_Vendor_A .
+
+noria:ProductModel_7 a noria:ProductModel ;
+    rdfs:label "F5 BIG-IP iSeries"@en ;
+    rdfs:comment "Application delivery controller and load balancer."@en ;
+    noria:productManufacturedBy org:Organization_Vendor_A .
+
+noria:ProductModel_8 a noria:ProductModel ;
+    rdfs:label "NetApp FAS8700"@en ;
+    rdfs:comment "Unified storage system."@en ;
+    noria:productManufacturedBy org:Organization_Vendor_A .
+
+noria:ProductModel_9 a noria:ProductModel ;
+    rdfs:label "HPE ProLiant DL380 Gen10"@en ;
+    rdfs:comment "Versatile rack server for various workloads."@en ;
+    noria:productManufacturedBy org:Organization_Vendor_A .
+
+noria:ProductModel_10 a noria:ProductModel ;
+    rdfs:label "Arista 7050S-64"@en ;
+    rdfs:comment "High-performance data center switch."@en ;
+    noria:productManufacturedBy org:Organization_Vendor_A .
+
+# --- Resources (500 instances) ---
+# 250 Servers, 150 Network Devices, 50 Firewalls, 50 Load Balancers
+@for $i from 1 to 250 {
+noria:Resource_Server_{$i} a noria:Resource ;
+    rdfs:label "Server {$i}"@en, "Serveur {$i}"@fr ;
+    rdfs:comment "A general-purpose server instance, part of the corporate infrastructure."@en ;
+    noria:resourceManagedBy foaf:Agent_Team_{ ($i % 5) + 1 } ;
+    noria:resourceHostName "srv{$i}.example.com" ;
+    noria:resourceProductModel noria:ProductModel_{ ($i % 5) + 1 } ;
+    noria:resourceType <kos/Resource/type/{ ($i % 2 == 0) ? "server" : "virtual-machine" }> ;
+    noria:resourceSerialNumber "SN-SRV-{$i}-ABC{($i * 13) % 9999}" ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "2023-01-{ ($i % 28) + 1 }T10:00:00Z"^^xsd:dateTime ;
+    noria:locatedAtLocus noria:Locus_{ ($i % 50) + 1 } ;
+    noria:resourceManagementIPAddress observable:IPAddress_Server_{$i} .
+observable:IPAddress_Server_{$i} a observable:IPAddress ;
+    rdfs:label "IP Address for Server {$i}"@en ;
+    observable:ipAddressValue "10.10.{ ($i % 20) + 1 }.{ ($i % 250) + 1 }" .
+}
+
+@for $i from 1 to 150 {
+noria:Resource_Network_{$i} a noria:Resource ;
+    rdfs:label "Network Device {$i}"@en, "Équipement Réseau {$i}"@fr ;
+    rdfs:comment "A router or switch, critical for network connectivity."@en ;
+    noria:resourceManagedBy foaf:Agent_Team_{ ($i % 3) + 1 } ;
+    noria:resourceHostName "net{$i}.example.com" ;
+    noria:resourceProductModel noria:ProductModel_{ ($i % 3) + 2 } ; # Using ProductModel 2,3,4 for network devices
+    noria:resourceType <kos/Resource/type/{ ($i % 2 == 0) ? "router" : "switch" }> ;
+    noria:resourceSerialNumber "SN-NET-{$i}-DEF{($i * 17) % 9999}" ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "2022-05-{ ($i % 28) + 1 }T11:00:00Z"^^xsd:dateTime ;
+    noria:locatedAtLocus noria:Locus_{ ($i % 50) + 1 } ;
+    noria:resourceManagementIPAddress observable:IPAddress_Network_{$i} .
+observable:IPAddress_Network_{$i} a observable:IPAddress ;
+    rdfs:label "IP Address for Network Device {$i}"@en ;
+    observable:ipAddressValue "10.20.{ ($i % 15) + 1 }.{ ($i % 150) + 1 }" .
+}
+
+@for $i from 1 to 50 {
+noria:Resource_Firewall_{$i} a noria:Resource ;
+    rdfs:label "Firewall {$i}"@en, "Pare-feu {$i}"@fr ;
+    rdfs:comment "A security firewall protecting network segments."@en ;
+    noria:resourceManagedBy foaf:Agent_Team_4 ; # Security Team
+    noria:resourceHostName "fw{$i}.example.com" ;
+    noria:resourceProductModel noria:ProductModel_6 ; # Palo Alto
+    noria:resourceType <kos/Resource/type/firewall> ;
+    noria:resourceSerialNumber "SN-FW-{$i}-GHI{($i * 19) % 9999}" ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "2023-03-{ ($i % 28) + 1 }T12:00:00Z"^^xsd:dateTime ;
+    noria:locatedAtLocus noria:Locus_{ ($i % 50) + 1 } ;
+    noria:resourceManagementIPAddress observable:IPAddress_Firewall_{$i} .
+observable:IPAddress_Firewall_{$i} a observable:IPAddress ;
+    rdfs:label "IP Address for Firewall {$i}"@en ;
+    observable:ipAddressValue "10.30.{ ($i % 5) + 1 }.{ ($i % 50) + 1 }" .
+}
+
+@for $i from 1 to 50 {
+noria:Resource_LoadBalancer_{$i} a noria:Resource ;
+    rdfs:label "Load Balancer {$i}"@en, "Équilibreur de Charge {$i}"@fr ;
+    rdfs:comment "A network load balancer distributing traffic to servers."@en ;
+    noria:resourceManagedBy foaf:Agent_Team_2 ; # App Support Team
+    noria:resourceHostName "lb{$i}.example.com" ;
+    noria:resourceProductModel noria:ProductModel_7 ; # F5 BIG-IP
+    noria:resourceType <kos/Resource/type/load-balancer> ;
+    noria:resourceSerialNumber "SN-LB-{$i}-JKL{($i * 23) % 9999}" ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "2023-04-{ ($i % 28) + 1 }T13:00:00Z"^^xsd:dateTime ;
+    noria:locatedAtLocus noria:Locus_{ ($i % 50) + 1 } ;
+    noria:resourceManagementIPAddress observable:IPAddress_LoadBalancer_{$i} .
+observable:IPAddress_LoadBalancer_{$i} a observable:IPAddress ;
+    rdfs:label "IP Address for Load Balancer {$i}"@en ;
+    observable:ipAddressValue "10.40.{ ($i % 5) + 1 }.{ ($i % 50) + 1 }" .
+}
+
+# --- Network Interfaces (1000 instances) ---
+# 2 interfaces per Resource on average (for the 500 resources)
+@for $i from 1 to 500 {
+noria:NetworkInterface_{$i}_Eth0 a noria:NetworkInterface ;
+    rdfs:label "Ethernet 0 for Resource {$i}"@en, "Ethernet 0 pour Ressource {$i}"@fr ;
+    rdfs:comment "Primary network interface for data traffic."@en ;
+    noria:networkInterfaceOf noria:Resource_Server_{$i} ;
+    noria:networkInterfaceDescription "Main data interface" ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/up> ;
+    noria:networkInterfaceRoutingPriorityMetric "100"^^xsd:int ;
+    noria:networkInterfaceLaserTxOpticalPower "-5"^^xsd:int ;
+    noria:networkInterfaceLaserRxOpticalPower "-7"^^xsd:int ;
+    noria:networkInterfaceLaserRxHighPowerWarningThreshold "0"^^xsd:int ;
+    noria:networkInterfaceLaserRxLowPowerWarningThreshold "-20"^^xsd:int .
+
+noria:NetworkInterface_{$i}_Eth1 a noria:NetworkInterface ;
+    rdfs:label "Ethernet 1 for Resource {$i}"@en, "Ethernet 1 pour Ressource {$i}"@fr ;
+    rdfs:comment "Secondary network interface, often used for management or redundancy."@en ;
+    noria:networkInterfaceOf noria:Resource_Server_{$i} ;
+    noria:networkInterfaceDescription "Management interface" ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/up> ;
+    noria:networkInterfaceRoutingPriorityMetric "100"^^xsd:int ;
+    noria:networkInterfaceLaserTxOpticalPower "-6"^^xsd:int ;
+    noria:networkInterfaceLaserRxOpticalPower "-8"^^xsd:int ;
+    noria:networkInterfaceLaserRxHighPowerWarningThreshold "0"^^xsd:int ;
+    noria:networkInterfaceLaserRxLowPowerWarningThreshold "-20"^^xsd:int .
+}
+
+# --- Network Links (500 instances) ---
+# Connecting pairs of Network Interfaces, ensuring connectivity
+@for $i from 1 to 500 {
+noria:NetworkLink_{$i} a noria:NetworkLink ;
+    rdfs:label "Link NL-{$i}"@en, "Lien NL-{$i}"@fr ;
+    rdfs:comment "A physical or logical network connection between two resources."@en ;
+    noria:networkLinkId "NL-{$i}" ;
+    noria:networkLinkInstallationDate "2023-09-{ ($i % 28) + 1 }T14:00:00Z"^^xsd:dateTime ;
+    noria:networkLinkType "Ethernet 10G" ;
+    noria:networkLinkTerminationResourceOrigin noria:Resource_Server_{$i} ;
+    noria:networkLinkTerminationResourceDestination noria:Resource_Network_{ ($i % 150) + 1 } ;
+    noria:networkInterfaceConnects noria:NetworkInterface_{$i}_Eth0 ;
+    noria:networkInterfaceConnects noria:NetworkInterface_{ ($i % 500) + 1 }_Eth1 .
+}
+
+# --- Applications (20 instances) ---
+@for $i from 1 to 20 {
+noria:Application_{$i} a noria:Application ;
+    rdfs:label "Business Application {$i}"@en, "Application Métier {$i}"@fr ;
+    rdfs:comment "A critical business application supporting various corporate functions."@en ;
+    noria:applicationModelIdentifier "APP-MODEL-{$i}" ;
+    noria:applicationNumericalIdentifier "{ 1000 + $i }"^^xsd:int ;
+    noria:applicationShortIdentifier "BA{$i}" ;
+    noria:applicationType <kos/application/type/{ ($i % 2 == 0) ? "business-critical" : "infrastructure" }> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/{ ($i % 3 == 0) ? "high" : "medium" }> ;
+    noria:applicationFunctionalDomain "{ ($i % 2 == 0) ? "Customer Management" : "Internal Operations" }" ;
+    noria:applicationFunctionalSubDomain "{ ($i % 2 == 0) ? "Order Processing" : "HR Management" }" .
+}
+
+# --- Application Modules (100 instances) ---
+# 5 modules per application
+@for $i from 1 to 100 {
+noria:ApplicationModule_{$i} a noria:ApplicationModule ;
+    rdfs:label "Module {$i} of Application { ($i-1)//5 + 1 }"@en, "Module {$i} de l'Application { ($i-1)//5 + 1 }"@fr ;
+    rdfs:comment "A specific instance or component of a business application, e.g., a development or production environment."@en ;
+    noria:applicationModuleOf noria:Application_{ ($i-1)//5 + 1 } ;
+    noria:applicationModuleName "APP{ ($i-1)//5 + 1 }-MOD{$i}" ;
+    noria:applicationModuleIdentifier "AM-{$i}" ;
+    noria:applicationModuleStatus <https://w3id.org/noria/kos/application/status/{ ($i % 3 == 0) ? "InProduction" : ( ($i % 3 == 1) ? "Testing" : "Maintenance" ) }> ;
+    noria:applicationModuleSlaLevel <https://w3id.org/noria/kos/application/sla-level/{ ($i % 2 == 0) ? "Gold" : "Silver" }> ;
+    noria:applicationModuleSlaLevelDate "2024-01-01T00:00:00Z"^^xsd:dateTime ;
+    noria:applicationModuleHotlineEnabled "{ ($i % 2 == 0) ? "true" : "false" }"^^xsd:boolean ;
+    noria:applicationModuleAdministrationTeam foaf:Agent_Team_{ ($i % 5) + 1 } ;
+    noria:applicationModuleSupportTeam foaf:Agent_Team_{ ($i % 5) + 1 } ;
+    noria:applicationModuleAdministrationLeader foaf:Agent_Person_{ ($i % 10) + 1 } ;
+    noria:applicationModuleSupportLeader foaf:Agent_Person_{ (($i + 1) % 10) + 1 } ;
+    noria:applicationModuleSupportGroup foaf:Agent_Team_{ (($i + 2) % 10) + 1 } ;
+    noria:applicationModuleHotlineGroup foaf:Agent_Team_{ (($i + 3) % 10) + 1 } .
+}
+
+# --- Services (10 instances) ---
+@for $i from 1 to 10 {
+noria:Service_{$i} a noria:Service ;
+    rdfs:label "Enterprise Service {$i}"@en, "Service d'Entreprise {$i}"@fr ;
+    rdfs:comment "An end-to-end service provided to customers or internal users, composed of multiple application modules."@en ;
+    noria:serviceType <kos/service/type/{ ($i % 2 == 0) ? "CustomerFacingService" : "ResourceFacingService" }> .
+}
+
+# Link Application Modules to Services (using seas:subSystemOf as noria:Service is seas:System)
+@for $i from 1 to 100 {
+noria:ApplicationModule_{$i} seas:subSystemOf noria:Service_{ ($i % 10) + 1 } .
+}
+
+# Link Resources to Applications
+@for $i from 1 to 250 {
+noria:Resource_Server_{$i} noria:resourceForApplication noria:Application_{ ($i % 20) + 1 } .
+}
+
+# --- Operation Plans (50 instances) ---
+@for $i from 1 to 50 {
+noria:OperationPlan_{$i} a noria:OperationPlan ;
+    rdfs:label "Operation Plan {$i}: System Update Procedure"@en, "Plan d'Opération {$i}: Procédure de Mise à Jour Système"@fr ;
+    rdfs:comment "Standard operating procedure for routine system updates and maintenance."@en .
+noria:ActionPreCondition_{$i} a noria:ActionPreCondition ;
+    rdfs:label "Pre-condition for OP {$i}"@en ;
+    rdfs:comment "Verify system backups, check maintenance window, and ensure resource availability."@en .
+noria:ActionPostCondition_{$i} a noria:ActionPostCondition ;
+    rdfs:label "Post-condition for OP {$i}"@en ;
+    rdfs:comment "Verify service functionality, check logs for errors, and confirm system health."@en .
+noria:OperationPlan_{$i} noria:operationPlanPreCondition noria:ActionPreCondition_{$i} ;
+    noria:operationPlanPostCondition noria:ActionPostCondition_{$i} .
+}
+
+# --- Event Records (5000 instances) ---
+# Mix of log, alarm, status changes, originating from various sources
+@for $i from 1 to 5000 {
+noria:EventRecord_{$i} a noria:EventRecord ;
+    rdfs:label "Event Record {$i}"@en, "Enregistrement d'Événement {$i}"@fr ;
+    rdfs:comment "A log entry or alarm notification indicating a system event."@en ;
+    noria:loggingTime "2024-01-{ ($i % 28) + 1 }T{ ($i % 23) + 1 }:{ ($i % 59) + 1 }:{ ($i % 59) + 1 }Z"^^xsd:dateTime ;
+    noria:logText "System status changed to { ($i % 2 == 0) ? 'UP' : 'DOWN' } on interface Eth0 of srv{ ($i % 250) + 1 }."@en ;
+    noria:logOriginatingManagedObject noria:Resource_Server_{ ($i % 250) + 1 } ;
+    noria:logOriginatingManagementSystem noria:Application_1 ; # Assuming App 1 is a monitoring system
+    noria:logOriginatingAgent foaf:Agent_Person_{ ($i % 10) + 1 } ;
+    noria:alarmSeverity <Notification/Severity/PerceivedSeverity/{ ($i % 4 == 0) ? "Critical" : ( ($i % 4 == 1) ? "Major" : ( ($i % 4 == 2) ? "Minor" : "Warning" ) ) }> ;
+    noria:alarmProposedRepairAction noria:OperationPlan_{ ($i % 50) + 1 } .
+}
+
+# --- Trouble Tickets (1000 instances) ---
+@for $i from 1 to 1000 {
+noria:TroubleTicket_{$i} a noria:TroubleTicket ;
+    rdfs:label "Trouble Ticket {$i}: Service Interruption on BA{ ($i % 20) + 1 }"@en, "Ticket d'Incident {$i}: Interruption de Service sur BA{ ($i % 20) + 1 }"@fr ;
+    rdfs:comment "Incident reported for a service or resource, requiring investigation and resolution."@en ;
+    noria:troubleTicketSeverity <kos/TroubleTicket/severity/{ ($i % 3 == 0) ? "Critical" : ( ($i % 3 == 1) ? "Major" : "Minor" ) }> ;
+    noria:troubleTicketType <kos/TroubleTicket/type/Failure> ;
+    noria:troubleTicketCriticity <kos/TroubleTicket/category/InterruptedService> ;
+    noria:troubleTicketPriority <kos/TroubleTicket/priority/{ ($i % 4 == 0) ? "P1" : ( ($i % 4 == 1) ? "P2" : ( ($i % 4 == 2) ? "P3" : "P4" ) ) }> ;
+    noria:troubleTicketOrigin <kos/TroubleTicket/origin/{ ($i % 2 == 0) ? "Customer" : "Supervision" }> ;
+    noria:troubleTicketUrgency <kos/TroubleTicket/urgency/{ ($i % 2 == 0) ? "ImmediateIntervention" : "DeferredIntervention" }> ;
+    noria:troubleTicketSupervisionTool "MonitoringSystemX" ;
+    noria:troubleTicketCategory <kos/TroubleTicket/trouble-category/TotalBreakdown> ;
+    noria:problemCategory <kos/TroubleTicket/trouble-category/NetworkFailure> ;
+    noria:troubleTicketCause "Network link failure detected, impacting application BA{ ($i % 20) + 1 }."@en ;
+    noria:problemResponsibility <kos/TroubleTicket/problemResponsibility/ManagedBackboneNetworks> ;
+    noria:troubleTicketDetectionDateTime "2024-02-{ ($i % 28) + 1 }T{ ($i % 23) + 1 }:{ ($i % 59) + 1 }:{ ($i % 59) + 1 }Z"^^xsd:dateTime ;
+    noria:troubleTicketTargetRestorationDateTime "2024-02-{ ($i % 28) + 1 }T{ ($i % 23) + 2 }:{ ($i % 59) + 1 }:{ ($i % 59) + 1 }Z"^^xsd:dateTime ;
+    noria:troubleTicketPlannedRestorationDateTime "2024-02-{ ($i % 28) + 1 }T{ ($i % 23) + 3 }:{ ($i % 59) + 1 }:{ ($i % 59) + 1 }Z"^^xsd:dateTime ;
+    noria:troubleTicketCommittedRestorationDateTime "2024-02-{ ($i % 28) + 1 }T{ ($i % 23) + 4 }:{ ($i % 59) + 1 }:{ ($i % 59) + 1 }Z"^^xsd:dateTime ;
+    noria:troubleTicketIsNotificationEnable "true"^^xsd:boolean ;
+    noria:troubleTicketStatusCurrent <kos/TroubleTicket/status/{ ($i % 2 == 0) ? "InProgress" : "Resolved" }> ;
+    noria:documentExternalId "EXT-TT-{$i}" ;
+    noria:documentHRef "https://tickets.example.com/tt/{$i}" ;
+    noria:troubleTicketRelatedService noria:ApplicationModule_{ ($i % 100) + 1 } ;
+    noria:troubleTicketRelatedResource noria:Resource_Network_{ ($i % 150) + 1 } ;
+    noria:troubleTicketRelatedParty foaf:Agent_Team_{ ($i % 10) + 1 } ;
+    noria:troubleTicketRelatedParty foaf:Agent_Person_{ ($i % 10) + 1 } ;
+    noria:troubleTicketTrigger noria:EventRecord_{ ($i % 5000) + 1 } ;
+    noria:documentStatusHistory noria:EventRecord_{ (($i + 1) % 5000) + 1 } .
+
+    # --- Trouble Ticket Notes (3000 instances, 3 notes per TT) ---
+    @for $j from 1 to 3 {
+    noria:TroubleTicketNote_{$i}_{$j} a noria:TroubleTicketNote ;
+        rdfs:label "Note {$j} for TT {$i}"@en, "Note {$j} pour TT {$i}"@fr ;
+        rdfs:comment "Update on the trouble ticket progress: { ($j == 1) ? 'Initial diagnosis performed.' : ( ($j == 2) ? 'Corrective action applied.' : 'Service verified restored.' ) }"@en ;
+        noria:troubleTicketNoteCommentType <kos/TroubleTicket/commentType/{ ($j % 2 == 0) ? "Internal" : "Customer" }> ;
+        noria:troubleTicketNoteOperationType <kos/TroubleTicket/operationType/{ ($j % 2 == 0) ? "Diagnosis" : "TestsAndMeasurements" }> ;
+        noria:troubleTicketNoteCorrelatedExecution noria:EventRecord_{ (($i * 3 + $j) % 5000) + 1 } .
+    }
+}
+
+# --- Change Requests (500 instances) ---
+@for $i from 1 to 500 {
+noria:ChangeRequest_{$i} a noria:ChangeRequest ;
+    rdfs:label "Change Request {$i}: Software Upgrade on srv{ ($i % 250) + 1 }"@en, "Demande de Changement {$i}: Mise à Jour Logicielle sur srv{ ($i % 250) + 1 }"@fr ;
+    rdfs:comment "Planned software upgrade for a server, requiring a maintenance window."@en ;
+    noria:changeRequestPlannedStartTime "2024-03-{ ($i % 28) + 1 }T18:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestPlannedEndTime "2024-03-{ ($i % 28) + 1 }T22:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestActualStartTime "2024-03-{ ($i % 28) + 1 }T18:05:00Z"^^xsd:dateTime ;
+    noria:changeRequestActualEndTime "2024-03-{ ($i % 28) + 1 }T21:45:00Z"^^xsd:dateTime ;
+    noria:changeRequestCategory <kos/ChangeRequest/category/InternalIntervention> ;
+    noria:changeRequestType <kos/ChangeRequest/type/Standard> ;
+    noria:changeRequestChangeCause <kos/ChangeRequest/cause/SoftwareUpgrade> ;
+    noria:changeRequestOutageDuration "PT3H"^^xsd:duration ;
+    noria:changeRequestStatusCurrent <kos/ChangeRequest/status/{ ($i % 2 == 0) ? "Implemented" : "Scheduled" }> ;
+    noria:changeRequestIsRegulated "false"^^xsd:boolean ;
+    noria:documentExternalId "EXT-CR-{$i}" ;
+    noria:documentHRef "https://changes.example.com/cr/{$i}" ;
+    noria:changeRequestImpact noria:Resource_Server_{ ($i % 250) + 1 } ;
+    noria:changeRequestImpact noria:ApplicationModule_{ ($i % 100) + 1 } ;
+    noria:changeRequestInitiatorParty foaf:Agent_Person_{ ($i % 10) + 1 } ;
+    noria:changeRequestPilotParty foaf:Agent_Team_{ ($i % 10) + 1 } ;
+    noria:changeRequestActorParty foaf:Agent_Person_{ (($i + 1) % 10) + 1 } ;
+    noria:documentStatusHistory noria:EventRecord_{ (($i + 2) % 5000) + 1 } .
+}
+
+# --- Document Attachments (100 instances) ---
+@for $i from 1 to 100 {
+noria:DocumentAttachment_{$i} a noria:DocumentAttachment ;
+    rdfs:label "Attachment {$i}: Network Diagram for CR/TT { ($i % 2 == 0) ? ($i % 1000) + 1 : ($i % 500) + 1 }"@en, "Pièce jointe {$i}: Diagramme Réseau pour CR/TT { ($i % 2 == 0) ? ($i % 1000) + 1 : ($i % 500) + 1 }"@fr ;
+    rdfs:comment "Diagram of the network topology or configuration related to an incident or change request."@en ;
+    dcterms:format "image/png" ;
+    dcterms:identifier "attachment-{$i}.png" ;
+    dcterms:source "https://docs.example.com/attachments/attachment-{$i}.png" .
+# Link to a random TroubleTicket or ChangeRequest
+@if ($i % 2 == 0) {
+noria:TroubleTicket_{ ($i % 1000) + 1 } dcterms:hasPart noria:DocumentAttachment_{$i} .
+} @else {
+noria:ChangeRequest_{ ($i % 500) + 1 } dcterms:hasPart noria:DocumentAttachment_{$i} .
+}
+}
+
+# --- Additional Connectivity for Density ---
+# Link some resources to other applications
+@for $i from 1 to 100 {
+noria:Resource_Network_{$i} noria:resourceForApplication noria:Application_{ (($i % 20) + 1) } .
+}
+
+# Link some firewalls to security team agents
+@for $i from 1 to 50 {
+foaf:Agent_Person_4 noria:agentManagesResource noria:Resource_Firewall_{$i} .
+}
+
+# Link some load balancers to application support team agents
+@for $i from 1 to 50 {
+foaf:Agent_Person_2 noria:agentManagesResource noria:Resource_LoadBalancer_{$i} .
+}
+
+# Link some servers to virtualization team agents
+@for $i from 1 to 50 {
+foaf:Agent_Person_8 noria:agentManagesResource noria:Resource_Server_{$i} .
+}
+
+# Link some network devices to network team agents
+@for $i from 1 to 50 {
+foaf:Agent_Person_1 noria:agentManagesResource noria:Resource_Network_{$i} .
+}
+
+# Link some application modules to specific resources they depend on
+@for $i from 1 to 100 {
+noria:ApplicationModule_{$i} seas:subSystemOf noria:Resource_Server_{ ($i % 250) + 1 } .
+noria:ApplicationModule_{$i} seas:subSystemOf noria:Resource_LoadBalancer_{ ($i % 50) + 1 } .
+}
+
+# Link some services to specific resources they depend on
+@for $i from 1 to 10 {
+noria:Service_{$i} seas:subSystemOf noria:Resource_Firewall_{ ($i % 50) + 1 } .
+noria:Service_{$i} seas:subSystemOf noria:Resource_Network_{ ($i % 150) + 1 } .
+}
+
+# Link some EventRecords to TroubleTickets as mitigation
+@for $i from 1 to 500 {
+noria:EventRecord_{ ($i % 5000) + 1 } noria:alarmMitigatedBy noria:TroubleTicket_{ ($i % 1000) + 1 } .
+}
+
+# Link some EventRecords to TroubleTicketNotes as correlated execution
+@for $i from 1 to 500 {
+noria:EventRecord_{ (($i + 1000) % 5000) + 1 } noria:troubleTicketNoteCorrelatedExecution noria:TroubleTicketNote_{ ($i % 1000) + 1 }_1 .
+}
+
+# Link some EventRecords to ChangeRequests as status history
+@for $i from 1 to 250 {
+noria:EventRecord_{ (($i + 2000) % 5000) + 1 } noria:documentStatusHistory noria:ChangeRequest_{ ($i % 500) + 1 } .
+}
+
+# --- End of Generated Graph ---

@@ -122,7 +122,7 @@ def generate_ttl(path_gen,path_result,nbr_ttl,model):
         bad_file_result = f'{bad_path_result}/{prompt_type}_{date_time}_{onto}_BAD.ttl'
 
         #Query LLM
-        response=query_llm(prompt,ontology,model)
+        max_tok,reas_eff,response=query_llm(prompt,ontology,model)
 
         #Store results
         storing_results(response,temp_file,file_result)
@@ -132,6 +132,8 @@ def generate_ttl(path_gen,path_result,nbr_ttl,model):
 
         logger = logging.getLogger('Gen_log')
 
+        logger.info('reasoning effort : %s',reas_eff)
+        logger.info('max_token : %s',max_tok)
         logger.info('Prompt tokens : %s',response.usage.prompt_tokens)
         logger.info('Output response tokens : %s',response.usage.completion_tokens)
         logger.info('Output responses tokens details : %s',response.usage.completion_tokens_details)
