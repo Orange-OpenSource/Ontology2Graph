@@ -15,7 +15,7 @@ def query_llm(prompt,ontology,model):
 
     #client = genai.Client()
     client = OpenAI(api_key=os.environ.get("LLM_PROXY_KEY"),base_url="https://llmproxy.ai.orange")
-    reas_eff="high"
+    reas_eff="not set"
     max_tok="not set"
     try:
         response = client.chat.completions.create(
@@ -23,7 +23,7 @@ def query_llm(prompt,ontology,model):
             model=model,
             temperature=0.1, # model's creativity
             top_p=0.4, # model's creativity
-            reasoning_effort=reas_eff,
+            #reasoning_effort=reas_eff,
             #extra_body={
             #        'extra_body': {
             #            "google": {
@@ -34,7 +34,7 @@ def query_llm(prompt,ontology,model):
             #            }
             #        }
             #},
-            #input=prompt)
+            #input=prompt) 
             #max_tokens=max_tok, # sum of reasoning tokens and text tokens
             #max_completion_tokens=max_tok,
             #frequency_penalty=1, #Applies a penalty to repeated tokens, reducing the likelihood of repetition in the generated text.
