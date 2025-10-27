@@ -291,6 +291,9 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
 
             logger_merge.info('### REMAIN OCC ### = %s , nbr_occ_max = %s',remain_occ, nbr_occ_max)
             logger_merge.info('#### FILE ####: %s ', ttl_file)
+            
+            print('REMAIN OCC : %s', remain_occ)
+            print('File : %s', ttl_file)
 
             with open(Path(path_result)/ttl_file,'r',encoding='utf-8') as infile, \
                  open(f'{Path(path_llm_graphs_dup_treated)}/{remain_occ}/Treated_{remain_occ}_'\
@@ -300,7 +303,7 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
                 for line in infile:
                     dup1_treated=False
                     dup2_treated=False
-                    logger_merge.info('Line : %s',line.strip())
+                    #logger_merge.info('Line : %s',line.strip())
 
                     for dup1 in occ_dup:
 
@@ -311,10 +314,10 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
                                 (dup1[0],f'{dup1[0]}_extra_node_{nbr_file_treated}')
                                 # for gpt-4.1-nano
                                 #(dup1[0],f'{dup1[0][:-1]}_extra_node_{nbr_file_treated}>')
-                            logger_merge.info('dup1 %s',dup1)
-                            logger_merge.info('remain_occ %s',remain_occ)
-                            logger_merge.info('updated_line %s',updated_line.strip())
-                            logger_merge.info('file : %s',infile)
+                            #logger_merge.info('dup1 %s',dup1)
+                            #logger_merge.info('remain_occ %s',remain_occ)
+                            #logger_merge.info('updated_line %s',updated_line.strip())
+                            #logger_merge.info('file : %s',infile)
                             dup1_treated=True
                             dup_treated_list.append(dup1)
 
@@ -328,7 +331,7 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
                                 updated_line_dual = updated_line.replace\
                                 (dup2[0],f'{dup2[0]}_extra_node_{nbr_file_treated}')
 
-                                logger_merge.info('updated_line_dual %s',updated_line_dual.strip())
+                                #logger_merge.info('updated_line_dual %s',updated_line_dual.strip())
                                 outfile.write(updated_line_dual)
                                 dup2_treated=True
                                 dup_treated_list.append(dup2)
@@ -342,17 +345,17 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
             # remove duplicate in dup_treated_list
             unique_tuple = {tuple(sublist) for sublist in dup_treated_list}
             unique_dup_treated_list=[list(t) for t in unique_tuple ]
-            logger_merge.info('unique_dup_treated_list : %s',unique_dup_treated_list)
+            #logger_merge.info('unique_dup_treated_list : %s',unique_dup_treated_list)
 
             # decrease occurence in occ_dup
-            logger_merge.info('occ_dup %s',occ_dup)
+            #logger_merge.info('occ_dup %s',occ_dup)
             for dup_treated in unique_dup_treated_list:
-                logger_merge.info('dup_treated %s',dup_treated)
+                #logger_merge.info('dup_treated %s',dup_treated)
                 if dup_treated in occ_dup:
                     row_number=occ_dup.index(dup_treated)
 
                     occ_dup[row_number][1]=occ_dup[row_number][1]-1
-                    logger_merge.info('occ_dup after %s',occ_dup)
+                    #logger_merge.info('occ_dup after %s',occ_dup)
 
             nbr_file_treated=nbr_file_treated+1
 
