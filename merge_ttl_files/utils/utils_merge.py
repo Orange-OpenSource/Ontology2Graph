@@ -178,6 +178,8 @@ def find_duplicates_nodes(path,ontology):
 
         for subj, pred, obj in g:
 
+            #print("subj %s", subj)
+            logger_node.info('\n subj %s :',subj)
             if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) and\
                 (pred != skos.inScheme) and (pred != rdfs.isDefinedBy) and pred not in dtp):
                 nx_graph.add_edge(str(subj), str(obj), label=str(pred))
@@ -196,10 +198,16 @@ def find_duplicates_nodes(path,ontology):
         #nodes=list(nx_graph.nodes)
         nodes=list(nx_graph.nodes)
         print('skosnumber : %s',skosnumber)
+        logger_node.info('\n nodes %s :',nodes)
+        #print(nodes)
 
-        ### for gemini 2.5 flash ###
+        ### for gemini 2.5 flash ### => problem is here when a subj contain #, the Path(nodes) return "bot#Site_MainDC" instead of Site_MainDC
         nodes_name=[Path(nodes).name for nodes in nodes]
-        all_nodes.append(nodes_name)
+        
+        #=> fix is here
+        nodes_name_final=[s.split('#',1)[1] if '#' in s else s for s in nodes_name]
+        
+        all_nodes.append(nodes_name_final)
 
         ### for gpt-4.1-nano ###
         #nodes_with_bracket = [f"<{nodes}>" for nodes in nodes]
@@ -208,7 +216,7 @@ def find_duplicates_nodes(path,ontology):
     # Transform list of list into a simple list
     all_nodes_list = [item for sublist in all_nodes for item in sublist]
     logger_node.info('\n all nodes list %s :',all_nodes_list)
-
+    
     counts=Counter(all_nodes_list)
     dupplicate_nodes=[item for item, count in counts.items() if count > 1]
 
@@ -272,9 +280,10 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
     logger_merge.setLevel(logging.INFO)
     logger_merge.addHandler(handler)
 
-    remain_occ=1
+    remain_occ=0
 
-    while remain_occ != nbr_occ_max + 1:
+    #while remain_occ != nbr_occ_max + 1:
+    while remain_occ != 1:
 
         print('Treatment in progress for remain_occ =%s',remain_occ)
 
@@ -303,7 +312,7 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
                 for line in infile:
                     dup1_treated=False
                     dup2_treated=False
-                    #logger_merge.info('Line : %s',line.strip())
+                    logger_merge.info('Line : %s',line.strip())
 
                     for dup1 in occ_dup:
 
@@ -314,10 +323,10 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
                                 (dup1[0],f'{dup1[0]}_extra_node_{nbr_file_treated}')
                                 # for gpt-4.1-nano
                                 #(dup1[0],f'{dup1[0][:-1]}_extra_node_{nbr_file_treated}>')
-                            #logger_merge.info('dup1 %s',dup1)
-                            #logger_merge.info('remain_occ %s',remain_occ)
-                            #logger_merge.info('updated_line %s',updated_line.strip())
-                            #logger_merge.info('file : %s',infile)
+                            logger_merge.info('dup1 %s',dup1)
+                            logger_merge.info('remain_occ %s',remain_occ)
+                            logger_merge.info('updated_line %s',updated_line.strip())
+                            logger_merge.info('file : %s',infile)
                             dup1_treated=True
                             dup_treated_list.append(dup1)
 
@@ -331,7 +340,7 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
                                 updated_line_dual = updated_line.replace\
                                 (dup2[0],f'{dup2[0]}_extra_node_{nbr_file_treated}')
 
-                                #logger_merge.info('updated_line_dual %s',updated_line_dual.strip())
+                                logger_merge.info('updated_line_dual %s',updated_line_dual.strip())
                                 outfile.write(updated_line_dual)
                                 dup2_treated=True
                                 dup_treated_list.append(dup2)
@@ -345,17 +354,17 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
             # remove duplicate in dup_treated_list
             unique_tuple = {tuple(sublist) for sublist in dup_treated_list}
             unique_dup_treated_list=[list(t) for t in unique_tuple ]
-            #logger_merge.info('unique_dup_treated_list : %s',unique_dup_treated_list)
+            logger_merge.info('unique_dup_treated_list : %s',unique_dup_treated_list)
 
             # decrease occurence in occ_dup
-            #logger_merge.info('occ_dup %s',occ_dup)
+            logger_merge.info('occ_dup %s',occ_dup)
             for dup_treated in unique_dup_treated_list:
-                #logger_merge.info('dup_treated %s',dup_treated)
+                logger_merge.info('dup_treated %s',dup_treated)
                 if dup_treated in occ_dup:
                     row_number=occ_dup.index(dup_treated)
 
                     occ_dup[row_number][1]=occ_dup[row_number][1]-1
-                    #logger_merge.info('occ_dup after %s',occ_dup)
+                    logger_merge.info('occ_dup after %s',occ_dup)
 
             nbr_file_treated=nbr_file_treated+1
 
