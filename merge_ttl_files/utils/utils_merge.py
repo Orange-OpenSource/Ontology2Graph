@@ -203,10 +203,10 @@ def find_duplicates_nodes(path,ontology):
 
         ### for gemini 2.5 flash ### => problem is here when a subj contain #, the Path(nodes) return "bot#Site_MainDC" instead of Site_MainDC
         nodes_name=[Path(nodes).name for nodes in nodes]
-        
+
         #=> fix is here
         nodes_name_final=[s.split('#',1)[1] if '#' in s else s for s in nodes_name]
-        
+
         all_nodes.append(nodes_name_final)
 
         ### for gpt-4.1-nano ###
@@ -216,7 +216,7 @@ def find_duplicates_nodes(path,ontology):
     # Transform list of list into a simple list
     all_nodes_list = [item for sublist in all_nodes for item in sublist]
     logger_node.info('\n all nodes list %s :',all_nodes_list)
-    
+
     counts=Counter(all_nodes_list)
     dupplicate_nodes=[item for item, count in counts.items() if count > 1]
 
@@ -282,8 +282,8 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
 
     remain_occ=0
 
-    #while remain_occ != nbr_occ_max + 1:
-    while remain_occ != 1:
+    while remain_occ != nbr_occ_max + 1:
+    #while remain_occ != 2:
 
         print('Treatment in progress for remain_occ =%s',remain_occ)
 
@@ -300,7 +300,7 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
 
             logger_merge.info('### REMAIN OCC ### = %s , nbr_occ_max = %s',remain_occ, nbr_occ_max)
             logger_merge.info('#### FILE ####: %s ', ttl_file)
-            
+
             print('REMAIN OCC : %s', remain_occ)
             print('File : %s', ttl_file)
 
@@ -309,47 +309,78 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
                       f'{ttl_file}','w',encoding='utf-8') as outfile:
 
                 logger_merge.info("nbr file treated %s",nbr_file_treated)
+
+#################################################################################
                 for line in infile:
-                    dup1_treated=False
-                    dup2_treated=False
+                    
+                    dup_treated=False
                     logger_merge.info('Line : %s',line.strip())
 
-                    for dup1 in occ_dup:
-
-                        if  re.search(r'\b' + re.escape(dup1[0]) + r'\b', line) and \
-                            (dup1[1]>remain_occ) and (dup1_treated is False):
-
-                            updated_line = line.replace\
-                                (dup1[0],f'{dup1[0]}_extra_node_{nbr_file_treated}')
-                                # for gpt-4.1-nano
-                                #(dup1[0],f'{dup1[0][:-1]}_extra_node_{nbr_file_treated}>')
-                            logger_merge.info('dup1 %s',dup1)
-                            logger_merge.info('remain_occ %s',remain_occ)
-                            logger_merge.info('updated_line %s',updated_line.strip())
-                            logger_merge.info('file : %s',infile)
-                            dup1_treated=True
-                            dup_treated_list.append(dup1)
-
-                        for dup2 in occ_dup: #case when there are 2 dup to rename in the same line
-                            if (dup1_treated is True) and (dup2_treated is False) and\
-                                  (dup2!=dup_treated_list[-1]) and\
-                                      (dup2[0] not in dup_treated_list[-1][0]) and\
-                                        (re.search(r'\b' + re.escape(dup2[0]) + r'\b',\
-                                                    updated_line)) and (dup2[1]>remain_occ) :
-
-                                updated_line_dual = updated_line.replace\
-                                (dup2[0],f'{dup2[0]}_extra_node_{nbr_file_treated}')
-
-                                logger_merge.info('updated_line_dual %s',updated_line_dual.strip())
-                                outfile.write(updated_line_dual)
-                                dup2_treated=True
-                                dup_treated_list.append(dup2)
-
-                    if dup1_treated is False or line=='\n':
+                    if line =='\n' or line.startswith('#') or line.startswith('@'):
                         outfile.write(line)
+                    else :
+                        updated_line=line
+                        for dup in occ_dup:
+                            if  re.search(r'\b' + re.escape(dup[0]) + r'\b', line) \
+                                and (dup[1]>remain_occ):
+                                updated_line = updated_line.replace\
+                                (dup[0],f'{dup[0]}_extra_node_{nbr_file_treated}')
+                                    # for gpt-4.1-nano
+                                    #(dup1[0],f'{dup1[0][:-1]}_extra_node_{nbr_file_treated}>')
+                                logger_merge.info('dup %s',dup)
+                                logger_merge.info('remain_occ %s',remain_occ)
+                                logger_merge.info('updated_line %s',updated_line.strip())
+                                logger_merge.info('file : %s',infile)
+                                dup_treated_list.append(dup)
+                                dup_treated=True
+                        
+                        if dup_treated is True :
+                            outfile.write(updated_line)    
+                        else :
+                            outfile.write(line)
 
-                    if dup1_treated is True and dup2_treated is False:
-                        outfile.write(updated_line)
+#####################################################################################
+                #for line in infile:
+                #    dup1_treated=False
+                #    dup2_treated=False
+                #    logger_merge.info('Line : %s',line.strip())
+
+                #    for dup1 in occ_dup:
+                #
+                #        if  re.search(r'\b' + re.escape(dup1[0]) + r'\b', line) and \
+                #            (dup1[1]>remain_occ) and (dup1_treated is False):
+
+                #            updated_line = line.replace\
+                #                (dup1[0],f'{dup1[0]}_extra_node_{nbr_file_treated}')
+                #                # for gpt-4.1-nano
+                #                #(dup1[0],f'{dup1[0][:-1]}_extra_node_{nbr_file_treated}>')
+                #            logger_merge.info('dup1 %s',dup1)
+                #            logger_merge.info('remain_occ %s',remain_occ)
+                #            logger_merge.info('updated_line %s',updated_line.strip())
+                #            logger_merge.info('file : %s',infile)
+                #            dup1_treated=True
+                #            dup_treated_list.append(dup1)
+
+                #        for dup2 in occ_dup: #case when there are 2 dup to rename in the same line
+                #            if (dup1_treated is True) and (dup2_treated is False) and\
+                #                  (dup2!=dup_treated_list[-1]) and\
+                #                      (dup2[0] not in dup_treated_list[-1][0]) and\
+                #                        (re.search(r'\b' + re.escape(dup2[0]) + r'\b',\
+                #                                    updated_line)) and (dup2[1]>remain_occ) :
+
+                #                updated_line_dual = updated_line.replace\
+                #                (dup2[0],f'{dup2[0]}_extra_node_{nbr_file_treated}')
+
+                #                logger_merge.info('updated_line_dual %s',updated_line_dual.strip())
+                #                outfile.write(updated_line_dual)
+                #                dup2_treated=True
+                #                dup_treated_list.append(dup2)
+
+                #    if dup1_treated is False or line=='\n':
+                #        outfile.write(line)
+
+                #"    if dup1_treated is True and dup2_treated is False:
+                #        outfile.write(updated_line)
 
             # remove duplicate in dup_treated_list
             unique_tuple = {tuple(sublist) for sublist in dup_treated_list}
