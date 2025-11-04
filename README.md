@@ -1,4 +1,4 @@
-# GenGraphLLM
+ont dasn # GenGraphLLM
 
 GenGraphLLM is a set of python scripts that create synthetic Knowledge Graphs based on LLM queries. GenGraphLLM is also able to compute Knowledge Graph KPIs and display the Graph Generated.
 

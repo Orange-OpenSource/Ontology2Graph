@@ -7,7 +7,7 @@ import argparse
 import sys
 import os
 import rdflib
-import owlready2
+from owlready2 import get_ontology,sync_reasoner_hermit,sync_reasoner_pellet,owl,OwlReadyInconsistentOntologyError,default_world
 
 #logging.basicConfig(
 #    level=logging.DEBUG,
@@ -29,7 +29,6 @@ path=Path(f'{os.getcwd()}')
 CONCAT = f'{path}/concat.ttl'
 
 #concat ontology and graph in the same file
-
 with open(CONCAT, 'w', encoding='utf-8') as target_file:
     for source_file in [ontology,graph]:
         with open(source_file, 'r', encoding='utf-8') as f:
@@ -37,7 +36,6 @@ with open(CONCAT, 'w', encoding='utf-8') as target_file:
                 target_file.write(line)
 
 skgraph = rdflib.Graph()
-
 skgraph.parse(f"file://{CONCAT}", format="turtle")
 
 # Convert RDFLib graph to OWL/XML format
@@ -57,8 +55,28 @@ if os.path.exists(OUTPUT_LOG):
 if os.path.exists(ERROR_LOG):
     os.remove(ERROR_LOG)
 
-sys.stdout = open('owlready_output.log', 'a', encoding='utf-8')
-sys.stderr = open('owlready_error.log', 'a', encoding='utf-8')
+graph = get_ontology("file://temp_graph.owl").load()
+#sync_reasoner_hermit()
+#sync_reasoner_pellet()
 
-graph = owlready2.get_ontology("file://temp_graph.owl").load()
-owlready2.sync_reasoner()
+#sys.stdout = open('owlready_output.log', 'a', encoding='utf-8')
+#sys.stderr = open('owlready_error.log', 'a', encoding='utf-8')   
+
+try:
+    with graph:
+        sync_reasoner_hermit(debug=2, keep_tmp_file=True,infer_property_values=True)
+        #sync_reasoner_pellet(debug=2, keep_tmp_file=True,
+        #                     infer_property_values=True, infer_data_property_values=True)
+except OwlReadyInconsistentOntologyError:
+    print("Pellet Reasoner reported an inconsistency (OwlReadyInconsistentOntologyError).")
+except Exception as e:
+    print("Reasoner error:", e)
+
+# list classes inferred equivalent to owl:Nothing (unsatisfiable classes)
+unsat = list(default_world.inconsistent_classes())
+if unsat:
+    print("Unsatisfiable classes:")
+    for c in unsat:
+        print(" -", c)
+else:
+    print("No unsatisfiable classes found.")

@@ -201,10 +201,10 @@ def find_duplicates_nodes(path,ontology):
         logger_node.info('\n nodes %s :',nodes)
         #print(nodes)
 
-        ### for gemini 2.5 flash ### => problem is here when a subj contain #, the Path(nodes) return "bot#Site_MainDC" instead of Site_MainDC
+        ### for gemini 2.5 flash ###
         nodes_name=[Path(nodes).name for nodes in nodes]
 
-        #=> fix is here
+        #Remove # character from node names if any
         nodes_name_final=[s.split('#',1)[1] if '#' in s else s for s in nodes_name]
 
         all_nodes.append(nodes_name_final)
@@ -312,7 +312,7 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
 
 #################################################################################
                 for line in infile:
-                    
+
                     dup_treated=False
                     logger_merge.info('Line : %s',line.strip())
 
@@ -333,9 +333,9 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
                                 logger_merge.info('file : %s',infile)
                                 dup_treated_list.append(dup)
                                 dup_treated=True
-                        
+
                         if dup_treated is True :
-                            outfile.write(updated_line)    
+                            outfile.write(updated_line)
                         else :
                             outfile.write(line)
 
