@@ -36,7 +36,9 @@ def generate_ttl(path_gen,path_result,nbr_ttl,model):
     #path=Path(f'{os.getcwd()}/generate_ttl_files')
     #path_gen=Path(f'{path}/generate_ttl_files')
     #PATH=f'{os.getcwd()}/DIGITAL_TWIN/gengraphllm' # when using crontab
-    path_ontology=f'{path_gen}/ontologies'
+
+    #path_ontology=f'{path_gen}/ontologies'
+    path_ontology=f'{path_gen}/ontologies/documentSH_TT_only'
     path_prompt=f'{path_gen}/prompts'
     path_graph=f'{path_gen}/graph'
 
@@ -114,7 +116,7 @@ def generate_ttl(path_gen,path_result,nbr_ttl,model):
     logger_gen.addHandler(handler_gen)
 
     logger_gen = logging.getLogger('Gen_log')
-   
+
     while number_of_graph != nbr_ttl_int:
 
         date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")

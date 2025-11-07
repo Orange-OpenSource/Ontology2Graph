@@ -153,15 +153,15 @@ def prepare_graph_to_display(file,log_html_folder,ontology):
                     short_predbn,short_obj)
 
     ### log nodes and Literals ###
-    #logger_file1.info('##################################################')
-    #logger_file1.info('%s',file)
-    #for s, p, o in g:
-    #    if isinstance(s, URIRef):
-    #        logger_file1.info('URIRef Subject : %s',s)
-    #    if isinstance(o, Literal):
-    #        logger_file1.info('Literal Object : %s',o)
-    #    if isinstance(s,BNode):
-    #        logger_file1.info('BNode Subject : %s',s)
+    logger_file1.info('##################################################')
+    logger_file1.info('%s',file)
+    for s, p, o in g:
+        if isinstance(s, URIRef):
+            logger_file1.info('URIRef Subject : %s',s)
+        if isinstance(o, Literal):
+            logger_file1.info('Literal Object : %s',o)
+        if isinstance(s,BNode):
+            logger_file1.info('BNode Subject : %s',s)
     logger_file1.info('##################################################')
 
     ## sort and remove duplicate lines ##

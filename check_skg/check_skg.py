@@ -50,11 +50,12 @@ if os.path.exists(ERROR_LOG):
 graph = get_ontology("file://temp_graph.owl").load()
 
 #sys.stdout = open('owlready_output.log', 'a', encoding='utf-8')
-#sys.stderr = open('owlready_error.log', 'a', encoding='utf-8')   
+#sys.stderr = open('owlready_error.log', 'a', encoding='utf-8')
 
 try:
     with graph:
         #sync_reasoner_hermit(debug=2, keep_tmp_file=True,infer_property_values=True)
+        #sync_reasoner_hermit(debug=2, keep_tmp_file=True,ignore_unsupported_datatypes = True)
         sync_reasoner_pellet(debug=2, keep_tmp_file=True,
                              infer_property_values=True, infer_data_property_values=True)
 except OwlReadyInconsistentOntologyError:
