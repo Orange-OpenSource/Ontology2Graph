@@ -7,9 +7,6 @@ from pathlib import Path
 import subprocess
 from openai import OpenAI, OpenAIError
 
-
-
-
 def query_llm(prompt,ontology,model):
     '''quey llm API'''
 

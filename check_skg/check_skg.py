@@ -9,18 +9,10 @@ import os
 import rdflib
 from owlready2 import get_ontology,sync_reasoner_hermit,sync_reasoner_pellet,owl,OwlReadyInconsistentOntologyError,default_world
 
-#logging.basicConfig(
-#    level=logging.DEBUG,
-#    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-#)
-#owlready2.set_log_level(4)
-
 parser = argparse.ArgumentParser()
 parser.add_argument("graph")
 parser.add_argument("ontology")
 args = parser.parse_args()
-
-#owlready2.JAVA_MEMORY = "4G"  # Set to 4 GB or more as needed
 
 graph=args.graph
 ontology=args.ontology
@@ -56,27 +48,26 @@ if os.path.exists(ERROR_LOG):
     os.remove(ERROR_LOG)
 
 graph = get_ontology("file://temp_graph.owl").load()
-#sync_reasoner_hermit()
-#sync_reasoner_pellet()
 
 #sys.stdout = open('owlready_output.log', 'a', encoding='utf-8')
 #sys.stderr = open('owlready_error.log', 'a', encoding='utf-8')   
 
 try:
     with graph:
-        sync_reasoner_hermit(debug=2, keep_tmp_file=True,infer_property_values=True)
-        #sync_reasoner_pellet(debug=2, keep_tmp_file=True,
-        #                     infer_property_values=True, infer_data_property_values=True)
+        #sync_reasoner_hermit(debug=2, keep_tmp_file=True,infer_property_values=True)
+        sync_reasoner_pellet(debug=2, keep_tmp_file=True,
+                             infer_property_values=True, infer_data_property_values=True)
 except OwlReadyInconsistentOntologyError:
-    print("Pellet Reasoner reported an inconsistency (OwlReadyInconsistentOntologyError).")
+    print("HermiT Reasoner reported an inconsistency (OwlReadyInconsistentOntologyError).")
 except Exception as e:
     print("Reasoner error:", e)
 
 # list classes inferred equivalent to owl:Nothing (unsatisfiable classes)
 unsat = list(default_world.inconsistent_classes())
 if unsat:
-    print("Unsatisfiable classes:")
+    print("inconsistent classes found:")
     for c in unsat:
         print(" -", c)
 else:
-    print("No unsatisfiable classes found.")
+    print("No inconsistent classes found.")
+
