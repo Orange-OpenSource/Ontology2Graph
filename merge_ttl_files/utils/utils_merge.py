@@ -265,12 +265,12 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
         shutil.rmtree(path_llm_graphs_dup_treated)
     os.makedirs(path_llm_graphs_dup_treated)
 
+
     path_merged_log=Path(f'{path_merged}/merge_log')
     if os.path.exists(path_merged_log):
         shutil.rmtree(path_merged_log)
     os.makedirs(path_merged_log)
 
-    #set logger
     log_file=Path(f'{path_merged_log}/merge.log')
     if log_file.is_file():
         os.remove(log_file)
