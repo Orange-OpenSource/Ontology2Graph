@@ -54,6 +54,17 @@ logger_check.addHandler(handler)
 for graph_to_check in all_graph_to_check :
     print(graph_to_check)
 #concat ontology and graph in the same file
+
+    CONCATENATED_CONTENT=""
+    TARGET_FILE="concatenated_file.ttl"
+
+    #for source_file in [graph_to_check,ontology]:
+    #    with open(source_file, 'r', encoding='utf-8') as file:
+    #        CONCATENATED_CONTENT += file.read() + "\n"
+
+    #with open(TARGET_FILE,'w',encoding='utf-8') as final_file:
+    #    final_file.write(CONCATENATED_CONTENT)
+
     with open(CONCAT, 'w', encoding='utf-8') as target_file:
         for source_file in [ontology,graph_to_check]:
             with open(source_file, 'r', encoding='utf-8') as file_source:
@@ -61,6 +72,7 @@ for graph_to_check in all_graph_to_check :
                     target_file.write(line)
 
     skgraph = rdflib.Graph()
+    #skgraph.parse(TARGET_FILE, format="turtle")
     skgraph.parse(f"file://{CONCAT}", format="turtle")
 
 # Convert RDFLib graph to OWL/XML format
@@ -68,18 +80,18 @@ for graph_to_check in all_graph_to_check :
     encoded_graph = graph_xml.encode('utf-8')
 
 # Save the OWL/XML graph to a temporary file
-    with open("temp_graph.owl", "wb") as temp_graph_owl:
+    with open(f'temp_graph.owl{Path(graph_to_check).name}', "wb") as temp_graph_owl:
         temp_graph_owl.write(encoded_graph)
 
     #OUTPUT_LOG = f'{path_cwd}/owlready_{graph_to_check}_output.log'
     #ERROR_LOG = f'{path_cwd}/owlready_{graph_to_check}_error.log'
 
-    encoded_graph_to_check = get_ontology("file://temp_graph.owl").load()
+    encoded_graph_to_check = get_ontology(f'file://temp_graph.owl{Path(graph_to_check).name}').load()
 
     #sys.stdout = open('owlready_output.log', 'a', encoding='utf-8')
     #sys.stderr = open('owlready_error.log', 'a', encoding='utf-8')
     logger_check.info('##########################################################################')
-    logger_check.info('Graph : %s \n',graph_to_check )
+    logger_check.info('Graph : %s \n',Path(graph_to_check).name)
 
     try:
         with encoded_graph_to_check:
@@ -87,10 +99,10 @@ for graph_to_check in all_graph_to_check :
                 sync_reasoner_hermit(debug=2, keep_tmp_file=True,
                                      ignore_unsupported_datatypes = True)
             if reasonner=="Pellet":
-                sync_reasoner_pellet(debug=2, keep_tmp_file=True)
-                                    #infer_property_values=True,infer_data_property_values=True)
+                sync_reasoner_pellet(debug=2, keep_tmp_file=True,
+                                    infer_property_values=True,infer_data_property_values=True)
     except OwlReadyInconsistentOntologyError as OntoE:
-        print(f'\nOwlReadyInconsistentOntologyError detected by {reasonner} for {graph_to_check}')
+        print(f'\nOwlReadyInconsistentOntologyError detected by {reasonner} for {Path(graph_to_check).name}')
         logger_check.info('OwlReadyInconsistentOntologyError detected by : %s \n',reasonner)
         logger_check.info(OntoE)
 
@@ -99,7 +111,7 @@ for graph_to_check in all_graph_to_check :
         logger_check.info('OverFlowError : %s',e)
 
     else :
-        print(f'\nNo inconsistent Ontology errors detected by {reasonner} for {graph_to_check}')
+        print(f'\nNo inconsistent Ontology errors detected by {reasonner} for {Path(graph_to_check).name}\n')
         logger_check.info('No inconsistent Ontology errors found by %s ',reasonner)
 # list classes inferred equivalent to owl:Nothing (unsatisfiable classes)
     unsat = list(default_world.inconsistent_classes())
@@ -110,7 +122,7 @@ for graph_to_check in all_graph_to_check :
             logger_check.info('inconsistent classes found by %s',reasonner)
             logger_check.info(' %s',c)
     else:
-        print(f'No inconsistent classes found by {reasonner} for {graph_to_check}.\n')
+        print(f'No inconsistent classes found by {reasonner} for {Path(graph_to_check).name}.\n')
         logger_check.info('No inconsistent classes found by %s',reasonner)
 
     logger_check.info('##########################################################################')
