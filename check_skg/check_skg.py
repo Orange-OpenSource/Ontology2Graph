@@ -97,7 +97,7 @@ for graph_to_check in all_graph_to_check :
         with encoded_graph_to_check:
             if reasonner=="HermiT":
                 sync_reasoner_hermit(debug=2, keep_tmp_file=True,
-                                     ignore_unsupported_datatypes = True)
+                                      ignore_unsupported_datatypes = True)
             if reasonner=="Pellet":
                 sync_reasoner_pellet(debug=2, keep_tmp_file=True,
                                     infer_property_values=True,infer_data_property_values=True)
