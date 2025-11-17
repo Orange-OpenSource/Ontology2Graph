@@ -146,7 +146,7 @@ def generate_ttl(path_gen,path_result,nbr_ttl,model):
         #print("Output response tokens details : ",response.usage.completion_tokens_details)
 
         number_of_graph += 1
-        
+
     #check_identical_file()  TBD
 
     return f'{path_ontology}/Noria.ttl'

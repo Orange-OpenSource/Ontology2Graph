@@ -31,11 +31,13 @@ def query_llm(prompt,ontology,model):
             #            }
             #        }
             #},
-            #input=prompt) 
+            #input=prompt)
             #max_tokens=max_tok, # sum of reasoning tokens and text tokens
             #max_completion_tokens=max_tok,
-            #frequency_penalty=1, #Applies a penalty to repeated tokens, reducing the likelihood of repetition in the generated text.
-            #presence_penalty=1, # Applies a penalty to tokens that have already appeared in the generated text, further reducing repetition.
+            #frequency_penalty=1, #Applies a penalty to repeated tokens, reducing the likelihood
+            # of repetition in the generated text.
+            #presence_penalty=1, # Applies a penalty to tokens that have already appeared in the
+            # generated text, further reducing repetition.
             #reasoning_effort="high",
             messages = [
                 {   "role":"system",
@@ -64,7 +66,7 @@ def query_llm(prompt,ontology,model):
         #        print(part.text)
         #        print()
 
-            #prompt=f"""Follow the instruction : {prompt} and use the following schema: {ontology} 
+            #prompt=f"""Follow the instruction : {prompt} and use the following schema: {ontology}
             #to generate a new graph in turtle format""")
     except OpenAIError as e:
         print(f"An error occured: {e}")
@@ -80,7 +82,7 @@ def storing_results(response,temp_file,file_result):
         filetemp.write(response.choices[0].message.content)
         #filetemp.write(response.choices[0].text)
         #filetemp.write(response)
-        
+
         filetemp.close()
 
     #with open(temp_file, 'r',encoding='utf-8') as infile, open(file_result, 'w',encoding='utf-8')\
@@ -133,7 +135,8 @@ def check_ttl(file_result, bad_file_result, bad_path_result,merged):
         #os.makedirs(folder_path, exist_ok=True)
         #shutil.copy(file_result,folder_path)
         print(f'\nFILE {Path(file_result).name} has been generated succesffully without errors')
-        logger.info('\nFILE : %s has been generated succesffully without errors',Path(file_result).name)
+        logger.info('\nFILE : %s has been generated succesffully without errors',
+                    Path(file_result).name)
 
     if merged==1:
         print(f'Merged graph : Turtle validator Result: {stdout}'.rstrip('\n'))

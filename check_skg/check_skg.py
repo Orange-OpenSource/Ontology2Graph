@@ -86,7 +86,7 @@ for graph_to_check in all_graph_to_check :
     #OUTPUT_LOG = f'{path_cwd}/owlready_{graph_to_check}_output.log'
     #ERROR_LOG = f'{path_cwd}/owlready_{graph_to_check}_error.log'
 
-    encoded_graph_to_check = get_ontology(f'file://temp_graph.owl{Path(graph_to_check).name}').load()
+    encoded_graph_to_check=get_ontology(f'file://temp_graph.owl{Path(graph_to_check).name}').load()
 
     #sys.stdout = open('owlready_output.log', 'a', encoding='utf-8')
     #sys.stderr = open('owlready_error.log', 'a', encoding='utf-8')
