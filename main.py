@@ -15,7 +15,7 @@ if __name__ == '__main__':
     path=Path(f'{os.getcwd()}')
     path_gen=Path(f'{path}/generate_ttl_files')
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    
+
         ### Choose the model to use ####
     model_list = []
     FILE_MODEL = f'{path_gen}/model/models.txt'
@@ -25,9 +25,9 @@ if __name__ == '__main__':
             cleaned_line = line.strip()
             model_list.append(cleaned_line)
     model = model_list[7]
-    
+
     PATH_RESULT = f'{path}/results/synthetics_graphs/{date}/{model}'
-    
+
     parser = argparse.ArgumentParser()
     parser.add_argument("nbrttl", help="number of ttl file to generate")
     args = parser.parse_args()
