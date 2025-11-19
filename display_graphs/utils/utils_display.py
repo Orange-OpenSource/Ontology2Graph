@@ -54,7 +54,7 @@ def retreive_datatype_properties(ontology):
     #print(dtproperties)
     return dtproperties
 
-def visu_graph(graph,file,html_folder):
+def visu_graph(graph,file,html_folder,trouble_ticket_nodes,change_request_nodes,application_nodes):
     '''display the graph with enhanced visualization settings'''
 
     # Create network with responsive sizing
@@ -204,9 +204,12 @@ def visu_graph(graph,file,html_folder):
     with open(html_file, 'r', encoding='utf-8') as f:
         html_content = f.read()
 
+    ete="entity to literal"
+    etl="entity to literal"
+
     # Insert custom JavaScript before closing body tag
     custom_js = f"""
-    <script type=\"text/javascript\">
+    <script type="text/javascript">
         // Track literal nodes
         var literalNodeIds = [];
         var literalEdgeIds = [];
@@ -219,7 +222,7 @@ def visu_graph(graph,file,html_folder):
         // Identify literal nodes and edges from the graph data
         var allEdges = edges.get();
         allEdges.forEach(function(edge) {{
-            if (edge.title && edge.title.includes('entity to literal')) {{
+            if (edge.title && edge.title.includes('{etl}')) {{
                 literalNodeIds.push(edge.to);
                 literalEdgeIds.push(edge.id);
             }}
@@ -238,7 +241,8 @@ def visu_graph(graph,file,html_folder):
 
                 var visibleLiteralEdges = literalEdgeIds.filter(function(edgeId) {{
                     var edge = edges.get(edgeId);
-                    return visibleNodes.indexOf(edge.from) !== -1 || visibleNodes.indexOf(edge.to) !== -1;
+                    return visibleNodes.indexOf(edge.from) !== -1 ||
+                      visibleNodes.indexOf(edge.to) !== -1;
                 }});
 
                 // Update only visible literal nodes
@@ -263,9 +267,31 @@ def visu_graph(graph,file,html_folder):
 
             // Update button text
             btn.innerHTML = literalsVisible ? 'Hide Literals' : 'Show Literals';
-            btn.style.backgroundColor = literalsVisible ? 'rgba(204, 0, 0, 0.8)' : 'rgba(0, 153, 0, 0.8)';
+            btn.style.backgroundColor = literalsVisible ? 'rgba(204, 0, 0, 0.8)' :
+              'rgba(0, 153, 0, 0.8)';
         }}
 
+    // Add toggle literals button on the top left
+    var toggleBtn = document.createElement('button');
+    toggleBtn.id = 'toggleLiteralsBtn';
+    toggleBtn.innerHTML = 'Hide Literals';
+    toggleBtn.style.position = 'fixed';
+    toggleBtn.style.top = '10px';
+    toggleBtn.style.left = '10px';
+    toggleBtn.style.backgroundColor = 'rgba(204, 0, 0, 0.8)';
+    toggleBtn.style.color = 'white';
+    toggleBtn.style.padding = '10px 20px';
+    toggleBtn.style.border = 'none';
+    toggleBtn.style.borderRadius = '5px';
+    toggleBtn.style.cursor = 'pointer';
+    toggleBtn.style.zIndex = '1001';
+    toggleBtn.style.fontFamily = 'Arial';
+    toggleBtn.style.fontSize = '14px';
+    toggleBtn.style.fontWeight = 'bold';
+    toggleBtn.onclick = toggleLiterals;
+    document.body.appendChild(toggleBtn);
+
+        // ...existing code for legend, connected nodes, and instructions...
         // Button to show/hide connected nodes (appears on node select)
         var toggleConnectedBtn = document.createElement('button');
         toggleConnectedBtn.id = 'toggleConnectedBtn';
@@ -300,10 +326,15 @@ def visu_graph(graph,file,html_folder):
         legendDiv.style.fontFamily = 'Arial';
         legendDiv.style.fontSize = '12px';
         legendDiv.innerHTML = '<b>Edge Types Legend:</b><br>' +
-            '<div style="margin: 5px 0;"><span style="display: inline-block; width: 30px; height: 3px; background-color: {edge_colors["entity_to_entity"]}; margin-right: 8px; vertical-align: middle;"></span><span>Entity to Entity</span></div>' +
-            '<div style="margin: 5px 0;"><span style="display: inline-block; width: 30px; height: 3px; background-color: {edge_colors["entity_to_literal"]}; margin-right: 8px; vertical-align: middle;"></span><span>Entity to Literal</span></div>';
+            '<div style="margin: 5px 0;"><span style="display: inline-block; width: 30px; height:\
+              3px; background-color: #00d4ff; margin-right: 8px; vertical-align: middle;">\
+              </span><span>{ete}</span></div>' +
+            '<div style="margin: 5px 0;"><span style="display: inline-block; width: 30px; height:\
+              3px; background-color: #00cc66; margin-right: 8px; vertical-align: middle;">\
+              </span><span>{etl}</span></div>';\
         document.body.appendChild(legendDiv);
 
+        // ...existing code for connected nodes and instructions...
         function updateToggleConnectedBtn(show) {{
             toggleConnectedBtn.style.display = show ? 'block' : 'none';
         }}
@@ -363,7 +394,8 @@ def visu_graph(graph,file,html_folder):
                 // Hide edges not connected to selected node
                 for (var edgeId in allEdges) {{
                     var edge = allEdges[edgeId];
-                    if (connectedNodes.indexOf(edge.from) === -1 || connectedNodes.indexOf(edge.to) === -1) {{
+                    if (connectedNodes.indexOf(edge.from) === -1 ||\
+                          connectedNodes.indexOf(edge.to) === -1) {{
                         edges.update({{id: edgeId, hidden: true}});
                     }} else {{
                         // Only show if it's not a literal edge or if literals are visible
@@ -417,26 +449,6 @@ def visu_graph(graph,file,html_folder):
             }}
         }});
 
-        // Add toggle literals button
-        var toggleBtn = document.createElement('button');
-        toggleBtn.id = 'toggleLiteralsBtn';
-        toggleBtn.innerHTML = 'Hide Literals';
-        toggleBtn.style.position = 'fixed';
-        toggleBtn.style.top = '10px';
-        toggleBtn.style.left = '10px';
-        toggleBtn.style.backgroundColor = 'rgba(204, 0, 0, 0.8)';
-        toggleBtn.style.color = 'white';
-        toggleBtn.style.padding = '10px 20px';
-        toggleBtn.style.border = 'none';
-        toggleBtn.style.borderRadius = '5px';
-        toggleBtn.style.cursor = 'pointer';
-        toggleBtn.style.zIndex = '1000';
-        toggleBtn.style.fontFamily = 'Arial';
-        toggleBtn.style.fontSize = '14px';
-        toggleBtn.style.fontWeight = 'bold';
-        toggleBtn.onclick = toggleLiterals;
-        document.body.appendChild(toggleBtn);
-
         // Add instructions overlay
         var instructions = document.createElement('div');
         instructions.style.position = 'fixed';
@@ -449,26 +461,199 @@ def visu_graph(graph,file,html_folder):
         instructions.style.zIndex = '1000';
         instructions.style.fontFamily = 'Arial';
         instructions.style.fontSize = '12px';
-        instructions.innerHTML = '<b>Graph Controls:</b><br>• Click node: Show only connected nodes<br>• Double-click: Show all nodes<br>• When a node is selected, use the "Hide Connected Nodes" button to hide/show its neighbors.';
+        instructions.innerHTML = '<b>Graph Controls:</b><br>\
+              • Click on a node: Isolate the node with their connected nodes and literals<br>\
+              • When a node is selected, use the hide/show buttons to hide/show its neighbors<br>\
+              • Double-click everywhere outside the graph : Show the entire graph<br>';
         document.body.appendChild(instructions);
 
     </script>
     """
 
-    html_content = html_content.replace('</body>', custom_js + '</body>')
+    # --- Combined Sidebar for all menus ---
+    combined_sidebar_js = f"""
+    <script type=\"text/javascript\">
+        var troubleTicketNodes = {trouble_ticket_nodes if trouble_ticket_nodes else []};
+        var changeRequestNodes = {change_request_nodes if change_request_nodes else []};
+        var applicationNodes = {application_nodes if application_nodes else []};
+        var sidebar = document.createElement('div');
+        sidebar.id = 'mainSidebar';
+        sidebar.style.position = 'fixed';
+        sidebar.style.top = '160px';
+        sidebar.style.right = '10px';
+        sidebar.style.width = '240px';
+        sidebar.style.background = 'rgba(30,30,30,0.95)';
+        sidebar.style.color = 'white';
+        sidebar.style.padding = '15px';
+        sidebar.style.borderRadius = '8px';
+        sidebar.style.zIndex = '1001';
+        sidebar.style.fontFamily = 'Arial';
+        sidebar.style.fontSize = '13px';
+        sidebar.innerHTML = `
+            <b>Trouble Tickets</b><br>
+            <select id=\"ttDropdown\" style=\"width:100%;margin-bottom:10px;\">
+                <option value=\"\">-- Select Trouble Ticket --</option>
+            </select>
+            <button id=\"showAllTTBtn\" style=\"margin-top:10px;width:100%;\">\
+                Show Only Trouble Tickets</button>
+            <button id=\"resetTTBtn\" style=\"margin-top:5px;width:100%;\">Reset Filter</button>
+            <hr style=\"margin:15px 0; border:1px solid #444;\">
+            <b>Change Requests</b><br>
+            <select id=\"crDropdown\" style=\"width:100%;margin-bottom:10px;\">
+                <option value=\"\">-- Select Change Request --</option>
+            </select>
+            <button id=\"showAllCRBtn\" style=\"margin-top:10px;width:100%;\">\
+                Show Only Change Requests</button>
+            <button id=\"resetCRBtn\" style=\"margin-top:5px;width:100%;\">Reset Filter</button>
+            <hr style=\"margin:15px 0; border:1px solid #444;\">
+            <b>Applications</b><br>
+            <select id=\"appDropdown\" style=\"width:100%;margin-bottom:10px;\">
+                <option value=\"\">-- Select Application --</option>
+            </select>
+            <button id=\"showAllAppBtn\" style=\"margin-top:10px;width:100%;\">\
+                Show Only Applications</button>
+            <button id=\"resetAppBtn\" style=\"margin-top:5px;width:100%;\">Reset Filter</button>
+        `;
+        document.body.appendChild(sidebar);
+
+        // Trouble Ticket dropdown
+        var ttDropdown = document.getElementById('ttDropdown');
+        troubleTicketNodes.forEach(function(nodeId) {{
+            var option = document.createElement('option');
+            option.value = nodeId;
+            option.text = nodeId;
+            ttDropdown.appendChild(option);
+        }});
+        ttDropdown.onchange = function() {{
+            var selected = this.value;
+            if(selected) {{
+                network.selectNodes([selected]);
+                network.focus(selected, {{scale:1.5, animation:true}});
+            }}
+        }};
+        document.getElementById('showAllTTBtn').onclick = function() {{
+            var allNodes = nodes.get({{returnType:"Object"}});
+            for (var nodeId in allNodes) {{
+                nodes.update({{id: nodeId, hidden: troubleTicketNodes.indexOf(nodeId) === -1}});
+            }}
+            var allEdges = edges.get({{returnType:"Object"}});
+            for (var edgeId in allEdges) {{
+                var edge = allEdges[edgeId];
+                var show = troubleTicketNodes.indexOf(edge.from) !== -1 && \
+                    troubleTicketNodes.indexOf(edge.to) !== -1;
+                edges.update({{id: edgeId, hidden: !show}});
+            }}
+        }};
+        document.getElementById('resetTTBtn').onclick = function() {{
+            var allNodes = nodes.get({{returnType:"Object"}});
+            for (var nodeId in allNodes) {{
+                nodes.update({{id: nodeId, hidden: false}});
+            }}
+            var allEdges = edges.get({{returnType:"Object"}});
+            for (var edgeId in allEdges) {{
+                edges.update({{id: edgeId, hidden: false}});
+            }}
+        }};
+
+        // Change Request dropdown
+        var crDropdown = document.getElementById('crDropdown');
+        changeRequestNodes.forEach(function(nodeId) {{
+            var option = document.createElement('option');
+            option.value = nodeId;
+            option.text = nodeId;
+            crDropdown.appendChild(option);
+        }});
+        crDropdown.onchange = function() {{
+            var selected = this.value;
+            if(selected) {{
+                network.selectNodes([selected]);
+                network.focus(selected, {{scale:1.5, animation:true}});
+            }}
+        }};
+        document.getElementById('showAllCRBtn').onclick = function() {{
+            var allNodes = nodes.get({{returnType:"Object"}});
+            for (var nodeId in allNodes) {{
+                nodes.update({{id: nodeId, hidden: changeRequestNodes.indexOf(nodeId) === -1}});
+            }}
+            var allEdges = edges.get({{returnType:"Object"}});
+            for (var edgeId in allEdges) {{
+                var edge = allEdges[edgeId];
+                var show = changeRequestNodes.indexOf(edge.from) !== -1 && \
+                    changeRequestNodes.indexOf(edge.to) !== -1;
+                edges.update({{id: edgeId, hidden: !show}});
+            }}
+        }};
+        document.getElementById('resetCRBtn').onclick = function() {{
+            var allNodes = nodes.get({{returnType:"Object"}});
+            for (var nodeId in allNodes) {{
+                nodes.update({{id: nodeId, hidden: false}});
+            }}
+            var allEdges = edges.get({{returnType:"Object"}});
+            for (var edgeId in allEdges) {{
+                edges.update({{id: edgeId, hidden: false}});
+            }}
+        }};
+
+        // Application dropdown
+        var appDropdown = document.getElementById('appDropdown');
+        applicationNodes.forEach(function(nodeId) {{
+            var option = document.createElement('option');
+            option.value = nodeId;
+            option.text = nodeId;
+            appDropdown.appendChild(option);
+        }});
+        appDropdown.onchange = function() {{
+            var selected = this.value;
+            if(selected) {{
+                network.selectNodes([selected]);
+                network.focus(selected, {{scale:1.5, animation:true}});
+            }}
+        }};
+        document.getElementById('showAllAppBtn').onclick = function() {{
+            var allNodes = nodes.get({{returnType:"Object"}});
+            for (var nodeId in allNodes) {{
+                nodes.update({{id: nodeId, hidden: applicationNodes.indexOf(nodeId) === -1}});
+            }}
+            var allEdges = edges.get({{returnType:"Object"}});
+            for (var edgeId in allEdges) {{
+                var edge = allEdges[edgeId];
+                var show = applicationNodes.indexOf(edge.from) !== -1 && \
+                    applicationNodes.indexOf(edge.to) !== -1;
+                edges.update({{id: edgeId, hidden: !show}});
+            }}
+        }};
+        document.getElementById('resetAppBtn').onclick = function() {{
+            var allNodes = nodes.get({{returnType:"Object"}});
+            for (var nodeId in allNodes) {{
+                nodes.update({{id: nodeId, hidden: false}});
+            }}
+            var allEdges = edges.get({{returnType:"Object"}});
+            for (var edgeId in allEdges) {{
+                edges.update({{id: edgeId, hidden: false}});
+            }}
+        }};
+    </script>
+    """
+
+    html_content = html_content.replace('</body>', combined_sidebar_js + custom_js + '</body>')
 
     with open(html_file, 'w', encoding='utf-8') as f:
         f.write(html_content)
 
     webbrowser.open(html_file,autoraise=True)
 
-def prepare_graph_to_display(file,log_html_folder,ontology):
+def prepare_graph_to_display(file, log_html_folder, ontology):
     '''set the graph and remove literal and other expression from the graph in order to keep only
     the real nodes and their relation to display, log some inforations'''
 
     rdf = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
     rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
     skos = Namespace("http://www.w3.org/2004/02/skos/core#")
+    #noria = Namespace("http://www.semanticweb.org/noria#")
+
+    trouble_ticket_nodes = set()
+    change_request_nodes = set()
+    application_nodes = set()
 
     ### set logger ###
     log_file = f'{Path(log_html_folder)}/URI_and_LITERAL.log'
@@ -493,6 +678,18 @@ def prepare_graph_to_display(file,log_html_folder,ontology):
         short_pred=Path(pred).name
         short_subj=Path(subj).name
         dtp = retreive_datatype_properties(ontology)
+
+        # Identify TroubleTicket nodes
+        if short_pred == "22-rdf-syntax-ns#type" and Path(obj).name == "TroubleTicket":
+            trouble_ticket_nodes.add(str(short_subj))
+
+        # Identify ChangeRequest nodes
+        if short_pred == "22-rdf-syntax-ns#type" and Path(obj).name == "ChangeRequest":
+            change_request_nodes.add(str(short_subj))
+
+        # Identify Application nodes
+        if short_pred == "22-rdf-syntax-ns#type" and Path(obj).name == "Application":
+            application_nodes.add(str(short_subj))
 
         # Entity-to-entity relationships
         if (
@@ -588,7 +785,7 @@ def prepare_graph_to_display(file,log_html_folder,ontology):
         log_sorted.writelines(sorted_lines)
         log_sorted.close()
 
-    return digraph
+    return digraph, list(trouble_ticket_nodes), list(change_request_nodes), list(application_nodes)
 
 def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD
     '''remove literal and other expression from the graph in order to keep only the nodes'''
@@ -608,7 +805,8 @@ def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD
             graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
             digraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
 
-def log_kpis(file_name,digraph,cumul_nodes,cumul_density):
+def log_kpis(file_name,digraph,cumul_nodes,cumul_density,trouble_ticket_nodes,
+             change_request_nodes,application_nodes):
     '''compute and logs KPIS'''
 
     logger = logging.getLogger('Graph_KPI')
@@ -631,6 +829,9 @@ def log_kpis(file_name,digraph,cumul_nodes,cumul_density):
         logger.info('%s,%s,%s',s,p,data)
     logger.info('#### NODES #### :%s',len(digraph.nodes))
     logger.info('%s',digraph.nodes)
+    logger.info('trouble tickets nodes :%s',trouble_ticket_nodes)
+    logger.info('change request nodes :%s',change_request_nodes)
+    logger.info('application nodes :%s',application_nodes)
     logger.info('##################################################\n')
 
     return cumul_nodes, cumul_density
