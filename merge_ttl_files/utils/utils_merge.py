@@ -279,7 +279,7 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
     handler = logging.FileHandler(log_file)
     logger_merge.setLevel(logging.INFO)
     logger_merge.addHandler(handler)
-
+    
     remain_occ=0
 
     while remain_occ != nbr_occ_max + 1:
@@ -310,7 +310,6 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
 
                 logger_merge.info("nbr file treated %s",nbr_file_treated)
 
-#################################################################################
                 for line in infile:
 
                     dup_treated=False
@@ -339,7 +338,7 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
                         else :
                             outfile.write(line)
 
-#####################################################################################
+
                 #for line in infile:
                 #    dup1_treated=False
                 #    dup2_treated=False

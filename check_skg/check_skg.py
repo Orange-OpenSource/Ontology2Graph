@@ -7,6 +7,7 @@ from pathlib import Path
 import argparse
 import shutil
 import os
+import sys
 import rdflib
 from owlready2 import get_ontology,sync_reasoner_hermit,sync_reasoner_pellet
 from owlready2 import OwlReadyInconsistentOntologyError,default_world
@@ -34,10 +35,11 @@ else :
     #all_graph_to_check = [f.name for f in Path(path_graph_file).iterdir() if f.is_file()]
     all_graph_to_check = [f for f in Path(path_graph_file).iterdir() if f.is_file()]
 
-
 if os.path.exists(path_check_log):
     shutil.rmtree(path_check_log)
+    
 os.makedirs(path_check_log)
+print(path_check_log)
 
 log_file=Path(f'{path_check_log}/check_graph.log')
 #print(log_file)
@@ -50,6 +52,8 @@ logger_check = logging.getLogger('check_graph_log')
 handler = logging.FileHandler(log_file)
 logger_check.setLevel(logging.DEBUG)
 logger_check.addHandler(handler)
+
+logger_check.info('##########################################################################')
 
 for graph_to_check in all_graph_to_check :
     print(graph_to_check)
@@ -99,10 +103,11 @@ for graph_to_check in all_graph_to_check :
                 sync_reasoner_hermit(debug=2, keep_tmp_file=True,
                                       ignore_unsupported_datatypes = True)
             if reasonner=="Pellet":
-                sync_reasoner_pellet(debug=2, keep_tmp_file=True,
-                                    infer_property_values=True,infer_data_property_values=True)
+                sync_reasoner_pellet(debug=2, keep_tmp_file=True)
+                                    #infer_property_values=True,infer_data_property_values=True)
     except OwlReadyInconsistentOntologyError as OntoE:
-        print(f'\nOwlReadyInconsistentOntologyError detected by {reasonner} for {Path(graph_to_check).name}')
+        print(f'\nOwlReadyInconsistentOntologyError detected by {reasonner} for \
+            {Path(graph_to_check).name}')
         logger_check.info('OwlReadyInconsistentOntologyError detected by : %s \n',reasonner)
         logger_check.info(OntoE)
 
@@ -111,7 +116,8 @@ for graph_to_check in all_graph_to_check :
         logger_check.info('OverFlowError : %s',e)
 
     else :
-        print(f'\nNo inconsistent Ontology errors detected by {reasonner} for {Path(graph_to_check).name}\n')
+        print(f'\nNo inconsistent Ontology errors detected by {reasonner} for \
+            {Path(graph_to_check).name}\n')
         logger_check.info('No inconsistent Ontology errors found by %s ',reasonner)
 # list classes inferred equivalent to owl:Nothing (unsatisfiable classes)
     unsat = list(default_world.inconsistent_classes())
