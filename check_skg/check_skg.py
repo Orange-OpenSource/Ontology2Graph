@@ -7,7 +7,6 @@ from pathlib import Path
 import argparse
 import shutil
 import os
-import sys
 import rdflib
 from owlready2 import get_ontology,sync_reasoner_hermit,sync_reasoner_pellet
 from owlready2 import OwlReadyInconsistentOntologyError,default_world
@@ -37,7 +36,7 @@ else :
 
 if os.path.exists(path_check_log):
     shutil.rmtree(path_check_log)
-    
+
 os.makedirs(path_check_log)
 print(path_check_log)
 

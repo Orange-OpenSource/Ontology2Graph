@@ -39,14 +39,9 @@ if Path(PATH).is_file():
     print('this is a single file')
     file_name=Path(PATH).name
     absolute_file_name=Path(f'{Path(PATH).parent.resolve()}/{file_name}')
-
-    Digraph, trouble_ticket_nodes, change_request_nodes, application_nodes =\
-        prepare_graph_to_display(PATH,log_html_folder,ONTOLOGY)
-
-    log_kpis(file_name,Digraph,CUMUL_NODES,CUMUL_DENSITY,trouble_ticket_nodes,change_request_nodes,
-             application_nodes)
-    visu_graph(Digraph,absolute_file_name,log_html_folder,trouble_ticket_nodes,
-               change_request_nodes,application_nodes)
+    Digraph, node_type_lists = prepare_graph_to_display(PATH,log_html_folder,ONTOLOGY)
+    log_kpis(file_name, Digraph, CUMUL_NODES, CUMUL_DENSITY, node_type_lists)
+    visu_graph(Digraph, absolute_file_name, log_html_folder, node_type_lists)
 
     sys.exit()
 
@@ -57,14 +52,9 @@ else :
 
     for file in all_files :
 
-        Digraph, trouble_ticket_nodes, change_request_nodes, application_nodes =\
-        prepare_graph_to_display(file,log_html_folder,ONTOLOGY)
-
-        CUMUL_NODES,CUMUL_DENSITY = log_kpis(file,Digraph,CUMUL_NODES,CUMUL_DENSITY,
-                                             trouble_ticket_nodes,change_request_nodes,
-                                             application_nodes)
-
-        visu_graph(Digraph,file,log_html_folder,trouble_ticket_nodes, change_request_nodes,
-                   application_nodes)
+        Digraph, node_type_lists = prepare_graph_to_display(file, log_html_folder, ONTOLOGY)
+        CUMUL_NODES, CUMUL_DENSITY = log_kpis(file, Digraph, CUMUL_NODES, CUMUL_DENSITY,\
+                                               node_type_lists)
+        visu_graph(Digraph, file, log_html_folder, node_type_lists)
 
     sys.exit()

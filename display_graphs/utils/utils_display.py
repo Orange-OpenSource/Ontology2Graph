@@ -54,8 +54,11 @@ def retreive_datatype_properties(ontology):
     #print(dtproperties)
     return dtproperties
 
-def visu_graph(graph,file,html_folder,trouble_ticket_nodes,change_request_nodes,application_nodes):
+def visu_graph(graph,file,html_folder,node_type_lists):
     '''display the graph with enhanced visualization settings'''
+
+    trouble_ticket_nodes, change_request_nodes, application_nodes,\
+        network_resource_nodes, network_interface_nodes = node_type_lists
 
     # Create network with responsive sizing
     net = Network(height="95vh", width="100%", bgcolor="#1a1a1a", font_color="white",
@@ -66,7 +69,8 @@ def visu_graph(graph,file,html_folder,trouble_ticket_nodes,change_request_nodes,
     net.from_nx(graph)
 
     # Improved physics settings for better stability and readability
-    net.set_options("""{
+    net.set_options(
+        """{
         "physics": {
             "solver": "barnesHut",
             "barnesHut": {
@@ -127,7 +131,8 @@ def visu_graph(graph,file,html_folder,trouble_ticket_nodes,change_request_nodes,
             "enabled": true,
             "filter": "physics"
             }
-        }""")
+        }"""
+        )
 
     # Color code edges: cyan for entity-to-entity, green for entity-to-literal
     edge_colors = {
@@ -277,7 +282,7 @@ def visu_graph(graph,file,html_folder,trouble_ticket_nodes,change_request_nodes,
     toggleBtn.innerHTML = 'Hide Literals';
     toggleBtn.style.position = 'fixed';
     toggleBtn.style.top = '10px';
-    toggleBtn.style.left = '10px';
+    toggleBtn.style.right = '10px';
     toggleBtn.style.backgroundColor = 'rgba(204, 0, 0, 0.8)';
     toggleBtn.style.color = 'white';
     toggleBtn.style.padding = '10px 20px';
@@ -298,8 +303,8 @@ def visu_graph(graph,file,html_folder,trouble_ticket_nodes,change_request_nodes,
         toggleConnectedBtn.innerHTML = 'Hide Connected Nodes';
         toggleConnectedBtn.style.position = 'fixed';
         toggleConnectedBtn.style.top = '50px';
-        toggleConnectedBtn.style.left = '10px';
-        toggleConnectedBtn.style.backgroundColor = 'rgba(0, 102, 204, 0.8)';
+        toggleConnectedBtn.style.right = '10px';
+        toggleConnectedBtn.style.backgroundColor = 'rgba(0,102,204,0.8)';
         toggleConnectedBtn.style.color = 'white';
         toggleConnectedBtn.style.padding = '10px 20px';
         toggleConnectedBtn.style.border = 'none';
@@ -453,7 +458,7 @@ def visu_graph(graph,file,html_folder,trouble_ticket_nodes,change_request_nodes,
         var instructions = document.createElement('div');
         instructions.style.position = 'fixed';
         instructions.style.top = '10px';
-        instructions.style.right = '10px';
+        instructions.style.left = '10px';
         instructions.style.backgroundColor = 'rgba(0,0,0,0.8)';
         instructions.style.color = 'white';
         instructions.style.padding = '15px';
@@ -476,10 +481,12 @@ def visu_graph(graph,file,html_folder,trouble_ticket_nodes,change_request_nodes,
         var troubleTicketNodes = {trouble_ticket_nodes if trouble_ticket_nodes else []};
         var changeRequestNodes = {change_request_nodes if change_request_nodes else []};
         var applicationNodes = {application_nodes if application_nodes else []};
+        var networkResourceNodes = {network_resource_nodes if network_resource_nodes else []};
+        var networkInterfaceNodes = {network_interface_nodes if network_interface_nodes else []};
         var sidebar = document.createElement('div');
         sidebar.id = 'mainSidebar';
         sidebar.style.position = 'fixed';
-        sidebar.style.top = '160px';
+        sidebar.style.top = '130px';
         sidebar.style.right = '10px';
         sidebar.style.width = '240px';
         sidebar.style.background = 'rgba(30,30,30,0.95)';
@@ -491,28 +498,39 @@ def visu_graph(graph,file,html_folder,trouble_ticket_nodes,change_request_nodes,
         sidebar.style.fontSize = '13px';
         sidebar.innerHTML = `
             <b>Trouble Tickets</b><br>
-            <select id=\"ttDropdown\" style=\"width:100%;margin-bottom:10px;\">
-                <option value=\"\">-- Select Trouble Ticket --</option>
+            <select id="ttDropdown" style="width:100%;margin-bottom:5px;">
+                <option value="">-- Select Trouble Ticket --</option>
             </select>
-            <button id=\"showAllTTBtn\" style=\"margin-top:10px;width:100%;\">\
-                Show Only Trouble Tickets</button>
-            <button id=\"resetTTBtn\" style=\"margin-top:5px;width:100%;\">Reset Filter</button>
-            <hr style=\"margin:15px 0; border:1px solid #444;\">
+            <button id="showAllTTBtn" style="margin-top:5px;width:100%;">Show Only Trouble Tickets</button>
+            <button id="resetTTBtn" style="margin-top:5px;width:100%;">Reset Filter</button>
+            <hr style="margin:5px 0; border:1px solid #444;">
             <b>Change Requests</b><br>
-            <select id=\"crDropdown\" style=\"width:100%;margin-bottom:10px;\">
-                <option value=\"\">-- Select Change Request --</option>
+            <select id="crDropdown" style="width:100%;margin-bottom:5px;">
+                <option value="">-- Select Change Request --</option>
             </select>
-            <button id=\"showAllCRBtn\" style=\"margin-top:10px;width:100%;\">\
-                Show Only Change Requests</button>
-            <button id=\"resetCRBtn\" style=\"margin-top:5px;width:100%;\">Reset Filter</button>
-            <hr style=\"margin:15px 0; border:1px solid #444;\">
+            <button id="showAllCRBtn" style="margin-top:5px;width:100%;">Show Only Change Requests</button>
+            <button id="resetCRBtn" style="margin-top:5px;width:100%;">Reset Filter</button>
+            <hr style="margin:5px 0; border:1px solid #444;">
             <b>Applications</b><br>
-            <select id=\"appDropdown\" style=\"width:100%;margin-bottom:10px;\">
-                <option value=\"\">-- Select Application --</option>
+            <select id="appDropdown" style="width:100%;margin-bottom:5px;">
+                <option value="">-- Select Application --</option>
             </select>
-            <button id=\"showAllAppBtn\" style=\"margin-top:10px;width:100%;\">\
-                Show Only Applications</button>
-            <button id=\"resetAppBtn\" style=\"margin-top:5px;width:100%;\">Reset Filter</button>
+            <button id="showAllAppBtn" style="margin-top:5px;width:100%;">Show Only Applications</button>
+            <button id="resetAppBtn" style="margin-top:5px;width:100%;">Reset Filter</button>
+            <hr style="margin:5px 0; border:1px solid #444;">
+            <b>Network Resources</b><br>
+            <select id="nrDropdown" style="width:100%;margin-bottom:5px;">
+                <option value="">-- Select Network Resource --</option>
+            </select>
+            <button id="showAllNRBtn" style="margin-top:5px;width:100%;">Show Only Network Resources</button>
+            <button id="resetNRBtn" style="margin-top:5px;width:100%;">Reset Filter</button>
+            <hr style="margin:5px 0; border:1px solid #444;">
+            <b>Network interfaces</b><br>
+            <select id="niDropdown" style="width:100%;margin-bottom:5px;">
+                <option value="">-- Select Network Interface --</option>
+            </select>
+            <button id="showAllNIBtn" style="margin-top:5px;width:100%;">Show Only Network Interfaces</button>
+            <button id="resetNIBtn" style="margin-top:5px;width:100%;">Reset Filter</button>
         `;
         document.body.appendChild(sidebar);
 
@@ -539,8 +557,8 @@ def visu_graph(graph,file,html_folder,trouble_ticket_nodes,change_request_nodes,
             var allEdges = edges.get({{returnType:"Object"}});
             for (var edgeId in allEdges) {{
                 var edge = allEdges[edgeId];
-                var show = troubleTicketNodes.indexOf(edge.from) !== -1 && \
-                    troubleTicketNodes.indexOf(edge.to) !== -1;
+                var show = troubleTicketNodes.indexOf(edge.from) !== -1 &&\
+                      troubleTicketNodes.indexOf(edge.to) !== -1;
                 edges.update({{id: edgeId, hidden: !show}});
             }}
         }};
@@ -578,7 +596,7 @@ def visu_graph(graph,file,html_folder,trouble_ticket_nodes,change_request_nodes,
             var allEdges = edges.get({{returnType:"Object"}});
             for (var edgeId in allEdges) {{
                 var edge = allEdges[edgeId];
-                var show = changeRequestNodes.indexOf(edge.from) !== -1 && \
+                var show = changeRequestNodes.indexOf(edge.from) !== -1 &&\
                     changeRequestNodes.indexOf(edge.to) !== -1;
                 edges.update({{id: edgeId, hidden: !show}});
             }}
@@ -617,12 +635,90 @@ def visu_graph(graph,file,html_folder,trouble_ticket_nodes,change_request_nodes,
             var allEdges = edges.get({{returnType:"Object"}});
             for (var edgeId in allEdges) {{
                 var edge = allEdges[edgeId];
-                var show = applicationNodes.indexOf(edge.from) !== -1 && \
-                    applicationNodes.indexOf(edge.to) !== -1;
+                var show = applicationNodes.indexOf(edge.from) !== -1 &&\
+                      applicationNodes.indexOf(edge.to) !== -1;
                 edges.update({{id: edgeId, hidden: !show}});
             }}
         }};
         document.getElementById('resetAppBtn').onclick = function() {{
+            var allNodes = nodes.get({{returnType:"Object"}});
+            for (var nodeId in allNodes) {{
+                nodes.update({{id: nodeId, hidden: false}});
+            }}
+            var allEdges = edges.get({{returnType:"Object"}});
+            for (var edgeId in allEdges) {{
+                edges.update({{id: edgeId, hidden: false}});
+            }}
+        }};
+
+        // Network Resource dropdown
+        var nrDropdown = document.getElementById('nrDropdown');
+        networkResourceNodes.forEach(function(nodeId) {{
+            var option = document.createElement('option');
+            option.value = nodeId;
+            option.text = nodeId;
+            nrDropdown.appendChild(option);
+        }});
+        nrDropdown.onchange = function() {{
+            var selected = this.value;
+            if(selected) {{
+                network.selectNodes([selected]);
+                network.focus(selected, {{scale:1.5, animation:true}});
+            }}
+        }};
+        document.getElementById('showAllNRBtn').onclick = function() {{
+            var allNodes = nodes.get({{returnType:"Object"}});
+            for (var nodeId in allNodes) {{
+                nodes.update({{id: nodeId, hidden: networkResourceNodes.indexOf(nodeId) === -1}});
+            }}
+            var allEdges = edges.get({{returnType:"Object"}});
+            for (var edgeId in allEdges) {{
+                var edge = allEdges[edgeId];
+                var show = networkResourceNodes.indexOf(edge.from) !== -1 &&\
+                      networkResourceNodes.indexOf(edge.to) !== -1;
+                edges.update({{id: edgeId, hidden: !show}});
+            }}
+        }};
+        document.getElementById('resetNRBtn').onclick = function() {{
+            var allNodes = nodes.get({{returnType:"Object"}});
+            for (var nodeId in allNodes) {{
+                nodes.update({{id: nodeId, hidden: false}});
+            }}
+            var allEdges = edges.get({{returnType:"Object"}});
+            for (var edgeId in allEdges) {{
+                edges.update({{id: edgeId, hidden: false}});
+            }}
+        }};
+
+        // Network Interface dropdown
+        var niDropdown = document.getElementById('niDropdown');
+        networkInterfaceNodes.forEach(function(nodeId) {{
+            var option = document.createElement('option');
+            option.value = nodeId;
+            option.text = nodeId;
+            niDropdown.appendChild(option);
+        }});
+        niDropdown.onchange = function() {{
+            var selected = this.value;
+            if(selected) {{
+                network.selectNodes([selected]);
+                network.focus(selected, {{scale:1.5, animation:true}});
+            }}
+        }};
+        document.getElementById('showAllNIBtn').onclick = function() {{
+            var allNodes = nodes.get({{returnType:"Object"}});
+            for (var nodeId in allNodes) {{
+                nodes.update({{id: nodeId, hidden: networkInterfaceNodes.indexOf(nodeId) === -1}});
+            }}
+            var allEdges = edges.get({{returnType:"Object"}});
+            for (var edgeId in allEdges) {{
+                var edge = allEdges[edgeId];
+                var show = networkInterfaceNodes.indexOf(edge.from) !== -1 &&\
+                     networkInterfaceNodes.indexOf(edge.to) !== -1;
+                edges.update({{id: edgeId, hidden: !show}});
+            }}
+        }};
+        document.getElementById('resetNIBtn').onclick = function() {{
             var allNodes = nodes.get({{returnType:"Object"}});
             for (var nodeId in allNodes) {{
                 nodes.update({{id: nodeId, hidden: false}});
@@ -654,6 +750,8 @@ def prepare_graph_to_display(file, log_html_folder, ontology):
     trouble_ticket_nodes = set()
     change_request_nodes = set()
     application_nodes = set()
+    network_resource_nodes = set()
+    network_interface_nodes = set()
 
     ### set logger ###
     log_file = f'{Path(log_html_folder)}/URI_and_LITERAL.log'
@@ -690,6 +788,14 @@ def prepare_graph_to_display(file, log_html_folder, ontology):
         # Identify Application nodes
         if short_pred == "22-rdf-syntax-ns#type" and Path(obj).name == "Application":
             application_nodes.add(str(short_subj))
+
+        # Identify NetworkResource nodes
+        if short_pred == "22-rdf-syntax-ns#type" and Path(obj).name == "Resource":
+            network_resource_nodes.add(str(short_subj))
+
+        # Identify NetworkResource nodes
+        if short_pred == "22-rdf-syntax-ns#type" and Path(obj).name == "NetworkInterface":
+            network_interface_nodes.add(str(short_subj))
 
         # Entity-to-entity relationships
         if (
@@ -761,7 +867,7 @@ def prepare_graph_to_display(file, log_html_folder, ontology):
                     obj,
                 )
 
-    ### log nodes and Literals ###
+   ### log nodes and Literals ###
     logger_file1.info('##################################################')
     logger_file1.info('%s',file)
     for s, p, o in g:
@@ -785,7 +891,10 @@ def prepare_graph_to_display(file, log_html_folder, ontology):
         log_sorted.writelines(sorted_lines)
         log_sorted.close()
 
-    return digraph, list(trouble_ticket_nodes), list(change_request_nodes), list(application_nodes)
+    node_type_lists = [list(trouble_ticket_nodes), list(change_request_nodes),\
+                        list(application_nodes), list(network_resource_nodes),\
+                            list(network_interface_nodes)]
+    return digraph, node_type_lists
 
 def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD
     '''remove literal and other expression from the graph in order to keep only the nodes'''
@@ -805,9 +914,10 @@ def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD
             graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
             digraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
 
-def log_kpis(file_name,digraph,cumul_nodes,cumul_density,trouble_ticket_nodes,
-             change_request_nodes,application_nodes):
+def log_kpis(file_name,digraph,cumul_nodes,cumul_density,node_type_lists):
     '''compute and logs KPIS'''
+    trouble_ticket_nodes, change_request_nodes, application_nodes,\
+          network_resource_nodes, network_interface_nodes = node_type_lists
 
     logger = logging.getLogger('Graph_KPI')
 
@@ -832,6 +942,8 @@ def log_kpis(file_name,digraph,cumul_nodes,cumul_density,trouble_ticket_nodes,
     logger.info('trouble tickets nodes :%s',trouble_ticket_nodes)
     logger.info('change request nodes :%s',change_request_nodes)
     logger.info('application nodes :%s',application_nodes)
+    logger.info('network resource nodes :%s',network_resource_nodes)
+    logger.info('network interface nodes :%s',network_interface_nodes)
     logger.info('##################################################\n')
 
     return cumul_nodes, cumul_density
