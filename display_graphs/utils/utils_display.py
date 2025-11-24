@@ -25,40 +25,41 @@ def get_last_folder_part(string, sep_char):
         last_part=string_parts[len(string_parts)-2]
     return last_part
 
-def retreive_datatype_properties(ontology):
-    '''create a list of all the data type properties from the ontologie'''
+def retreive_onto_object(ontology,object_type):
+    '''create a list of all the object declares in the ontology
+    object_type can be DatatypeProperty, ObjectProperty or Class'''
 
     index_list=[]
-    dtprop=[]
-    dtproperties=[]
+    objects=[]
+    object_clean=[]
 
-    #build index list of DatatypeProperty
+    #build index list of Object
     with open(f'{ontology}', 'r',encoding='utf-8') as file:
         for index, line in enumerate(file, start=1):
-            if 'DatatypeProperty' in line :
+            if f":{object_type} " in line :
                 index_list.append(index-1)
     file.close()
 
-    #retreive DatatypeProperties based on index list
+    #retrieve Object based on index list
     with open(f'{ontology}', 'r',encoding='utf-8') as file:
         for index, line in enumerate(file, start=1):
             if index in index_list:
-                dtprop.append(line.strip())
+                objects.append(line.strip())
                 #print(line.strip())
     file.close()
 
-    #clean DatatypeProperties
-    for dtp in dtprop:
-        dtp=dtp.replace('noria:',"")
-        dtproperties.append(dtp)
+    #clean Object
+    for obj in objects:
+        obj=obj.replace('noria:',"")
+        object_clean.append(obj)
     #print(dtproperties)
-    return dtproperties
+    return object_clean
 
 def visu_graph(graph,file,html_folder,node_type_lists):
     '''display the graph with enhanced visualization settings'''
 
     trouble_ticket_nodes, change_request_nodes, application_nodes,\
-        network_resource_nodes, network_interface_nodes = node_type_lists
+        network_resource_nodes, network_interface_nodes, network_link_nodes = node_type_lists
 
     # Create network with responsive sizing
     net = Network(height="95vh", width="100%", bgcolor="#1a1a1a", font_color="white",
@@ -128,7 +129,7 @@ def visu_graph(graph,file,html_folder,node_type_lists):
                 }
             },
         "configure": {
-            "enabled": true,
+            "enabled": false,
             "filter": "physics"
             }
         }"""
@@ -483,6 +484,7 @@ def visu_graph(graph,file,html_folder,node_type_lists):
         var applicationNodes = {application_nodes if application_nodes else []};
         var networkResourceNodes = {network_resource_nodes if network_resource_nodes else []};
         var networkInterfaceNodes = {network_interface_nodes if network_interface_nodes else []};
+        var networkLinkNodes = {network_link_nodes if network_link_nodes else []};
         var sidebar = document.createElement('div');
         sidebar.id = 'mainSidebar';
         sidebar.style.position = 'fixed';
@@ -531,6 +533,13 @@ def visu_graph(graph,file,html_folder,node_type_lists):
             </select>
             <button id="showAllNIBtn" style="margin-top:5px;width:100%;">Show Only Network Interfaces</button>
             <button id="resetNIBtn" style="margin-top:5px;width:100%;">Reset Filter</button>
+            <hr style="margin:5px 0; border:1px solid #444;">
+            <b>Network Link</b><br>
+            <select id="nlDropdown" style="width:100%;margin-bottom:5px;">
+                <option value="">-- Select Network Link --</option>
+            </select>
+            <button id="showAllNLBtn" style="margin-top:5px;width:100%;">Show Only Network Link</button>
+            <button id="resetNLBtn" style="margin-top:5px;width:100%;">Reset Filter</button>
         `;
         document.body.appendChild(sidebar);
 
@@ -728,6 +737,45 @@ def visu_graph(graph,file,html_folder,node_type_lists):
                 edges.update({{id: edgeId, hidden: false}});
             }}
         }};
+
+        // Network Link dropdown
+        var nlDropdown = document.getElementById('nlDropdown');
+        networkLinkNodes.forEach(function(nodeId) {{
+            var option = document.createElement('option');
+            option.value = nodeId;
+            option.text = nodeId;
+            nlDropdown.appendChild(option);
+        }});
+        nlDropdown.onchange = function() {{
+            var selected = this.value;
+            if(selected) {{
+                network.selectNodes([selected]);
+                network.focus(selected, {{scale:1.5, animation:true}});
+            }}
+        }};
+        document.getElementById('showAllNLBtn').onclick = function() {{
+            var allNodes = nodes.get({{returnType:"Object"}});
+            for (var nodeId in allNodes) {{
+                nodes.update({{id: nodeId, hidden: networkLinkNodes.indexOf(nodeId) === -1}});
+            }}
+            var allEdges = edges.get({{returnType:"Object"}});
+            for (var edgeId in allEdges) {{
+                var edge = allEdges[edgeId];
+                var show = networkLinkNodes.indexOf(edge.from) !== -1 &&\
+                     networkLinkNodes.indexOf(edge.to) !== -1;
+                edges.update({{id: edgeId, hidden: !show}});
+            }}
+        }};
+        document.getElementById('resetNLBtn').onclick = function() {{
+            var allNodes = nodes.get({{returnType:"Object"}});
+            for (var nodeId in allNodes) {{
+                nodes.update({{id: nodeId, hidden: false}});
+            }}
+            var allEdges = edges.get({{returnType:"Object"}});
+            for (var edgeId in allEdges) {{
+                edges.update({{id: edgeId, hidden: false}});
+            }}
+        }};
     </script>
     """
 
@@ -752,6 +800,7 @@ def prepare_graph_to_display(file, log_html_folder, ontology):
     application_nodes = set()
     network_resource_nodes = set()
     network_interface_nodes = set()
+    network_link_nodes = set()
 
     ### set logger ###
     log_file = f'{Path(log_html_folder)}/URI_and_LITERAL.log'
@@ -770,32 +819,35 @@ def prepare_graph_to_display(file, log_html_folder, ontology):
     logger_file1.info('##################################################')
     logger_file1.info('%s',file)
 
+    dtp = retreive_onto_object(ontology,"DatatypeProperty")
+    print('Datatype Properties:',dtp)
+
     ### populate graph with nodes and relations (including literals) ###
     for subj, pred, obj in g:
 
         short_pred=Path(pred).name
+        if '#' in short_pred:
+            short_pred=short_pred.split('#',1)[1]
         short_subj=Path(subj).name
-        dtp = retreive_datatype_properties(ontology)
 
-        # Identify TroubleTicket nodes
-        if short_pred == "22-rdf-syntax-ns#type" and Path(obj).name == "TroubleTicket":
-            trouble_ticket_nodes.add(str(short_subj))
+        if short_pred == "type":
+            if Path(obj).name == "TroubleTicket": # Identify TroubleTicket nodes
+                trouble_ticket_nodes.add(str(short_subj))
 
-        # Identify ChangeRequest nodes
-        if short_pred == "22-rdf-syntax-ns#type" and Path(obj).name == "ChangeRequest":
-            change_request_nodes.add(str(short_subj))
+            if Path(obj).name == "ChangeRequest": # Identify ChangeRequest nodes
+                change_request_nodes.add(str(short_subj))
+            
+            if Path(obj).name == "Application": # Identify Application nodes
+                application_nodes.add(str(short_subj))
+            
+            if Path(obj).name == "Resource": # Identify NetworkResource nodes
+                network_resource_nodes.add(str(short_subj))
+            
+            if Path(obj).name == "NetworkInterface": # Identify NetworkInterface nodes
+                network_interface_nodes.add(str(short_subj))
 
-        # Identify Application nodes
-        if short_pred == "22-rdf-syntax-ns#type" and Path(obj).name == "Application":
-            application_nodes.add(str(short_subj))
-
-        # Identify NetworkResource nodes
-        if short_pred == "22-rdf-syntax-ns#type" and Path(obj).name == "Resource":
-            network_resource_nodes.add(str(short_subj))
-
-        # Identify NetworkResource nodes
-        if short_pred == "22-rdf-syntax-ns#type" and Path(obj).name == "NetworkInterface":
-            network_interface_nodes.add(str(short_subj))
+            if Path(obj).name == "NetworkLink": # Identify NetworkLink nodes
+                network_link_nodes.add(str(short_subj))
 
         # Entity-to-entity relationships
         if (
@@ -893,13 +945,13 @@ def prepare_graph_to_display(file, log_html_folder, ontology):
 
     node_type_lists = [list(trouble_ticket_nodes), list(change_request_nodes),\
                         list(application_nodes), list(network_resource_nodes),\
-                            list(network_interface_nodes)]
+                            list(network_interface_nodes), list(network_link_nodes)]
     return digraph, node_type_lists
 
 def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD
     '''remove literal and other expression from the graph in order to keep only the nodes'''
 
-    datatypeproperties=retreive_datatype_properties(ontology)
+    datatypeproperties=retreive_onto_object(ontology,"DatatypeProperty")
 
     for subj, pred, obj in g:
         last_part_pred=get_last_folder_part(pred,'/')
@@ -917,7 +969,7 @@ def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD
 def log_kpis(file_name,digraph,cumul_nodes,cumul_density,node_type_lists):
     '''compute and logs KPIS'''
     trouble_ticket_nodes, change_request_nodes, application_nodes,\
-          network_resource_nodes, network_interface_nodes = node_type_lists
+          network_resource_nodes, network_interface_nodes, network_link_nodes = node_type_lists
 
     logger = logging.getLogger('Graph_KPI')
 
@@ -944,6 +996,7 @@ def log_kpis(file_name,digraph,cumul_nodes,cumul_density,node_type_lists):
     logger.info('application nodes :%s',application_nodes)
     logger.info('network resource nodes :%s',network_resource_nodes)
     logger.info('network interface nodes :%s',network_interface_nodes)
+    logger.info('network link nodes :%s',network_link_nodes)
     logger.info('##################################################\n')
 
     return cumul_nodes, cumul_density
