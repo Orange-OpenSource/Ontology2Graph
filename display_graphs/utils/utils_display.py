@@ -70,6 +70,29 @@ def visu_graph(graph,file,html_folder,node_type_lists):
     net.from_nx(graph)
 
     # Improved physics settings for better stability and readability
+
+    #net.set_options("""{
+    #    "physics": {
+    #        "solver": "barnesHut",
+    #        "barnesHut": {
+    #            "gravitationalConstant": -80000,
+    #            "centralGravity": 0.3,
+    #            "springLength": 200,
+    #            "springConstant": 0.04,
+    #            "damping": 0.09
+    #            }
+    #        },
+    #    "edges":{
+    #        "color": {
+    #            "color": "#ff0000",
+    #            "highlight": "#ff0000",
+    #            "hover": "#ff0000",
+    #            "inherit": false,
+    #            "opacity": 1.0
+    #                }
+    #        }
+    #}""")
+
     net.set_options(
         """{
         "physics": {
@@ -84,9 +107,9 @@ def visu_graph(graph,file,html_folder,node_type_lists):
                 },
             "stabilization": {
                 "enabled": true,
-                "iterations": 200,
+                "iterations": 20,
                 "updateInterval": 25
-                }
+            }
             },
         "edges":{
             "smooth": {
@@ -129,11 +152,11 @@ def visu_graph(graph,file,html_folder,node_type_lists):
                 }
             },
         "configure": {
-            "enabled": false,
+            "enabled": true,
             "filter": "physics"
             }
         }"""
-        )
+    )
 
     # Color code edges: cyan for entity-to-entity, green for entity-to-literal
     edge_colors = {
@@ -210,7 +233,7 @@ def visu_graph(graph,file,html_folder,node_type_lists):
     with open(html_file, 'r', encoding='utf-8') as f:
         html_content = f.read()
 
-    ete="entity to literal"
+    ete="entity to entity"
     etl="entity to literal"
 
     # Insert custom JavaScript before closing body tag
@@ -219,7 +242,7 @@ def visu_graph(graph,file,html_folder,node_type_lists):
         // Track literal nodes
         var literalNodeIds = [];
         var literalEdgeIds = [];
-        var literalsVisible = true;
+        var literalsVisible = false; // Hide literals by default
         var visibleNodes = [];  // Track currently visible nodes (for filtered view)
         var isFiltered = false;  // Track if we're in a filtered view
         var selectedNodeId = null;
@@ -232,6 +255,16 @@ def visu_graph(graph,file,html_folder,node_type_lists):
                 literalNodeIds.push(edge.to);
                 literalEdgeIds.push(edge.id);
             }}
+        }});
+
+        // Hide all literals by default
+        window.addEventListener('DOMContentLoaded', function() {{
+            literalNodeIds.forEach(function(nodeId) {{
+                nodes.update({{id: nodeId, hidden: true}});
+            }});
+            literalEdgeIds.forEach(function(edgeId) {{
+                edges.update({{id: edgeId, hidden: true}});
+            }});
         }});
 
         // Function to toggle literal visibility
@@ -280,7 +313,7 @@ def visu_graph(graph,file,html_folder,node_type_lists):
     // Add toggle literals button on the top left
     var toggleBtn = document.createElement('button');
     toggleBtn.id = 'toggleLiteralsBtn';
-    toggleBtn.innerHTML = 'Hide Literals';
+    toggleBtn.innerHTML = 'Show Literals'; // Button starts as 'Show Literals'
     toggleBtn.style.position = 'fixed';
     toggleBtn.style.top = '10px';
     toggleBtn.style.right = '10px';
@@ -830,19 +863,20 @@ def prepare_graph_to_display(file, log_html_folder, ontology):
             short_pred=short_pred.split('#',1)[1]
         short_subj=Path(subj).name
 
+        # Retrieve nodes by their type to be used in the UI menu for filtering
         if short_pred == "type":
             if Path(obj).name == "TroubleTicket": # Identify TroubleTicket nodes
                 trouble_ticket_nodes.add(str(short_subj))
 
             if Path(obj).name == "ChangeRequest": # Identify ChangeRequest nodes
                 change_request_nodes.add(str(short_subj))
-            
+
             if Path(obj).name == "Application": # Identify Application nodes
                 application_nodes.add(str(short_subj))
-            
+
             if Path(obj).name == "Resource": # Identify NetworkResource nodes
                 network_resource_nodes.add(str(short_subj))
-            
+
             if Path(obj).name == "NetworkInterface": # Identify NetworkInterface nodes
                 network_interface_nodes.add(str(short_subj))
 
