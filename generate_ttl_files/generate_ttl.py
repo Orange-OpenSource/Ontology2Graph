@@ -19,8 +19,9 @@ import os
 import datetime
 import time
 from pathlib import Path
-from utils.utils_gen import query_llm, storing_results, check_ttl, remove_file_in_folder,\
-    model_to_choose, build_folder_paths_and_files,prompt_type_and_ontology_name
+from utils.utils_gen import query_llm, storing_results, check_ttl,\
+    remove_file_in_folder, model_to_choose, build_folder_paths_and_files,\
+    prompt_type_and_ontology_name, log
 
 ### set argument parser ###
 parser = argparse.ArgumentParser()
@@ -35,11 +36,11 @@ PATH_RESULT, BAD_PATH_RESULT, PATH_ONTOLOGY, PATH_PROMPT, PATH_GRAPH, TEMP_FILE,
 LOG_FILE, PATH_MERGED = build_folder_paths_and_files(model)
 
 ### Set up logger ###
+remove_file_in_folder(Path(LOG_FILE).parent)
 logger_gen = logging.getLogger('Gen_log')
-handler_gen = logging.FileHandler(LOG_FILE)
+handler_gen = logging.FileHandler(Path(LOG_FILE))
 logger_gen.setLevel(logging.INFO)
 logger_gen.addHandler(handler_gen)
-#logger_gen = logging.getLogger('Gen_log')
 
 ## set PROMPT_TYPE and ontology ##
 PROMPT_TYPE, ONTO_NAME=prompt_type_and_ontology_name()
@@ -56,10 +57,10 @@ NBR_TTL_INT = int(args.nbrttl)
 ### remove old files in the result folder ###
 remove_file_in_folder(PATH_RESULT)
 remove_file_in_folder(BAD_PATH_RESULT)
-remove_file_in_folder(Path(LOG_FILE).parent)
 
 os.system("clear")
 print('TTL FILE GENERATION IS IN PROGRESS')
+logger = logging.getLogger('Gen_log')
 
 ## Generate graphs ##
 while NUMBER_OF_GRAPH != NBR_TTL_INT:
@@ -70,22 +71,16 @@ while NUMBER_OF_GRAPH != NBR_TTL_INT:
     BAD_FILE_RESULT = f'{BAD_PATH_RESULT}/{PROMPT_TYPE}_{date_time}_{ONTO_NAME}_BAD.ttl'
 
     # Query LLM
-    max_tok,reas_eff,response=query_llm(PROMPT,ONTOLOGY,model)
+    response=query_llm(PROMPT,ONTOLOGY,model)
 
     # Store results
     storing_results(response,TEMP_FILE,FILE_RESULT)
 
     # Check Turtle syntax
-    check_ttl(FILE_RESULT,BAD_FILE_RESULT,BAD_PATH_RESULT,0)
+    TTL_VALIDATOR_OUTPUT = check_ttl(FILE_RESULT,BAD_FILE_RESULT,BAD_PATH_RESULT,0)
 
     # log some info
-    logger = logging.getLogger('Gen_log')
-    logger.info('reasoning effort : %s',reas_eff)
-    logger.info('max_token : %s',max_tok)
-    logger.info('Prompt tokens : %s',response.usage.prompt_tokens)
-    logger.info('Output response tokens : %s',response.usage.completion_tokens)
-    logger.info('Output responses tokens details : %s',response.usage.completion_tokens_details)
-    logger.info('##################################################\n')
+    log(FILE_RESULT, BAD_FILE_RESULT, TTL_VALIDATOR_OUTPUT,response,model,logger_gen)
 
     NUMBER_OF_GRAPH += 1
     print(f'\nNUMBER OF GRAPH GENERATED : {NUMBER_OF_GRAPH}\n')

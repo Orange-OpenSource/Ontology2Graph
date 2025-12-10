@@ -1,0 +1,582 @@
+# Copyright (c) 2022-2023 Orange. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+#     1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+#     2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+#     3. All advertising materials mentioning features or use of this software must display the following acknowledgement:
+#     This product includes software developed by Orange.
+#     4. Neither the name of Orange nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY Orange "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL Orange BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# === PREFIXES ================================================================
+
+# --- Basic ---
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# --- Ontology management ---
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+# --- Domain specific ---
+@prefix bot: <https://w3id.org/bot#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix log: <https://w3id.org/sepses/ns/log#> .
+@prefix folio: <http://IBCNServices.github.io/Folio-Ontology/Folio.owl#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix pep: <https://w3id.org/pep/> .
+@prefix observable: <https://unifiedcyberontology.org/ontology/uco/observable#> .
+
+# --- NORIA ---
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@base <https://w3id.org/noria/> .
+
+# =============================================================================
+# Knowledge Graph Instances
+# =============================================================================
+
+# --- Agents and Organizations ---
+foaf:Agent_IT_Ops_Team
+    a foaf:Agent, org:OrganizationalUnit ;
+    rdfs:label "IT Operations Team"@en ;
+    rdfs:comment "Team responsible for general IT infrastructure operations and first-level support."@en ;
+    noria:agentWorkingHours "9:00 am - 5:00 pm (Mon-Fri)"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/email> ;
+    noria:agentInstructions "Contact via ticketing system for non-urgent issues, hotline for critical incidents."@en .
+
+foaf:Agent_DB_Admin_Team
+    a foaf:Agent, org:OrganizationalUnit ;
+    rdfs:label "Database Administration Team"@en ;
+    rdfs:comment "Specialized team managing all database systems."@en ;
+    noria:agentWorkingHours "24/7 On-Call"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ;
+    noria:agentInstructions "Escalate critical database issues directly to on-call DBA."@en .
+
+foaf:Agent_Network_Team
+    a foaf:Agent, org:OrganizationalUnit ;
+    rdfs:label "Network Operations Team"@en ;
+    rdfs:comment "Team responsible for network infrastructure management."@en ;
+    noria:agentWorkingHours "24/7 On-Call"@en ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/phone> ;
+    noria:agentInstructions "For network outages, use the dedicated network hotline."@en .
+
+foaf:Agent_John_Doe
+    a foaf:Agent, foaf:Person ;
+    rdfs:label "John Doe"@en ;
+    rdfs:comment "Lead Engineer in the IT Operations Team."@en ;
+    foaf:mbox <mailto:john.doe@example.com> ;
+    foaf:member foaf:Agent_IT_Ops_Team .
+
+foaf:Agent_Jane_Smith
+    a foaf:Agent, foaf:Person ;
+    rdfs:label "Jane Smith"@en ;
+    rdfs:comment "Senior Database Administrator."@en ;
+    foaf:mbox <mailto:jane.smith@example.com> ;
+    foaf:member foaf:Agent_DB_Admin_Team .
+
+org:OrganizationalUnit_CustomerSupport
+    a foaf:Agent, org:OrganizationalUnit ;
+    rdfs:label "Customer Support Department"@en ;
+    rdfs:comment "First line of contact for customer issues."@en .
+
+foaf:Agent_Alice_Brown
+    a foaf:Agent, foaf:Person ;
+    rdfs:label "Alice Brown"@en ;
+    rdfs:comment "Customer Support Representative."@en ;
+    foaf:mbox <mailto:alice.brown@example.com> ;
+    foaf:member org:OrganizationalUnit_CustomerSupport .
+
+org:Organization_OurCompany
+    a org:Organization ;
+    rdfs:label "Example Corp"@en ;
+    rdfs:comment "The main company operating the IT infrastructure."@en .
+
+org:Organization_ServerVendor
+    a org:Organization ;
+    rdfs:label "ServerTech Inc."@en ;
+    rdfs:comment "Manufacturer of server hardware."@en .
+
+# --- Location ---
+bot:Site_MainDataCenter
+    a bot:Site ;
+    rdfs:label "Main Data Center"@en ;
+    rdfs:comment "Primary data center facility for Example Corp."@en ;
+    noria:siteId "DC01" ;
+    noria:siteType "data center" ;
+    noria:sitePrincipalAddress "123 Tech Avenue"@en ;
+    noria:sitePrincipalAddressCityName "Metropolis"@en ;
+    noria:sitePrincipalAddressPostalCode "10001" ;
+    noria:sitePrincipalAddressCountry "US" .
+
+noria:Room_ServerRoomA
+    a noria:Room ;
+    rdfs:label "Server Room A"@en ;
+    rdfs:comment "A dedicated room within the Main Data Center housing critical servers."@en ;
+    bot:hasSpace bot:Site_MainDataCenter .
+
+noria:Locus_RackA1_U20
+    a noria:Locus ;
+    rdfs:label "Rack A1, Unit 20"@en ;
+    rdfs:comment "Specific location within Server Room A for a server rack and unit."@en ;
+    noria:locusLine "A1" ;
+    noria:locusRow "20" ;
+    bot:hasSpace noria:Room_ServerRoomA .
+
+# --- Product Models ---
+noria:ProductModel_DellPowerEdge
+    a noria:ProductModel ;
+    rdfs:label "Dell PowerEdge R750"@en ;
+    rdfs:comment "High-performance rack server model."@en ;
+    noria:productManufacturedBy org:Organization_ServerVendor .
+
+noria:ProductModel_CiscoNexus
+    a noria:ProductModel ;
+    rdfs:label "Cisco Nexus 9300"@en ;
+    rdfs:comment "Data center switch model."@en ;
+    noria:productManufacturedBy org:Organization_ServerVendor .
+
+# --- Resources ---
+noria:Resource_DBServer01
+    a noria:Resource ;
+    rdfs:label "Production Database Server 01"@en ;
+    rdfs:comment "Primary database server for the E-commerce Platform."@en ;
+    noria:resourceLogisticId "ASSET-DB-001" ;
+    noria:resourceHostName "db01.prod.example.com" ;
+    noria:resourceProductModel noria:ProductModel_DellPowerEdge ;
+    noria:resourceManagedBy foaf:Agent_DB_Admin_Team ;
+    noria:resourceType <kos/Resource/type/server> ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "2023-01-15T10:00:00Z"^^xsd:dateTime ;
+    noria:resourceForApplication noria:Application_ECommercePlatform ;
+    noria:locatedAtLocus noria:Locus_RackA1_U20 ;
+    noria:resourceManagementIPAddress "192.168.10.10" ;
+    noria:virtualServerStatus <kos/Resource/OperationalState/running> .
+
+noria:Resource_WebServer01
+    a noria:Resource ;
+    rdfs:label "Production Web Server 01"@en ;
+    rdfs:comment "Front-end web server for the E-commerce Platform."@en ;
+    noria:resourceLogisticId "ASSET-WEB-001" ;
+    noria:resourceHostName "web01.prod.example.com" ;
+    noria:resourceProductModel noria:ProductModel_DellPowerEdge ;
+    noria:resourceManagedBy foaf:Agent_IT_Ops_Team ;
+    noria:resourceType <kos/Resource/type/server> ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "2023-01-15T11:00:00Z"^^xsd:dateTime ;
+    noria:resourceForApplication noria:Application_ECommercePlatform ;
+    noria:locatedAtLocus noria:Locus_RackA1_U20 ;
+    noria:resourceManagementIPAddress "192.168.10.20" ;
+    seas:dependsOn noria:Resource_DBServer01 .
+
+noria:Resource_RouterCore01
+    a noria:Resource ;
+    rdfs:label "Core Router 01"@en ;
+    rdfs:comment "Main router connecting the data center to the corporate network."@en ;
+    noria:resourceLogisticId "ASSET-RTR-001" ;
+    noria:resourceHostName "router01.core.example.com" ;
+    noria:resourceProductModel noria:ProductModel_CiscoNexus ;
+    noria:resourceManagedBy foaf:Agent_Network_Team ;
+    noria:resourceType <kos/Resource/type/router> ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "2022-05-01T09:00:00Z"^^xsd:dateTime ;
+    noria:resourceForApplication noria:Application_ECommercePlatform ;
+    noria:locatedAtLocus noria:Locus_RackA1_U20 ;
+    noria:resourceManagementIPAddress "10.0.0.1" .
+
+noria:Resource_LoadBalancer01
+    a noria:Resource ;
+    rdfs:label "Production Load Balancer 01"@en ;
+    rdfs:comment "Load balancer for distributing traffic to web servers."@en ;
+    noria:resourceLogisticId "ASSET-LB-001" ;
+    noria:resourceHostName "lb01.prod.example.com" ;
+    noria:resourceProductModel noria:ProductModel_CiscoNexus ;
+    noria:resourceManagedBy foaf:Agent_Network_Team ;
+    noria:resourceType <kos/Resource/type/load-balancer> ;
+    noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
+    noria:resourceInstallationDate "2023-03-01T14:00:00Z"^^xsd:dateTime ;
+    noria:resourceForApplication noria:Application_ECommercePlatform ;
+    noria:locatedAtLocus noria:Locus_RackA1_U20 ;
+    noria:resourceManagementIPAddress "192.168.10.5" ;
+    seas:subSystemOf noria:Resource_WebServer01 .
+
+# --- Network Interfaces ---
+noria:NetworkInterface_DBServer01_Eth0
+    a noria:NetworkInterface ;
+    rdfs:label "db01-eth0"@en ;
+    rdfs:comment "Ethernet interface for DBServer01."@en ;
+    noria:networkInterfaceOf noria:Resource_DBServer01 ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/up> .
+
+noria:NetworkInterface_RouterCore01_Gi0_1
+    a noria:NetworkInterface ;
+    rdfs:label "router01-Gi0/1"@en ;
+    rdfs:comment "Gigabit Ethernet interface on RouterCore01, connected to DB server segment."@en ;
+    noria:networkInterfaceOf noria:Resource_RouterCore01 ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/up> ;
+    noria:networkInterfaceLaserTxOpticalPower -2 ;
+    noria:networkInterfaceLaserRxOpticalPower -3 ;
+    noria:networkInterfaceLaserRxOpticalPowerAverage -3 ;
+    noria:networkInterfaceLaserRxHighPowerWarningThreshold -1 ;
+    noria:networkInterfaceLaserRxLowPowerWarningThreshold -5 ;
+    noria:networkInterfaceRoutingPriorityMetric 100 .
+
+noria:NetworkInterface_LoadBalancer01_Eth0
+    a noria:NetworkInterface ;
+    rdfs:label "lb01-eth0"@en ;
+    rdfs:comment "Ethernet interface for LoadBalancer01."@en ;
+    noria:networkInterfaceOf noria:Resource_LoadBalancer01 ;
+    noria:networkInterfaceType "physical" ;
+    noria:networkInterfaceAdministrativeStatus <kos/Resource/AdministrativeState/up> ;
+    noria:networkInterfaceOperationalStatus <kos/Resource/OperationalState/up> .
+
+# --- Network Links ---
+noria:NetworkLink_DB_Router
+    a noria:NetworkLink ;
+    rdfs:label "Link DBServer01 to RouterCore01"@en ;
+    rdfs:comment "Physical link between the database server and the core router."@en ;
+    noria:networkLinkId "NL-DB-RTR-001" ;
+    noria:networkLinkType "Ethernet" ;
+    noria:networkLinkInstallationDate "2023-01-15T12:00:00Z"^^xsd:dateTime ;
+    noria:networkLinkTerminationResourceOrigin noria:Resource_DBServer01 ;
+    noria:networkLinkTerminationResourceDestination noria:Resource_RouterCore01 ;
+    noria:resourceManagedBy foaf:Agent_Network_Team .
+
+noria:NetworkInterface_DBServer01_Eth0 noria:networkInterfaceConnects noria:NetworkLink_DB_Router .
+noria:NetworkInterface_RouterCore01_Gi0_1 noria:networkInterfaceConnects noria:NetworkLink_DB_Router .
+
+# --- Applications ---
+noria:Application_ECommercePlatform
+    a noria:Application ;
+    rdfs:label "E-commerce Platform"@en ;
+    rdfs:comment "Main application for online sales and customer interaction."@en ;
+    noria:applicationModelIdentifier "ECOMM-PLAT" ;
+    noria:applicationNumericalIdentifier 1001 ;
+    noria:applicationShortIdentifier "ECOMM" ;
+    noria:applicationType <kos/application/type/business-application> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/high> ;
+    noria:applicationFunctionalDomain "Customer Relationship Management"@en ;
+    noria:applicationFunctionalSubDomain "Online Sales"@en ;
+    noria:elementManagedBy foaf:Agent_IT_Ops_Team .
+
+noria:Application_MonitoringSystem
+    a noria:Application ;
+    rdfs:label "Central Monitoring System"@en ;
+    rdfs:comment "Application responsible for collecting and analyzing system metrics and logs."@en ;
+    noria:applicationModelIdentifier "MON-SYS" ;
+    noria:applicationType <kos/application/type/infrastructure> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/high> ;
+    noria:elementManagedBy foaf:Agent_IT_Ops_Team .
+
+noria:Application_SyslogServer
+    a noria:Application ;
+    rdfs:label "Central Syslog Server"@en ;
+    rdfs:comment "Application for collecting and storing system logs from various devices."@en ;
+    noria:applicationModelIdentifier "SYSLOG-SERV" ;
+    noria:applicationType <kos/application/type/infrastructure> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/medium> ;
+    noria:elementManagedBy foaf:Agent_IT_Ops_Team .
+
+noria:Application_ITSMSystem
+    a noria:Application ;
+    rdfs:label "IT Service Management System"@en ;
+    rdfs:comment "Application for managing IT services, incidents, and changes."@en ;
+    noria:applicationModelIdentifier "ITSM-SYS" ;
+    noria:applicationType <kos/application/type/business-application> ;
+    noria:applicationBusinessImportance <kos/application/business-importance/high> ;
+    noria:elementManagedBy foaf:Agent_IT_Ops_Team .
+
+# --- Application Modules ---
+noria:ApplicationModule_ECommerceProd
+    a noria:ApplicationModule ;
+    rdfs:label "E-commerce Production Module"@en ;
+    rdfs:comment "The live production instance of the E-commerce Platform."@en ;
+    noria:applicationModuleOf noria:Application_ECommercePlatform ;
+    noria:applicationModuleName "ECOMM_PROD" ;
+    noria:applicationModuleIdentifier "PROD" ;
+    noria:applicationModuleStatus <https://w3id.org/noria/kos/application/status/InProduction> ;
+    noria:applicationModuleAdministrationTeam foaf:Agent_IT_Ops_Team ;
+    noria:applicationModuleAdministrationLeader foaf:Agent_John_Doe ;
+    noria:applicationModuleSupportTeam foaf:Agent_IT_Ops_Team ;
+    noria:applicationModuleSupportLeader foaf:Agent_John_Doe ;
+    noria:applicationModuleHotlineEnabled true ;
+    noria:applicationModuleSlaLevel <https://w3id.org/noria/kos/application/sla-level/Critical> ;
+    noria:applicationModuleSlaLevelDate "2023-01-01T00:00:00Z"^^xsd:dateTime .
+
+noria:ApplicationModule_ECommerceDev
+    a noria:ApplicationModule ;
+    rdfs:label "E-commerce Development Module"@en ;
+    rdfs:comment "Development instance of the E-commerce Platform for testing and new features."@en ;
+    noria:applicationModuleOf noria:Application_ECommercePlatform ;
+    noria:applicationModuleName "ECOMM_DEV" ;
+    noria:applicationModuleIdentifier "DEV" ;
+    noria:applicationModuleStatus <https://w3id.org/noria/kos/application/status/InDevelopment> ;
+    noria:applicationModuleAdministrationTeam foaf:Agent_IT_Ops_Team ;
+    noria:applicationModuleAdministrationLeader foaf:Agent_John_Doe ;
+    noria:applicationModuleHotlineEnabled false .
+
+# --- Services ---
+noria:Service_CustomerFacingWeb
+    a noria:Service ;
+    rdfs:label "Customer Facing Web Service"@en ;
+    rdfs:comment "End-to-end service providing web access to the E-commerce Platform."@en ;
+    noria:serviceType <kos/service/type/CustomerFacingService> ;
+    seas:subSystemOf noria:ApplicationModule_ECommerceProd .
+
+# --- Event Records ---
+noria:EventRecord_DBDownAlert
+    a noria:EventRecord ;
+    rdfs:label "Database Server Down Alert"@en ;
+    rdfs:comment "Automated alert indicating that the production database server is unreachable."@en ;
+    noria:loggingTime "2024-04-23T14:30:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagedObject noria:Resource_DBServer01 ;
+    noria:logOriginatingManagementSystem noria:Application_MonitoringSystem ;
+    noria:logText "CRITICAL: Host db01.prod.example.com is DOWN - PING CRITICAL."@en ;
+    noria:alarmSeverity <Notification/Severity/PerceivedSeverity/Critical> .
+
+noria:EventRecord_InterfaceDownLog
+    a noria:EventRecord ;
+    rdfs:label "Router Interface Down Log"@en ;
+    rdfs:comment "Log entry from Core Router 01 indicating an interface went down."@en ;
+    noria:loggingTime "2024-04-23T14:29:50Z"^^xsd:dateTime ;
+    noria:logOriginatingManagedObject noria:Resource_RouterCore01 ;
+    noria:logOriginatingManagementSystem noria:Application_SyslogServer ;
+    noria:logText "LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to down."@en ;
+    noria:alarmSeverity <Notification/Severity/PerceivedSeverity/Major> .
+
+noria:EventRecord_DBRestartLog
+    a noria:EventRecord ;
+    rdfs:label "Database Service Restart Log"@en ;
+    rdfs:comment "Log entry indicating a database service restart command was executed."@en ;
+    noria:loggingTime "2024-04-23T15:15:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagedObject noria:Resource_DBServer01 ;
+    noria:logOriginatingAgent foaf:Agent_Jane_Smith ;
+    noria:logText "Service 'postgresql' restarted by user 'jane.smith'."@en ;
+    noria:alarmSeverity <Notification/Severity/PerceivedSeverity/Informational> .
+
+noria:EventRecord_TT_StatusChange_InProgress
+    a noria:EventRecord ;
+    rdfs:label "Trouble Ticket Status Change to In Progress"@en ;
+    rdfs:comment "Automated event: Trouble Ticket TT-20240423-001 status changed to In Progress."@en ;
+    noria:loggingTime "2024-04-23T14:35:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagementSystem noria:Application_ITSMSystem ;
+    noria:logOriginatingAgent foaf:Agent_IT_Ops_Team ;
+    noria:logText "TT-20240423-001 status updated to In Progress."@en .
+
+noria:EventRecord_TT_StatusChange_Resolved
+    a noria:EventRecord ;
+    rdfs:label "Trouble Ticket Status Change to Resolved"@en ;
+    rdfs:comment "Automated event: Trouble Ticket TT-20240423-001 status changed to Resolved."@en ;
+    noria:loggingTime "2024-04-23T15:25:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagementSystem noria:Application_ITSMSystem ;
+    noria:logOriginatingAgent foaf:Agent_Jane_Smith ;
+    noria:logText "TT-20240423-001 status updated to Resolved."@en .
+
+noria:EventRecord_InterfaceDownAction
+    a noria:EventRecord ;
+    rdfs:label "Router Interface Down Command Executed"@en ;
+    rdfs:comment "Log entry for administrative command to shut down router interface."@en ;
+    noria:loggingTime "2024-04-26T01:00:05Z"^^xsd:dateTime ;
+    noria:logOriginatingManagedObject noria:Resource_RouterCore01 ;
+    noria:logOriginatingAgent foaf:Agent_John_Doe ;
+    noria:logText "Interface GigabitEthernet0/1 administratively down by console."@en ;
+    noria:alarmSeverity <Notification/Severity/PerceivedSeverity/Informational> .
+
+noria:EventRecord_WebServerCPUHigh
+    a noria:EventRecord ;
+    rdfs:label "Web Server High CPU Usage Alert"@en ;
+    rdfs:comment "Monitoring alert for sustained high CPU usage on web01.prod.example.com."@en ;
+    noria:loggingTime "2024-04-24T09:55:00Z"^^xsd:dateTime ;
+    noria:logOriginatingManagedObject noria:Resource_WebServer01 ;
+    noria:logOriginatingManagementSystem noria:Application_MonitoringSystem ;
+    noria:logText "ALERT: web01.prod.example.com CPU usage > 90% for 15 minutes."@en ;
+    noria:alarmSeverity <Notification/Severity/PerceivedSeverity/Warning> .
+
+# --- Trouble Tickets ---
+noria:TroubleTicket_DBOutage
+    a noria:TroubleTicket ;
+    rdfs:label "Critical DB Server Outage for E-commerce"@en ;
+    rdfs:comment "Incident reported due to production database server being unreachable, impacting E-commerce platform."@en ;
+    noria:documentExternalId "TT-20240423-001" ;
+    noria:documentHRef "https://itsm.example.com/ticket/TT-20240423-001" ;
+    noria:troubleTicketSeverity <kos/TroubleTicket/severity/Critical> ;
+    noria:troubleTicketType <kos/TroubleTicket/type/Failure> ;
+    noria:troubleTicketCriticity <kos/TroubleTicket/category/InterruptedService> ;
+    noria:troubleTicketPriority <kos/TroubleTicket/priority/P1> ;
+    noria:troubleTicketOrigin <kos/TroubleTicket/origin/Supervision> ;
+    noria:troubleTicketTrigger noria:EventRecord_DBDownAlert ;
+    noria:troubleTicketUrgency <kos/TroubleTicket/urgency/ImmediateIntervention> ;
+    noria:troubleTicketSupervisionTool "Nagios"@en ;
+    noria:troubleTicketCategory <kos/TroubleTicket/trouble-category/TotalBreakdown> ;
+    noria:troubleTicketCause "Database service crashed due to resource exhaustion."@en ;
+    noria:troubleTicketDetectionDateTime "2024-04-23T14:30:00Z"^^xsd:dateTime ;
+    noria:troubleTicketTargetRestorationDateTime "2024-04-23T16:30:00Z"^^xsd:dateTime ;
+    noria:troubleTicketPlannedRestorationDateTime "2024-04-23T15:30:00Z"^^xsd:dateTime ;
+    noria:troubleTicketCommittedRestorationDateTime "2024-04-23T17:00:00Z"^^xsd:dateTime ;
+    noria:troubleTicketIsNotificationEnable true ;
+    noria:troubleTicketStatusCurrent <kos/TroubleTicket/status/InProgress> ;
+    noria:troubleTicketRelatedParty foaf:Agent_DB_Admin_Team, foaf:Agent_IT_Ops_Team, foaf:Agent_John_Doe, foaf:Agent_Jane_Smith ;
+    noria:troubleTicketRelatedService noria:ApplicationModule_ECommerceProd ;
+    noria:troubleTicketRelatedResource noria:Resource_DBServer01 ;
+    noria:troubleTicketImpacts noria:Application_ECommercePlatform, noria:Resource_DBServer01, noria:Service_CustomerFacingWeb ;
+    noria:documentStatusHistory noria:EventRecord_TT_StatusChange_InProgress, noria:EventRecord_TT_StatusChange_Resolved .
+
+noria:TroubleTicket_WebPerformance
+    a noria:TroubleTicket ;
+    rdfs:label "E-commerce Web Performance Degradation"@en ;
+    rdfs:comment "Customers reporting slow response times on the E-commerce platform."@en ;
+    noria:documentExternalId "TT-20240424-002" ;
+    noria:documentHRef "https://itsm.example.com/ticket/TT-20240424-002" ;
+    noria:troubleTicketSeverity <kos/TroubleTicket/severity/Major> ;
+    noria:troubleTicketType <kos/TroubleTicket/type/Assistance> ;
+    noria:troubleTicketCriticity <kos/TroubleTicket/category/CorruptedService> ;
+    noria:troubleTicketPriority <kos/TroubleTicket/priority/P2> ;
+    noria:troubleTicketOrigin <kos/TroubleTicket/origin/Customer> ;
+    noria:troubleTicketTrigger noria:EventRecord_WebServerCPUHigh ;
+    noria:troubleTicketUrgency <kos/TroubleTicket/urgency/DeferredIntervention> ;
+    noria:troubleTicketCategory <kos/TroubleTicket/trouble-category/DowngradingEquipment> ;
+    noria:troubleTicketDetectionDateTime "2024-04-24T10:00:00Z"^^xsd:dateTime ;
+    noria:troubleTicketTargetRestorationDateTime "2024-04-24T18:00:00Z"^^xsd:dateTime ;
+    noria:troubleTicketStatusCurrent <kos/TroubleTicket/status/InProgress> ;
+    noria:troubleTicketRelatedParty foaf:Agent_IT_Ops_Team, org:OrganizationalUnit_CustomerSupport, foaf:Agent_Alice_Brown ;
+    noria:troubleTicketRelatedService noria:ApplicationModule_ECommerceProd ;
+    noria:troubleTicketImpacts noria:Resource_WebServer01, noria:Resource_LoadBalancer01 .
+
+# --- Trouble Ticket Notes ---
+noria:TroubleTicketNote_DBOutage_Initial
+    a noria:TroubleTicketNote ;
+    rdfs:label "Initial Diagnosis Note for DB Outage"@en ;
+    rdfs:comment "Initial assessment: Database service unresponsive. Attempting restart."@en ;
+    dcterms:isPartOf noria:TroubleTicket_DBOutage ;
+    dcterms:created "2024-04-23T14:45:00Z"^^xsd:dateTime ;
+    dcterms:creator foaf:Agent_John_Doe ;
+    noria:troubleTicketNoteCommentType <kos/TroubleTicket/commentType/Internal> ;
+    noria:troubleTicketNoteOperationType <kos/TroubleTicket/operationType/Diagnosis> .
+
+noria:TroubleTicketNote_DBOutage_Resolution
+    a noria:TroubleTicketNote ;
+    rdfs:label "Resolution Note for DB Outage"@en ;
+    rdfs:comment "Database service restarted successfully. Monitoring for stability. Root cause identified as memory leak in old version."@en ;
+    dcterms:isPartOf noria:TroubleTicket_DBOutage ;
+    dcterms:created "2024-04-23T15:20:00Z"^^xsd:dateTime ;
+    dcterms:creator foaf:Agent_Jane_Smith ;
+    noria:troubleTicketNoteCommentType <kos/TroubleTicket/commentType/Internal> ;
+    noria:troubleTicketNoteOperationType <kos/TroubleTicket/operationType/TestsAndMeasurements> ;
+    noria:troubleTicketNoteCorrelatedExecution noria:EventRecord_DBRestartLog .
+
+# --- Change Requests ---
+noria:ChangeRequest_DBPatch
+    a noria:ChangeRequest ;
+    rdfs:label "Database Patch for Memory Leak"@en ;
+    rdfs:comment "Apply critical patch to database server to fix memory leak issue identified during recent outage."@en ;
+    noria:documentExternalId "CR-20240424-001" ;
+    noria:documentHRef "https://itsm.example.com/change/CR-20240424-001" ;
+    dcterms:created "2024-04-24T09:00:00Z"^^xsd:dateTime ;
+    dcterms:creator foaf:Agent_Jane_Smith ;
+    noria:changeRequestPlannedStartTime "2024-05-01T02:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestPlannedEndTime "2024-05-01T04:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestCategory <kos/ChangeRequest/category/InternalIntervention> ;
+    noria:changeRequestType <kos/ChangeRequest/type/Standard> ;
+    noria:changeRequestChangeCause <kos/ChangeRequest/cause/SoftwareUpgrade> ;
+    noria:changeRequestImpact noria:Resource_DBServer01, noria:ApplicationModule_ECommerceProd ;
+    noria:changeRequestOutageDuration "PT2H"^^xsd:duration ;
+    noria:changeRequestStatusCurrent <kos/ChangeRequest/status/Scheduled> ;
+    noria:changeRequestInitiatorParty foaf:Agent_Jane_Smith ;
+    noria:changeRequestPilotParty foaf:Agent_John_Doe ;
+    noria:changeRequestActorParty foaf:Agent_DB_Admin_Team ;
+    noria:changeRequestIsRegulated false ;
+    noria:actionCorrelatedOperationPlan noria:OperationPlan_DBPatchProcedure .
+
+noria:ChangeRequest_NetworkConfig
+    a noria:ChangeRequest ;
+    rdfs:label "Router Interface Configuration Change"@en ;
+    rdfs:comment "Change administrative status of router interface Gi0/1 to 'down' for maintenance."@en ;
+    noria:documentExternalId "CR-20240425-002" ;
+    noria:documentHRef "https://itsm.example.com/change/CR-20240425-002" ;
+    dcterms:created "2024-04-25T10:00:00Z"^^xsd:dateTime ;
+    dcterms:creator foaf:Agent_John_Doe ;
+    noria:changeRequestPlannedStartTime "2024-04-26T01:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestPlannedEndTime "2024-04-26T01:15:00Z"^^xsd:dateTime ;
+    noria:changeRequestCategory <kos/ChangeRequest/category/InternalIntervention> ;
+    noria:changeRequestType <kos/ChangeRequest/type/Standard> ;
+    noria:changeRequestChangeCause <kos/ChangeRequest/cause/Configuration> ;
+    noria:changeRequestImpact noria:NetworkInterface_RouterCore01_Gi0_1 ;
+    noria:changeRequestOutageDuration "PT15M"^^xsd:duration ;
+    noria:changeRequestStatusCurrent <kos/ChangeRequest/status/Approved> ;
+    noria:changeRequestInitiatorParty foaf:Agent_John_Doe ;
+    noria:changeRequestPilotParty foaf:Agent_Network_Team ;
+    noria:changeRequestActorParty foaf:Agent_Network_Team ;
+    noria:changeRequestIsRegulated true ;
+    noria:documentStatusHistory noria:EventRecord_InterfaceDownAction .
+
+noria:ChangeRequest_ScaleWebServer
+    a noria:ChangeRequest ;
+    rdfs:label "Scale Up E-commerce Web Servers"@en ;
+    rdfs:comment "Add two new web server instances to handle increased traffic load."@en ;
+    noria:documentExternalId "CR-20240425-003" ;
+    noria:documentHRef "https://itsm.example.com/change/CR-20240425-003" ;
+    dcterms:created "2024-04-25T11:00:00Z"^^xsd:dateTime ;
+    dcterms:creator foaf:Agent_John_Doe ;
+    noria:changeRequestPlannedStartTime "2024-05-05T00:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestPlannedEndTime "2024-05-05T03:00:00Z"^^xsd:dateTime ;
+    noria:changeRequestCategory <kos/ChangeRequest/category/InternalIntervention> ;
+    noria:changeRequestType <kos/ChangeRequest/type/Standard> ;
+    noria:changeRequestChangeCause <kos/ChangeRequest/cause/NetworkExtension> ;
+    noria:changeRequestImpact noria:ApplicationModule_ECommerceProd ;
+    noria:changeRequestOutageDuration "PT0S"^^xsd:duration ;
+    noria:changeRequestStatusCurrent <kos/ChangeRequest/status/Scheduled> ;
+    noria:changeRequestInitiatorParty foaf:Agent_John_Doe ;
+    noria:changeRequestPilotParty foaf:Agent_IT_Ops_Team ;
+    noria:changeRequestActorParty foaf:Agent_IT_Ops_Team ;
+    noria:changeRequestIsRegulated false .
+
+# --- Document Attachments ---
+noria:DocumentAttachment_DBPatchPlan
+    a noria:DocumentAttachment ;
+    rdfs:label "Database Patch Plan Document"@en ;
+    rdfs:comment "Detailed plan for applying the database patch, including rollback procedures."@en ;
+    dcterms:isPartOf noria:ChangeRequest_DBPatch ;
+    dcterms:created "2024-04-24T11:00:00Z"^^xsd:dateTime ;
+    dcterms:creator foaf:Agent_Jane_Smith ;
+    dcterms:format "application/pdf" .
+
+# --- Anomaly Patterns ---
+noria:AnomalyPattern_DBMemoryLeak
+    a noria:AnomalyPattern ;
+    rdfs:label "Database Memory Leak Pattern"@en ;
+    rdfs:comment "Pattern describing symptoms of the database memory leak: high CPU, increasing memory usage, eventual service crash."@en ;
+    skos:example "High CPU usage followed by OOM killer events and service restart."@en ;
+    folio:hasCause noria:TroubleTicket_DBOutage .
+
+# --- Operation Plans and Conditions ---
+noria:OperationPlan_DBRestart
+    a noria:OperationPlan ;
+    rdfs:label "Database Service Restart Procedure"@en ;
+    rdfs:comment "Standard operating procedure for restarting the PostgreSQL database service."@en ;
+    noria:operationPlanPreCondition noria:ActionPreCondition_DBServiceDown ;
+    noria:operationPlanPostCondition noria:ActionPostCondition_DBServiceUp .
+
+noria:ActionPreCondition_DBServiceDown
+    a noria:ActionPreCondition ;
+    rdfs:label "Database Service is Down"@en ;
+    rdfs:comment "Condition: The PostgreSQL service on the database server is not running or unresponsive."@en .
+
+noria:ActionPostCondition_DBServiceUp
+    a noria:ActionPostCondition ;
+    rdfs:label "Database Service is Up and Accessible"@en ;
+    rdfs:comment "Outcome: The PostgreSQL service is running, accepting connections, and application can access it."@en .
+
+noria:OperationPlan_DBPatchProcedure
+    a noria:OperationPlan ;
+    rdfs:label "Database Patch Deployment Procedure"@en ;
+    rdfs:comment "Step-by-step guide for deploying the critical database patch."@en ;
+    noria:operationPlanPreCondition noria:ActionPreCondition_DBServiceUp ;
+    noria:operationPlanPostCondition noria:ActionPostCondition_DBServiceUp .
