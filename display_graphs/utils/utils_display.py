@@ -62,7 +62,7 @@ def visu_graph(graph,file,html_folder,node_type_lists):
         network_resource_nodes, network_interface_nodes, network_link_nodes = node_type_lists
 
     # Create network with responsive sizing
-    net = Network(height="95vh", width="100%", bgcolor="#1a1a1a", font_color="white",
+    net = Network(height="95vh", width="100%", bgcolor="#1a1a1a", font_color="wite",
                   directed=True)
     net.barnes_hut()
 
@@ -70,29 +70,6 @@ def visu_graph(graph,file,html_folder,node_type_lists):
     net.from_nx(graph)
 
     # Improved physics settings for better stability and readability
-
-    #net.set_options("""{
-    #    "physics": {
-    #        "solver": "barnesHut",
-    #        "barnesHut": {
-    #            "gravitationalConstant": -80000,
-    #            "centralGravity": 0.3,
-    #            "springLength": 200,
-    #            "springConstant": 0.04,
-    #            "damping": 0.09
-    #            }
-    #        },
-    #    "edges":{
-    #        "color": {
-    #            "color": "#ff0000",
-    #            "highlight": "#ff0000",
-    #            "hover": "#ff0000",
-    #            "inherit": false,
-    #            "opacity": 1.0
-    #                }
-    #        }
-    #}""")
-
     net.set_options(
         """{
         "physics": {
