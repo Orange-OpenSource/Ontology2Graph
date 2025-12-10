@@ -5,6 +5,7 @@ import shutil
 import logging
 from pathlib import Path
 import subprocess
+import datetime
 from openai import OpenAI, OpenAIError
 
 def query_llm(prompt,ontology,model):
@@ -160,3 +161,62 @@ def ttl_validator(path):
         print(file)
         print(f'Merged graph : Turtle validator Result: {stdout},{stderr}')
         print('\n')
+
+def model_to_choose(model_nbr):
+    '''choose model from model.txt file model_nbr : int value to choose the model in file_list'''
+    path_gen=Path(f'{os.getcwd()}')
+    model_list = []
+    file_list = f'{path_gen}/model/models.txt'
+    with open(file_list, mode='r',encoding='utf-8') as file:
+        lines = file.readlines()
+        for line in lines:
+            cleaned_line = line.strip()
+            model_list.append(cleaned_line)
+    model = model_list[model_nbr]
+    return model
+
+def build_folder_paths_and_files(model):
+    '''build folder paths and files'''
+
+    date = datetime.datetime.now().strftime("%Y-%m-%d")
+    path_gen=Path(f'{os.getcwd()}')
+
+    path_result = f'{path_gen.parent}/results/synthetics_graphs/{date}/{model}'
+    path_ontologies=f'{path_gen}/ontologies'
+    path_prompt=f'{path_gen}/prompts'
+    path_graph=f'{path_gen}/graph'
+    path_merged = f'{path_result}/merged_graph'
+
+    bad_path_result = f'{path_result}/Bad_Turtle_Syntax'
+    temp_file = f'{path_result}/temp.ttl'
+    date_other_format = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    log_file=f'{Path(path_result)}/nodes_log/generate_{date_other_format}.log'
+
+    os.makedirs(f'{path_result}/nodes_log', exist_ok=True)
+    os.makedirs(f'{bad_path_result}', exist_ok=True)
+
+    return path_result, bad_path_result, path_ontologies, path_prompt, path_graph, temp_file,\
+        log_file,path_merged
+
+def remove_file_in_folder(folder_path):
+    '''remove all files in a folder'''
+    if Path(folder_path).is_dir() and Path(folder_path).exists():
+        for files in Path(folder_path).iterdir():
+            if files.is_file():
+                files.unlink()
+
+def prompt_type_and_ontology_name():
+    '''choose prompt type and ontology'''
+
+    #prompt_type='1_initial_prompt_ip'
+    #prompt_type='2_ip_enhanced_manually_ipem'
+    #prompt_type='2_1_ip_enhanced_manually_ipem'
+    #prompt_type='3_ipem_enhanced_by_AI'
+    #prompt_type='3_1_ip_enhanced_manually_ipem_enhanced_by_AI'
+    #prompt_type='4_prompt_fully_created_by_AI'
+    prompt_type='4_1_prompt_fully_created_by_AI'
+    #prompt_type='4_2_created_by_gemini' #generated with gemini
+
+    onto_name = 'Noria'
+
+    return prompt_type, onto_name

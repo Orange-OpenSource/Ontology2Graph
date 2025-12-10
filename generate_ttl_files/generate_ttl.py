@@ -1,151 +1,100 @@
-''' This function generates knowledge graph in turtle format based on an ontology schema, a prompt
-    and/or a graph example. It uses the internal Orange LLM Proxy portal 
-    (https://portal.llmproxy.ai.orange/) for which you must have an account. You just have to pass
-    the number of graph you want as an argumet. Several constant must be set directly in this script 
-    before launching'''
+''' This function generates knowledge graph in turtle format based on an ontology schema and a 
+prompt. It uses the internal Orange LLM Proxy portal (https://portal.llmproxy.ai.orange/) 
+Please read the following. 
+    - You just have to pass the number of graph you want as an argument of this script.
+    - Model_nbr must be set directly in this script before launching.
+    - This script uses utils functions defined in utils_gen.py located in the utils folder.
+    - The generated ttl files are stored in the results/synthetics_graphs folder.
+    - Make sure you have set the LLM_PROXY_KEY environment variable with your API key.
+    - This script also creates a log file containing some information about the generation.
+    - The script sleeps 60 seconds between each generation to reset the context.
+    - Make sure you have installed the required packages listed in the requirements.txt file.
+    - To run the script, use the command: python generate_ttl.py <number_of_ttl_files_to_generate>
+    - This srcript must be launch from the generate_ttl_files folder where it is stored
+'''
 
 import argparse
 import logging
 import os
 import datetime
+import time
 from pathlib import Path
+from utils.utils_gen import query_llm, storing_results, check_ttl, remove_file_in_folder,\
+    model_to_choose, build_folder_paths_and_files,prompt_type_and_ontology_name
 
-from generate_ttl_files.utils.utils_gen import query_llm, storing_results, check_ttl
-#from utils.utils_gen import query_llm, storing_results, check_ttl
+### set argument parser ###
+parser = argparse.ArgumentParser()
+parser.add_argument("nbrttl", help="number of ttl file to generate")
+args = parser.parse_args()
 
-def generate_ttl(path_gen,path_result,nbr_ttl,model):
-    '''function to generate ttl files'''
+### Choose the model to use ####
+model = model_to_choose(model_nbr=7)
 
-#parser = argparse.ArgumentParser()
-#parser.add_argument("path_gen")
-#parser.add_argument("path_result")
-#parser.add_argument("nbr_ttl")
-#parser.add_argument("model")
+### build FOLDER PATHS & FILES ###
+PATH_RESULT, BAD_PATH_RESULT, PATH_ONTOLOGY, PATH_PROMPT, PATH_GRAPH, TEMP_FILE,\
+LOG_FILE, PATH_MERGED = build_folder_paths_and_files(model)
 
-#args = parser.parse_args()
+### Set up logger ###
+logger_gen = logging.getLogger('Gen_log')
+handler_gen = logging.FileHandler(LOG_FILE)
+logger_gen.setLevel(logging.INFO)
+logger_gen.addHandler(handler_gen)
+#logger_gen = logging.getLogger('Gen_log')
 
-#path_gen=args.path_gen
-#path_result=args.path_result
-#nbr_ttl=args.nbr_ttl
-#model=args.model
+## set PROMPT_TYPE and ontology ##
+PROMPT_TYPE, ONTO_NAME=prompt_type_and_ontology_name()
 
-    ## SET constant ##
+with open(f'{PATH_ONTOLOGY}/Noria.ttl','rt',encoding='utf-8') as ontol:
+    ONTOLOGY = ','.join(str(x) for x in ontol.readlines())
 
-    # PATH constant where are stored the needed ressources, prompt, ontology and graph
-    #path=Path(f'{os.getcwd()}/generate_ttl_files')
-    #path_gen=Path(f'{path}/generate_ttl_files')
-    #PATH=f'{os.getcwd()}/DIGITAL_TWIN/gengraphllm' # when using crontab
+with open(f'{PATH_PROMPT}/{PROMPT_TYPE}.txt','rt',encoding='utf-8') as prpt:
+    PROMPT = ','.join(str(x) for x in prpt.readlines())
 
-    #path_ontology=f'{path_gen}/ontologies'
-    path_ontology=f'{path_gen}/ontologies/documentSH_TT_only'
-    path_prompt=f'{path_gen}/prompts'
-    path_graph=f'{path_gen}/graph'
+NUMBER_OF_GRAPH = 0
+NBR_TTL_INT = int(args.nbrttl)
 
-    ## PROMPT_TYPE to choose ##
-    #prompt_type='1_initial_prompt_ip'
-    #prompt_type='2_ip_enhanced_manually_ipem'
-    #prompt_type='2_1_ip_enhanced_manually_ipem'
-    #prompt_type='3_ipem_enhanced_by_AI'
-    #prompt_type='3_1_ip_enhanced_manually_ipem_enhanced_by_AI'
-    #prompt_type='4_prompt_fully_created_by_AI'
-    prompt_type='4_1_prompt_fully_created_by_AI'
-    #prompt_type='4_2_created_by_gemini' #generated with gemini
-    #PROMPT_TYPE='Second_prompt'
-    #PROMPT_TYPE='Third_prompt'
+### remove old files in the result folder ###
+remove_file_in_folder(PATH_RESULT)
+remove_file_in_folder(BAD_PATH_RESULT)
+remove_file_in_folder(Path(LOG_FILE).parent)
 
-    ## ONTOLOGY to choose ##
-    onto='Noria'
-    #ONTOLOGY='pygraph'
+os.system("clear")
+print('TTL FILE GENERATION IS IN PROGRESS')
 
-    ## choose MODEL ##
-    #file_model = f'{path_gen}/model/models.txt'
+## Generate graphs ##
+while NUMBER_OF_GRAPH != NBR_TTL_INT:
 
-    #model_list = []
-    # Open the text file
-    #with open(file_model, mode='r',encoding='utf-8') as file:
-    #    lines = file.readlines()
-    #    for line in lines:
-    #        cleaned_line = line.strip()
-    #        model_list.append(cleaned_line)
-
-    #model = model_list[5]
-    #date = datetime.datetime.now().strftime("%Y-%m-%d")
-
-    #path_result = f'{path_gen.parent}/results/synthetics_graphs/{date}/{model}'
-    bad_path_result = f'{path_result}/Bad_Turtle_Syntax'
-    temp_file = f'{path_result}/temp.ttl'
-
-    with open(f'{path_ontology}/Noria.ttl','rt',encoding='utf-8') as ontol:
-        ontology = ','.join(str(x) for x in ontol.readlines())
-
-    with open(f'{path_prompt}/{prompt_type}.txt','rt',encoding='utf-8') as prpt:
-        prompt = ','.join(str(x) for x in prpt.readlines())
-
-    # Only for second and third prompt
-    #with open(f'{PATH_GRAPH}/full_graph.ttl','rt',encoding='utf-8') as graph:
-    #    GRAPH = ','.join(str(x) for x in graph.readlines())
-
-    #os.makedirs(f'{path_result}', exist_ok=True)
-    os.makedirs(f'{path_result}/nodes_log', exist_ok=True)
-    os.makedirs(f'{bad_path_result}', exist_ok=True)
-
-    #arg = sys.argv[1:]
-    #TARGET_NUMBER_OF_GRAPH = int(arg[0])
-    number_of_graph = 0
-    nbr_ttl_int = int(nbr_ttl)
-
-    # remove the old files in path_result and bad_path_result
-    #if Path(path_result).exists() and Path(path_result).is_dir():
-    #    for files in Path(path_result).iterdir():
-    #        if files.is_file():
-    #            files.unlink()
-
-    #if Path(bad_path_result).exists() and Path(bad_path_result).is_dir():
-    #    for files in Path(bad_path_result).iterdir():
-    #        if files.is_file():
-    #            files.unlink(
-
-    ## Generate graphs ##
+    ### build file name for each graph ###
     date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    FILE_RESULT = f'{PATH_RESULT}/{PROMPT_TYPE}_{date_time}_{ONTO_NAME}.ttl'
+    BAD_FILE_RESULT = f'{BAD_PATH_RESULT}/{PROMPT_TYPE}_{date_time}_{ONTO_NAME}_BAD.ttl'
 
-    log_file=f'{Path(path_result)}/nodes_log/generate_{date_time}.log'
-    logger_gen = logging.getLogger('Gen_log')
-    handler_gen = logging.FileHandler(log_file)
-    logger_gen.setLevel(logging.INFO)
-    logger_gen.addHandler(handler_gen)
+    # Query LLM
+    max_tok,reas_eff,response=query_llm(PROMPT,ONTOLOGY,model)
 
-    logger_gen = logging.getLogger('Gen_log')
+    # Store results
+    storing_results(response,TEMP_FILE,FILE_RESULT)
 
-    while number_of_graph != nbr_ttl_int:
+    # Check Turtle syntax
+    check_ttl(FILE_RESULT,BAD_FILE_RESULT,BAD_PATH_RESULT,0)
 
-        date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        file_result = f'{path_result}/{prompt_type}_{date_time}_{onto}.ttl'
-        bad_file_result = f'{bad_path_result}/{prompt_type}_{date_time}_{onto}_BAD.ttl'
+    # log some info
+    logger = logging.getLogger('Gen_log')
+    logger.info('reasoning effort : %s',reas_eff)
+    logger.info('max_token : %s',max_tok)
+    logger.info('Prompt tokens : %s',response.usage.prompt_tokens)
+    logger.info('Output response tokens : %s',response.usage.completion_tokens)
+    logger.info('Output responses tokens details : %s',response.usage.completion_tokens_details)
+    logger.info('##################################################\n')
 
-        #Query LLM
-        max_tok,reas_eff,response=query_llm(prompt,ontology,model)
+    NUMBER_OF_GRAPH += 1
+    print(f'\nNUMBER OF GRAPH GENERATED : {NUMBER_OF_GRAPH}\n')
+    print("Sleeping 60 sec to reset the context")
+    time.sleep(60)
+    print("Awake !")
 
-        #Store results
-        storing_results(response,temp_file,file_result)
+### remove old files in the merge folder ###
+remove_file_in_folder(PATH_MERGED)
 
-        # Check Turtle syntax
-        check_ttl(file_result,bad_file_result,bad_path_result,0)
-
-        logger = logging.getLogger('Gen_log')
-
-        logger.info('reasoning effort : %s',reas_eff)
-        logger.info('max_token : %s',max_tok)
-        logger.info('Prompt tokens : %s',response.usage.prompt_tokens)
-        logger.info('Output response tokens : %s',response.usage.completion_tokens)
-        logger.info('Output responses tokens details : %s',response.usage.completion_tokens_details)
-        logger.info('##################################################\n')
-
-        #print("Prompt tokens : ",response.usage.prompt_tokens)
-        #print("Output response tokens", response.usage.completion_tokens)
-        #print("Output response tokens details : ",response.usage.completion_tokens_details)
-
-        number_of_graph += 1
-
-    #check_identical_file()  TBD
-
-    return f'{path_ontology}/Noria.ttl'
+print(f'\nTTL FILES ARE STORED IN : {PATH_RESULT}\n')
+print('#### TTL FILE GENERATION PROCESS ENDED ####\n')
