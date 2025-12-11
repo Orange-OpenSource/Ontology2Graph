@@ -59,8 +59,8 @@ def query_llm(prompt,ontology,model):
     if response is not None:
         return response
 
-def storing_results(response,temp_file,file_result):
-    '''store and clean results'''
+def storing_results(response,temp_file,file_result,logger,model):
+    '''store the files and log some infos about the generation'''
 
     with open(temp_file,'x',encoding='utf-8') as filetemp:
         filetemp.write(response.choices[0].message.content)
@@ -76,45 +76,44 @@ def storing_results(response,temp_file,file_result):
         final.writelines(filtered_lines)
         final.close()
 
+    logger.info('########### GRAPH GENERATION INFO ###########')
+
+    if response is not None :
+        if response.usage is not None:
+            logger.info('FILE %s : has been generated', file_result)
+            logger.info('Model used : %s',model)
+            logger.info('Completion response tokens : %s',response.usage.completion_tokens)
+            logger.info('Prompt tokens : %s',response.usage.prompt_tokens)
+            logger.info('Total tokens : %s',response.usage.total_tokens)
+            logger.info('Completion token details : %s\n',response.usage.completion_tokens_details)
+
     os.remove(temp_file)
 
-def check_ttl(file_result, bad_file_result, bad_path_result,merged):
-    '''check ttl syntax store wrong file in specific folder and 
-    maek a copy of right ttl file'''
+def check_ttl(file_result, bad_file_result, bad_path_result, merged,logger):
+    '''check ttl syntax, store wrong file in specific folder and log some infos'''
     command=["ttl",file_result]
     ttlvalidator = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
     stdout, stderr = ttlvalidator.communicate()
 
+    file_name=Path(file_result).name
+
     if stdout!='Validator finished with 0 warnings and 0 errors.\n' :
-    # move bad file in bad folder and Save logs
-        print(f'\nFILE {Path(file_result).name} has been generated with errors')
+    # move bad file in bad folder and log the results
+        print(f'\nFILE {file_name} has been generated with errors')
         os.makedirs(f'{bad_path_result}', exist_ok=True)
         shutil.move(file_result, bad_file_result)
-    else:    # make a copy of right files
-        print(f'\nFILE {Path(file_result).name} has been generated succesffully without errors')
+        logger.info('Error detected in %s', file_name)
+        logger.info('Result: %s', stdout)
+
+    else: # log the results
+        print(f'\nFILE {file_name} has been generated succesffully without errors')
+        logger.info('No error detected in : %s', file_name)
+        logger.info('Result : %s', stdout)
 
     if merged==1:
         print(f'Merged graph : Turtle validator Result: {stdout}'.rstrip('\n'))
     else:
         print(f'Turtle validator Result: {stdout}'.rstrip('\n'))
-
-    return stdout
-
-def ttl_validator(path):
-    '''validate ttl merged graph'''
-    all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
-
-    for i, file in enumerate(all_files):
-        all_files[i]= path + file
-
-    for file in all_files :
-        command=["ttl",file]
-        ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,stderr=subprocess.PIPE,
-                                      text=True)
-        stdout, stderr = ttlvalidator.communicate()
-        print(file)
-        print(f'Merged graph : Turtle validator Result: {stdout},{stderr}')
-        print('\n')
 
 def model_to_choose(model_nbr):
     '''choose model from model.txt file model_nbr : int value to choose the model in file_list'''
@@ -129,8 +128,11 @@ def model_to_choose(model_nbr):
     model = model_list[model_nbr]
     return model
 
-def build_folder_paths_and_files(model):
+def build_folder_paths_and_files(model,gen_or_merge):
     '''build folder paths and files'''
+
+    if gen_or_merge not in ['gen','merge']:
+        raise ValueError("gen_or_merge must be either 'gen' or 'merge'")
 
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     path_gen=Path(f'{os.getcwd()}')
@@ -144,20 +146,25 @@ def build_folder_paths_and_files(model):
     bad_path_result = f'{path_result}/Bad_Turtle_Syntax'
     temp_file = f'{path_result}/temp.ttl'
     date_other_format = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    log_file=f'{Path(path_result)}/nodes_log/generate_{date_other_format}.log'
+    log_file=f'{Path(path_result)}/no_log_file.log'
+    if gen_or_merge=='gen':
+        log_file=f'{Path(path_result)}/nodes_log/generate_{date_other_format}.log'
+    if gen_or_merge=='merge':
+        log_file=f'{Path(path_result)}/merged/merge_{date_other_format}.log'
 
     os.makedirs(f'{path_result}/nodes_log', exist_ok=True)
+    os.makedirs(f'{path_merged}',exist_ok=True)
     os.makedirs(f'{bad_path_result}', exist_ok=True)
 
     return path_result, bad_path_result, path_ontologies, path_prompt, path_graph, temp_file,\
         log_file,path_merged
 
-def remove_file_in_folder(folder_path):
-    '''remove all files in a folder'''
-    if Path(folder_path).is_dir() and Path(folder_path).exists():
-        for files in Path(folder_path).iterdir():
-            if files.is_file():
-                files.unlink()
+#def remove_file_in_folder(folder_path):
+#    '''remove all files in a folder'''
+#    if Path(folder_path).is_dir() and Path(folder_path).exists():
+#        for files in Path(folder_path).iterdir():
+#            if files.is_file():
+#                files.unlink()
 
 def prompt_type_and_ontology_name():
     '''choose prompt type and ontology'''
@@ -175,24 +182,10 @@ def prompt_type_and_ontology_name():
 
     return prompt_type, onto_name
 
-def log(file_result, bad_file_result, ttl_validator_output,response,model,logger_gen):
-    '''log generation info'''
-
-    logger_gen.info('########### GRAPH GENERATION INFO ###########')
-
-    if ttl_validator_output=='Validator finished with 0 warnings and 0 errors.\n' :
-        logger_gen.info('\nFILE : %s has been generated succesffully without errors',
-                    Path(file_result).name)
-        logger_gen.info('Result : %s', ttl_validator_output)
-    else:
-        logger_gen.info('\nFILE %s : has been generated with errors', Path(bad_file_result).name)
-        logger_gen.info('Result: %s', ttl_validator_output)
-
-    if response is not None :
-        if response.usage is not None:
-            logger_gen.info('Model used : %s',model)
-            logger_gen.info('Completion response tokens : %s',response.usage.completion_tokens)
-            logger_gen.info('Prompt tokens : %s',response.usage.prompt_tokens)
-            logger_gen.info('Total tokens : %s',response.usage.total_tokens)
-            logger_gen.info('Completion token details : %s',\
-                response.usage.completion_tokens_details)
+#def setup_logger(log_file,logger_name):
+#    '''setup logger configuration'''
+#    logger = logging.getLogger(logger_name)
+#    handler = logging.FileHandler(Path(log_file))
+#    logger.setLevel(logging.INFO)
+#    logger.addHandler(handler)
+#    return logger
