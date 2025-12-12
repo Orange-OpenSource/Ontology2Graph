@@ -12,18 +12,19 @@ Please read the following.
     - To run the script, use the command: python generate_ttl.py <number_of_ttl_files_to_generate>
     - This srcript must be launch from the generate_ttl_files folder where it is stored'''
 
+
 import os
 import datetime
-import sys
 import time
+import sys
 from pathlib import Path
-from utils.utils_gen import query_llm,storing_results,check_ttl,prompt_type_and_ontology_name,\
-    model_to_choose,build_folder_paths_and_files
-from utils_common.utils import setup_argument_parser,setup_logger,remove_file_in_folder
-sys.path.append('/home/pdooze/DIGITAL_TWIN/gengraphllm')
-
+from utils_gen.utils import model_to_choose, build_folder_paths_and_files, \
+    prompt_type_and_ontology_name, query_llm, storing_results, check_ttl
+# Add parent directory to sys.path for sibling package imports
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from utils_common import utils_com
 ### set argument parser ###
-args=setup_argument_parser("parser", [("nbrttl", "number of ttl file to generate")])
+args = utils_com.setup_argument_parser("parser", [("nbrttl", "number of ttl file to generate")])
 
 ### Choose the model to use ####
 model = model_to_choose(model_nbr=7)
@@ -33,8 +34,8 @@ PATH_RESULT, BAD_PATH_RESULT, PATH_ONTOLOGY, PATH_PROMPT, PATH_GRAPH, TEMP_FILE,
 LOG_FILE, PATH_MERGED = build_folder_paths_and_files(model,'gen')
 
 ### Set up logger ###
-remove_file_in_folder(Path(LOG_FILE).parent)
-logger= setup_logger(LOG_FILE,'Gen_log')
+utils_com.remove_file_in_folder(Path(LOG_FILE).parent)
+logger= utils_com.setup_logger(LOG_FILE,'Gen_log')
 
 ## set PROMPT_TYPE and ontology ##
 PROMPT_TYPE, ONTO_NAME=prompt_type_and_ontology_name()
@@ -49,8 +50,8 @@ NUMBER_OF_GRAPH = 0
 NBR_TTL_INT = int(args.nbrttl)
 
 ### remove old files in the result folder ###
-remove_file_in_folder(PATH_RESULT)
-remove_file_in_folder(BAD_PATH_RESULT)
+utils_com.remove_file_in_folder(PATH_RESULT)
+utils_com.remove_file_in_folder(BAD_PATH_RESULT)
 
 os.system("clear")
 print('TTL FILE GENERATION IS IN PROGRESS')
@@ -79,7 +80,7 @@ while NUMBER_OF_GRAPH != int(args.nbrttl):
     print("Awake !")
 
 ### remove old files in the merge folder ###
-remove_file_in_folder(PATH_MERGED)
+utils_com.remove_file_in_folder(PATH_MERGED)
 
 print(f'\nTTL FILES ARE STORED IN : {PATH_RESULT}\n')
 print('#### TTL FILE GENERATION PROCESS ENDED ####\n')
