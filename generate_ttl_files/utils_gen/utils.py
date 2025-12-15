@@ -1,54 +1,79 @@
-''' function used to generate graphs from llm '''
+"""
+utils_gen.py provides utility functions for generating, validating, and storing knowledge graphs 
+in Turtle (TTL) format using large language models (LLMs). It includes functions for querying
+LLM APIs, storing and filtering results, validating TTL syntax, managing model selection,
+and building file/folder paths and selecting prompt and ontology name. 
+
+Main functionalities:
+- Query LLMs to generate knowledge graphs based on prompts and ontologies
+- Store and filter generated graph results
+- Validate TTL files and handle errors
+- Select LLM models from configuration
+- Build and manage folder/file paths for graph operations
+- Utility helpers for prompt and ontology selection
+"""
 
 import os
+import json
 import shutil
 from pathlib import Path
 import subprocess
 import datetime
 from openai import OpenAI, OpenAIError
 
-def query_llm(prompt,ontology,model):
-    '''quey llm API'''
+#from generate_ttl_files.generate_ttl import PROMPT_TYPE
 
-    #client = genai.Client()
+def query_llm(ontology_file,prompt_file,model):
+    """This function sends a prompt and an ontology schema to the LLM (via OpenAI-compatible API)
+    and requests a graph generation using the specified model. The LLM is expected to return a 
+    response containing the generated graph in Turtle format.
+
+    Args:
+        ontology (str): The ontology schema to guide the graph generation.
+        model (str): The LLM model name to use for the API call.
+        
+    User Prompts to choose from:
+        - "1_ip"  : (Initial prompt)
+        - "2_ip_enhanced_manually' : (first enhancement by human)
+        - "2_1_ip_enhanced_manually' : (second enhancement by human)
+        - "3_ipem_enhanced_by_AI' : (prompt 2 enhanced by AI)
+        - "3_1_ipem_enhanced_by_AI' : (prompt 2_1 enhanced by)
+        - "4_prompt_fully_created_by_AI' : (fully created by AI)    
+        - "4_1_AI_enhance_manually' : (fully created by AI and then manually enhanced)
+        
+    System Prompt to choose from:
+        - "tokens_constraints" : (constraints on the number of tokens to use in the response)
+        - "no_tokens_constraints" : (no constraints on the number of tokens to use in the response)
+
+    Returns:
+        openai.types.ChatCompletion | None: The response object from the LLM API if successful
+        , otherwise None.
+    """
+    prompt_type="4_1_AI_enhance_manually"
+
+    # Load prompts from a JSON file
+    with open(prompt_file, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+        prompt_system=data["prompt_system"]["tokens_constraints"]
+        prompt_user=data["prompt_user"][prompt_type]
+
+    with open(f'{ontology_file}','rt',encoding='utf-8') as ontol:
+        ontology = ','.join(str(x) for x in ontol.readlines())
+
     client = OpenAI(api_key=os.environ.get("LLM_PROXY_KEY"),base_url="https://llmproxy.ai.orange")
     response= None
     try:
         response = client.chat.completions.create(
-        #response = client.completions.create(
             model=model,
-            temperature=0.1, # model's creativity
-            top_p=0.4, # model's creativity
-            #reasoning_effort=reas_eff,
-            #extra_body={
-            #        'extra_body': {
-            #            "google": {
-            #                "thinking_config": {
-            #                    "thinking_budget": -1,
-            #                    "include_thoughts":True
-            #                }
-            #            }
-            #        }
-            #},
-            #input=prompt)
-            #max_tokens=max_tok, # sum of reasoning tokens and text tokens
-            #max_completion_tokens=max_tok,
-            #frequency_penalty=1, #Applies a penalty to repeated tokens, reducing the likelihood
-            # of repetition in the generated text.
-            #presence_penalty=1, # Applies a penalty to tokens that have already appeared in the
-            # generated text, further reducing repetition.
-            #reasoning_effort="high",
+            temperature=0.1,
+            top_p=0.4,
             messages = [
                 {   "role":"system",
-                    "content":"""You are an expert in websemantic technologies and most 
-                    particulary in knowledge graph and ttl format. 
-                    Please provide detailed and comprehensive responses to the following queries. 
-                    Ensure that your answers are as thorough as possible.
-                    """
+                    "content":f"""{prompt_system}"""
                 },
                 {   "role": "user",
-                    "content": f"""Follow the instruction : {prompt} and use the following schema:
-                    {ontology} to generate a new graph in turtle format"""
+                    "content": f"""Follow the instruction : {prompt_user} and use the following
+                    schema: {ontology} to generate a new graph in turtle format"""
                 }
                        ]
             )
@@ -56,11 +81,22 @@ def query_llm(prompt,ontology,model):
     except OpenAIError as e:
         print(f"An error occured: {e}")
 
-    if response is not None:
-        return response
+    return response, prompt_type
 
 def storing_results(response,temp_file,file_result,logger,model):
-    '''store the files and log some infos about the generation'''
+    """ Store the generated graph result from the LLM response, filter its content, and log 
+    generation details. This function writes the LLM's response content to a temporary file,
+    removes lines starting with '`', writes the filtered content to the final result file, logs
+    information about the generation process (including model and token usage), and removes the
+    temporary file.
+
+    Args:
+        response: The LLM API response object containing the generated graph and usage info.
+        temp_file (str): Path to the temporary file for initial content storage.
+        file_result (str): Path to the final output file for the filtered graph.
+        logger: Logger object for recording generation details.
+        model (str): The name of the LLM model used for generation.
+    """
 
     with open(temp_file,'x',encoding='utf-8') as filetemp:
         filetemp.write(response.choices[0].message.content)
@@ -90,7 +126,19 @@ def storing_results(response,temp_file,file_result,logger,model):
     os.remove(temp_file)
 
 def check_ttl(file_result, bad_file_result, bad_path_result, merged,logger):
-    '''check ttl syntax, store wrong file in specific folder and log some infos'''
+    """Validate the syntax of a Turtle (TTL) file, handle errors, and log results. 
+    This function runs a TTL validator on the specified file. If errors are found, it moves the 
+    file to a designated folder for bad files, logs the error, and prints a message. If no errors
+    are found, it logs and prints a success message.
+    Optionally, it prints a special message if the file is a merged graph.
+
+    Args:
+        file_result (str): Path to the TTL file to validate.
+        bad_file_result (str): Path to move the file if validation fails.
+        bad_path_result (str): Directory to store files with bad syntax.
+        merged (int): Flag indicating if the file is a merged graph (1 for merged, 0 otherwise).
+        logger: Logger object for recording validation results.
+    """
     command=["ttl",file_result]
     ttlvalidator = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
     stdout, stderr = ttlvalidator.communicate()
@@ -116,7 +164,15 @@ def check_ttl(file_result, bad_file_result, bad_path_result, merged,logger):
         print(f'Turtle validator Result: {stdout}'.rstrip('\n'))
 
 def model_to_choose(model_nbr):
-    '''choose model from model.txt file model_nbr : int value to choose the model in file_list'''
+    """ Select a model name from the models.txt file based on the provided index.
+    This function reads the list of available model names from the models.txt file and returns the
+    model corresponding to the given index (model_nbr).
+
+    Args:
+        model_nbr (int): The index of the model to select from the list.
+    Returns:
+        str: The name of the selected model.
+    """
     path_gen=Path(f'{os.getcwd()}')
     model_list = []
     file_list = f'{path_gen}/model/models.txt'
@@ -129,7 +185,19 @@ def model_to_choose(model_nbr):
     return model
 
 def build_folder_paths_and_files(model,gen_or_merge):
-    '''build folder paths and files'''
+    """Build and return paths for result folders, ontology, prompts, logs, and temporary files.
+    This function constructs and creates (if necessary) the directory structure and file paths
+    required for generating or merging knowledge graphs. It organizes output, logs, ontology,
+    prompt files, and handles both generation and merging workflows.
+
+    Args:
+        model (str): The name of the model used for folder naming.
+        gen_or_merge (str): Either 'gen' for generation or 'merge' for merging graphs.
+
+    Returns:
+        tuple: Paths for result folder, bad syntax folder, ontology file, prompt file, graph folder,
+               temporary file, log file, and merged graph folder, in that order.
+    """
 
     if gen_or_merge not in ['gen','merge']:
         raise ValueError("gen_or_merge must be either 'gen' or 'merge'")
@@ -138,8 +206,8 @@ def build_folder_paths_and_files(model,gen_or_merge):
     path_gen=Path(f'{os.getcwd()}')
 
     path_result = f'{path_gen.parent}/results/synthetics_graphs/{date}/{model}'
-    path_ontologies=f'{path_gen}/ontologies'
-    path_prompt=f'{path_gen}/prompts'
+    ontologie_file=f'{path_gen}/ontologies/Noria.ttl'
+    prompt_file=f'{path_gen}/prompts/prompts.json'
     path_graph=f'{path_gen}/graph'
     path_merged = f'{path_result}/merged_graph'
 
@@ -148,44 +216,13 @@ def build_folder_paths_and_files(model,gen_or_merge):
     date_other_format = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     log_file=f'{Path(path_result)}/no_log_file.log'
     if gen_or_merge=='gen':
-        log_file=f'{Path(path_result)}/nodes_log/generate_{date_other_format}.log'
+        log_file=f'{Path(path_result)}/nodes_log/generation_graph_{date_other_format}.log'
     if gen_or_merge=='merge':
-        log_file=f'{Path(path_result)}/merged/merge_{date_other_format}.log'
+        log_file=f'{Path(path_result)}/merged/merge_graph_{date_other_format}.log'
 
     os.makedirs(f'{path_result}/nodes_log', exist_ok=True)
     os.makedirs(f'{path_merged}',exist_ok=True)
     os.makedirs(f'{bad_path_result}', exist_ok=True)
 
-    return path_result, bad_path_result, path_ontologies, path_prompt, path_graph, temp_file,\
+    return path_result, bad_path_result, ontologie_file, prompt_file, path_graph, temp_file,\
         log_file,path_merged
-
-#def remove_file_in_folder(folder_path):
-#    '''remove all files in a folder'''
-#    if Path(folder_path).is_dir() and Path(folder_path).exists():
-#        for files in Path(folder_path).iterdir():
-#            if files.is_file():
-#                files.unlink()
-
-def prompt_type_and_ontology_name():
-    '''choose prompt type and ontology'''
-
-    #prompt_type='1_initial_prompt_ip'
-    #prompt_type='2_ip_enhanced_manually_ipem'
-    #prompt_type='2_1_ip_enhanced_manually_ipem'
-    #prompt_type='3_ipem_enhanced_by_AI'
-    #prompt_type='3_1_ip_enhanced_manually_ipem_enhanced_by_AI'
-    #prompt_type='4_prompt_fully_created_by_AI'
-    prompt_type='4_1_prompt_fully_created_by_AI'
-    #prompt_type='4_2_created_by_gemini' #generated with gemini
-
-    onto_name = 'Noria'
-
-    return prompt_type, onto_name
-
-#def setup_logger(log_file,logger_name):
-#    '''setup logger configuration'''
-#    logger = logging.getLogger(logger_name)
-#    handler = logging.FileHandler(Path(log_file))
-#    logger.setLevel(logging.INFO)
-#    logger.addHandler(handler)
-#    return logger

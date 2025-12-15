@@ -18,54 +18,45 @@ import datetime
 import time
 import sys
 from pathlib import Path
-from utils_gen.utils import model_to_choose, build_folder_paths_and_files, \
-    prompt_type_and_ontology_name, query_llm, storing_results, check_ttl
-# Add parent directory to sys.path for sibling package imports
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-from utils_common import utils_com
+from utils_gen.utils import model_to_choose, build_folder_paths_and_files, query_llm, \
+    storing_results, check_ttl
+from utils_common.utils_com import remove_file_in_folder, setup_logger, setup_argument_parser
+
 ### set argument parser ###
-args = utils_com.setup_argument_parser("parser", [("nbrttl", "number of ttl file to generate")])
+args = setup_argument_parser("parser", [("nbrttl", "number of ttl file to generate")])
 
 ### Choose the model to use ####
 model = model_to_choose(model_nbr=7)
 
 ### Build FOLDERS & FILES PATHS ###
-PATH_RESULT, BAD_PATH_RESULT, PATH_ONTOLOGY, PATH_PROMPT, PATH_GRAPH, TEMP_FILE,\
+PATH_RESULT, BAD_PATH_RESULT, ONTOLOGY_FILE, PROMPT_FILE, PATH_GRAPH, TEMP_FILE,\
 LOG_FILE, PATH_MERGED = build_folder_paths_and_files(model,'gen')
 
-### Set up logger ###
-utils_com.remove_file_in_folder(Path(LOG_FILE).parent)
-logger= utils_com.setup_logger(LOG_FILE,'Gen_log')
-
-## set PROMPT_TYPE and ontology ##
-PROMPT_TYPE, ONTO_NAME=prompt_type_and_ontology_name()
-
-with open(f'{PATH_ONTOLOGY}/Noria.ttl','rt',encoding='utf-8') as ontol:
-    ONTOLOGY = ','.join(str(x) for x in ontol.readlines())
-
-with open(f'{PATH_PROMPT}/{PROMPT_TYPE}.txt','rt',encoding='utf-8') as prpt:
-    PROMPT = ','.join(str(x) for x in prpt.readlines())
+### Setup logger ###
+remove_file_in_folder(Path(LOG_FILE).parent)
+logger= setup_logger(LOG_FILE,'Gen_log')
 
 NUMBER_OF_GRAPH = 0
+ONTO_NAME=Path(ONTOLOGY_FILE).stem
 NBR_TTL_INT = int(args.nbrttl)
 
 ### remove old files in the result folder ###
-utils_com.remove_file_in_folder(PATH_RESULT)
-utils_com.remove_file_in_folder(BAD_PATH_RESULT)
+remove_file_in_folder(PATH_RESULT)
+remove_file_in_folder(BAD_PATH_RESULT)
 
 os.system("clear")
 print('TTL FILE GENERATION IS IN PROGRESS')
 
 ## Generate graphs ##
-while NUMBER_OF_GRAPH != int(args.nbrttl):
+while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
+
+    ### Query LLM ##
+    response,PROMPT_TYPE=query_llm(ONTOLOGY_FILE,PROMPT_FILE,model)
 
     ### build file name for each graph ###
     date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     FILE_RESULT = f'{PATH_RESULT}/{PROMPT_TYPE}_{date_time}_{ONTO_NAME}.ttl'
     BAD_FILE_RESULT = f'{BAD_PATH_RESULT}/{PROMPT_TYPE}_{date_time}_{ONTO_NAME}_BAD.ttl'
-
-    ### Query LLM ##
-    response=query_llm(PROMPT,ONTOLOGY,model)
 
     ### Store results and logs some infos ###
     storing_results(response,TEMP_FILE,FILE_RESULT,logger,model)
@@ -80,7 +71,7 @@ while NUMBER_OF_GRAPH != int(args.nbrttl):
     print("Awake !")
 
 ### remove old files in the merge folder ###
-utils_com.remove_file_in_folder(PATH_MERGED)
+remove_file_in_folder(PATH_MERGED)
 
 print(f'\nTTL FILES ARE STORED IN : {PATH_RESULT}\n')
 print('#### TTL FILE GENERATION PROCESS ENDED ####\n')
