@@ -12,36 +12,16 @@ Please read the following.
     - To run the script, use the command: python generate_ttl.py <number_of_ttl_files_to_generate>
     - This srcript must be launch from the generate_ttl_files folder where it is stored'''
 
-
+import time
 import os
 import datetime
-import time
-import sys
 from pathlib import Path
-<<<<<<< HEAD
 from utils_gen.utils import model_to_choose, build_folder_paths_and_files, query_llm, \
     storing_results, check_ttl
 from utils_common.utils_com import remove_file_in_folder, setup_logger, setup_argument_parser
-=======
-<<<<<<< HEAD
-from utils_common.utils import setup_argument_parser,setup_logger,remove_file_in_folder
-from generate_ttl_files.utils.utils_gen import query_llm,storing_results,check_ttl,\
-    model_to_choose,build_folder_paths_and_files
->>>>>>> 369579b (enhance generation)
 
-=======
-from utils_gen.utils import model_to_choose, build_folder_paths_and_files, \
-    prompt_type_and_ontology_name, query_llm, storing_results, check_ttl
-# Add parent directory to sys.path for sibling package imports
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-from utils_common import utils_com
->>>>>>> 6f99849 (minor change)
 ### set argument parser ###
-<<<<<<< HEAD
 args = setup_argument_parser("parser", [("nbrttl", "number of ttl file to generate")])
-=======
-args = utils_com.setup_argument_parser("parser", [("nbrttl", "number of ttl file to generate")])
->>>>>>> 369579b (enhance generation)
 
 ### Choose the model to use ####
 model = model_to_choose(model_nbr=7)
@@ -50,23 +30,17 @@ model = model_to_choose(model_nbr=7)
 PATH_RESULT, BAD_PATH_RESULT, ONTOLOGY_FILE, PROMPT_FILE, PATH_GRAPH, TEMP_FILE,\
 LOG_FILE, PATH_MERGED = build_folder_paths_and_files(model,'gen')
 
-<<<<<<< HEAD
 ### Setup logger ###
 remove_file_in_folder(Path(LOG_FILE).parent)
 logger= setup_logger(LOG_FILE,'Gen_log')
-=======
-### Set up logger ###
-utils_com.remove_file_in_folder(Path(LOG_FILE).parent)
-logger= utils_com.setup_logger(LOG_FILE,'Gen_log')
->>>>>>> 6f99849 (minor change)
 
 NUMBER_OF_GRAPH = 0
 ONTO_NAME=Path(ONTOLOGY_FILE).stem
 NBR_TTL_INT = int(args.nbrttl)
 
 ### remove old files in the result folder ###
-utils_com.remove_file_in_folder(PATH_RESULT)
-utils_com.remove_file_in_folder(BAD_PATH_RESULT)
+remove_file_in_folder(PATH_RESULT)
+remove_file_in_folder(BAD_PATH_RESULT)
 
 os.system("clear")
 print('TTL FILE GENERATION IS IN PROGRESS')
@@ -95,7 +69,7 @@ while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
     print("Awake !")
 
 ### remove old files in the merge folder ###
-utils_com.remove_file_in_folder(PATH_MERGED)
+remove_file_in_folder(PATH_MERGED)
 
 print(f'\nTTL FILES ARE STORED IN : {PATH_RESULT}\n')
 print('#### TTL FILE GENERATION PROCESS ENDED ####\n')
