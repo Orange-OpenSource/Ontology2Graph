@@ -1,6 +1,6 @@
 '''list of function to be used '''
 
-import logging
+import datetime
 import re
 import os
 import shutil
@@ -10,6 +10,7 @@ from collections import Counter
 import networkx as nx
 import rdflib
 from rdflib import URIRef,Namespace,BNode
+from utils_common import utils as utils_common
 
 def remove_pred_obj(expr, graph, predi, obje):
     '''remove predicate and target object of an edge'''
@@ -87,14 +88,6 @@ def check_ttl(path_merged,bad_path_result,merged):
                 log.close()
         count = count + 1
 
-def get_last_folder_part(string, sep_char):
-    """get last part of a folder string"""
-    string_parts=string.split(sep_char)
-    last_part=string_parts[len(string_parts)-1]
-    if last_part=='':
-        last_part=string_parts[len(string_parts)-2]
-    return last_part
-
 def manage_prefix(path_merged):
     '''remove duplicate prefix of the merged file'''
     nodes_lines=[]
@@ -132,7 +125,7 @@ def manage_prefix(path_merged):
             graph.close()
         count = count + 1
 
-def find_duplicates_nodes(path,ontology):
+def find_duplicates_nodes(path,ontology,logger):
     '''find duplicates nodes in ttl files, just add the folder where the files
     are stored as an argument'''
 
@@ -151,20 +144,20 @@ def find_duplicates_nodes(path,ontology):
     rdf = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
     rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
 
-    path_node_log=Path(f'{path}/nodes_log')
+    #path_node_log=Path(f'{path}/nodes_log')
     #if os.path.exists(path_node_log):
     #    shutil.rmtree(path_node_log)
     #os.makedirs(path_node_log)
 
     #set logger
-    log_file=Path(f'{path_node_log}/node.log')
-    if log_file.is_file():
-        os.remove(log_file)
+    #log_file=Path(f'{path_node_log}/node.log')
+    #if log_file.is_file():
+    #    os.remove(log_file)
 
-    logger_node = logging.getLogger('Node_log')
-    handler = logging.FileHandler(log_file)
-    logger_node.setLevel(logging.INFO)
-    logger_node.addHandler(handler)
+    #logger_node = logging.getLogger('Node_log')
+    #handler = logging.FileHandler(log_file)
+    #logger_node.setLevel(logging.INFO)
+    #logger_node.addHandler(handler)
 
     skosnumber=0
 
@@ -179,7 +172,7 @@ def find_duplicates_nodes(path,ontology):
         for subj, pred, obj in g:
 
             #print("subj %s", subj)
-            logger_node.info('\n subj %s :',subj)
+            logger.info('\n subj %s :',subj)
             if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) and\
                 (pred != skos.inScheme) and (pred != rdfs.isDefinedBy) and pred not in dtp):
                 nx_graph.add_edge(str(subj), str(obj), label=str(pred))
@@ -191,14 +184,14 @@ def find_duplicates_nodes(path,ontology):
                 for subjbn, predbn in g.subject_predicates(subj):
                     short_subjbn=Path(subjbn).name
                     short_predbn=Path(predbn).name
-                    logger_node.info('Blank Node Subject:%s,Predicate :%s,Object : %s',\
+                    logger.info('Blank Node Subject:%s,Predicate :%s,Object : %s',\
                         short_subjbn,short_predbn,obj)
                     nx_graph.add_edge(str(subjbn),str(obj),label=str(predbn),color='white')
 
         #nodes=list(nx_graph.nodes)
         nodes=list(nx_graph.nodes)
         print('skosnumber : %s',skosnumber)
-        logger_node.info('\n nodes %s :',nodes)
+        logger.info('\n nodes %s :',nodes)
         #print(nodes)
 
         ### for gemini 2.5 flash ###
@@ -215,7 +208,7 @@ def find_duplicates_nodes(path,ontology):
 
     # Transform list of list into a simple list
     all_nodes_list = [item for sublist in all_nodes for item in sublist]
-    logger_node.info('\n all nodes list %s :',all_nodes_list)
+    logger.info('\n all nodes list %s :',all_nodes_list)
 
     counts=Counter(all_nodes_list)
     dupplicate_nodes=[item for item, count in counts.items() if count > 1]
@@ -250,46 +243,49 @@ def occurence_duplicate(duplicates_nodes,path_result):
 
     return occu_duplicates
 
-def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
-    ''' rename the duplicated nodes by varying remain_occ parameter from 0 to nbr_occ_max. Then for
-    each iteration merged all the new ttl files in an only one file'''
+def build_merged_folder_paths_and_files(path_files):
+    ''' create merged folder if not exists'''
 
-    all_ttl_files = [f.name for f in Path(path_result).iterdir() if f.is_file()]
+    path_merged = f'{path_files}/merged'
+    bad_path_result = f'{path_files}/Bad_Turtle_Syntax'
+    path_duplicate_treated=f'{Path(bad_path_result)}/llm_graphs_dup_treated'
+    date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    log_file=Path(f'{Path(path_files)}/logs/merge_graph_{date}.log')
 
     if os.path.exists(path_merged):
         shutil.rmtree(path_merged)
     os.makedirs(Path(path_merged))
 
-    path_llm_graphs_dup_treated=f'{Path(path_result)}/llm_graphs_dup_treated'
-    if os.path.exists(path_llm_graphs_dup_treated):
-        shutil.rmtree(path_llm_graphs_dup_treated)
-    os.makedirs(path_llm_graphs_dup_treated)
-
-
-    path_merged_log=Path(f'{path_merged}/merge_log')
-    if os.path.exists(path_merged_log):
-        shutil.rmtree(path_merged_log)
-    os.makedirs(path_merged_log)
-
-    log_file=Path(f'{path_merged_log}/merge.log')
-    if log_file.is_file():
-        os.remove(log_file)
-
-    logger_merge = logging.getLogger('Merge_log')
-    handler = logging.FileHandler(log_file)
-    logger_merge.setLevel(logging.INFO)
-    logger_merge.addHandler(handler)
+    if os.path.exists(bad_path_result):
+        shutil.rmtree(bad_path_result)
+    os.makedirs(Path(bad_path_result))
     
+    if os.path.exists(path_duplicate_treated):
+        shutil.rmtree(path_duplicate_treated)
+    os.makedirs(path_duplicate_treated)
+
+    if os.path.exists(log_file.parent):
+        shutil.rmtree(log_file.parent)
+    os.makedirs(log_file.parent)
+
+    return(bad_path_result,log_file,path_merged,path_duplicate_treated)
+
+def merge_ttl_graphs(path_duplicate_treated,path_merged,duplicates_nodes,nbr_occ_max,logger_merge):
+    ''' rename the duplicated nodes by varying remain_occ parameter from 0 to nbr_occ_max. Then for
+    each iteration merged all the new ttl files in an only one file'''
+
+    path_files=path_merged.parent
+
+    all_ttl_files = [f.name for f in Path(path_files).iterdir() if f.is_file()]
     remain_occ=0
 
     while remain_occ != nbr_occ_max + 1:
-    #while remain_occ != 2:
 
         print('Treatment in progress for remain_occ =%s',remain_occ)
 
-        occ_dup=occurence_duplicate(duplicates_nodes,path_result)
+        occ_dup=occurence_duplicate(duplicates_nodes,path_files)
         nbr_file_treated=0
-        os.makedirs(Path(f'{path_llm_graphs_dup_treated}/{remain_occ}'),exist_ok=True)
+        os.makedirs(Path(f'{path_duplicate_treated}/{remain_occ}'),exist_ok=True)
 
         logger_merge.info('occ_dup_BN %s',occ_dup)
 
@@ -297,15 +293,14 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
             dup_treated_list=[]
 
             logger_merge.info('##################################################')
-
             logger_merge.info('### REMAIN OCC ### = %s , nbr_occ_max = %s',remain_occ, nbr_occ_max)
             logger_merge.info('#### FILE ####: %s ', ttl_file)
 
             print('REMAIN OCC : %s', remain_occ)
             print('File : %s', ttl_file)
 
-            with open(Path(path_result)/ttl_file,'r',encoding='utf-8') as infile, \
-                 open(f'{Path(path_llm_graphs_dup_treated)}/{remain_occ}/Treated_{remain_occ}_'\
+            with open(Path(path_files)/ttl_file,'r',encoding='utf-8') as infile, \
+                 open(f'{Path(path_duplicate_treated)}/{remain_occ}/Treated_{remain_occ}_'\
                       f'{ttl_file}','w',encoding='utf-8') as outfile:
 
                 logger_merge.info("nbr file treated %s",nbr_file_treated)
@@ -398,7 +393,7 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
 
             nbr_file_treated=nbr_file_treated+1
 
-        all_new_ttl_files = [f for f in Path(f'{path_llm_graphs_dup_treated}/{remain_occ}')\
+        all_new_ttl_files = [f for f in Path(f'{path_duplicate_treated}/{remain_occ}')\
             .iterdir() if f.is_file()]
 
         # merge mofified ttl file in an only one file
@@ -413,10 +408,10 @@ def merge_ttl_graphs(path_result,path_merged,duplicates_nodes,nbr_occ_max):
 
         remain_occ = remain_occ + 1
 
-def max_node_occ_value(ttl_folder,ontology):
+def max_node_occ_value(ttl_folder,ontology,logger):
     '''return the node that have the max occurrence'''
 
-    duplicate_nodes=find_duplicates_nodes(ttl_folder,ontology)
+    duplicate_nodes=find_duplicates_nodes(ttl_folder,ontology,logger)
 
     occ_dup=occurence_duplicate(duplicate_nodes,ttl_folder)
 

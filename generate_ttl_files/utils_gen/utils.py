@@ -153,7 +153,7 @@ def check_ttl(file_result, bad_file_result, bad_path_result, merged,logger):
         logger.info('Error detected in %s', file_name)
         logger.info('Result: %s', stdout)
 
-    else: # log the results
+    else:
         print(f'\nFILE {file_name} has been generated succesffully without errors')
         logger.info('No error detected in : %s', file_name)
         logger.info('Result : %s', stdout)
@@ -184,7 +184,7 @@ def model_to_choose(model_nbr):
     model = model_list[model_nbr]
     return model
 
-def build_folder_paths_and_files(model,gen_or_merge):
+def build_folder_paths_and_files(model):
     """Build and return paths for result folders, ontology, prompts, logs, and temporary files.
     This function constructs and creates (if necessary) the directory structure and file paths
     required for generating or merging knowledge graphs. It organizes output, logs, ontology,
@@ -199,9 +199,6 @@ def build_folder_paths_and_files(model,gen_or_merge):
                temporary file, log file, and merged graph folder, in that order.
     """
 
-    if gen_or_merge not in ['gen','merge']:
-        raise ValueError("gen_or_merge must be either 'gen' or 'merge'")
-
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     path_gen=Path(f'{os.getcwd()}')
 
@@ -214,13 +211,9 @@ def build_folder_paths_and_files(model,gen_or_merge):
     bad_path_result = f'{path_result}/Bad_Turtle_Syntax'
     temp_file = f'{path_result}/temp.ttl'
     date_other_format = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    log_file=f'{Path(path_result)}/no_log_file.log'
-    if gen_or_merge=='gen':
-        log_file=f'{Path(path_result)}/nodes_log/generation_graph_{date_other_format}.log'
-    if gen_or_merge=='merge':
-        log_file=f'{Path(path_result)}/merged/merge_graph_{date_other_format}.log'
+    log_file=f'{Path(path_result)}/logs/generation_graph_{date_other_format}.log'
 
-    os.makedirs(f'{path_result}/nodes_log', exist_ok=True)
+    os.makedirs(f'{path_result}/logs', exist_ok=True)
     os.makedirs(f'{path_merged}',exist_ok=True)
     os.makedirs(f'{bad_path_result}', exist_ok=True)
 

@@ -4,7 +4,7 @@ This folder contains scripts and utilities for generating synthetic knowledge gr
 
 ## Main Components
 - **generate_ttl.py**: Main script to generate one or more Turtle files using a language model and a given ontology.
-- **utils/utils_gen.py**: Utility functions for querying the LLM, storing results, checking Turtle syntax, and managing files/folders.
+- **utils_gen/utils.py**: Utility functions for querying the LLM, storing results, checking Turtle syntax, and managing files/folders.
 
 ## Features
 - Automated generation of Turtle files using LLM prompts and ontology.
