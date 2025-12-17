@@ -125,7 +125,7 @@ def storing_results(response,temp_file,file_result,logger,model):
 
     os.remove(temp_file)
 
-def check_ttl(file_result, bad_file_result, bad_path_result, merged,logger):
+def check_ttl(file_result, bad_file_result, bad_path_result,logger):
     """Validate the syntax of a Turtle (TTL) file, handle errors, and log results. 
     This function runs a TTL validator on the specified file. If errors are found, it moves the 
     file to a designated folder for bad files, logs the error, and prints a message. If no errors
@@ -158,10 +158,7 @@ def check_ttl(file_result, bad_file_result, bad_path_result, merged,logger):
         logger.info('No error detected in : %s', file_name)
         logger.info('Result : %s', stdout)
 
-    if merged==1:
-        print(f'Merged graph : Turtle validator Result: {stdout}'.rstrip('\n'))
-    else:
-        print(f'Turtle validator Result: {stdout}'.rstrip('\n'))
+    print(f'Turtle validator Result: {stdout}'.rstrip('\n'))
 
 def model_to_choose(model_nbr):
     """ Select a model name from the models.txt file based on the provided index.
@@ -206,7 +203,7 @@ def build_folder_paths_and_files(model):
     ontologie_file=f'{path_gen}/ontologies/Noria.ttl'
     prompt_file=f'{path_gen}/prompts/prompts.json'
     path_graph=f'{path_gen}/graph'
-    path_merged = f'{path_result}/merged_graph'
+    path_merged = f'{path_result}/merged'
 
     bad_path_result = f'{path_result}/Bad_Turtle_Syntax'
     temp_file = f'{path_result}/temp.ttl'

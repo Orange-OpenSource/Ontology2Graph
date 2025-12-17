@@ -10,7 +10,7 @@ Usage:
     python merge_ttl.py --path_file <graphs_folder> --ontology <ontology_file>
 
 Arguments:
-    path_file:   Path to the folder containing the knowledge graph TTL files.
+    path_file:   Absolute path to the folder containing the knowledge graph TTL files.
     ontology:    Path to the ontology TTL file.
 """
 
@@ -24,18 +24,22 @@ args = utils_common.setup_argument_parser("parser", arguments)
 path_files=args.path_file
 ontology=args.ontology
 
-bad_path_result,log_file,path_merged,path_duplicate_treated\
+bad_path_result,log_file,log_file_homonymes,log_file_check_ttl,path_merged,path_duplicate_treated\
     =utils_merge.build_merged_folder_paths_and_files(path_files)
 
-### Set up logger ###
-logger= utils_common.setup_logger(log_file,'merge_log')
+### Set up loggers ###
+logger_merge= utils_common.setup_logger(log_file,'merge_log')
+logger_homonymes= utils_common.setup_logger(log_file_homonymes,'homonymes_log')
+logger_check_ttl= utils_common.setup_logger(log_file_check_ttl,'check_merged_ttl_log')
 
-### Find duplicates nodes and max occurrence value ###
-duplicates = utils_merge.find_duplicates_nodes(path_files,ontology,logger)
-occ_max = utils_merge.max_node_occ_value(path_files,ontology,logger)
+
+### Find homonymes nodes and max occurrence value ###
+homonymes_nodes = utils_merge.find_homonymes_nodes(path_files,logger_homonymes,ontology)
+occ_max = utils_merge.max_node_occ_value(path_files,ontology,logger_homonymes)
 
 ### Merge & check ttl files ###
-utils_merge.merge_ttl_graphs(path_files,path_duplicate_treated,path_merged,\
-    duplicates,occ_max[0],logger)
+utils_merge.rename_homonyme_in_files(path_duplicate_treated,path_merged,homonymes_nodes,occ_max[0],\
+                             logger_merge)
+
 utils_merge.manage_prefix(path_merged)
-utils_merge.check_ttl(path_merged,bad_path_result,1)
+utils_merge.check_ttl(path_merged,bad_path_result,logger_check_ttl)

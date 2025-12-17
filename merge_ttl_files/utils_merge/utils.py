@@ -10,7 +10,6 @@ from collections import Counter
 import networkx as nx
 import rdflib
 from rdflib import URIRef,Namespace,BNode
-from utils_common import utils as utils_common
 
 def remove_pred_obj(expr, graph, predi, obje):
     '''remove predicate and target object of an edge'''
@@ -46,7 +45,7 @@ def retreive_datatype_properties(ontology):
         dtproperties.append(dtp)
     return dtproperties
 
-def check_ttl(path_merged,bad_path_result,merged):
+def check_ttl(path_merged,bad_path_result,logger_check_ttl):
     '''check ttl syntax and store wrong file in specific folder'''
 
     nbr_file = 0
@@ -55,11 +54,12 @@ def check_ttl(path_merged,bad_path_result,merged):
         for entry in entries:
             if entry.is_file():
                 nbr_file += 1
+    print('Number of merged file to check : %s',nbr_file)
 
     count = 0
+    bad_file = 0
 
     merged_file_list = [f.name for f in Path(path_merged).iterdir() if f.is_file()]
-    print(merged_file_list)
 
     while count != nbr_file:
 
@@ -69,24 +69,27 @@ def check_ttl(path_merged,bad_path_result,merged):
         ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,
                                       stderr=subprocess.PIPE,text=True)
         stdout, stderr = ttlvalidator.communicate()
-        if merged==1:
-            print(f'Merged graph {Path(merged_file).name} : Turtle validator Result: \
-                  {stdout},{stderr}\n')
-        else:
-            print(f'Turtle validator Result: {stdout}, {stderr}')
+        logger_check_ttl.info('Merged graph %s : Turtle validator Result: %s,%s\n',\
+                              Path(merged_file).name,stdout,stderr)
 
         if stdout!='Validator finished with 0 warnings and 0 errors.\n' :
         # move bad file in bad folder and Save logs
             bad_merged_file=f'{bad_path_result}/merged_graph_{count}_BAD.ttl'
-            print('bad_merged_file : ', bad_merged_file)
+            logger_check_ttl.info('bad_merged_file : %s', bad_merged_file)
 
             os.makedirs(f'{bad_path_result}', exist_ok=True)
             shutil.move(merged_file, bad_merged_file)
 
-            with open(f'{bad_path_result}/errors.log', 'a',encoding='utf-8') as log:
-                log.write(f'{bad_merged_file} : {ttlvalidator.communicate()}\n')
-                log.close()
+            logger_check_ttl.info('Error detected in %s', Path(merged_file).name)
+            logger_check_ttl.info('Result: %s', stdout) 
+            bad_file = bad_file + 1
+
         count = count + 1
+
+    if bad_file == 0:
+        print('\n No bad merged file detected')
+    else:
+        print(f'\n Number of bad merged files detected : {bad_file}')
 
 def manage_prefix(path_merged):
     '''remove duplicate prefix of the merged file'''
@@ -125,15 +128,15 @@ def manage_prefix(path_merged):
             graph.close()
         count = count + 1
 
-def find_duplicates_nodes(path,ontology,logger):
+def find_homonymes_nodes(path,logger_homonymes,ontology):
     '''find duplicates nodes in ttl files, just add the folder where the files
     are stored as an argument'''
 
     # List all the ttl graph files in PATH except folder
     all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
 
+    # Retreive DatatypeProperties from ontology
     dtp=retreive_datatype_properties(ontology)
-    skos = Namespace("http://www.w3.org/2004/02/skos/core#")
 
     # Rebuild complete file path (folder/file)
     for i, file in enumerate(all_files):
@@ -143,21 +146,7 @@ def find_duplicates_nodes(path,ontology,logger):
     nodes=[]
     rdf = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
     rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
-
-    #path_node_log=Path(f'{path}/nodes_log')
-    #if os.path.exists(path_node_log):
-    #    shutil.rmtree(path_node_log)
-    #os.makedirs(path_node_log)
-
-    #set logger
-    #log_file=Path(f'{path_node_log}/node.log')
-    #if log_file.is_file():
-    #    os.remove(log_file)
-
-    #logger_node = logging.getLogger('Node_log')
-    #handler = logging.FileHandler(log_file)
-    #logger_node.setLevel(logging.INFO)
-    #logger_node.addHandler(handler)
+    skos = Namespace("http://www.w3.org/2004/02/skos/core#")
 
     skosnumber=0
 
@@ -172,7 +161,7 @@ def find_duplicates_nodes(path,ontology,logger):
         for subj, pred, obj in g:
 
             #print("subj %s", subj)
-            logger.info('\n subj %s :',subj)
+            logger_homonymes.info('\n subj %s :',subj)
             if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) and\
                 (pred != skos.inScheme) and (pred != rdfs.isDefinedBy) and pred not in dtp):
                 nx_graph.add_edge(str(subj), str(obj), label=str(pred))
@@ -182,19 +171,16 @@ def find_duplicates_nodes(path,ontology,logger):
 
             if isinstance(subj, BNode) and (pred != rdf.type) and (pred != skos.inScheme):
                 for subjbn, predbn in g.subject_predicates(subj):
-                    short_subjbn=Path(subjbn).name
-                    short_predbn=Path(predbn).name
-                    logger.info('Blank Node Subject:%s,Predicate :%s,Object : %s',\
+                    short_subjbn=Path(str(subjbn)).name
+                    short_predbn=Path(str(predbn)).name
+                    logger_homonymes.info('Blank Node Subject:%s,Predicate :%s,Object : %s',\
                         short_subjbn,short_predbn,obj)
                     nx_graph.add_edge(str(subjbn),str(obj),label=str(predbn),color='white')
 
-        #nodes=list(nx_graph.nodes)
         nodes=list(nx_graph.nodes)
         print('skosnumber : %s',skosnumber)
-        logger.info('\n nodes %s :',nodes)
-        #print(nodes)
+        logger_homonymes.info('\n nodes %s :',nodes)
 
-        ### for gemini 2.5 flash ###
         nodes_name=[Path(nodes).name for nodes in nodes]
 
         #Remove # character from node names if any
@@ -202,23 +188,20 @@ def find_duplicates_nodes(path,ontology,logger):
 
         all_nodes.append(nodes_name_final)
 
-        ### for gpt-4.1-nano ###
-        #nodes_with_bracket = [f"<{nodes}>" for nodes in nodes]
-        #all_nodes.append(nodes_with_bracket)
-
     # Transform list of list into a simple list
     all_nodes_list = [item for sublist in all_nodes for item in sublist]
-    logger.info('\n all nodes list %s :',all_nodes_list)
+    logger_homonymes.info('\n all nodes list %s :',all_nodes_list)
 
     counts=Counter(all_nodes_list)
-    dupplicate_nodes=[item for item, count in counts.items() if count > 1]
+    homonymes_nodes=[item for item, count in counts.items() if count > 1]
+    logger_homonymes.info('\n homonymes nodes list %s :',homonymes_nodes)
 
-    return dupplicate_nodes
+    return homonymes_nodes
 
-def occurence_duplicate(duplicates_nodes,path_result):
+def occurence_duplicate(homonymes_nodes,path_result):
     '''compute the occurence of duplicates all over the ttl files once a node appear in a ttl file
     occu_duplicates is increased by 1'''
-    occu_duplicates=[[duplicates_nodes[i],0] for i in range(0,len(duplicates_nodes))]
+    occu_duplicates=[[homonymes_nodes[i],0] for i in range(0,len(homonymes_nodes))]
 
     #List all the ttl graph files in PATH except folder
     all_files = [f.name for f in Path(path_result).iterdir() if f.is_file()]
@@ -250,7 +233,9 @@ def build_merged_folder_paths_and_files(path_files):
     bad_path_result = f'{path_files}/Bad_Turtle_Syntax'
     path_duplicate_treated=f'{Path(bad_path_result)}/llm_graphs_dup_treated'
     date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    log_file=Path(f'{Path(path_files)}/logs/merge_graph_{date}.log')
+    log_file=f'{Path(path_files)}/logs/merge_graph_{date}.log'
+    log_file_homonymes=f'{Path(path_files)}/logs/homonymes_graph_{date}.log'
+    log_file_check_ttl=f'{Path(path_files)}/logs/check_merged_ttl_graph_{date}.log'
 
     if os.path.exists(path_merged):
         shutil.rmtree(path_merged)
@@ -259,18 +244,51 @@ def build_merged_folder_paths_and_files(path_files):
     if os.path.exists(bad_path_result):
         shutil.rmtree(bad_path_result)
     os.makedirs(Path(bad_path_result))
-    
+
     if os.path.exists(path_duplicate_treated):
         shutil.rmtree(path_duplicate_treated)
     os.makedirs(path_duplicate_treated)
 
-    if os.path.exists(log_file.parent):
-        shutil.rmtree(log_file.parent)
-    os.makedirs(log_file.parent)
+    ### remove previous log files homonyme ###
+    for filename in os.listdir(Path(log_file).parent):
+        if filename.startswith('merge_graph_') or filename.startswith('homonymes')\
+            or filename.startswith('check'):
+            file_path = os.path.join(Path(log_file).parent, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
 
-    return(bad_path_result,log_file,path_merged,path_duplicate_treated)
+    return(bad_path_result,Path(log_file),Path(log_file_homonymes),Path(log_file_check_ttl),Path(path_merged),\
+           path_duplicate_treated)
 
-def merge_ttl_graphs(path_duplicate_treated,path_merged,duplicates_nodes,nbr_occ_max,logger_merge):
+def rename_homonyme_by_line(infile,outfile,remain_occ,occ_dup,dup_treated_list,logger,\
+                            nbr_file_treated):
+    '''check if homonyme exists in line and replace it'''
+    for line in infile:
+
+        dup_treated=False
+        logger.info('Line : %s',line.strip())
+
+        if line =='\n' or line.startswith('#') or line.startswith('@'):
+            outfile.write(line)
+        else :
+            updated_line=line
+            for dup in occ_dup:
+                if  re.search(r'\b' + re.escape(dup[0]) + r'\b', line) and (dup[1]>remain_occ):
+                    updated_line = updated_line.replace\
+                        (dup[0],f'{dup[0]}_extra_node_{nbr_file_treated}')
+                    logger.info('dup %s',dup)
+                    logger.info('remain_occ %s',remain_occ)
+                    logger.info('updated_line %s',updated_line.strip())
+                    logger.info('file : %s',infile)
+                    dup_treated_list.append(dup)
+                    dup_treated=True
+
+            if dup_treated is True :
+                outfile.write(updated_line)
+            else :
+                outfile.write(line)
+
+def rename_homonyme_in_files(path_duplicate_treated,path_merged,duplicates_nodes,nbr_occ_max,logger_merge):
     ''' rename the duplicated nodes by varying remain_occ parameter from 0 to nbr_occ_max. Then for
     each iteration merged all the new ttl files in an only one file'''
 
@@ -282,10 +300,10 @@ def merge_ttl_graphs(path_duplicate_treated,path_merged,duplicates_nodes,nbr_occ
     while remain_occ != nbr_occ_max + 1:
 
         print('Treatment in progress for remain_occ =%s',remain_occ)
+        os.makedirs(Path(f'{path_duplicate_treated}/{remain_occ}'),exist_ok=True)
 
         occ_dup=occurence_duplicate(duplicates_nodes,path_files)
         nbr_file_treated=0
-        os.makedirs(Path(f'{path_duplicate_treated}/{remain_occ}'),exist_ok=True)
 
         logger_merge.info('occ_dup_BN %s',occ_dup)
 
@@ -305,76 +323,35 @@ def merge_ttl_graphs(path_duplicate_treated,path_merged,duplicates_nodes,nbr_occ
 
                 logger_merge.info("nbr file treated %s",nbr_file_treated)
 
-                for line in infile:
-
-                    dup_treated=False
-                    logger_merge.info('Line : %s',line.strip())
-
-                    if line =='\n' or line.startswith('#') or line.startswith('@'):
-                        outfile.write(line)
-                    else :
-                        updated_line=line
-                        for dup in occ_dup:
-                            if  re.search(r'\b' + re.escape(dup[0]) + r'\b', line) \
-                                and (dup[1]>remain_occ):
-                                updated_line = updated_line.replace\
-                                (dup[0],f'{dup[0]}_extra_node_{nbr_file_treated}')
-                                    # for gpt-4.1-nano
-                                    #(dup1[0],f'{dup1[0][:-1]}_extra_node_{nbr_file_treated}>')
-                                logger_merge.info('dup %s',dup)
-                                logger_merge.info('remain_occ %s',remain_occ)
-                                logger_merge.info('updated_line %s',updated_line.strip())
-                                logger_merge.info('file : %s',infile)
-                                dup_treated_list.append(dup)
-                                dup_treated=True
-
-                        if dup_treated is True :
-                            outfile.write(updated_line)
-                        else :
-                            outfile.write(line)
-
+                ##check if homonyme exists in line and replace it
+                rename_homonyme_by_line(infile,outfile,remain_occ,occ_dup,dup_treated_list,\
+                                        logger_merge,nbr_file_treated)
 
                 #for line in infile:
-                #    dup1_treated=False
-                #    dup2_treated=False
-                #    logger_merge.info('Line : %s',line.strip())
 
-                #    for dup1 in occ_dup:
-                #
-                #        if  re.search(r'\b' + re.escape(dup1[0]) + r'\b', line) and \
-                #            (dup1[1]>remain_occ) and (dup1_treated is False):
+                    #dup_treated=False
+                    #logger_merge.info('Line : %s',line.strip())
 
-                #            updated_line = line.replace\
-                #                (dup1[0],f'{dup1[0]}_extra_node_{nbr_file_treated}')
-                #                # for gpt-4.1-nano
-                #                #(dup1[0],f'{dup1[0][:-1]}_extra_node_{nbr_file_treated}>')
-                #            logger_merge.info('dup1 %s',dup1)
-                #            logger_merge.info('remain_occ %s',remain_occ)
-                #            logger_merge.info('updated_line %s',updated_line.strip())
-                #            logger_merge.info('file : %s',infile)
-                #            dup1_treated=True
-                #            dup_treated_list.append(dup1)
+                    #if line =='\n' or line.startswith('#') or line.startswith('@'):
+                    #    outfile.write(line)
+                    #else :
+                    #    updated_line=line
+                    #    for dup in occ_dup:
+                    #        if  re.search(r'\b' + re.escape(dup[0]) + r'\b', line) \
+                    #            and (dup[1]>remain_occ):
+                    #            updated_line = updated_line.replace\
+                    #            (dup[0],f'{dup[0]}_extra_node_{nbr_file_treated}')
+                    #            logger_merge.info('dup %s',dup)
+                    #            logger_merge.info('remain_occ %s',remain_occ)
+                    #            logger_merge.info('updated_line %s',updated_line.strip())
+                    #            logger_merge.info('file : %s',infile)
+                    #            dup_treated_list.append(dup)
+                    #            dup_treated=True
 
-                #        for dup2 in occ_dup: #case when there are 2 dup to rename in the same line
-                #            if (dup1_treated is True) and (dup2_treated is False) and\
-                #                  (dup2!=dup_treated_list[-1]) and\
-                #                      (dup2[0] not in dup_treated_list[-1][0]) and\
-                #                        (re.search(r'\b' + re.escape(dup2[0]) + r'\b',\
-                #                                    updated_line)) and (dup2[1]>remain_occ) :
-
-                #                updated_line_dual = updated_line.replace\
-                #                (dup2[0],f'{dup2[0]}_extra_node_{nbr_file_treated}')
-
-                #                logger_merge.info('updated_line_dual %s',updated_line_dual.strip())
-                #                outfile.write(updated_line_dual)
-                #                dup2_treated=True
-                #                dup_treated_list.append(dup2)
-
-                #    if dup1_treated is False or line=='\n':
-                #        outfile.write(line)
-
-                #"    if dup1_treated is True and dup2_treated is False:
-                #        outfile.write(updated_line)
+                    #    if dup_treated is True :
+                    #        outfile.write(updated_line)
+                    #    else :
+                    #        outfile.write(line)
 
             # remove duplicate in dup_treated_list
             unique_tuple = {tuple(sublist) for sublist in dup_treated_list}
@@ -392,35 +369,54 @@ def merge_ttl_graphs(path_duplicate_treated,path_merged,duplicates_nodes,nbr_occ
                     logger_merge.info('occ_dup after %s',occ_dup)
 
             nbr_file_treated=nbr_file_treated+1
+            print('Number of file treated : %s',nbr_file_treated)
 
         all_new_ttl_files = [f for f in Path(f'{path_duplicate_treated}/{remain_occ}')\
             .iterdir() if f.is_file()]
 
-        # merge mofified ttl file in an only one file
-        merged_file=f'{path_merged}/merged_graph_{remain_occ}.ttl'
-        with open(merged_file, 'w', encoding='utf-8') as m_file:
-            for file in all_new_ttl_files: # Open each input file in read mode
-                with open(file, 'r', encoding='utf-8')\
-                 as ttl_file: # Read the content and write it to the output file
-                    content = ttl_file.read()
-                    m_file.write(content)
-                    m_file.write('\n')  # Adds a newline between files
+        # merge files in an only one file
+        merge_graph(all_new_ttl_files,path_merged,remain_occ)
+
+        #merged_file=f'{path_merged}/merged_graph_{remain_occ}.ttl'
+        #with open(merged_file, 'w', encoding='utf-8') as m_file:
+        #    for file in all_new_ttl_files: # Open each input file in read mode
+        #        with open(file, 'r', encoding='utf-8')\
+        #         as ttl_file: # Read the content and write it to the output file
+        #            content = ttl_file.read()
+        #            m_file.write(content)
+        #            m_file.write('\n')  # Adds a newline between files
 
         remain_occ = remain_occ + 1
+    return all_new_ttl_files
 
-def max_node_occ_value(ttl_folder,ontology,logger):
+def merge_graph(all_new_ttl_files,path_merged,remain_occ):
+    ''' placeholder function to indicate graph merging is done '''
+    merged_file=f'{path_merged}/merged_graph_{remain_occ}.ttl'
+    with open(merged_file, 'w', encoding='utf-8') as m_file:
+        for file in all_new_ttl_files: # Open each input file in read mode
+            with open(file, 'r', encoding='utf-8')\
+             as ttl_file: # Read the content and write it to the output file
+                content = ttl_file.read()
+                m_file.write(content)
+                m_file.write('\n')  # Adds a newline between files
+    print('Graphs have been merged successfully.')
+
+def max_node_occ_value(path_files,homonymes_nodes,logger_homonymes):
     '''return the node that have the max occurrence'''
 
-    duplicate_nodes=find_duplicates_nodes(ttl_folder,ontology,logger)
-
-    occ_dup=occurence_duplicate(duplicate_nodes,ttl_folder)
+    occ_dup=occurence_duplicate(homonymes_nodes,path_files)
 
     if occ_dup != []:
         print(f'List of all the nodes that appeared in several ttl files : {occ_dup} ')
+        logger_homonymes.info('List of all the nodes that appeared in several ttl files : %s'\
+                              ,occ_dup)
         m_n_o_v = max(sublist[1] for sublist in occ_dup)
         print('Max number of occurence of nodes in ttl files:', m_n_o_v)
+        logger_homonymes.info('Max number of occurence of nodes in ttl files : %s', m_n_o_v)
         node_max_occ=[sublist[0] for sublist in occ_dup if sublist[1] == m_n_o_v]
         print('Node that have the max number of occurence in ttl files :',node_max_occ)
+        logger_homonymes.info('Node that have the max number of occurence in ttl files : %s'\
+                              ,node_max_occ)
 
     else:
         print('NO DUPLICATES NODES FOUND')

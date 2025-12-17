@@ -16,8 +16,8 @@ import time
 import os
 import datetime
 from pathlib import Path
-import utils_gen.utils as utils_gen
-import utils_common.utils as utils_common
+from utils_gen import utils as utils_gen
+from utils_common import utils as utils_common
 
 ### set argument parser ###
 args = utils_common.setup_argument_parser("parser", [("nbrttl", "number of ttl file to generate")])
@@ -40,6 +40,7 @@ NBR_TTL_INT = int(args.nbrttl)
 ### remove old files in the result folder ###
 utils_common.remove_file_in_folder(PATH_RESULT)
 utils_common.remove_file_in_folder(BAD_PATH_RESULT)
+utils_common.remove_file_in_folder(Path(LOG_FILE).parent)
 
 os.system("clear")
 print('TTL FILE GENERATION IS IN PROGRESS')
@@ -59,7 +60,7 @@ while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
     utils_gen.storing_results(response,TEMP_FILE,FILE_RESULT,logger,model)
 
     ### Check Turtle syntax and log some info ###
-    utils_gen.check_ttl(FILE_RESULT,BAD_FILE_RESULT,BAD_PATH_RESULT,0,logger)
+    utils_gen.check_ttl(FILE_RESULT,BAD_FILE_RESULT,BAD_PATH_RESULT,logger)
 
     NUMBER_OF_GRAPH += 1
     print(f'\nNUMBER OF GRAPH GENERATED : {NUMBER_OF_GRAPH}\n')
