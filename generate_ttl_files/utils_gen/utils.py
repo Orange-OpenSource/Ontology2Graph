@@ -15,9 +15,7 @@ Main functionalities:
 
 import os
 import json
-import shutil
 from pathlib import Path
-import subprocess
 import datetime
 from openai import OpenAI, OpenAIError
 
@@ -95,8 +93,7 @@ def storing_results(response,temp_file,file_result,logger,model):
         temp_file (str): Path to the temporary file for initial content storage.
         file_result (str): Path to the final output file for the filtered graph.
         logger: Logger object for recording generation details.
-        model (str): The name of the LLM model used for generation.
-    """
+        model (str): The name of the LLM model used for generation."""
 
     with open(temp_file,'x',encoding='utf-8') as filetemp:
         filetemp.write(response.choices[0].message.content)
@@ -124,41 +121,6 @@ def storing_results(response,temp_file,file_result,logger,model):
             logger.info('Completion token details : %s\n',response.usage.completion_tokens_details)
 
     os.remove(temp_file)
-
-def check_ttl(file_result, bad_file_result, bad_path_result,logger):
-    """Validate the syntax of a Turtle (TTL) file, handle errors, and log results. 
-    This function runs a TTL validator on the specified file. If errors are found, it moves the 
-    file to a designated folder for bad files, logs the error, and prints a message. If no errors
-    are found, it logs and prints a success message.
-    Optionally, it prints a special message if the file is a merged graph.
-
-    Args:
-        file_result (str): Path to the TTL file to validate.
-        bad_file_result (str): Path to move the file if validation fails.
-        bad_path_result (str): Directory to store files with bad syntax.
-        merged (int): Flag indicating if the file is a merged graph (1 for merged, 0 otherwise).
-        logger: Logger object for recording validation results.
-    """
-    command=["ttl",file_result]
-    ttlvalidator = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
-    stdout, stderr = ttlvalidator.communicate()
-
-    file_name=Path(file_result).name
-
-    if stdout!='Validator finished with 0 warnings and 0 errors.\n' :
-    # move bad file in bad folder and log the results
-        print(f'\nFILE {file_name} has been generated with errors')
-        os.makedirs(f'{bad_path_result}', exist_ok=True)
-        shutil.move(file_result, bad_file_result)
-        logger.info('Error detected in %s', file_name)
-        logger.info('Result: %s', stdout)
-
-    else:
-        print(f'\nFILE {file_name} has been generated succesffully without errors')
-        logger.info('No error detected in : %s', file_name)
-        logger.info('Result : %s', stdout)
-
-    print(f'Turtle validator Result: {stdout}'.rstrip('\n'))
 
 def model_to_choose(model_nbr):
     """ Select a model name from the models.txt file based on the provided index.
@@ -214,5 +176,12 @@ def build_folder_paths_and_files(model):
     os.makedirs(f'{path_merged}',exist_ok=True)
     os.makedirs(f'{bad_path_result}', exist_ok=True)
 
+    ### remove previous log files in logs ###
+    for filename in os.listdir(Path(log_file).parent):
+        if filename.startswith('generation'):
+            file_path = os.path.join(Path(log_file).parent, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+
     return path_result, bad_path_result, ontologie_file, prompt_file, path_graph, temp_file,\
-        log_file,path_merged
+        Path(log_file),path_merged
