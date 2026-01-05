@@ -35,21 +35,25 @@ logger_check_ttl_merged = utils_common.setup_logger(log_file_check_ttl_merged,\
     'check_merged_ttl_log')
 
 ### Find homonymes nodes and max occurrence value ###
-homonymes_nodes = utils_merge.find_homonymes_nodes(path_files,logger_homonymes,ontology)
+homonymes_nodes_and_occurence = utils_merge.find_homonymes_nodes(path_files,logger_homonymes,\
+    ontology)
 
-print(type(homonymes_nodes))
+#print(homonymes_nodes_and_occurence)
 
-max_homonyme_name = max(homonymes_nodes, key=lambda x: homonymes_nodes.get(x, 0)) \
-    if homonymes_nodes else None
-max_homonyme_value = homonymes_nodes[max_homonyme_name] if max_homonyme_name else None
+MAX_HOMONYME_NAME = max(homonymes_nodes_and_occurence, key=lambda x: \
+    homonymes_nodes_and_occurence.get(x, 0)) if homonymes_nodes_and_occurence else None
+MAX_HOMONYME_VALUE = homonymes_nodes_and_occurence[MAX_HOMONYME_NAME] if MAX_HOMONYME_NAME else \
+    None
 
-print(f'Max homonyme node: {max_homonyme_name} with occurrence: {max_homonyme_value}')
+homonymes_nodes_list = list(homonymes_nodes_and_occurence.keys())
 
-nbr_homonyme_max = utils_merge.max_node_occ_value(path_files,ontology,logger_homonymes)
-
+#nbr_homonyme_max = utils_merge.max_node_occ_value(path_files,ontology,logger_homonymes)
 ### rename homonymes & merge files ###
-utils_merge.rename_and_merge(path_duplicate_treated,path_merged,homonymes_nodes,\
-    nbr_homonyme_max[0],logger_merge)
+#utils_merge.rename_and_merge(path_duplicate_treated,path_merged,homonymes_nodes,\
+#    nbr_homonyme_max[0],logger_merge)
+
+utils_merge.rename_and_merge(path_duplicate_treated,path_merged,homonymes_nodes_and_occurence,\
+    MAX_HOMONYME_VALUE,logger_merge)
 
 ### manage merged ttl files prefixes ###
 utils_merge.manage_prefix(path_merged)

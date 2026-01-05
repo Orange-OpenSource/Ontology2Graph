@@ -194,8 +194,10 @@ def find_homonymes_nodes(path,logger_homonymes,ontology):
 
 def occurence_homonyme(homonymes_nodes,path_result):
     '''compute the occurence of homonymes all over the ttl files once a node appear in a ttl file
-    occu_homonymes is increased by 1'''
+    occu_homonymes is increased by 1
     occu_homonymes=[[homonymes_nodes[i],0] for i in range(0,len(homonymes_nodes))]
+
+    print('occu%s  ',homonymes_nodes)
 
     #List all the ttl graph files in PATH except folder
     all_files = [f.name for f in Path(path_result).iterdir() if f.is_file()]
@@ -207,18 +209,15 @@ def occurence_homonyme(homonymes_nodes,path_result):
     for file in all_files:
 
         with open(file,'r',encoding='utf-8') as file:
-            content = file.read()
+            content = file.read()     
 
         for item in occu_homonymes:
             if re.search(r'\b' + re.escape(item[0]) + r'\b', content):
                 item[1]=item[1]+1
 
         file.close()
-    print('occu%s  ',occu_homonymes)
 
-    print('len occu %s',len(occu_homonymes))
-
-    return occu_homonymes
+    return occu_homonymes'''
 
 def build_merged_folder_paths_and_files(path_files):
     ''' create merged folder if not exists'''
@@ -254,7 +253,7 @@ def build_merged_folder_paths_and_files(path_files):
     return(bad_path_result,Path(log_file),Path(log_file_homonymes),Path(log_file_check_ttl),\
         Path(path_merged),path_homonyme_treated)
 
-def rename_homonyme_by_line(infile,outfile,remain_occ,occ_dup,dup_treated_list,logger,\
+def rename_homonyme_by_line(infile,outfile,remain_occ,occ_dup,dup_treated_list,logger,
                             nbr_file_treated):
     '''check if homonyme exists in line and replace it'''
     for line in infile:
@@ -266,15 +265,15 @@ def rename_homonyme_by_line(infile,outfile,remain_occ,occ_dup,dup_treated_list,l
             outfile.write(line)
         else :
             updated_line=line
-            for dup in occ_dup:
-                if  re.search(r'\b' + re.escape(dup[0]) + r'\b', line) and (dup[1]>remain_occ):
+            for key, value in occ_dup.items():
+                if  re.search(r'\b' + re.escape(key) + r'\b', line) and (value>remain_occ):
                     updated_line = updated_line.replace\
-                        (dup[0],f'{dup[0]}_extra_node_{nbr_file_treated}')
-                    logger.info('dup %s',dup)
+                        (key,f'{key}_extra_node_{nbr_file_treated}')
+                    logger.info('dup %s %s',key,value)
                     logger.info('remain_occ %s',remain_occ)
                     logger.info('updated_line %s',updated_line.strip())
                     logger.info('file : %s',infile)
-                    dup_treated_list.append(dup)
+                    dup_treated_list.append(key)
                     dup_treated=True
 
             if dup_treated is True :
@@ -282,8 +281,8 @@ def rename_homonyme_by_line(infile,outfile,remain_occ,occ_dup,dup_treated_list,l
             else :
                 outfile.write(line)
 
-def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes,nbr_homonyme_max,\
-    logger_merge):
+def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occurence,\
+    nbr_homonyme_max,logger_merge):
     ''' rename the homonymed nodes by varying remain_occ parameter from 0 to nbr_occ_max. Then for
     each iteration merged all the new ttl files in an only one file'''
 
@@ -295,10 +294,12 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes,nbr_homon
 
     while nbr_file_with_duplicates != nbr_homonyme_max + 1:
 
-        print('Treatment in progress for remain_occ =%s',nbr_file_with_duplicates)
+        print(f'\nTreatment in progress : {nbr_file_with_duplicates} files will remain with '\
+            'homonymes nodes')
         os.makedirs(Path(f'{path_homonyme_treated}/{nbr_file_with_duplicates}'),exist_ok=True)
 
-        occ_dup=occurence_homonyme(homonymes_nodes,path_files)
+        #occ_dup=occurence_homonyme(homonymes_nodes,path_files)
+        occ_dup=homonymes_nodes_and_occurence
         nbr_file_treated=0
 
         logger_merge.info('occ_dup_BN %s',occ_dup)
@@ -307,12 +308,10 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes,nbr_homon
             dup_treated_list=[]
 
             logger_merge.info('##################################################')
-            logger_merge.info('### REMAIN OCC ### = %s , nbr_occ_max = %s',\
+            logger_merge.info('### REMAIN OCC ### = %s , nbr_occ_max = %ls .s',\
                 nbr_file_with_duplicates,nbr_homonyme_max)
-            logger_merge.info('#### FILE ####: %s ', ttl_file)
-
-            print('Nbr_file_with_duplicates : %s', nbr_file_with_duplicates)
-            print('File : %s', ttl_file)
+            print(f'{ttl_file} treated')
+            logger_merge.info('#### FILE ####: %s ',  ttl_file)
 
             with open(Path(path_files)/ttl_file,'r',encoding='utf-8') as infile, \
                  open(f'{Path(path_homonyme_treated)}/{nbr_file_with_duplicates}/Treated_'\
@@ -322,7 +321,7 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes,nbr_homon
 
                 ##check if homonyme exists in line and replace it
                 rename_homonyme_by_line(infile,outfile,nbr_file_with_duplicates,occ_dup,\
-                    dup_treated_list,logger_merge,nbr_file_treated)
+                    dup_treated_list, logger_merge,nbr_file_treated)
 
                 #for line in infile:
 
@@ -351,22 +350,32 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes,nbr_homon
                     #        outfile.write(line)
 
             # remove homonyme in dup_treated_list
-            unique_tuple = {tuple(sublist) for sublist in dup_treated_list}
-            unique_dup_treated_list=[list(t) for t in unique_tuple ]
+            #print(dup_treated_list)
+            unique_set=set(dup_treated_list)
+            unique_dup_treated_list=list(unique_set)
+
+            #print(unique_dup_treated_list)
+
+            #unique_tuple = {tuple(sublist) for sublist in dup_treated_list}
+            #unique_dup_treated_list=[list(t) for t in unique_tuple ]
             logger_merge.info('unique_dup_treated_list : %s',unique_dup_treated_list)
+
 
             # decrease occurence in occ_dup
             logger_merge.info('occ_dup %s',occ_dup)
             for dup_treated in unique_dup_treated_list:
                 logger_merge.info('dup_treated %s',dup_treated)
                 if dup_treated in occ_dup:
-                    row_number=occ_dup.index(dup_treated)
-
-                    occ_dup[row_number][1]=occ_dup[row_number][1]-1
+                    #print("key :",dup_treated)
+                    #print("value of key : ",occ_dup[dup_treated])
+                    #row_number=occ_dup.index(dup_treated)
+                    #occ_dup[row_number][1]=occ_dup[row_number][1]-1
+                    occ_dup[dup_treated]=occ_dup[dup_treated]-1
+                    #print("value of key : ",occ_dup[dup_treated])
                     logger_merge.info('occ_dup after %s',occ_dup)
 
             nbr_file_treated=nbr_file_treated+1
-            print('Number of file treated : %s',nbr_file_treated)
+            #print('Number of file treated : %s',nbr_file_treated)
 
         all_new_ttl_files = [f for f in Path(f'{path_homonyme_treated}/{nbr_file_with_duplicates}')\
             .iterdir() if f.is_file()]
