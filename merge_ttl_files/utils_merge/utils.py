@@ -7,7 +7,6 @@ import shutil
 from pathlib import Path
 from collections import Counter
 import networkx as nx
-from numpy import append
 import rdflib
 from rdflib import URIRef,Namespace,BNode
 import utils_common.utils as utils_common
@@ -194,9 +193,9 @@ def find_homonymes_nodes(path,logger_homonymes,ontology):
 
 def occurence_homonyme(homonymes_nodes,path_result):
     '''compute the occurence of homonymes all over the ttl files once a node appear in a ttl file
-    occu_homonymes is increased by 1
-    occu_homonymes=[[homonymes_nodes[i],0] for i in range(0,len(homonymes_nodes))]
+    occu_homonymes is increased by 1'''
 
+    occu_homonymes=[[homonymes_nodes[i],0] for i in range(0,len(homonymes_nodes))]
     print('occu%s  ',homonymes_nodes)
 
     #List all the ttl graph files in PATH except folder
@@ -217,7 +216,7 @@ def occurence_homonyme(homonymes_nodes,path_result):
 
         file.close()
 
-    return occu_homonymes'''
+    return occu_homonymes
 
 def build_merged_folder_paths_and_files(path_files):
     ''' create merged folder if not exists'''
