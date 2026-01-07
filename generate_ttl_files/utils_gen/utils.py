@@ -18,7 +18,6 @@ import json
 from pathlib import Path
 import datetime
 from openai import OpenAI, OpenAIError
-
 #from generate_ttl_files.generate_ttl import PROMPT_TYPE
 
 def query_llm(ontology_file,prompt_file,model):

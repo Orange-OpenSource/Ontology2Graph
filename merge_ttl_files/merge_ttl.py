@@ -16,7 +16,7 @@ Arguments:
 
 from ast import arguments
 import utils_merge.utils as utils_merge
-import utils_common.utils as utils_common
+from utils_common import utils as utils_common
 
 ### Set up argument parser ###
 arguments= [("path_file", "Graphs file path"), ("ontology", "Ontology file path")]
@@ -36,10 +36,8 @@ logger_check_ttl_merged = utils_common.setup_logger(log_file_check_ttl_merged,\
 
 ### Find homonymes nodes and max occurrence value ###
 homonymes_nodes_and_occurence = utils_merge.find_homonymes_nodes(path_files,logger_homonymes,\
-    ontology)
-
+                                                                 ontology)
 #print(homonymes_nodes_and_occurence)
-
 MAX_HOMONYME_NAME = max(homonymes_nodes_and_occurence, key=lambda x: \
     homonymes_nodes_and_occurence.get(x, 0)) if homonymes_nodes_and_occurence else None
 MAX_HOMONYME_VALUE = homonymes_nodes_and_occurence[MAX_HOMONYME_NAME] if MAX_HOMONYME_NAME else \

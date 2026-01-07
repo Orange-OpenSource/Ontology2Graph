@@ -9,7 +9,7 @@ from collections import Counter
 import networkx as nx
 import rdflib
 from rdflib import URIRef,Namespace,BNode
-import utils_common.utils as utils_common
+from utils_common import utils as utils_common
 
 #def remove_pred_obj(expr, graph, predi, obje):
 #    '''remove predicate and target object of an edge'''
@@ -44,52 +44,6 @@ def retreive_datatype_properties(ontology):
         dtp=dtp.replace('noria:',"")
         dtproperties.append(dtp)
     return dtproperties
-
-def check_ttl(path_merged,bad_path_result,logger_check_ttl):
-    '''check ttl syntax and store wrong file in specific folder
-
-    nbr_file = 0
-
-    with os.scandir(path_merged) as entries:
-        for entry in entries:
-            if entry.is_file():
-                nbr_file += 1
-    print('Number of merged file to check : %s',nbr_file)
-
-    count = 0
-    bad_file = 0
-
-    merged_file_list = [f.name for f in Path(path_merged).iterdir() if f.is_file()]
-
-    while count != nbr_file:
-
-        merged_file=f'{path_merged}/{merged_file_list[count]}'
-
-        command=["ttl",merged_file]
-        ttlvalidator=subprocess.Popen(command, stdout=subprocess.PIPE,
-                                      stderr=subprocess.PIPE,text=True)
-        stdout, stderr = ttlvalidator.communicate()
-        logger_check_ttl.info('Merged graph %s : Turtle validator Result: %s,%s\n',\
-                              Path(merged_file).name,stdout,stderr)
-
-        if stdout!='Validator finished with 0 warnings and 0 errors.\n' :
-        # move bad file in bad folder and Save logs
-            bad_merged_file=f'{bad_path_result}/merged_graph_{count}_BAD.ttl'
-            logger_check_ttl.info('bad_merged_file : %s', bad_merged_file)
-
-            os.makedirs(f'{bad_path_result}', exist_ok=True)
-            shutil.move(merged_file, bad_merged_file)
-
-            logger_check_ttl.info('Error detected in %s', Path(merged_file).name)
-            logger_check_ttl.info('Result: %s', stdout)
-            bad_file = bad_file + 1
-
-        count = count + 1
-
-    if bad_file == 0:
-        print('\n No bad merged file detected')
-    else:
-        print(f'\n Number of bad merged files detected : {bad_file}')'''
 
 def manage_prefix(path_merged):
     '''remove homonyme prefix of the merged file'''
@@ -208,7 +162,7 @@ def occurence_homonyme(homonymes_nodes,path_result):
     for file in all_files:
 
         with open(file,'r',encoding='utf-8') as file:
-            content = file.read()     
+            content = file.read()
 
         for item in occu_homonymes:
             if re.search(r'\b' + re.escape(item[0]) + r'\b', content):
