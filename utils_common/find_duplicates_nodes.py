@@ -1,21 +1,20 @@
-'''find duplicates nodes in ttl files, just add the folder where the files
-are stored as an argument'''
+'''find duplicates nodes in ttl files, just pass as an argument the folder where the ttl files are 
+stored and the path file to the Ontology'''
 
 import sys
-import os
 from pathlib import Path
 from collections import Counter
 import networkx as nx
 import rdflib
-from utils import get_last_folder_part, retreive_datatype_properties
+from utils_common.utils import retreive_datatype_properties
 
 arg = sys.argv[1:]
 PATH= arg[0]
+ONTOLOGY = arg[1]
 
 #List all the ttl graph files in PATH except folder
 all_files = [f.name for f in Path(PATH).iterdir() if f.is_file()]
 
-ONTOLOGY = os.path.expanduser('~/DIGITAL_TWIN/gengraphllm/ontologies/Noria.ttl')
 DataTypeProperties=retreive_datatype_properties(ONTOLOGY)
 
 #rebuild complete file path (folder/file)
@@ -34,7 +33,7 @@ for file in all_files :
     nx_graph = nx.DiGraph()
 
     for subj, pred, obj in g:
-        last_part_pred=get_last_folder_part(pred,'/')
+        last_part_pred=Path(str(pred)).name
 
         if ('label' in last_part_pred) or ('type' in last_part_pred) or\
            ('inScheme' in last_part_pred) or ('description' in last_part_pred) or\
@@ -42,8 +41,8 @@ for file in all_files :
             pass
 
         else :
-            last_part_subj=get_last_folder_part(subj,'/')
-            last_part_obj=get_last_folder_part(obj,'/')
+            last_part_subj=Path(str(subj)).name
+            last_part_obj=Path(str(obj)).name
             nx_graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
 
     nodes=list(nx_graph.nodes)

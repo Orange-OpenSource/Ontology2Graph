@@ -45,12 +45,12 @@ def setup_logger(log_file,logger_name):
     return logger
 
 def get_last_folder_part(string, sep_char):
-    """get last part of a folder string
+    """get last part of a folder string"""
     string_parts=string.split(sep_char)
     last_part=string_parts[len(string_parts)-1]
     if last_part=='':
         last_part=string_parts[len(string_parts)-2]
-    return last_part"""
+    return last_part
 
 def retreive_datatype_properties(ontology):
     '''Extracts all datatype properties from an ontology file.
@@ -86,7 +86,7 @@ def retreive_datatype_properties(ontology):
     return dtproperties
 
 def retreive_object_properties(ontology):
-    """create a list of all the data type properties from the ontologie
+    """create a list of all the data type properties from the ontologie"""
 
     index_list=[]
     objprop=[]
@@ -111,7 +111,7 @@ def retreive_object_properties(ontology):
     for objp in objprop:
         objp=objp.replace('noria:',"")
         objproperties.append(objp)
-    return objproperties"""
+    return objproperties
 
 def check_ttl(file_path,bad_file_path,logger):
     """Checks the syntax of all TTL files in a directory using an external Turtle validator.

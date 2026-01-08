@@ -1,13 +1,14 @@
-'''extract nodes from file'''
-''' TO BE CHECK WHAT IS CONSIDERED A NODE OR NOT IN RDFLIB GRAPH'''
+'''extract nodes from files
+to be check what is considered a node or not in rdlib graph'''
 
-from os import getcwd
 import sys
+from os import getcwd
 import csv
 from pathlib import Path
 import rdflib
 import networkx as nx
-from utils_common.utils import get_last_folder_part,retreive_datatype_properties,retreive_object_properties
+from utils_common.utils import retreive_datatype_properties
+#from utils_common.utils import retreive_object_properties
 
 arg = sys.argv[1:]
 file= arg[0]
@@ -31,8 +32,8 @@ for subj, pred, obj in g:
         pass
 
     else :
-        last_part_subj=get_last_folder_part(subj,'/')
-        last_part_obj=get_last_folder_part(obj,'/')
+        last_part_subj=Path(str(subj)).name
+        last_part_obj=Path(str(obj)).name
         nx_graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
 
 nodes=list(nx_graph.nodes)
