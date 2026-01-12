@@ -3,6 +3,7 @@
 import logging
 import webbrowser
 import os
+import shutil
 from pathlib import Path
 from rdflib import URIRef, Literal, Namespace,BNode
 from pyvis.network import Network
@@ -10,24 +11,39 @@ import networkx as nx
 from networkx.classes.function import density, degree_histogram, number_of_selfloops
 from networkx import average_degree_connectivity
 import rdflib
+from utils_common import utils as utils_common
 
 def remove_pred_obj(expr, graph, predi, obje):
-    '''remove predicate and target object of an edge'''
+    '''remove predicate and target object of an edge
     edges_to_remove = [(u, v) for u, v, attr in graph.edges(data=True)
                          if attr.get(expr) == predi and v == obje]
-    return graph.remove_edges_from(edges_to_remove)
+    return graph.remove_edges_from(edges_to_remove)'''
+
+def create_new_log_html_folder(path):
+    '''create new log_html folder'''
+    if Path(path).is_file():
+        log_html_folder = Path(f'{str(Path(path).parent)}/log_html/')
+    else:
+        log_html_folder = Path(f'{str(Path(path))}/log_html/')
+
+    if log_html_folder.exists() and log_html_folder.is_dir():
+        shutil.rmtree(log_html_folder)
+
+    Path.mkdir(log_html_folder)
+
+    return log_html_folder
 
 def get_last_folder_part(string, sep_char):
-    """get last part of a folder string"""
+    """get last part of a folder string
     string_parts=string.split(sep_char)
     last_part=string_parts[len(string_parts)-1]
     if last_part=='':
         last_part=string_parts[len(string_parts)-2]
-    return last_part
+    return last_part"""
 
 def retreive_onto_object(ontology,object_type):
     '''create a list of all the object declares in the ontology
-    object_type can be DatatypeProperty, ObjectProperty or Class'''
+    object_type can be DatatypeProperty, ObjectProperty or Class
 
     index_list=[]
     objects=[]
@@ -53,17 +69,16 @@ def retreive_onto_object(ontology,object_type):
         obj=obj.replace('noria:',"")
         object_clean.append(obj)
     #print(dtproperties)
-    return object_clean
+    return object_clean'''
 
-def visu_graph(graph,file,html_folder,node_type_lists):
+def visu_graph_advanced(graph,file,html_folder,node_type_lists):
     '''display the graph with enhanced visualization settings'''
 
     trouble_ticket_nodes, change_request_nodes, application_nodes,\
         network_resource_nodes, network_interface_nodes, network_link_nodes = node_type_lists
 
     # Create network with responsive sizing
-    net = Network(height="95vh", width="100%", bgcolor="#1a1a1a", font_color="wite",
-                  directed=True)
+    net = Network(height="95vh", width="100%", bgcolor="#1a1a1a",directed=True)
     net.barnes_hut()
 
     # Convert NetworkX graph to pyvis first
@@ -796,7 +811,52 @@ def visu_graph(graph,file,html_folder,node_type_lists):
 
     webbrowser.open(html_file,autoraise=True)
 
-def prepare_graph_to_display(file, log_html_folder, ontology):
+def visu_graph_basic(graph,file,html_folder):
+    '''dysplay the graph'''
+
+    net = Network(height="1300px", width="100%", bgcolor="#222222",directed=True)
+    net.barnes_hut()
+    #net.repulsion()
+
+    net.set_options("""{
+        "physics": {
+            "solver": "barnesHut",
+            "barnesHut": {
+                "gravitationalConstant": -80000,
+                "centralGravity": 0.3,
+                "springLength": 200,
+                "springConstant": 0.04,
+                "damping": 0.09
+                }
+            },
+        "edges":{
+            "color": {
+                "color": "#ff0000",
+                "highlight": "#ff0000",
+                "hover": "#ff0000",
+                "inherit": false,
+                "opacity": 1.0
+                    }
+            }
+        }""")
+
+    #net.set_options(options)
+    net.from_nx(graph)
+    #net.show_buttons(filter_=['physics'])
+
+    #for edges in net.edges:
+    #    edges["color"]="green"
+
+    os.makedirs(html_folder,exist_ok=True)
+
+    html_file = f'{html_folder}/{Path(file).stem}.html'
+
+    net.save_graph(html_file)
+
+    #webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{html_file}',autoraise=True)
+    webbrowser.open(html_file,autoraise=True)
+
+def prepare_graph_to_display_advanced(file, log_html_folder, ontology):
     '''set the graph and remove literal and other expression from the graph in order to keep only
     the real nodes and their relation to display, log some inforations'''
 
@@ -829,35 +889,39 @@ def prepare_graph_to_display(file, log_html_folder, ontology):
     logger_file1.info('##################################################')
     logger_file1.info('%s',file)
 
-    dtp = retreive_onto_object(ontology,"DatatypeProperty")
+    dtp = utils_common.retreive_onto_object(ontology,"DatatypeProperty")
     print('Datatype Properties:',dtp)
 
     ### populate graph with nodes and relations (including literals) ###
     for subj, pred, obj in g:
 
-        short_pred=Path(pred).name
+        #subj=str(subject)
+        #obj=str(object)
+       # pred=str(predicate)
+
+        short_pred=Path(str(pred)).name
         if '#' in short_pred:
             short_pred=short_pred.split('#',1)[1]
-        short_subj=Path(subj).name
+        short_subj=Path(str(subj)).name
 
         # Retrieve nodes by their type to be used in the UI menu for filtering
         if short_pred == "type":
-            if Path(obj).name == "TroubleTicket": # Identify TroubleTicket nodes
+            if Path(str(obj)).name == "TroubleTicket": # Identify TroubleTicket nodes
                 trouble_ticket_nodes.add(str(short_subj))
 
-            if Path(obj).name == "ChangeRequest": # Identify ChangeRequest nodes
+            if Path(str(obj)).name == "ChangeRequest": # Identify ChangeRequest nodes
                 change_request_nodes.add(str(short_subj))
 
-            if Path(obj).name == "Application": # Identify Application nodes
+            if Path(str(obj)).name == "Application": # Identify Application nodes
                 application_nodes.add(str(short_subj))
 
-            if Path(obj).name == "Resource": # Identify NetworkResource nodes
+            if Path(str(obj)).name == "Resource": # Identify NetworkResource nodes
                 network_resource_nodes.add(str(short_subj))
 
-            if Path(obj).name == "NetworkInterface": # Identify NetworkInterface nodes
+            if Path(str(obj)).name == "NetworkInterface": # Identify NetworkInterface nodes
                 network_interface_nodes.add(str(short_subj))
 
-            if Path(obj).name == "NetworkLink": # Identify NetworkLink nodes
+            if Path(str(obj)).name == "NetworkLink": # Identify NetworkLink nodes
                 network_link_nodes.add(str(short_subj))
 
         # Entity-to-entity relationships
@@ -905,8 +969,8 @@ def prepare_graph_to_display(file, log_html_folder, ontology):
         ):
             logger_file1.info('Blank Node Subject :%s', subj)
             for subjbn, predbn in g.subject_predicates(subj):
-                short_subjbn = Path(subjbn).name
-                short_predbn = Path(predbn).name
+                short_subjbn = Path(str(subjbn)).name
+                short_predbn = Path(str(predbn)).name
                 if isinstance(obj, URIRef):
                     short_obj = Path(obj).name
                     digraph.add_edge(
@@ -959,10 +1023,88 @@ def prepare_graph_to_display(file, log_html_folder, ontology):
                             list(network_interface_nodes), list(network_link_nodes)]
     return digraph, node_type_lists
 
-def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD
-    '''remove literal and other expression from the graph in order to keep only the nodes'''
+def prepare_graph_to_display_basic(file,log_html_folder,ontology):
+    '''set the graph and remove literal and other expression from the graph in order to keep only
+    the real nodes and their relation to display, log some inforations'''
 
-    datatypeproperties=retreive_onto_object(ontology,"DatatypeProperty")
+    rdf = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+    rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
+    skos = Namespace("http://www.w3.org/2004/02/skos/core#")
+
+    ### set logger ###
+    log_file=f'{Path(log_html_folder)}/URI_and_LITERAL.log'
+    log_file_sorted=f'{Path(log_html_folder)}/URI_and_LITERAL_sorted.log'
+
+    logger_file1 = logging.getLogger('URI_and_LITERAL')
+    handler_file1 = logging.FileHandler(log_file)
+    logger_file1.setLevel(logging.INFO)
+    logger_file1.addHandler(handler_file1)
+
+    ### set the graph based on the turtle file and log some infos ###
+    digraph = nx.DiGraph()
+    g = rdflib.Graph()
+    g.parse(f'{file}', format='turtle')
+
+    logger_file1.info('##################################################')
+    logger_file1.info('%s',file)
+
+    ### populate graph with nodes and relations only ###
+    for subj, pred, obj in g:
+
+        short_pred=Path(str(pred)).name
+        short_subj=Path(str(subj)).name
+        short_obj=Path(str(obj)).name
+        dtp = utils_common.retreive_datatype_properties(ontology)
+
+        if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) and\
+            (pred != skos.inScheme) and (pred != rdfs.isDefinedBy) and\
+                (short_pred not in dtp)):
+            digraph.add_edge(str(short_subj), str(short_obj), label=str(short_pred),color='white')
+            logger_file1.info('URIRef Subject : %s',subj)
+
+        if isinstance(obj, Literal):
+            logger_file1.info('Literal Object : %s',obj)
+
+        if isinstance(subj, BNode) and (pred != rdf.type) and (pred != skos.inScheme):
+            logger_file1.info('Blank Node Subject :%s',subj)
+            for subjbn, predbn in g.subject_predicates(subj):
+                short_subjbn=Path(str(subjbn)).name
+                short_predbn=Path(str(predbn)).name
+                digraph.add_edge(short_subjbn,short_obj,label=short_predbn,\
+                    color='white')
+                logger_file1.info('Blank Node Subject :%s,Predicate :%s,Object : %s',short_subjbn,\
+                    short_predbn,short_obj)
+
+    ### log nodes and Literals ###
+    logger_file1.info('##################################################')
+    logger_file1.info('%s',file)
+    for s, p, o in g:
+        if isinstance(s, URIRef):
+            logger_file1.info('URIRef Subject : %s',s)
+        if isinstance(o, Literal):
+            logger_file1.info('Literal Object : %s',o)
+        if isinstance(s,BNode):
+            logger_file1.info('BNode Subject : %s',s)
+    logger_file1.info('##################################################')
+
+    ## sort and remove duplicate lines ##
+    with open(log_file, 'r',encoding='utf-8') as log:
+        unique_lines = set(log.readlines())
+        log.close()
+
+    sorted_lines=sorted(unique_lines)  # sort in alphabetical order
+    os.remove(log_file)
+
+    with open(log_file_sorted, 'a',encoding='utf-8') as log_sorted:
+        log_sorted.writelines(sorted_lines)
+        log_sorted.close()
+
+    return digraph
+
+def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD
+    '''remove literal and other expression from the graph in order to keep only the nodes
+
+    datatypeproperties=utils_common.retreive_onto_object(ontology,"DatatypeProperty")
 
     for subj, pred, obj in g:
         last_part_pred=get_last_folder_part(pred,'/')
@@ -975,14 +1117,14 @@ def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD
             last_part_subj=get_last_folder_part(subj,'/')
             last_part_obj=get_last_folder_part(obj,'/')
             graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
-            digraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
+            digraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))'''
 
-def log_kpis(file_name,digraph,cumul_nodes,cumul_density,node_type_lists):
+def log_kpis_advanced(file_name,digraph,cumul_nodes,cumul_density,node_type_lists):
     '''compute and logs KPIS'''
     trouble_ticket_nodes, change_request_nodes, application_nodes,\
           network_resource_nodes, network_interface_nodes, network_link_nodes = node_type_lists
 
-    logger = logging.getLogger('Graph_KPI')
+    logger = logging.getLogger('graph_kpi')
 
     logger.info('##################################################')
     logger.info('Knowledge Graph : %s',file_name)
@@ -1008,6 +1150,33 @@ def log_kpis(file_name,digraph,cumul_nodes,cumul_density,node_type_lists):
     logger.info('network resource nodes :%s',network_resource_nodes)
     logger.info('network interface nodes :%s',network_interface_nodes)
     logger.info('network link nodes :%s',network_link_nodes)
+    logger.info('##################################################\n')
+
+    return cumul_nodes, cumul_density
+
+def log_kpis_basic(file_name,digraph,cumul_nodes,cumul_density):
+    '''compute and logs KPIS'''
+
+    logger = logging.getLogger('Graph_KPI')
+
+    logger.info('##################################################')
+    logger.info('Knowledge Graph : %s',file_name)
+    logger.info('Number of Nodes : %s',digraph.number_of_nodes())
+    logger.info('Number of edges : %s',digraph.number_of_edges())
+    cumul_nodes = cumul_nodes + digraph.number_of_nodes()
+    logger.info('cumulative number of nodes : %s',cumul_nodes )
+    logger.info('degree_histogram : %s', degree_histogram(digraph))
+    logger.info('number of self loop : %s', number_of_selfloops(digraph))
+    logger.info('####  KPIs ####')
+    logger.info('DiGraph density : %s',density(digraph))
+    cumul_density = cumul_density + density(digraph)
+    logger.info('cumulative density : %s',cumul_density)
+    logger.info('Average degree connectivity : %s', average_degree_connectivity(digraph))
+    logger.info('#### Subject, Object, predicate ####')
+    for s, p, data in digraph.edges(data=True):
+        logger.info('%s,%s,%s',s,p,data)
+    logger.info('#### NODES #### :%s',len(digraph.nodes))
+    logger.info('%s',digraph.nodes)
     logger.info('##################################################\n')
 
     return cumul_nodes, cumul_density

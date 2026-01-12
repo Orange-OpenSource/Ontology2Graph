@@ -12,15 +12,19 @@ import subprocess
 import shutil
 from pathlib import Path
 
-def setup_argument_parser(parser, arguments):
+def setup_argument_parser(arguments):
     """ Sets up an argument parser with the given description and arguments.
     Args:
         parser (argparse.ArgumentParser): The argument parser to set up.
         arguments (list of tuples): Each tuple contains (name, help) for an argument.
     """
     parser = argparse.ArgumentParser()
+
     for name, help_text in arguments:
-        parser.add_argument(name, help=help_text)
+        if name=="mode": # special case for mode argument in display_graphs.py
+            parser.add_argument(name, help=help_text, choices=['basic','advanced'])
+        else:
+            parser.add_argument(name, help=help_text)
 
     args = parser.parse_args()
     return args
@@ -58,7 +62,7 @@ def retreive_datatype_properties(ontology):
         ontology (str): Path to the ontology file (TTL format) to be processed.
     Returns:
         list: A list of datatype property names (as strings) found in the ontology, \
-            with the 'noria:' prefix removed.'''
+            with the 'noria:' prefix removed.
 
     index_list=[]
     dtprop=[]
@@ -83,7 +87,37 @@ def retreive_datatype_properties(ontology):
     for dtp in dtprop:
         dtp=dtp.replace('noria:',"")
         dtproperties.append(dtp)
-    return dtproperties
+    return dtproperties'''
+
+def retreive_onto_object(ontology,object_type):
+    '''create a list of all the object declares in the ontology
+    object_type can be DatatypeProperty, ObjectProperty or Class'''
+
+    index_list=[]
+    objects=[]
+    object_clean=[]
+
+    #build index list of Object
+    with open(f'{ontology}', 'r',encoding='utf-8') as file:
+        for index, line in enumerate(file, start=1):
+            if f":{object_type} " in line :
+                index_list.append(index-1)
+    file.close()
+
+    #retrieve Object based on index list
+    with open(f'{ontology}', 'r',encoding='utf-8') as file:
+        for index, line in enumerate(file, start=1):
+            if index in index_list:
+                objects.append(line.strip())
+                #print(line.strip())
+    file.close()
+
+    #clean Object
+    for obj in objects:
+        obj=obj.replace('noria:',"")
+        object_clean.append(obj)
+    #print(dtproperties)
+    return object_clean
 
 def retreive_object_properties(ontology):
     """create a list of all the data type properties from the ontologie"""

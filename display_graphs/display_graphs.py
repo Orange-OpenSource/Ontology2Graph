@@ -2,59 +2,57 @@
 You must pass as an argument the absolute path where are stored the ttl files or the PATH + the
 file name for a single one file'''
 
-import os
-import sys
-import shutil
-import logging
 from pathlib import Path
-from utils.utils_display import visu_graph, prepare_graph_to_display, log_kpis
+from utils import utils_display as utils
+from utils_common import utils as utils_common
 
-arg = sys.argv[1:]
-PATH= arg[0]
-ONTOLOGY = os.path.expanduser('../generate_ttl_files/ontologies/Noria.ttl')
+### set argument parser ###
+args = utils_common.setup_argument_parser([("path", "path where files are stored")\
+                                ,("ontology", "ontology file path"),("mode", "display mode")])
+
+### initialize cumulative variables ###
 CUMUL_NODES=0
 CUMUL_DENSITY=0
 
 ### create new log_html_folder and clean old logs ###
-if Path(PATH).is_file():
-    log_html_folder = Path(f'{str(Path(PATH).parent)}/log_html/')
-else:
-    log_html_folder = Path(f'{str(Path(PATH))}/log_html/')
-
-if log_html_folder.exists() and log_html_folder.is_dir():
-    shutil.rmtree(log_html_folder)
-
-Path.mkdir(log_html_folder)
-
-log_file=Path(f'{log_html_folder}/Graph_KPIs.log')
+log_html_folder=utils.create_new_log_html_folder(args.path)
+log_file=Path(f'{log_html_folder}/graph_kpi.log')
 
 ### set logger ###
-logger = logging.getLogger('Graph_KPI')
-handler = logging.FileHandler(log_file)
-logger.setLevel(logging.INFO)
-logger.addHandler(handler)
+logger_merge = utils_common.setup_logger(log_file,'graph_kpi')
 
-if Path(PATH).is_file():
+### display graphs and compute kpis ###
+if Path(args.path).is_file():
 
     print('this is a single file')
-    file_name=Path(PATH).name
-    absolute_file_name=Path(f'{Path(PATH).parent.resolve()}/{file_name}')
-    Digraph, node_type_lists = prepare_graph_to_display(PATH,log_html_folder,ONTOLOGY)
-    log_kpis(file_name, Digraph, CUMUL_NODES, CUMUL_DENSITY, node_type_lists)
-    visu_graph(Digraph, absolute_file_name, log_html_folder, node_type_lists)
+    file_name=Path(args.path).name
+    absolute_file_name=Path(f'{Path(args.path).parent.resolve()}/{file_name}')
 
-    sys.exit()
+    if args.mode=='basic':
+        Digraph = utils.prepare_graph_to_display_basic(args.path,log_html_folder,args.ontology)
+        utils.visu_graph_basic(Digraph, absolute_file_name, log_html_folder)
+        utils.log_kpis_basic(file_name, Digraph, CUMUL_NODES, CUMUL_DENSITY)
+    elif args.mode=='advanced':
+        Digraph, node_type_lists = utils.prepare_graph_to_display_advanced(args.path,\
+                                                                log_html_folder,args.ontology)
+        utils.visu_graph_advanced(Digraph,absolute_file_name,log_html_folder,node_type_lists)
+        utils.log_kpis_advanced(file_name,Digraph,CUMUL_NODES,CUMUL_DENSITY,node_type_lists)
 
 else :
+    print(args.path)
 
-    all_files = [str(f.resolve()) for f in Path(PATH).iterdir() if f.is_file()]
-    print(all_files)
+    all_files = [str(f.resolve()) for f in Path(args.path).iterdir() if f.is_file()]
 
     for file in all_files :
 
-        Digraph, node_type_lists = prepare_graph_to_display(file, log_html_folder, ONTOLOGY)
-        CUMUL_NODES, CUMUL_DENSITY = log_kpis(file, Digraph, CUMUL_NODES, CUMUL_DENSITY,\
-                                               node_type_lists)
-        visu_graph(Digraph, file, log_html_folder, node_type_lists)
+        if args.mode=='basic':
+            Digraph = utils.prepare_graph_to_display_basic(file,log_html_folder,args.ontology)
+            utils.visu_graph_basic(Digraph, file, log_html_folder)
+            CUMUL_NODES,CUMUL_DENSITY=utils.log_kpis_basic(file,Digraph,CUMUL_NODES,CUMUL_DENSITY)
+        elif args.mode=='advanced':
+            Digraph, node_type_lists = utils.prepare_graph_to_display_advanced(file,\
+                                                                log_html_folder,args.ontology)
+            utils.visu_graph_advanced(Digraph, file, log_html_folder,node_type_lists)
+            CUMUL_NODES,CUMUL_DENSITY = utils.log_kpis_advanced(file,Digraph,CUMUL_NODES,\
+                                                                CUMUL_DENSITY,node_type_lists)
 
-    sys.exit()
