@@ -29,13 +29,6 @@ def setup_argument_parser(arguments):
     args = parser.parse_args()
     return args
 
-def remove_file_in_folder(folder_path):
-    '''remove all files in a folder'''
-    if Path(folder_path).is_dir() and Path(folder_path).exists():
-        for files in Path(folder_path).iterdir():
-            if files.is_file():
-                files.unlink()
-
 def setup_logger(log_file,logger_name):
     '''setup logger configuration'''
     logger = logging.getLogger(logger_name)
@@ -47,47 +40,6 @@ def setup_logger(log_file,logger_name):
         handler.setFormatter(formatter)
         logger.addHandler(handler)
     return logger
-
-def get_last_folder_part(string, sep_char):
-    """get last part of a folder string"""
-    string_parts=string.split(sep_char)
-    last_part=string_parts[len(string_parts)-1]
-    if last_part=='':
-        last_part=string_parts[len(string_parts)-2]
-    return last_part
-
-def retreive_datatype_properties(ontology):
-    '''Extracts all datatype properties from an ontology file.
-    Args:
-        ontology (str): Path to the ontology file (TTL format) to be processed.
-    Returns:
-        list: A list of datatype property names (as strings) found in the ontology, \
-            with the 'noria:' prefix removed.
-
-    index_list=[]
-    dtprop=[]
-    dtproperties=[]
-
-    #build index list of DatatypeProperty
-    with open(f'{ontology}', 'r',encoding='utf-8') as file:
-        for index, line in enumerate(file, start=1):
-            if 'DatatypeProperty' in line :
-                index_list.append(index-1)
-    file.close()
-
-    #retreive DatatypeProperties based on index list
-    with open(f'{ontology}', 'r',encoding='utf-8') as file:
-        for index, line in enumerate(file, start=1):
-            if index in index_list:
-                dtprop.append(line.strip())
-                #print(line.strip())
-    file.close()
-
-    #clean DatatypeProperties
-    for dtp in dtprop:
-        dtp=dtp.replace('noria:',"")
-        dtproperties.append(dtp)
-    return dtproperties'''
 
 def retreive_onto_object(ontology,object_type):
     '''create a list of all the object declares in the ontology
@@ -118,34 +70,6 @@ def retreive_onto_object(ontology,object_type):
         object_clean.append(obj)
     #print(dtproperties)
     return object_clean
-
-def retreive_object_properties(ontology):
-    """create a list of all the data type properties from the ontologie"""
-
-    index_list=[]
-    objprop=[]
-    objproperties=[]
-
-    #build index list of ObjectProperty
-    with open(f'{ontology}', 'r',encoding='utf-8') as file:
-        for index, line in enumerate(file, start=1):
-            if 'ObjectProperty' in line :
-                index_list.append(index-1)
-    file.close()
-
-    #retreive ObjectProperties based on index list
-    with open(f'{ontology}', 'r',encoding='utf-8') as file:
-        for index, line in enumerate(file, start=1):
-            if index in index_list:
-                objprop.append(line.strip())
-                #print(line.strip())
-    file.close()
-
-    #clean ObjectProperties
-    for objp in objprop:
-        objp=objp.replace('noria:',"")
-        objproperties.append(objp)
-    return objproperties
 
 def check_ttl(file_path,bad_file_path,logger):
     """Checks the syntax of all TTL files in a directory using an external Turtle validator.
@@ -202,3 +126,74 @@ def check_ttl(file_path,bad_file_path,logger):
 
     if bad_file_number != 0:
         print(f'Number of bad files detected : {bad_file_number}')
+
+#### old code below for reference ####
+
+def get_last_folder_part(string, sep_char):
+    """get last part of a folder string
+    string_parts=string.split(sep_char)
+    last_part=string_parts[len(string_parts)-1]
+    if last_part=='':
+        last_part=string_parts[len(string_parts)-2]
+    return last_part"""
+
+def retreive_datatype_properties(ontology):
+    '''Extracts all datatype properties from an ontology file.
+    Args:
+        ontology (str): Path to the ontology file (TTL format) to be processed.
+    Returns:
+        list: A list of datatype property names (as strings) found in the ontology, \
+            with the 'noria:' prefix removed.
+
+    index_list=[]
+    dtprop=[]
+    dtproperties=[]
+
+    #build index list of DatatypeProperty
+    with open(f'{ontology}', 'r',encoding='utf-8') as file:
+        for index, line in enumerate(file, start=1):
+            if 'DatatypeProperty' in line :
+                index_list.append(index-1)
+    file.close()
+
+    #retreive DatatypeProperties based on index list
+    with open(f'{ontology}', 'r',encoding='utf-8') as file:
+        for index, line in enumerate(file, start=1):
+            if index in index_list:
+                dtprop.append(line.strip())
+                #print(line.strip())
+    file.close()
+
+    #clean DatatypeProperties
+    for dtp in dtprop:
+        dtp=dtp.replace('noria:',"")
+        dtproperties.append(dtp)
+    return dtproperties'''
+
+def retreive_object_properties(ontology):
+    """create a list of all the data type properties from the ontologie
+
+    index_list=[]
+    objprop=[]
+    objproperties=[]
+
+    #build index list of ObjectProperty
+    with open(f'{ontology}', 'r',encoding='utf-8') as file:
+        for index, line in enumerate(file, start=1):
+            if 'ObjectProperty' in line :
+                index_list.append(index-1)
+    file.close()
+
+    #retreive ObjectProperties based on index list
+    with open(f'{ontology}', 'r',encoding='utf-8') as file:
+        for index, line in enumerate(file, start=1):
+            if index in index_list:
+                objprop.append(line.strip())
+                #print(line.strip())
+    file.close()
+
+    #clean ObjectProperties
+    for objp in objprop:
+        objp=objp.replace('noria:',"")
+        objproperties.append(objp)
+    return objproperties"""

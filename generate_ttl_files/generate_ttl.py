@@ -19,7 +19,7 @@ from utils_gen import utils as utils_gen
 from utils_common import utils as utils_common
 
 ### set argument parser ###
-args = utils_common.setup_argument_parser("parser", [("nbrttl", "number of ttl file to generate")])
+args = utils_common.setup_argument_parser(("nbrttl", "number of ttl file to generate"))
 
 ### Choose the model to use ####
 model = utils_gen.model_to_choose(model_nbr=7)
@@ -38,8 +38,8 @@ ONTO_NAME=Path(ONTOLOGY_FILE).stem
 NBR_TTL_INT = int(args.nbrttl)
 
 ### remove old files in the result folder ###
-utils_common.remove_file_in_folder(PATH_RESULT)
-utils_common.remove_file_in_folder(BAD_PATH_RESULT)
+utils_gen.remove_file_in_folder(PATH_RESULT)
+utils_gen.remove_file_in_folder(BAD_PATH_RESULT)
 
 os.system("clear")
 print('TTL FILE GENERATION IS IN PROGRESS')
@@ -70,7 +70,7 @@ while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
 utils_common.check_ttl(PATH_RESULT,BAD_PATH_RESULT,logger_gen)
 
 ### remove old files in the merge folder ###
-utils_common.remove_file_in_folder(PATH_MERGED)
+utils_gen.remove_file_in_folder(PATH_MERGED)
 
 print(f'\nTTL FILES ARE STORED IN : {PATH_RESULT}\n')
 print(f'LOGS FILES ARE STORED IN : {LOG_FILE}\n')

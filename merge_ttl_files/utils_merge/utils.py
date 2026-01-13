@@ -11,39 +11,6 @@ import rdflib
 from rdflib import URIRef,Namespace,BNode
 from utils_common import utils as utils_common
 
-#def remove_pred_obj(expr, graph, predi, obje):
-#    '''remove predicate and target object of an edge'''
-#    edges_to_remove = [(u, v) for u, v, attr in graph.edges(data=True)
-#                         if attr.get(expr) == predi and v == obje]#
-#    return graph.remove_edges_from(edges_to_remove)
-
-def retreive_datatype_properties(ontology):
-    '''create a list of all the data type properties from the ontologie
-
-    index_list=[]
-    dtprop=[]
-    dtproperties=[]
-
-    #build index list of DatatypeProperty
-    with open(f'{ontology}', 'r',encoding='utf-8') as file:
-        for index, line in enumerate(file, start=1):
-            if 'DatatypeProperty' in line :
-                index_list.append(index-1)
-    file.close()
-
-    #retreive DatatypeProperties based on index list
-    with open(f'{ontology}', 'r',encoding='utf-8') as file:
-        for index, line in enumerate(file, start=1):
-            if index in index_list:
-                dtprop.append(line.strip())
-                #print(line.strip())
-    file.close()
-
-    #clean DatatypeProperties
-    for dtp in dtprop:
-        dtp=dtp.replace('noria:',"")
-        dtproperties.append(dtp)
-    return dtproperties'''
 
 def manage_prefix(path_merged):
     '''remove homonyme prefix of the merged file'''
@@ -305,7 +272,7 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
         homo_max = homo_max + 1
     return all_new_ttl_files
 
-################ Functions used internally in utils.py ###########################################
+### Functions used internally in utils.py ###
 
 def rename_homonyme_by_line(infile,outfile,homo_max,occ_dup,dup_treated_list,logger,
                             nbr_file_treated):
@@ -335,6 +302,51 @@ def rename_homonyme_by_line(infile,outfile,homo_max,occ_dup,dup_treated_list,log
             else :
                 outfile.write(line)
 
+def merge_graph(all_new_ttl_files,path_merged,homo_max):
+    ''' placeholder function to indicate graph merging is done '''
+    merged_file=f'{path_merged}/merged_graph_{homo_max}.ttl'
+    with open(merged_file, 'w', encoding='utf-8') as m_file:
+        for file in all_new_ttl_files: # Open each input file in read mode
+            with open(file, 'r', encoding='utf-8')\
+             as ttl_file: # Read the content and write it to the output file
+                content = ttl_file.read()
+                m_file.write(content)
+                m_file.write('\n')  # Adds a newline between files
+    print('Graphs have been merged successfully.')
+
+### old code below for reference ###
+
+def remove_pred_obj(expr, graph, predi, obje):
+    '''remove predicate and target object of an edge
+    edges_to_remove = [(u, v) for u, v, attr in graph.edges(data=True)
+                         if attr.get(expr) == predi and v == obje]#
+    return graph.remove_edges_from(edges_to_remove)'''
+
+def max_node_occ_value(path_files,homonymes_nodes,logger_homonymes):
+    '''return the node that have the max occurrence
+
+    occ_dup=occurence_homonyme(homonymes_nodes,path_files)
+    print('occ_dup:', occ_dup)
+
+    if occ_dup != []:
+        print(f'List of all the nodes that appeared in several ttl files : {occ_dup} ')
+        logger_homonymes.info('List of all the nodes that appeared in several ttl files : %s'\
+                              ,occ_dup)
+        m_n_o_v = max(sublist[1] for sublist in occ_dup)
+        print('Max number of occurence of nodes in ttl files:', m_n_o_v)
+        logger_homonymes.info('Max number of occurence of nodes in ttl files : %s', m_n_o_v)
+        node_max_occ=[sublist[0] for sublist in occ_dup if sublist[1] == m_n_o_v]
+        print('Node that have the max number of occurence in ttl files :',node_max_occ)
+        logger_homonymes.info('Node that have the max number of occurence in ttl files : %s'\
+                              ,node_max_occ)
+
+    else:
+        print('No homonymes nodes found')
+        node_max_occ='NULL'
+        m_n_o_v = 0
+
+    return m_n_o_v, node_max_occ'''
+
 def occurence_homonyme(homonymes_nodes,path_result):
     '''compute the occurence of homonymes all over the ttl files once a node appear in a ttl file
     occu_homonymes is increased by 1
@@ -362,39 +374,30 @@ def occurence_homonyme(homonymes_nodes,path_result):
 
     return occu_homonymes'''
 
-def merge_graph(all_new_ttl_files,path_merged,homo_max):
-    ''' placeholder function to indicate graph merging is done '''
-    merged_file=f'{path_merged}/merged_graph_{homo_max}.ttl'
-    with open(merged_file, 'w', encoding='utf-8') as m_file:
-        for file in all_new_ttl_files: # Open each input file in read mode
-            with open(file, 'r', encoding='utf-8')\
-             as ttl_file: # Read the content and write it to the output file
-                content = ttl_file.read()
-                m_file.write(content)
-                m_file.write('\n')  # Adds a newline between files
-    print('Graphs have been merged successfully.')
+def retreive_datatype_properties(ontology):
+    '''create a list of all the data type properties from the ontologie
 
-def max_node_occ_value(path_files,homonymes_nodes,logger_homonymes):
-    '''return the node that have the max occurrence
+    index_list=[]
+    dtprop=[]
+    dtproperties=[]
 
-    occ_dup=occurence_homonyme(homonymes_nodes,path_files)
-    print('occ_dup:', occ_dup)
+    #build index list of DatatypeProperty
+    with open(f'{ontology}', 'r',encoding='utf-8') as file:
+        for index, line in enumerate(file, start=1):
+            if 'DatatypeProperty' in line :
+                index_list.append(index-1)
+    file.close()
 
-    if occ_dup != []:
-        print(f'List of all the nodes that appeared in several ttl files : {occ_dup} ')
-        logger_homonymes.info('List of all the nodes that appeared in several ttl files : %s'\
-                              ,occ_dup)
-        m_n_o_v = max(sublist[1] for sublist in occ_dup)
-        print('Max number of occurence of nodes in ttl files:', m_n_o_v)
-        logger_homonymes.info('Max number of occurence of nodes in ttl files : %s', m_n_o_v)
-        node_max_occ=[sublist[0] for sublist in occ_dup if sublist[1] == m_n_o_v]
-        print('Node that have the max number of occurence in ttl files :',node_max_occ)
-        logger_homonymes.info('Node that have the max number of occurence in ttl files : %s'\
-                              ,node_max_occ)
+    #retreive DatatypeProperties based on index list
+    with open(f'{ontology}', 'r',encoding='utf-8') as file:
+        for index, line in enumerate(file, start=1):
+            if index in index_list:
+                dtprop.append(line.strip())
+                #print(line.strip())
+    file.close()
 
-    else:
-        print('No homonymes nodes found')
-        node_max_occ='NULL'
-        m_n_o_v = 0
-
-    return m_n_o_v, node_max_occ'''
+    #clean DatatypeProperties
+    for dtp in dtprop:
+        dtp=dtp.replace('noria:',"")
+        dtproperties.append(dtp)
+    return dtproperties'''

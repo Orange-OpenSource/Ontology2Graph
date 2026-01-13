@@ -18,7 +18,6 @@ import json
 from pathlib import Path
 import datetime
 from openai import OpenAI, OpenAIError
-#from generate_ttl_files.generate_ttl import PROMPT_TYPE
 
 def query_llm(ontology_file,prompt_file,model):
     """This function sends a prompt and an ontology schema to the LLM (via OpenAI-compatible API)
@@ -184,3 +183,10 @@ def build_folder_paths_and_files(model):
 
     return path_result, bad_path_result, ontologie_file, prompt_file, path_graph, temp_file,\
         Path(log_file),path_merged
+
+def remove_file_in_folder(folder_path):
+    '''remove all files in a folder'''
+    if Path(folder_path).is_dir() and Path(folder_path).exists():
+        for files in Path(folder_path).iterdir():
+            if files.is_file():
+                files.unlink()

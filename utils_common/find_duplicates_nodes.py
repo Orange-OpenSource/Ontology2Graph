@@ -6,7 +6,7 @@ from pathlib import Path
 from collections import Counter
 import networkx as nx
 import rdflib
-from utils_common.utils import retreive_datatype_properties
+from utils_common.utils import retreive_onto_object
 
 arg = sys.argv[1:]
 PATH= arg[0]
@@ -15,7 +15,7 @@ ONTOLOGY = arg[1]
 #List all the ttl graph files in PATH except folder
 all_files = [f.name for f in Path(PATH).iterdir() if f.is_file()]
 
-DataTypeProperties=retreive_datatype_properties(ONTOLOGY)
+DataTypeProperties=retreive_onto_object(ONTOLOGY,'DatatypeProperty')
 
 #rebuild complete file path (folder/file)
 for i, file in enumerate(all_files):
@@ -25,6 +25,7 @@ j=0
 all_nodes=[]
 nodes=[]
 
+### populate graphqs from all ttl files ###
 for file in all_files :
 
     g = rdflib.Graph()
@@ -51,11 +52,8 @@ for file in all_files :
 #transform list of list into a simple list
 all_nodes_list = [item for sublist in all_nodes for item in sublist]
 
-print(all_nodes_list,'\n')
-
 counts=Counter(all_nodes_list)
 duplicates=[item for item, count in counts.items() if count > 1]
 print(f'DUPLICATES {duplicates},\n')
 
 all_nodes_list_unique = list(set(all_nodes_list))
-print(f'NODES OF FINAL GRAPH {all_nodes_list_unique},\n')

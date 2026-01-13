@@ -13,12 +13,6 @@ from networkx import average_degree_connectivity
 import rdflib
 from utils_common import utils as utils_common
 
-def remove_pred_obj(expr, graph, predi, obje):
-    '''remove predicate and target object of an edge
-    edges_to_remove = [(u, v) for u, v, attr in graph.edges(data=True)
-                         if attr.get(expr) == predi and v == obje]
-    return graph.remove_edges_from(edges_to_remove)'''
-
 def create_new_log_html_folder(path):
     '''create new log_html folder'''
     if Path(path).is_file():
@@ -32,44 +26,6 @@ def create_new_log_html_folder(path):
     Path.mkdir(log_html_folder)
 
     return log_html_folder
-
-def get_last_folder_part(string, sep_char):
-    """get last part of a folder string
-    string_parts=string.split(sep_char)
-    last_part=string_parts[len(string_parts)-1]
-    if last_part=='':
-        last_part=string_parts[len(string_parts)-2]
-    return last_part"""
-
-def retreive_onto_object(ontology,object_type):
-    '''create a list of all the object declares in the ontology
-    object_type can be DatatypeProperty, ObjectProperty or Class
-
-    index_list=[]
-    objects=[]
-    object_clean=[]
-
-    #build index list of Object
-    with open(f'{ontology}', 'r',encoding='utf-8') as file:
-        for index, line in enumerate(file, start=1):
-            if f":{object_type} " in line :
-                index_list.append(index-1)
-    file.close()
-
-    #retrieve Object based on index list
-    with open(f'{ontology}', 'r',encoding='utf-8') as file:
-        for index, line in enumerate(file, start=1):
-            if index in index_list:
-                objects.append(line.strip())
-                #print(line.strip())
-    file.close()
-
-    #clean Object
-    for obj in objects:
-        obj=obj.replace('noria:',"")
-        object_clean.append(obj)
-    #print(dtproperties)
-    return object_clean'''
 
 def visu_graph_advanced(graph,file,html_folder,node_type_lists):
     '''display the graph with enhanced visualization settings'''
@@ -1054,7 +1010,8 @@ def prepare_graph_to_display_basic(file,log_html_folder,ontology):
         short_pred=Path(str(pred)).name
         short_subj=Path(str(subj)).name
         short_obj=Path(str(obj)).name
-        dtp = utils_common.retreive_datatype_properties(ontology)
+        #dtp = utils_common.retreive_datatype_properties(ontology)
+        dtp = utils_common.retreive_onto_object(ontology,"DatatypeProperty")
 
         if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) and\
             (pred != skos.inScheme) and (pred != rdfs.isDefinedBy) and\
@@ -1100,24 +1057,6 @@ def prepare_graph_to_display_basic(file,log_html_folder,ontology):
         log_sorted.close()
 
     return digraph
-
-def remove_literal_from_nodes_old(g,graph,digraph,ontology): ##OLD
-    '''remove literal and other expression from the graph in order to keep only the nodes
-
-    datatypeproperties=utils_common.retreive_onto_object(ontology,"DatatypeProperty")
-
-    for subj, pred, obj in g:
-        last_part_pred=get_last_folder_part(pred,'/')
-
-        if (('label' in last_part_pred) or ('type' in last_part_pred) or
-           ('inScheme' in last_part_pred) or ('description' in last_part_pred) or
-           ('comment' in last_part_pred) or last_part_pred in datatypeproperties):
-            pass
-        else :
-            last_part_subj=get_last_folder_part(subj,'/')
-            last_part_obj=get_last_folder_part(obj,'/')
-            graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
-            digraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))'''
 
 def log_kpis_advanced(file_name,digraph,cumul_nodes,cumul_density,node_type_lists):
     '''compute and logs KPIS'''
@@ -1180,3 +1119,68 @@ def log_kpis_basic(file_name,digraph,cumul_nodes,cumul_density):
     logger.info('##################################################\n')
 
     return cumul_nodes, cumul_density
+
+### old code below for reference ###
+
+def remove_literal_from_nodes_old(g,graph,digraph,ontology): 
+    '''remove literal and other expression from the graph in order to keep only the nodes
+
+    datatypeproperties=utils_common.retreive_onto_object(ontology,"DatatypeProperty")
+
+    for subj, pred, obj in g:
+        last_part_pred=get_last_folder_part(pred,'/')
+
+        if (('label' in last_part_pred) or ('type' in last_part_pred) or
+           ('inScheme' in last_part_pred) or ('description' in last_part_pred) or
+           ('comment' in last_part_pred) or last_part_pred in datatypeproperties):
+            pass
+        else :
+            last_part_subj=get_last_folder_part(subj,'/')
+            last_part_obj=get_last_folder_part(obj,'/')
+            graph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))
+            digraph.add_edge(str(last_part_subj),str(last_part_obj),label=str(last_part_pred))'''
+
+def remove_pred_obj(expr, graph, predi, obje):
+    '''remove predicate and target object of an edge
+    edges_to_remove = [(u, v) for u, v, attr in graph.edges(data=True)
+                         if attr.get(expr) == predi and v == obje]
+    return graph.remove_edges_from(edges_to_remove)'''
+    
+def get_last_folder_part(string, sep_char):
+    """get last part of a folder string
+    string_parts=string.split(sep_char)
+    last_part=string_parts[len(string_parts)-1]
+    if last_part=='':
+        last_part=string_parts[len(string_parts)-2]
+    return last_part"""
+    
+def retreive_onto_object(ontology,object_type):
+    
+    '''create a list of all the object declares in the ontology
+    object_type can be DatatypeProperty, ObjectProperty or Class
+
+    index_list=[]
+    objects=[]
+    object_clean=[]
+
+    #build index list of Object
+    with open(f'{ontology}', 'r',encoding='utf-8') as file:
+        for index, line in enumerate(file, start=1):
+            if f":{object_type} " in line :
+                index_list.append(index-1)
+    file.close()
+
+    #retrieve Object based on index list
+    with open(f'{ontology}', 'r',encoding='utf-8') as file:
+        for index, line in enumerate(file, start=1):
+            if index in index_list:
+                objects.append(line.strip())
+                #print(line.strip())
+    file.close()
+
+    #clean Object
+    for obj in objects:
+        obj=obj.replace('noria:',"")
+        object_clean.append(obj)
+    #print(dtproperties)
+    return object_clean'''
