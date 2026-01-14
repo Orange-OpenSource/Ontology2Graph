@@ -19,12 +19,12 @@ from utils_gen import utils as utils_gen
 from utils_common import utils as utils_common
 
 ### set argument parser ###
-args = utils_common.setup_argument_parser(("nbrttl", "number of ttl file to generate"))
+args = utils_common.setup_argument_parser([("nbrttl", "number of ttl file to generate")])
 
-### Choose the model to use ####
+### choose the model to use ####
 model = utils_gen.model_to_choose(model_nbr=7)
 
-### Build FOLDERS & FILES PATHS ###
+### build folders & files paths ###
 PATH_RESULT, BAD_PATH_RESULT, ONTOLOGY_FILE, PROMPT_FILE, PATH_GRAPH, TEMP_FILE,\
 LOG_FILE, PATH_MERGED = utils_gen.build_folder_paths_and_files(model)
 
@@ -47,7 +47,7 @@ print('TTL FILE GENERATION IS IN PROGRESS')
 ## Generate graphs ##
 while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
 
-    ### Query LLM ##
+    ### query llm ##
     response,PROMPT_TYPE=utils_gen.query_llm(ONTOLOGY_FILE,PROMPT_FILE,model)
 
     logger_gen.info('Graph generation with prompt type : %s',{PROMPT_TYPE})

@@ -57,7 +57,7 @@ def query_llm(ontology_file,prompt_file,model):
         ontology = ','.join(str(x) for x in ontol.readlines())
 
     client = OpenAI(api_key=os.environ.get("LLM_PROXY_KEY"),base_url="https://llmproxy.ai.orange")
-    response= None
+    response=None
     try:
         response = client.chat.completions.create(
             model=model,

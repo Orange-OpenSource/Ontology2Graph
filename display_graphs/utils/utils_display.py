@@ -793,7 +793,12 @@ def visu_graph_basic(graph,file,html_folder):
                 "inherit": false,
                 "opacity": 1.0
                     }
+            },
+        "nodes": {
+            "font": {
+                "color": "#ffffff"
             }
+        }
         }""")
 
     #net.set_options(options)
@@ -1096,7 +1101,7 @@ def log_kpis_advanced(file_name,digraph,cumul_nodes,cumul_density,node_type_list
 def log_kpis_basic(file_name,digraph,cumul_nodes,cumul_density):
     '''compute and logs KPIS'''
 
-    logger = logging.getLogger('Graph_KPI')
+    logger = logging.getLogger('graph_kpi')
 
     logger.info('##################################################')
     logger.info('Knowledge Graph : %s',file_name)

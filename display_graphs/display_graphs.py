@@ -19,12 +19,10 @@ log_html_folder=utils.create_new_log_html_folder(args.path)
 log_file=Path(f'{log_html_folder}/graph_kpi.log')
 
 ### set logger ###
-logger_merge = utils_common.setup_logger(log_file,'graph_kpi')
+logger = utils_common.setup_logger(log_file,'graph_kpi')
 
 ### display graphs and compute kpis ###
-if Path(args.path).is_file():
-
-    print('this is a single file')
+if Path(args.path).is_file(): 
     file_name=Path(args.path).name
     absolute_file_name=Path(f'{Path(args.path).parent.resolve()}/{file_name}')
 
@@ -39,8 +37,6 @@ if Path(args.path).is_file():
         utils.log_kpis_advanced(file_name,Digraph,CUMUL_NODES,CUMUL_DENSITY,node_type_lists)
 
 else :
-    print(args.path)
-
     all_files = [str(f.resolve()) for f in Path(args.path).iterdir() if f.is_file()]
 
     for file in all_files :
