@@ -1,3 +1,10 @@
+# Software Name : Ontologie2Graph
+# SPDX-FileCopyrightText: Copyright (c) Orange SA
+# SPDX-License-Identifier: BSD-4-Clause
+#
+# This software is distributed under the BSD 4-Clause "Original" or "Old" License,
+# see the "LICENSE" file for more details or <license-url
+
 ''' This python script compute some Knowledge Graphs KPIs and display the Graph.
 You must pass as an argument the absolute path where are stored the ttl files or the PATH + the
 file name for a single one file'''

@@ -34,7 +34,7 @@ pip install -r requirements.txt
 ```
 
 ## Notes
-- Edit `generate_ttl.py` to set the model number and other configuration as needed.
+- Edit `generate_ttl.py` to set the model number (model_nbr variable) and other configuration as needed.
 - The script sleeps 60 seconds between generations to reset LLM context.
 - Make sure to run the script from the `generate_ttl_files` directory for correct path resolution.
 

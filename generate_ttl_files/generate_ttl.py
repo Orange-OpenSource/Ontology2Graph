@@ -1,18 +1,29 @@
-''' This function generates knowledge graph in turtle format based on an ontology schema and a 
-prompt. It uses the internal Orange LLM Proxy portal (https://portal.llmproxy.ai.orange/) 
+# Software Name : Ontologie2Graph
+# SPDX-FileCopyrightText: Copyright (c) Orange SA
+# SPDX-License-Identifier: BSD-4-Clause
+#
+# This software is distributed under the BSD 4-Clause "Original" or "Old" License,
+# see the "LICENSE" file for more details or <license-url>
+
+'''
+This script generates knowledge graph in turtle format based on an ontology schema and a prompt.
 Please read the following. 
     - You just have to pass the number of graph you want as an argument of this script.
     - "model_nbr" vatriable must be set directly in this script before launching.
-    - This script uses utils functions defined in utils_gen.py located in the utils folder.
     - The generated ttl files are stored in the results/synthetics_graphs folder.
     - Make sure you have set the LLM_PROXY_KEY environment variable with your API key.
     - This script also creates a log file containing some information about the generation.
-    - The script sleeps 60 seconds between each generation to reset the context.
-    - Make sure you have installed the required packages listed in the requirements.txt file.
-    - To run the script, use the command: python generate_ttl.py <number_of_ttl_files_to_generate>
-    - This srcript must be launch from the generate_ttl_files folder where it is stored'''
+    - This srcript must be launch from the generate_ttl_files folder where it is stored
+    
+Usage:
+    python generate_ttl.py --nbrttl <number of ttl file to generate>
+
+Arguments:
+    nbrttl : Number of graph (ttl file to generate)    
+'''
 
 import os
+import time
 import datetime
 from pathlib import Path
 from utils_gen import utils as utils_gen
@@ -27,8 +38,6 @@ model = utils_gen.model_to_choose(model_nbr=7)
 ### build folders & files paths ###
 PATH_RESULT, BAD_PATH_RESULT, ONTOLOGY_FILE, PROMPT_FILE, PATH_GRAPH, TEMP_FILE,\
 LOG_FILE, PATH_MERGED = utils_gen.build_folder_paths_and_files(model)
-
-print(LOG_FILE)
 
 ### Setup logger ###
 logger_gen= utils_common.setup_logger(LOG_FILE,'gen_log')
@@ -63,7 +72,7 @@ while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
     NUMBER_OF_GRAPH += 1
     print(f'\nNUMBER OF GRAPH GENERATED : {NUMBER_OF_GRAPH}\n')
     print("Sleeping 60 sec to reset the context")
-    #time.sleep(60)
+    time.sleep(60)
     print("Awake !")
 
 ### Check Turtle syntax and log some info ###

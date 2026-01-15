@@ -1,16 +1,15 @@
+# Software Name : Ontologie2Graph
+# SPDX-FileCopyrightText: Copyright (c) Orange SA
+# SPDX-License-Identifier: BSD-4-Clause
+#
+# This software is distributed under the BSD 4-Clause "Original" or "Old" License,
+# see the "LICENSE" file for more details or <license-url>
+
 """
 utils_gen.py provides utility functions for generating, validating, and storing knowledge graphs 
 in Turtle (TTL) format using large language models (LLMs). It includes functions for querying
 LLM APIs, storing and filtering results, validating TTL syntax, managing model selection,
 and building file/folder paths and selecting prompt and ontology name. 
-
-Main functionalities:
-- Query LLMs to generate knowledge graphs based on prompts and ontologies
-- Store and filter generated graph results
-- Validate TTL files and handle errors
-- Select LLM models from configuration
-- Build and manage folder/file paths for graph operations
-- Utility helpers for prompt and ontology selection
 """
 
 import os
@@ -149,7 +148,6 @@ def build_folder_paths_and_files(model):
 
     Args:
         model (str): The name of the model used for folder naming.
-        gen_or_merge (str): Either 'gen' for generation or 'merge' for merging graphs.
 
     Returns:
         tuple: Paths for result folder, bad syntax folder, ontology file, prompt file, graph folder,

@@ -1,4 +1,16 @@
-'''list of function to be used '''
+# Software Name : Ontologie2Graph
+# SPDX-FileCopyrightText: Copyright (c) Orange SA
+# SPDX-License-Identifier: BSD-4-Clause
+#
+# This software is distributed under the BSD 4-Clause "Original" or "Old" License,
+# see the "LICENSE" file for more details or <license-url
+
+'''
+utils_display.py provides utility functions used by display.py for merging graphs in Turtle format.
+It includes functions for building file/folder paths, manage prfix in the merged graphs, find
+homonymes nodes in a set of graphs, rename homonymes step by step to generate graphs with different 
+density.
+'''
 
 import logging
 import webbrowser
@@ -1127,7 +1139,7 @@ def log_kpis_basic(file_name,digraph,cumul_nodes,cumul_density):
 
 ### old code below for reference ###
 
-def remove_literal_from_nodes_old(g,graph,digraph,ontology): 
+def remove_literal_from_nodes_old(g,graph,digraph,ontology):
     '''remove literal and other expression from the graph in order to keep only the nodes
 
     datatypeproperties=utils_common.retreive_onto_object(ontology,"DatatypeProperty")
@@ -1150,7 +1162,7 @@ def remove_pred_obj(expr, graph, predi, obje):
     edges_to_remove = [(u, v) for u, v, attr in graph.edges(data=True)
                          if attr.get(expr) == predi and v == obje]
     return graph.remove_edges_from(edges_to_remove)'''
-    
+
 def get_last_folder_part(string, sep_char):
     """get last part of a folder string
     string_parts=string.split(sep_char)
@@ -1158,9 +1170,9 @@ def get_last_folder_part(string, sep_char):
     if last_part=='':
         last_part=string_parts[len(string_parts)-2]
     return last_part"""
-    
+
 def retreive_onto_object(ontology,object_type):
-    
+
     '''create a list of all the object declares in the ontology
     object_type can be DatatypeProperty, ObjectProperty or Class
 

@@ -1,18 +1,65 @@
-'''list of function to be used '''
+# Software Name : Ontologie2Graph
+# SPDX-FileCopyrightText: Copyright (c) Orange SA
+# SPDX-License-Identifier: BSD-4-Clause
+#
+# This software is distributed under the BSD 4-Clause "Original" or "Old" License,
+# see the "LICENSE" file for more details or <license-url
+
+'''
+utils_merge.py provides utility functions used by merge_ttl.py for merging graphs in Turtle format.
+It includes functions for building file/folder paths, manage prfix in the merged graphs, find homonymes
+nodes in a set of graphs, rename homonymes step by step to generate grpahs with different density. 
+'''
 
 import datetime
-from fileinput import filename
 import re
 import os
 import shutil
 from pathlib import Path
 from collections import Counter
 import networkx as nx
-from pyparsing import line
 import rdflib
 from rdflib import URIRef,Namespace,BNode
 from utils_common import utils as utils_common
 
+def build_merged_folder_paths_and_files(path_files):
+    ''' create merged folder if not exists'''
+
+    path_merged = f'{path_files}/merged'
+    bad_path_result = f'{path_files}/Bad_Turtle_Syntax'
+    path_homonyme_treated=f'{Path(path_merged)}/llm_graphs_dup_treated'
+    path_logs = f'{Path(path_files)}/logs'
+    date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    log_file=f'{Path(path_files)}/logs/merge_graph_{date}.log'
+    log_file_homonymes=f'{Path(path_files)}/logs/homonymes_graph_{date}.log'
+    log_file_check_ttl=f'{Path(path_files)}/logs/check_merged_ttl_graph_{date}.log'
+
+    if os.path.exists(path_logs):
+        shutil.rmtree(path_logs)
+    os.makedirs(Path(path_logs))
+
+    if os.path.exists(path_merged):
+        shutil.rmtree(path_merged)
+    os.makedirs(Path(path_merged))
+
+    if os.path.exists(bad_path_result):
+        shutil.rmtree(bad_path_result)
+    os.makedirs(Path(bad_path_result))
+
+    if os.path.exists(path_homonyme_treated):
+        shutil.rmtree(path_homonyme_treated)
+    os.makedirs(path_homonyme_treated)
+
+    ### remove previous log files homonyme in logs ###
+    for filename in os.listdir(Path(log_file).parent):
+        if filename.startswith('merge_graph_') or filename.startswith('homonymes')\
+            or filename.startswith('check'):
+            file_path = os.path.join(Path(log_file).parent, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+
+    return(bad_path_result,Path(log_file),Path(log_file_homonymes),Path(log_file_check_ttl),\
+        Path(path_merged),path_homonyme_treated)
 
 def manage_prefix(path_merged):
     '''remove homonyme prefix of the merged file'''
@@ -67,7 +114,7 @@ def find_homonymes_nodes(path,logger_homonymes,ontology):
         all_files[i]= f'{path}/{file}'
 
     all_nodes_of_all_graphs=[]
-    nodes_name=[]
+
     rdf = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
     rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
     skos = Namespace("http://www.w3.org/2004/02/skos/core#")
@@ -78,7 +125,7 @@ def find_homonymes_nodes(path,logger_homonymes,ontology):
         g.parse(file, format="turtle")
 
         nx_graph = nx.DiGraph()
-    
+        nodes_name=[]
         ### populate the networkx graph ###
         for subj, pred, obj in g:
             if (isinstance(subj, URIRef) and isinstance(obj, URIRef) and (pred != rdf.type) and\
@@ -95,66 +142,26 @@ def find_homonymes_nodes(path,logger_homonymes,ontology):
                     nx_graph.add_edge(str(subjbn),str(obj),label=str(predbn),color='white')
 
         nodes_name=[os.path.basename(Path(n)) for n in list(nx_graph.nodes)]
-        print(f'nodes_name for file: {file}')
-        print(nodes_name)
         nodes_name_final=[s.split('#',1)[1] if '#' in s else s for s in nodes_name]
+
+        #remove duplicate to keep only the name of the nodes that appears at least once in the file
+        nodes_name_per_file=set(nodes_name_final)
 
         logger_homonymes.info('nodes in : %s \n',file)
         logger_homonymes.info('%s \n',nodes_name_final)
-        all_nodes_of_all_graphs.append(nodes_name_final)
+
+        all_nodes_of_all_graphs.append(nodes_name_per_file)
 
     # Transform list of list into a simple list
     all_nodes_of_all_graphs_list=[item for sublist in all_nodes_of_all_graphs for item in sublist]
+
     logger_homonymes.info('All the nodes of all the graph : ')
     logger_homonymes.info(all_nodes_of_all_graphs_list)
 
     homonyme_occurence=Counter(all_nodes_of_all_graphs_list)
-    #print(counts)
-    #homonymes_nodes_list=[item for item, count in counts.items() if count > 1]
     logger_homonymes.info('\n homonymes nodes list and occurence %s :',homonyme_occurence)
 
     return homonyme_occurence
-
-def build_merged_folder_paths_and_files(path_files):
-    ''' create merged folder if not exists'''
-
-    path_merged = f'{path_files}/merged'
-    bad_path_result = f'{path_files}/Bad_Turtle_Syntax'
-    path_homonyme_treated=f'{Path(bad_path_result)}/llm_graphs_dup_treated'
-    path_logs = f'{Path(path_files)}/logs'
-    date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    log_file=f'{Path(path_files)}/logs/merge_graph_{date}.log'
-    log_file_homonymes=f'{Path(path_files)}/logs/homonymes_graph_{date}.log'
-    log_file_check_ttl=f'{Path(path_files)}/logs/check_merged_ttl_graph_{date}.log'
-
-    if os.path.exists(path_logs):
-        shutil.rmtree(path_logs)
-    os.makedirs(Path(path_logs))
-
-    if os.path.exists(path_merged):
-        shutil.rmtree(path_merged)
-    os.makedirs(Path(path_merged))
-
-    if os.path.exists(bad_path_result):
-        shutil.rmtree(bad_path_result)
-    os.makedirs(Path(bad_path_result))
-
-    if os.path.exists(path_homonyme_treated):
-        shutil.rmtree(path_homonyme_treated)
-    os.makedirs(path_homonyme_treated)
-
-    print(Path(log_file).parent)
-
-    ### remove previous log files homonyme in logs ###
-    for filename in os.listdir(Path(log_file).parent):
-        if filename.startswith('merge_graph_') or filename.startswith('homonymes')\
-            or filename.startswith('check'):
-            file_path = os.path.join(Path(log_file).parent, filename)
-            if os.path.isfile(file_path):
-                os.remove(file_path)
-
-    return(bad_path_result,Path(log_file),Path(log_file_homonymes),Path(log_file_check_ttl),\
-        Path(path_merged),path_homonyme_treated)
 
 def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occurence,\
     nbr_homonyme_max,logger_merge):
@@ -167,16 +174,16 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
     all_new_ttl_files = []
     homo_max=0
 
+    print('\nTreatment in progress :\n')
     print('Max number of homonyme detected in files:', nbr_homonyme_max)
 
-    while homo_max != nbr_homonyme_max + 1: 
-        print('\nTreatment in progress :')
+    while homo_max != nbr_homonyme_max + 1:
         print(f'Renaming Homonymes : {homo_max} homonyme max in the set of files')
 
         os.makedirs(Path(f'{path_homonyme_treated}/{homo_max}'),exist_ok=True)
 
-        #occ_dup=occurence_homonyme(homonymes_nodes,path_files)
-        occ_dup=homonymes_nodes_and_occurence
+        occ_dup=homonymes_nodes_and_occurence # to be replace by the function find 
+        print(homonymes_nodes_and_occurence)
         nbr_file_treated=0
 
         logger_merge.info('occ_dup :%s ',occ_dup)
@@ -184,9 +191,9 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
         for ttl_file in all_ttl_files :
             dup_treated_list=[]
 
-            logger_merge.info('#############################################################################')
-            logger_merge.info('### Target number of max homonyme in the set of files ### = %s',homo_max)
-            logger_merge.info('Number of max homonyme deteceted in the set of files : %s',nbr_homonyme_max)
+            logger_merge.info('##################################################################')
+            logger_merge.info('Target number of max homonyme in the set of files = %s',homo_max)
+            logger_merge.info('Max number of homonyme in the set of files : %s',nbr_homonyme_max)
             print(f'{ttl_file} treated')
             logger_merge.info('#### FILE ####: %s',  ttl_file)
 
@@ -194,24 +201,6 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
                  open(f'{Path(path_homonyme_treated)}/{homo_max}/Treated_'\
                       f'{homo_max}_{ttl_file}','w',encoding='utf-8') as outfile:
                 logger_merge.info("nbr file treated %s",nbr_file_treated)
-
-                #formated_lines = ''
-
-                #for line_num, line in enumerate(infile, 1):
-                    #line = line.rstrip('\n')
-                    #if " ; " in line:
-                    #    formated=format_turtle_line(line)
-                    #    formated_lines=formated.split('\n')
-                    #    print(line_num)
-                    #    print("ligne",line)
-                    #    print("format",formated)
-                    #    print("formatted_lines",formated_lines)
-                    #    print(type(formated))
-                    #    print(type(line))
-                        #print(line)
-
-                #with open(Path(path_files)/ttl_file,'r',encoding='utf-8') as file:
-                #    file.writelines(formated_lines)
 
                 ##check if homonyme exists in line and replace it
                 rename_homonyme_by_line(infile,outfile,homo_max,occ_dup,\
@@ -221,24 +210,19 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
             unique_set=set(dup_treated_list)
             unique_dup_treated_list=list(unique_set)
 
-            #print(unique_dup_treated_list)
-
-            #unique_tuple = {tuple(sublist) for sublist in dup_treated_list}
-            #unique_dup_treated_list=[list(t) for t in unique_tuple ]
-            #logger_merge.info('unique_dup_treated_list : %s',unique_dup_treated_list)
-
             # decrease occurence in occ_dup
             for dup_treated in unique_dup_treated_list:
                 if dup_treated in occ_dup:
                     occ_dup[dup_treated]=occ_dup[dup_treated]-1
-
+            
             logger_merge.info('occ_dup after treatement %s',occ_dup)
-
             nbr_file_treated=nbr_file_treated+1
 
         all_new_ttl_files = [f for f in Path(f'{path_homonyme_treated}/{homo_max}')\
             .iterdir() if f.is_file()]
 
+        print(occ_dup)
+        
         # merge files in an only one file
         merge_graph(all_new_ttl_files,path_merged,homo_max)
 
@@ -283,7 +267,7 @@ def merge_graph(all_new_ttl_files,path_merged,homo_max):
                 content = ttl_file.read()
                 m_file.write(content)
                 m_file.write('\n')  # Adds a newline between files
-    print('Graphs have been merged successfully.')
+    print('Graphs have been merged successfully.\n')
 
 def format_turtle_line(line):
     """Transform single-line Turtle to multi-line format"""
