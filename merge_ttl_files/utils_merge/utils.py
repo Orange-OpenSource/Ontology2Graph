@@ -182,11 +182,9 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
 
         os.makedirs(Path(f'{path_homonyme_treated}/{homo_max}'),exist_ok=True)
 
-        occ_dup=homonymes_nodes_and_occurence # to be replace by the function find 
-        print(homonymes_nodes_and_occurence)
+        occ_dup=homonymes_nodes_and_occurence.copy()
+        #print(occ_dup)
         nbr_file_treated=0
-
-        logger_merge.info('occ_dup :%s ',occ_dup)
 
         for ttl_file in all_ttl_files :
             dup_treated_list=[]
@@ -197,14 +195,36 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
             print(f'{ttl_file} treated')
             logger_merge.info('#### FILE ####: %s',  ttl_file)
 
-            with open(Path(path_files)/ttl_file,'r',encoding='utf-8') as infile, \
+            with open(Path(path_files)/ttl_file,'r',encoding='utf-8') as rawfile,\
+                 open(f'{Path(path_homonyme_treated)}/{homo_max}/Treated_split'\
+                      f'{homo_max}_{ttl_file}','w',encoding='utf-8') as infile,\
                  open(f'{Path(path_homonyme_treated)}/{homo_max}/Treated_'\
                       f'{homo_max}_{ttl_file}','w',encoding='utf-8') as outfile:
                 logger_merge.info("nbr file treated %s",nbr_file_treated)
 
+#######################################################################
+# case when a 
+                for line in rawfile:
+                    if '; ' in line : #split line statement on several lines
+                        parts=line.split(';')
+                        #print(parts)
+                        for part in parts:
+                            if part==parts[0]:
+                                infile.write(part + ';\n')
+                            elif part==parts[len(parts)-1]:
+                                infile.write('    '+ part + '\n')
+                            else:
+                                infile.write('    ' + part + ';\n')
+                    else :
+                        infile.write(line)
+########################################################################
+
+
                 ##check if homonyme exists in line and replace it
-                rename_homonyme_by_line(infile,outfile,homo_max,occ_dup,\
-                    dup_treated_list, logger_merge,nbr_file_treated)
+                with open(f'{Path(path_homonyme_treated)}/{homo_max}/Treated_split'\
+                      f'{homo_max}_{ttl_file}','r',encoding='utf-8') as infile:
+                    rename_homonyme_by_line(infile,outfile,homo_max,occ_dup,\
+                        dup_treated_list, logger_merge,nbr_file_treated)
 
             # remove homonyme in dup_treated_list
             unique_set=set(dup_treated_list)
@@ -214,15 +234,15 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
             for dup_treated in unique_dup_treated_list:
                 if dup_treated in occ_dup:
                     occ_dup[dup_treated]=occ_dup[dup_treated]-1
-            
+
             logger_merge.info('occ_dup after treatement %s',occ_dup)
             nbr_file_treated=nbr_file_treated+1
 
         all_new_ttl_files = [f for f in Path(f'{path_homonyme_treated}/{homo_max}')\
             .iterdir() if f.is_file()]
 
-        print(occ_dup)
-        
+        #print(occ_dup)
+
         # merge files in an only one file
         merge_graph(all_new_ttl_files,path_merged,homo_max)
 
@@ -234,17 +254,44 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
 def rename_homonyme_by_line(infile,outfile,homo_max,occ_dup,dup_treated_list,logger_merge,
                             nbr_file_treated):
     '''check if homonyme exists in line and replace it'''
+
     for line in infile:
 
         dup_treated=False
         logger_merge.info('Line : %s',line.strip())
 
-        if line =='\n' or line.startswith('#') or line.startswith('@'):
+        if line =='\n' or line.startswith('#') or line.startswith('@') or \
+            line.startswith('    rdfs:comment') or line.startswith('    rdfs:label') or \
+                line.startswith('    rdfs:seeAlso') or line.startswith('    skos:example'):
             outfile.write(line)
         else :
+
+            if '#' in line: #remove comment start with # at the end of the line
+                line=line.split(' #',1)[0]
+
             updated_line=line
             for key, value in occ_dup.items():
-                if  re.search(r'\b' + re.escape(key) + r'\b', line) and (value>homo_max):
+            #    if '#' in line: #Case when there is a comment at the end of the line
+            #        after_hash=line.split('#',1)[1]
+            #        before_hash=line.split('#',1)[0]
+            #        if re.search(r'\b' + re.escape(key) + r'\b', after_hash) and \
+            #            not re.search(r'\b' + re.escape(key) + r'\b', before_hash) and (value>homo_max):
+            #            #replace only
+            #            updated_line = updated_line.replace\
+            #            (key,f'{key}_extra_node_{nbr_file_treated}')
+            #            logger_merge.info('dup %s %s',key,value)
+            #            logger_merge.info('updated_line %s',updated_line.strip())
+            #        if re.search(r'\b' + re.escape(key) + r'\b', before_hash) and (value>homo_max):
+            #            #replace and decrease occurence
+            #            updated_line = updated_line.replace\
+            #            (key,f'{key}_extra_node_{nbr_file_treated}')
+            #            logger_merge.info('dup %s %s',key,value)
+            #            logger_merge.info('updated_line %s',updated_line.strip())
+            #            dup_treated_list.append(key)
+            #            dup_treated=True
+
+                if re.search(r'\b' + re.escape(key) + r'\b', line)\
+                  and (value>homo_max):
                     updated_line = updated_line.replace\
                         (key,f'{key}_extra_node_{nbr_file_treated}')
                     logger_merge.info('dup %s %s',key,value)
@@ -262,36 +309,13 @@ def merge_graph(all_new_ttl_files,path_merged,homo_max):
     merged_file=f'{path_merged}/merged_graph_{homo_max}.ttl'
     with open(merged_file, 'w', encoding='utf-8') as m_file:
         for file in all_new_ttl_files: # Open each input file in read mode
+            
             with open(file, 'r', encoding='utf-8')\
              as ttl_file: # Read the content and write it to the output file
                 content = ttl_file.read()
                 m_file.write(content)
                 m_file.write('\n')  # Adds a newline between files
     print('Graphs have been merged successfully.\n')
-
-def format_turtle_line(line):
-    """Transform single-line Turtle to multi-line format"""
-    if ' ; ' not in line:
-        return line
-    print("line",line)
-
-    # Split at semicolons but preserve the final period
-    line = line.rstrip(' .')
-    parts = line.split(' ; ')
-
-    if len(parts) <= 1:
-        return line + ' .'
-
-    # Format: first part + continuation lines with indentation
-    formatted = parts[0] + ' ;\n'
-
-    for i, part in enumerate(parts[1:], 1):
-        if i == len(parts) - 1:  # Last part
-            formatted += f'        {part.strip()} .\n'
-        else:
-            formatted += f'        {part.strip()} ;\n'
-
-    return formatted.rstrip('\n')
 
 ### old code below for reference ###
 

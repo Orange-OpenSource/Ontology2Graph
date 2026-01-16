@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: BSD-4-Clause
 #
 # This software is distributed under the BSD 4-Clause "Original" or "Old" License,
-# see the "LICENSE" file for more details or <license-url
+# see the "LICENSE" file for more details or <license-url>
 
 """ This script merges multiple knowledge graphs (in Turtle format) into a single unified graph \
     using a specified ontology.

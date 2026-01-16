@@ -128,50 +128,36 @@ bot:BranchOfficeSite a bot:Site ;
 noria:ServerRoomDC01 a noria:Room ;
     rdfs:label "Server Room DC01"@en, "Salle Serveurs DC01"@fr ;
     rdfs:comment "Main server room within the primary data center."@en ;
-    bot:hasSpace bot:MainDataCenter . # bot:hasSpace is inverse of bot:containsZone, but bot:containsZone is for Zone -> Space. Room is a Space. Site contains Space.
-    # The schema says bot:containsZone is for Locus of a Room. So Room is contained by Site.
-    # bot:containsZone is for Zone -> Space. bot:Site is a Space. bot:Room is a Space.
-    # The schema says "The relationship to the Locus of a Room is available with the bot:containsZone property."
-    # This implies bot:Room bot:containsZone noria:Locus.
-    # And bot:Site bot:containsZone noria:Room.
-    # Let's use bot:containsZone for Site -> Room and Room -> Locus.
-bot:MainDataCenter bot:containsZone noria:ServerRoomDC01 .
+    bot:hasSpace bot:MainDataCenter .                  bot:MainDataCenter bot:containsZone noria:ServerRoomDC01 .
 
 noria:NetworkClosetBO01 a noria:Room ;
     rdfs:label "Network Closet BO01"@en, "Local Réseau BO01"@fr ;
     rdfs:comment "Network equipment closet in the branch office."@en ;
-    bot:containsZone bot:BranchOfficeSite . # This is inverse of what I want. bot:Site contains noria:Room.
-    # Correct: bot:BranchOfficeSite bot:containsZone noria:NetworkClosetBO01 .
-
+    bot:containsZone bot:BranchOfficeSite .   
 noria:RackA1Locus a noria:Locus ;
     rdfs:label "Rack A1 Locus"@en, "Emplacement Rack A1"@fr ;
     rdfs:comment "Specific location for Rack A1 in Server Room DC01."@en ;
     noria:locusLine "A" ;
     noria:locusRow "1" ;
-    bot:containsZone noria:ServerRoomDC01 . # This is inverse. noria:Room contains noria:Locus.
-    # Correct: noria:ServerRoomDC01 bot:containsZone noria:RackA1Locus .
-
+    bot:containsZone noria:ServerRoomDC01 .   
 noria:RackB2Locus a noria:Locus ;
     rdfs:label "Rack B2 Locus"@en, "Emplacement Rack B2"@fr ;
     rdfs:comment "Specific location for Rack B2 in Server Room DC01."@en ;
     noria:locusLine "B" ;
     noria:locusRow "2" ;
-    bot:containsZone noria:ServerRoomDC01 . # Correct: noria:ServerRoomDC01 bot:containsZone noria:RackB2Locus .
-
+    bot:containsZone noria:ServerRoomDC01 .
 noria:RackC3Locus a noria:Locus ;
     rdfs:label "Rack C3 Locus"@en, "Emplacement Rack C3"@fr ;
     rdfs:comment "Specific location for Rack C3 in Server Room DC01."@en ;
     noria:locusLine "C" ;
     noria:locusRow "3" ;
-    bot:containsZone noria:ServerRoomDC01 . # Correct: noria:ServerRoomDC01 bot:containsZone noria:RackC3Locus .
-
+    bot:containsZone noria:ServerRoomDC01 .
 noria:RackBO01Locus a noria:Locus ;
     rdfs:label "Rack BO01 Locus"@en, "Emplacement Rack BO01"@fr ;
     rdfs:comment "Specific location for network equipment in Network Closet BO01."@en ;
     noria:locusLine "Main" ;
     noria:locusRow "1" ;
-    bot:containsZone noria:NetworkClosetBO01 . # Correct: noria:NetworkClosetBO01 bot:containsZone noria:RackBO01Locus .
-
+    bot:containsZone noria:NetworkClosetBO01 .
 # Correcting the bot:containsZone usage based on the schema's example:
 # "The relationship to the Locus of a Room is available with the bot:containsZone property."
 # This means Room bot:containsZone Locus.
@@ -281,8 +267,8 @@ noria:WebServerClusterController a noria:Resource ;
     rdfs:comment "Virtual resource managing the web server cluster."@en ;
     noria:resourceManagedBy org:ApplicationSupportTeam ;
     noria:resourceHostName "web-cluster-ctrl.corp.example.com" ;
-    noria:resourceProductModel noria:VMwareESXi ; # Assuming it runs on a hypervisor
-    noria:resourceType <kos/Resource/type/VirtualMachine> ;
+    noria:resourceProductModel noria:VMwareESXi ;
+           noria:resourceType <kos/Resource/type/VirtualMachine> ;
     noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
     noria:resourceForApplication noria:CorporateWebsiteApp ;
     noria:resourceManagementIPAddress "10.0.0.15" .
@@ -323,9 +309,9 @@ noria:Firewall_DC01 a noria:Resource ;
     noria:resourceManagedBy org:SecurityOperationsCenter ;
     noria:resourceLogisticId "ASSET-FW-001" ;
     noria:resourceHostName "fw-dc01.corp.example.com" ;
-    noria:resourceProductModel noria:JuniperMX480 ; # Placeholder, assuming a high-end firewall
-    noria:resourceType <kos/Resource/type/Router> ; # Firewalls often classified as routers in network inventory
-    noria:resourceSerialNumber "SN-FW-001-MNO" ;
+    noria:resourceProductModel noria:JuniperMX480 ;
+           noria:resourceType <kos/Resource/type/Router> ;
+           noria:resourceSerialNumber "SN-FW-001-MNO" ;
     noria:resourceUsageState <kos/Resource/LifecycleState/InProduction> ;
     noria:resourceInstallationDate "2021-08-01T10:00:00Z"^^xsd:dateTime ;
     noria:resourceForApplication noria:CorporateInternetAccessApp ;
@@ -650,8 +636,8 @@ noria:TT_Web_Note_01 a noria:TroubleTicketNote ;
     rdfs:label "Web Performance Initial Customer Report"@en ;
     rdfs:comment "Customer reported slow website loading times, especially during peak hours."@en ;
     dcterms:created "2024-03-21T14:05:00Z"^^xsd:dateTime ;
-    dcterms:creator <kos/TroubleTicket/origin/Customer> ; # Using the KOS concept as a placeholder for the agent
-    noria:troubleTicketNoteCommentType <kos/TroubleTicket/commentType/Customer> ;
+    dcterms:creator <kos/TroubleTicket/origin/Customer> ;
+           noria:troubleTicketNoteCommentType <kos/TroubleTicket/commentType/Customer> ;
     noria:troubleTicketNoteOperationType <kos/TroubleTicket/operationType/Diagnosis> ;
     dcterms:isPartOf noria:TT_Web_Performance_20240321 .
 
@@ -690,8 +676,8 @@ noria:CR_Web_Optimization_20240322 a noria:ChangeRequest ;
     dcterms:modified "2024-03-22T10:00:00Z"^^xsd:dateTime ;
     noria:changeRequestPlannedStartTime "2024-03-25T02:00:00Z"^^xsd:dateTime ;
     noria:changeRequestPlannedEndTime "2024-03-25T03:00:00Z"^^xsd:dateTime ;
-    noria:changeRequestCategory <kos/ChangeRequest/category/SoftwareUpgrade> ; # Configuration change can be seen as a type of software change
-    noria:changeRequestType <kos/ChangeRequest/type/Standard> ;
+    noria:changeRequestCategory <kos/ChangeRequest/category/SoftwareUpgrade> ;
+           noria:changeRequestType <kos/ChangeRequest/type/Standard> ;
     noria:changeRequestChangeCause <kos/ChangeRequest/cause/Configuration> ;
     noria:changeRequestImpact noria:Web_Server_01, noria:Web_Server_02, noria:CorporateWebsiteApp ;
     noria:changeRequestOutageDuration "PT0H15M"^^xsd:duration ;
@@ -750,8 +736,7 @@ noria:Event_Firewall_Blocked_Attempt_20240323 a noria:EventRecord ;
     noria:logOriginatingManagementSystem noria:SIEMSystem ;
     noria:alarmSeverity <Notification/Severity/PerceivedSeverity/Minor> ;
     dcterms:type <kos/Notification/EventType/securityAlert> ;
-    noria:logOriginatingAgent noria:CUid_ExternalAttacker . # Example of external agent
-
+    noria:logOriginatingAgent noria:CUid_ExternalAttacker .
 noria:MonitoringSystemNagios a noria:Application ;
     rdfs:label "Nagios Monitoring System"@en ;
     rdfs:comment "Infrastructure monitoring application."@en ;
@@ -767,8 +752,8 @@ noria:SIEMSystem a noria:Application ;
     rdfs:comment "Security Information and Event Management system."@en ;
     noria:applicationType <kos/application/type/service-platform> .
 
-noria:CUid_ExternalAttacker a noria:CorporateUserIdentifier ; # Representing an external entity as a user account for logging purposes
-    rdfs:label "External Attacker ID"@en ;
+noria:CUid_ExternalAttacker a noria:CorporateUserIdentifier ;
+           rdfs:label "External Attacker ID"@en ;
     rdfs:comment "Placeholder for an external entity identified in logs, not an internal employee."@en ;
     foaf:accountName "external_ip_1.2.3.4" .
 
@@ -791,12 +776,14 @@ noria:OperationPlan_Web_Optimization a noria:OperationPlan ;
 noria:PreCond_ServerOffline a noria:ActionPreCondition ;
     rdfs:label "Server Offline Pre-Condition"@en ;
     rdfs:comment "Ensure the server is gracefully shut down and powered off before intervention."@en ;
-    skos:example "Ping to server IP fails; power status is off."@en .
+    skos:example "Ping to server IP fails;
+        power status is off."@en .
 
 noria:PostCond_ServerOnline a noria:ActionPostCondition ;
     rdfs:label "Server Online Post-Condition"@en ;
     rdfs:comment "Verify server is powered on, operating system booted, and services are running."@en ;
-    skos:example "Ping to server IP succeeds; DNS service responds to queries."@en .
+    skos:example "Ping to server IP succeeds;
+        DNS service responds to queries."@en .
 
 noria:PreCond_LowTrafficWindow a noria:ActionPreCondition ;
     rdfs:label "Low Traffic Window Pre-Condition"@en ;

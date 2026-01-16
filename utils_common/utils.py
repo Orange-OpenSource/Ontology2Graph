@@ -113,7 +113,7 @@ def check_ttl(file_path,bad_file_path,logger):
 
         if stdout!='Validator finished with 0 warnings and 0 errors.\n' :
         # move bad file in bad folder and Save logs
-            bad_file=f'{bad_file_path}/{file_name}_BAD.ttl'
+            bad_file=f'{bad_file_path}/BAD_{file_name}'
             os.makedirs(f'{bad_file_path}', exist_ok=True)
             shutil.move(file, bad_file)
             logger.info('Error detected in : %s', file_name)
