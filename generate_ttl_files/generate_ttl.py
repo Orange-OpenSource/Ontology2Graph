@@ -6,15 +6,17 @@
 # see the "LICENSE" file for more details or <license-url>
 
 '''
-This script generates knowledge graph in turtle format based on an ontology schema and a prompt.
+This script generates knowledge graphs in turtle format based on an ontology schema and a prompt.
 Please read the following. 
     - You just have to pass the number of graph you want as an argument of this script.
-    - "model_nbr" vatriable must be set directly in this script before launching.
+    - "model_nbr" and "prompt_type" must be set directly in this script before launching.
+    - You have to refer to utils_gen/models/models.json to set "model_nbr".
+    - You have to refer to utils_gen/prompts/prompts.json to set "prompt_type".
     - The generated ttl files are stored in the results/synthetics_graphs folder.
-    - Make sure you have set the LLM_PROXY_KEY environment variable with your API key.
-    - This script also creates a log file containing some information about the generation.
-    - This srcript must be launch from the generate_ttl_files folder where it is stored
-    
+    - If you use an API, make sure "LLM_PROXY_KEY" environment variable is set with your API key.
+    - This script also creates a logs files containing some information about the generation.
+    - This script must be launch from the generate_ttl_files folder where it is stored
+
 Usage:
     python generate_ttl.py --nbrttl <number of ttl file to generate>
 
@@ -26,18 +28,21 @@ import os
 import time
 import datetime
 from pathlib import Path
-from utils_gen import utils as utils_gen
 from utils_common import utils as utils_common
+from utils_gen import utils as utils_gen
 
 ### set argument parser ###
 args = utils_common.setup_argument_parser([("nbrttl", "number of ttl file to generate")])
 
 ### choose the model to use ####
-model = utils_gen.model_to_choose(model_nbr=7)
+model_name = utils_gen.model_to_choose(model_nbr=7)
+
+### set the prompt type ###
+PROMPT_TYPE="4_1_AI_enhance_manually"
 
 ### build folders & files paths ###
 PATH_RESULT, BAD_PATH_RESULT, ONTOLOGY_FILE, PROMPT_FILE, PATH_GRAPH, TEMP_FILE,\
-LOG_FILE, PATH_MERGED = utils_gen.build_folder_paths_and_files(model)
+LOG_FILE, PATH_MERGED = utils_gen.build_folder_paths_and_files(model_name)
 
 ### Setup logger ###
 logger_gen= utils_common.setup_logger(LOG_FILE,'gen_log')
@@ -53,11 +58,11 @@ utils_gen.remove_file_in_folder(BAD_PATH_RESULT)
 os.system("clear")
 print('TTL FILE GENERATION IS IN PROGRESS')
 
-## Generate graphs ##
+### Generate graphs ###
 while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
 
     ### query llm ##
-    response,PROMPT_TYPE=utils_gen.query_llm(ONTOLOGY_FILE,PROMPT_FILE,model)
+    response=utils_gen.query_llm(ONTOLOGY_FILE,PROMPT_FILE,model_name,PROMPT_TYPE)
 
     logger_gen.info('Graph generation with prompt type : %s',{PROMPT_TYPE})
 
@@ -67,7 +72,7 @@ while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
     BAD_FILE_RESULT = f'{BAD_PATH_RESULT}/{PROMPT_TYPE}_{date_time}_{ONTO_NAME}_BAD.ttl'
 
     ### Store results and logs some infos ###
-    utils_gen.storing_results(response,TEMP_FILE,FILE_RESULT,logger_gen,model)
+    utils_gen.storing_results(response,TEMP_FILE,FILE_RESULT,logger_gen,model_name)
 
     NUMBER_OF_GRAPH += 1
     print(f'\nNUMBER OF GRAPH GENERATED : {NUMBER_OF_GRAPH}\n')

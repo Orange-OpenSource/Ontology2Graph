@@ -1,0 +1,174 @@
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix pep: <https://w3id.org/pep/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix bot:  <https://w3id.org/bot#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix log: <https://w3id.org/sepses/ns/log#> .
+@prefix observable: <https://unifiedcyberontology.org/ontology/uco/observable#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix BBO: <https://www.irit.fr/recherches/MELODI/ontologies/BBO#> .
+@prefix folio: <http://IBCNServices.github.io/Folio-Ontology/Folio.owl#> .
+@prefix gn: <https://www.geonames.org/ontology#> .
+@prefix devopsprod: <http://w3id.org/devops-infra/product#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+# =============================================================================
+# Agents and Organizations
+# =============================================================================
+
+noria:Agent_DNSAdminTeam a foaf:Agent ;
+    rdfs:label "DNS Admin Team"@en, "Équipe d'administration DNS"@fr ;
+    rdfs:comment "Team responsible for corporate DNS server management and incident resolution."@en ;
+    noria:agentWorkingHours "08:00-17:00 (Mon-Fri)" ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/Email> ;
+    noria:agentInstructions "Contact via ticketing system for non-critical issues, phone for critical alerts."@en ;
+    noria:agentManagesResource noria:Resource_DNS01, noria:Resource_Firewall01, noria:Resource_WebSrv01 ;
+    foaf:mbox "dns.admin@example.com" .
+
+noria:Agent_NetworkOpsTeam a foaf:Agent ;
+    rdfs:label "Network Operations Team"@en, "Équipe Opérations Réseau"@fr ;
+    rdfs:comment "Team responsible for network infrastructure monitoring and maintenance."@en ;
+    noria:agentWorkingHours "24/7" ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/Phone> ;
+    noria:agentInstructions "Immediate phone call for any network outage impacting critical services."@en ;
+    noria:agentManagesResource noria:Resource_RouterCore01, noria:Resource_SwitchAccess01, noria:Resource_EdgeRouter01 ;
+    foaf:mbox "net.ops@example.com" .
+
+noria:Agent_AppDevTeam a foaf:Agent ;
+    rdfs:label "Application Development Team"@en, "Équipe Développement Application"@fr ;
+    rdfs:comment "Team responsible for the development and maintenance of the Corporate Intranet Application."@en ;
+    noria:agentWorkingHours "09:00-18:00 (Mon-Fri)" ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/Chat> ;
+    noria:agentManagesResource noria:Resource_WebSrv01, noria:Resource_DB01 ;
+    foaf:mbox "app.dev@example.com" .
+
+noria:Agent_SecurityTeam a foaf:Agent ;
+    rdfs:label "Security Operations Center"@en, "Centre Opérations Sécurité"@fr ;
+    rdfs:comment "Team monitoring security events and managing security incidents."@en ;
+    noria:agentWorkingHours "24/7" ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/SIEMAlert> ;
+    noria:agentManagesResource noria:Resource_Firewall01, noria:Resource_IDS01 ;
+    foaf:mbox "soc@example.com" .
+
+noria:Agent_CustomerSupport a foaf:Agent ;
+    rdfs:label "Customer Support Tier 1"@en, "Support Client Niveau 1"@fr ;
+    rdfs:comment "First line of contact for customer issues."@en ;
+    noria:agentWorkingHours "07:00-22:00 (Mon-Sun)" ;
+    noria:agentPreferredContactMethod <kos/org/agent-contact-method/TicketingSystem> ;
+    foaf:mbox "support@example.com" .
+
+noria:Org_ITDepartment a org:Organization ;
+    rdfs:label "IT Department"@en, "Département Informatique"@fr ;
+    rdfs:comment "The main IT department of the company."@en ;
+    org:hasUnit noria:OrgUnit_DNSAdmin, noria:OrgUnit_NetworkOps, noria:OrgUnit_AppDev, noria:OrgUnit_SecurityOps .
+
+noria:OrgUnit_DNSAdmin a org:OrganizationalUnit ;
+    rdfs:label "DNS Administration Unit"@en, "Unité Administration DNS"@fr ;
+    org:unitOf noria:Org_ITDepartment ;
+    org:member noria:Agent_DNSAdminTeam .
+
+noria:OrgUnit_NetworkOps a org:OrganizationalUnit ;
+    rdfs:label "Network Operations Unit"@en, "Unité Opérations Réseau"@fr ;
+    org:unitOf noria:Org_ITDepartment ;
+    org:member noria:Agent_NetworkOpsTeam .
+
+noria:OrgUnit_AppDev a org:OrganizationalUnit ;
+    rdfs:label "Application Development Unit"@en, "Unité Développement Application"@fr ;
+    org:unitOf noria:Org_ITDepartment ;
+    org:member noria:Agent_AppDevTeam .
+
+noria:OrgUnit_SecurityOps a org:OrganizationalUnit ;
+    rdfs:label "Security Operations Unit"@en, "Unité Opérations Sécurité"@fr ;
+    org:unitOf noria:Org_ITDepartment ;
+    org:member noria:Agent_SecurityTeam .
+
+noria:CorporateUserIdentifier_JDOE a noria:CorporateUserIdentifier ;
+    rdfs:label "John Doe's Corporate ID"@en ;
+    rdfs:comment "Corporate user identifier for John Doe, a member of the Network Operations Team."@en ;
+    foaf:accountName "jdoe" ;
+    foaf:holdsAccount noria:Agent_NetworkOpsTeam .
+
+# =============================================================================
+# Product Models
+# =============================================================================
+
+noria:ProductModel_DellR740 a noria:ProductModel ;
+    rdfs:label "Dell PowerEdge R740"@en ;
+    rdfs:comment "Dell server model used for various enterprise applications."@en ;
+    noria:productManufacturedBy noria:Org_Dell .
+
+noria:ProductModel_CiscoNexus9K a noria:ProductModel ;
+    rdfs:label "Cisco Nexus 9000 Series"@en ;
+    rdfs:comment "High-performance data center switch series."@en ;
+    noria:productManufacturedBy noria:Org_Cisco .
+
+noria:ProductModel_JuniperSRX3K a noria:ProductModel ;
+    rdfs:label "Juniper SRX3000 Series"@en ;
+    rdfs:comment "Security Services Gateway for enterprise networks."@en ;
+    noria:productManufacturedBy noria:Org_Juniper .
+
+noria:ProductModel_HPProLiantDL380 a noria:ProductModel ;
+    rdfs:label "HP ProLiant DL380 Gen10"@en ;
+    rdfs:comment "Versatile rack server for diverse workloads."@en ;
+    noria:productManufacturedBy noria:Org_HP .
+
+noria:Org_Dell a org:Organization ;
+    rdfs:label "Dell Technologies"@en .
+
+noria:Org_Cisco a org:Organization ;
+    rdfs:label "Cisco Systems"@en .
+
+noria:Org_Juniper a org:Organization ;
+    rdfs:label "Juniper Networks"@en .
+
+noria:Org_HP a org:Organization ;
+    rdfs:label "Hewlett Packard Enterprise"@en .
+
+# =============================================================================
+# Locations
+# =============================================================================
+
+noria:Site_MainDC a bot:Site ;
+    rdfs:label "Main Data Center"@en, "Centre de Données Principal"@fr ;
+    noria:siteId "DC01" ;
+    noria:siteType "data center" ;
+    noria:sitePrincipalAddress "123 Tech Avenue" ;
+    noria:sitePrincipalAddressCityName "Metropolis" ;
+    noria:sitePrincipalAddressPostalCode "10001" ;
+    noria:sitePrincipalAddressCountry "US" ;
+    noria:sitePrincipalAddressStreet "Tech Avenue" .
+
+noria:Room_ServerRoomA a noria:Room ;
+    rdfs:label "Server Room A"@en, "Salle Serveurs A"@fr ;
+    rdfs:comment "Primary server room within the main data center."@en ;
+    bot:hasSpace noria:Locus_RackA1, noria:Locus_RackA2 ;
+    seas:isSubSystemOf noria:Site_MainDC .
+
+noria:Locus_RackA1 a noria:Locus ;
+    rdfs:label "Rack A1"@en, "Baie A1"@fr ;
+    rdfs:comment "Location of servers in Rack A1."@en ;
+    noria:locusLine "A" ;
+    noria:locusRow "1" ;
+    seas:isSubSystemOf noria:Room_ServerRoomA .
+
+noria:Locus_RackA2 a noria:Locus ;
+    rdfs:label "Rack A2"@en, "Baie A2"@fr ;
+    rdfs:comment "Location of network devices in Rack A2."@en ;
+    noria:locusLine "A" ;
+    noria:locusRow "2" ;
+    seas:isSubSystemOf noria:Room_ServerRoomA .
+
+# =============================================================================
+# Resources
+# =============================================================================
+
+noria:Resource_DNS01 a noria:Resource ;
+    rdfs:label "Corporate DNS Server 1"@en, "Serveur DNS d'entreprise 1"@fr ;
+    rdfs:comment "Primary

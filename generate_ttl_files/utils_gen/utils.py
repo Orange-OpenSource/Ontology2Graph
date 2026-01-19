@@ -6,7 +6,7 @@
 # see the "LICENSE" file for more details or <license-url>
 
 """
-utils_gen.py provides utility functions for generating, validating, and storing knowledge graphs 
+This script provides utility functions for generating, validating, and storing knowledge graphs 
 in Turtle (TTL) format using large language models (LLMs). It includes functions for querying
 LLM APIs, storing and filtering results, validating TTL syntax, managing model selection,
 and building file/folder paths and selecting prompt and ontology name. 
@@ -18,24 +18,15 @@ from pathlib import Path
 import datetime
 from openai import OpenAI, OpenAIError
 
-def query_llm(ontology_file,prompt_file,model):
-    """This function sends a prompt and an ontology schema to the LLM (via OpenAI-compatible API)
+def query_llm(ontology_file,prompt_file,model,prompt_type):
+    """ This function sends a prompt and an ontology schema to an LLM (via OpenAI-compatible API)
     and requests a graph generation using the specified model. The LLM is expected to return a 
     response containing the generated graph in Turtle format.
 
     Args:
         ontology (str): The ontology schema to guide the graph generation.
         model (str): The LLM model name to use for the API call.
-        
-    User Prompts to choose from:
-        - "1_ip"  : (Initial prompt)
-        - "2_ip_enhanced_manually' : (first enhancement by human)
-        - "2_1_ip_enhanced_manually' : (second enhancement by human)
-        - "3_ipem_enhanced_by_AI' : (prompt 2 enhanced by AI)
-        - "3_1_ipem_enhanced_by_AI' : (prompt 2_1 enhanced by)
-        - "4_prompt_fully_created_by_AI' : (fully created by AI)    
-        - "4_1_AI_enhance_manually' : (fully created by AI and then manually enhanced)
-        
+
     System Prompt to choose from:
         - "tokens_constraints" : (constraints on the number of tokens to use in the response)
         - "no_tokens_constraints" : (no constraints on the number of tokens to use in the response)
@@ -44,14 +35,14 @@ def query_llm(ontology_file,prompt_file,model):
         openai.types.ChatCompletion | None: The response object from the LLM API if successful
         , otherwise None.
     """
-    prompt_type="4_1_AI_enhance_manually"
 
-    # Load prompts from a JSON file
-    with open(prompt_file, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-        prompt_system=data["prompt_system"]["tokens_constraints"]
+    ### Load prompts from a JSON file ###
+    with open(prompt_file, 'r', encoding='utf-8') as file:
+        data = json.load(file)
         prompt_user=data["prompt_user"][prompt_type]
+        prompt_system=data["prompt_system"]["tokens_constraints"]
 
+    ### Load ontology from a file ###
     with open(f'{ontology_file}','rt',encoding='utf-8') as ontol:
         ontology = ','.join(str(x) for x in ontol.readlines())
 
@@ -76,7 +67,7 @@ def query_llm(ontology_file,prompt_file,model):
     except OpenAIError as e:
         print(f"An error occured: {e}")
 
-    return response, prompt_type
+    return response#, prompt_type
 
 def storing_results(response,temp_file,file_result,logger,model):
     """ Store the generated graph result from the LLM response, filter its content, and log 
@@ -120,28 +111,28 @@ def storing_results(response,temp_file,file_result,logger,model):
     os.remove(temp_file)
 
 def model_to_choose(model_nbr):
-    """ Select a model name from the models.txt file based on the provided index.
-    This function reads the list of available model names from the models.txt file and returns the
+    """ Select a model name from the models.json file based on the provided index.
+    This function reads the list of available model names from the models.json file and returns the
     model corresponding to the given index (model_nbr).
 
     Args:
-        model_nbr (int): The index of the model to select from the list.
+        model_nbr (int) : The index of the model to select from the list.
     Returns:
-        str: The name of the selected model.
+        model_name : The name of the selected model.
     """
+
     path_gen=Path(f'{os.getcwd()}')
-    model_list = []
-    file_list = f'{path_gen}/model/models.txt'
-    with open(file_list, mode='r',encoding='utf-8') as file:
-        lines = file.readlines()
-        for line in lines:
-            cleaned_line = line.strip()
-            model_list.append(cleaned_line)
-    model = model_list[model_nbr]
-    return model
+    model_file = f'{path_gen}/utils_gen/models/models.json'
+
+    # Load model name from a JSON file
+    with open(model_file, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+        model_name=data["model"][str(model_nbr)]
+
+    return model_name
 
 def build_folder_paths_and_files(model):
-    """Build and return paths for result folders, ontology, prompts, logs, and temporary files.
+    """ Build and return paths for result folders, ontology, prompts, logs, and temporary files.
     This function constructs and creates (if necessary) the directory structure and file paths
     required for generating or merging knowledge graphs. It organizes output, logs, ontology,
     prompt files, and handles both generation and merging workflows.
@@ -158,8 +149,8 @@ def build_folder_paths_and_files(model):
     path_gen=Path(f'{os.getcwd()}')
 
     path_result = f'{path_gen.parent}/results/synthetics_graphs/{date}/{model}'
-    ontologie_file=f'{path_gen}/ontologies/Noria.ttl'
-    prompt_file=f'{path_gen}/prompts/prompts.json'
+    ontologie_file=f'{path_gen}/utils_gen/ontologies/Noria.ttl'
+    prompt_file=f'{path_gen}/utils_gen/prompts/prompts.json'
     path_graph=f'{path_gen}/graph'
     path_merged = f'{path_result}/merged'
 
@@ -183,7 +174,11 @@ def build_folder_paths_and_files(model):
         Path(log_file),path_merged
 
 def remove_file_in_folder(folder_path):
-    '''remove all files in a folder'''
+    """ Remove all files in a specify folder
+
+    Args:
+        folder_path (str): The path to the folder from which files will be removed.
+    """
     if Path(folder_path).is_dir() and Path(folder_path).exists():
         for files in Path(folder_path).iterdir():
             if files.is_file():
