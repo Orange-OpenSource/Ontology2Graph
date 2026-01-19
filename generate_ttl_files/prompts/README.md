@@ -1,5 +1,12 @@
-# Prompt folder
+# Prompts Folder
 
-This folder contain 2 files corresponding to 3 differents prompts that can be used by an LLM to generate a syntetic Knowledge Graph. All of these prompts are constantly refined based on problems we encountered when generating new graphs with LLM.
+This folder is intended to store prompt files used in the project. Prompts are typically used to guide language models or other AI systems in generating specific outputs or behaviors.
 
-The first one use only an ontology (schema) to build a synthetic Knoweled Grah, the second one use an ontology and a part of a graph corresponding to this ontology and the third one use an ontology and the associated full knowledge graph.
+## Usage
+- Place all prompt files relevant to your project in this directory.
+- Any existing prompt files in this folder are provided as examples. You can use them as references when creating your own prompts.
+
+## Example
+- Existing prompt files in this folder serve as templates or starting points for your own custom prompts.
+
+Feel free to add, modify, or remove prompt files as needed for your specific use case.
