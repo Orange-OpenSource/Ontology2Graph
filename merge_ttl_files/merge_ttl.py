@@ -9,7 +9,7 @@
     using a specified ontology.
 
 Main Features:
-- Identifies duplicate nodes and computes their maximum occurrence values across the graphs.
+- Identifies duplicate nodes and count the number of files in which they appear. 
 - Merges graphs into one, manages RDF prefixes, and checks the validity of the resulting TTL file.
 - Logs the merging process and removes previous log and result files for a clean run.
 
@@ -17,13 +17,13 @@ Usage:
     python merge_ttl.py --path_file <graphs_folder> --ontology <ontology_file>
 
 Arguments:
-    path_file:   Absolute path to the folder containing the knowledge graph TTL files.
+    path_file:   Absolute path to the folder containing the synthetic knowledge graphs to merge.
     ontology:    Path to the ontology TTL file.
 """
 
 #from ast import arguments
-import utils_merge.utils as utils_merge
 from utils_common import utils as utils_common
+import utils_merge.utils as utils_merge
 
 ### Set up argument parser ###
 args = utils_common.setup_argument_parser([("path_file", "Graphs file path"),\

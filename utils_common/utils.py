@@ -61,14 +61,14 @@ def retreive_onto_object(ontology,object_type):
         for index, line in enumerate(file, start=1):
             if index in index_list:
                 objects.append(line.strip())
-                #print(line.strip())
+                
     file.close()
 
     #clean Object
     for obj in objects:
         obj=obj.replace('noria:',"")
         object_clean.append(obj)
-    #print(dtproperties)
+
     return object_clean
 
 def check_ttl(file_path,bad_file_path,logger):

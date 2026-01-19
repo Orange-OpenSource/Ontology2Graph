@@ -7,8 +7,9 @@
 
 '''
 utils_merge.py provides utility functions used by merge_ttl.py for merging graphs in Turtle format.
-It includes functions for building file/folder paths, manage prfix in the merged graphs, find homonymes
-nodes in a set of graphs, rename homonymes step by step to generate grpahs with different density. 
+It includes functions for building file/folder paths, manage prefix in the merged graphs, find 
+homonymes nodes in a set of graphs, rename homonymes step by step to generate graphs with different
+ density. 
 '''
 
 import datetime
@@ -175,10 +176,10 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
     homo_max=0
 
     print('\nTreatment in progress :\n')
-    print('Max number of homonyme detected in files:', nbr_homonyme_max)
+    print('At least one homonyme node appeared in : ', nbr_homonyme_max,' differents files \n')
 
     while homo_max != nbr_homonyme_max + 1:
-        print(f'Renaming Homonymes : {homo_max} homonyme max in the set of files')
+        print(f'Renaming Homonymes : Keep {homo_max} homonyme max in {homo_max} different files')
 
         os.makedirs(Path(f'{path_homonyme_treated}/{homo_max}'),exist_ok=True)
 
