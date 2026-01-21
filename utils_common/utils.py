@@ -61,7 +61,7 @@ def retreive_onto_object(ontology,object_type):
         for index, line in enumerate(file, start=1):
             if index in index_list:
                 objects.append(line.strip())
-                
+
     file.close()
 
     #clean Object

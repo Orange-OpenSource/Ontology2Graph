@@ -28,8 +28,9 @@ import os
 import time
 import datetime
 from pathlib import Path
-from utils_common import utils as utils_common
+from venv import logger
 from utils_gen import utils as utils_gen
+from utils_common import utils as utils_common
 
 ### set argument parser ###
 args = utils_common.setup_argument_parser([("nbrttl", "number of ttl file to generate")])
@@ -41,7 +42,7 @@ model_name = utils_gen.model_to_choose(model_nbr=7)
 PROMPT_TYPE="4_1_AI_enhance_manually"
 
 ### build folders & files paths ###
-PATH_RESULT, BAD_PATH_RESULT, ONTOLOGY_FILE, PROMPT_FILE, PATH_GRAPH, TEMP_FILE,\
+PATH_RESULT, BAD_PATH_RESULT, MISFORMATED_PATH, ONTOLOGY_FILE, PROMPT_FILE, PATH_GRAPH, TEMP_FILE,\
 LOG_FILE, PATH_MERGED = utils_gen.build_folder_paths_and_files(model_name)
 
 ### Setup logger ###
@@ -77,11 +78,14 @@ while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
     NUMBER_OF_GRAPH += 1
     print(f'\nNUMBER OF GRAPH GENERATED : {NUMBER_OF_GRAPH}\n')
     print("Sleeping 60 sec to reset the context")
-    time.sleep(60)
+    #time.sleep(60)
     print("Awake !")
 
 ### Check Turtle syntax and log some info ###
 utils_common.check_ttl(PATH_RESULT,BAD_PATH_RESULT,logger_gen)
+
+### Clea TTL files if needed ###
+utils_gen.format_ttl(PATH_RESULT,MISFORMATED_PATH,logger_gen)
 
 ### remove old files in the merge folder ###
 utils_gen.remove_file_in_folder(PATH_MERGED)

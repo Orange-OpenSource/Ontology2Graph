@@ -16,6 +16,7 @@ import os
 import json
 from pathlib import Path
 import datetime
+import subprocess
 from openai import OpenAI, OpenAIError
 
 def query_llm(ontology_file,prompt_file,model,prompt_type):
@@ -141,8 +142,9 @@ def build_folder_paths_and_files(model):
         model (str): The name of the model used for folder naming.
 
     Returns:
-        tuple: Paths for result folder, bad syntax folder, ontology file, prompt file, graph folder,
-               temporary file, log file, and merged graph folder, in that order.
+        tuple: Paths for result_folder, invalid syntax folder, misformatted turtle folder,
+            ontology file, prompt file, graph folder, temporary file, log file, 
+            and merged graph folder, in that order.
     """
 
     date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -154,13 +156,15 @@ def build_folder_paths_and_files(model):
     path_graph=f'{path_gen}/graph'
     path_merged = f'{path_result}/merged'
 
-    bad_path_result = f'{path_result}/Bad_Turtle_Syntax'
+    bad_path_result = f'{path_result}/Invalid_Turtle_Syntax'
+    misformated_path = f'{path_result}/Misformatted_Turtle_file'
     temp_file = f'{path_result}/temp.ttl'
     date_other_format = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     log_file=f'{Path(path_result)}/logs/generation_graph_{date_other_format}.log'
 
     os.makedirs(f'{path_result}/logs', exist_ok=True)
     os.makedirs(f'{path_merged}',exist_ok=True)
+    os.makedirs(f'{misformated_path}', exist_ok=True)
     os.makedirs(f'{bad_path_result}', exist_ok=True)
 
     ### remove previous log files in logs ###
@@ -170,8 +174,8 @@ def build_folder_paths_and_files(model):
             if os.path.isfile(file_path):
                 os.remove(file_path)
 
-    return path_result, bad_path_result, ontologie_file, prompt_file, path_graph, temp_file,\
-        Path(log_file),path_merged
+    return path_result, bad_path_result, misformated_path, ontologie_file, prompt_file,\
+        path_graph, temp_file, Path(log_file), path_merged
 
 def remove_file_in_folder(folder_path):
     """ Remove all files in a specify folder
@@ -183,3 +187,43 @@ def remove_file_in_folder(folder_path):
         for files in Path(folder_path).iterdir():
             if files.is_file():
                 files.unlink()
+
+def format_ttl(folder_path,misformated_path,logger_gen):
+    '''format ttl files generate by LLM model to ensure the turtle syntax respect '''
+    all_files = [f.name for f in Path(folder_path).iterdir() if f.is_file()]
+
+    # format each ttl file with owl-cli #
+    for file in all_files :
+        file_to_format= f"{folder_path}/{file}"
+
+        formated_file_name = f"{folder_path}/{Path(file).stem}_FORMATED.ttl"
+        #print(f"\nFormated file name: {formated_file_name}")
+
+        print(f"Checking format of {file}")
+
+        format_ttl_command = ["owl","write","--endOfLine","lf","--encoding", "utf_8",\
+            "--indent", "space","--input", "TURTLE","--output", "TURTLE",file_to_format,
+            formated_file_name]
+
+        try:
+            # Use subprocess.run for simpler handling
+            result = subprocess.run(format_ttl_command, capture_output=True, text=True, \
+                timeout=30, check=False)
+
+            if result.returncode == 0:
+                os.replace(formated_file_name, file_to_format)
+                print(f"✓ Successfully formatted: {file}")
+                
+            else:
+                print(f"✗ Error formatting {file}:")
+                print(f"  Return code: {result.returncode}")
+                print(f"  Error output: {result.stderr}")
+                misformated_file_name = f"{Path(file).stem}_MISFORMATED.ttl"
+                os.rename(file, f"{misformated_path}/{misformated_file_name}")
+
+        except subprocess.TimeoutExpired:
+            print(f"✗ Timeout formatting {file}")
+        except FileNotFoundError:
+            print("✗ owl command not found. Make sure owl-cli is installed and in PATH")
+        except Exception as e:
+            print(f"✗ Unexpected error formatting {file}: {e}")
