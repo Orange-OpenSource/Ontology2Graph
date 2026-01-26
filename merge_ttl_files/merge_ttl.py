@@ -18,12 +18,11 @@ Usage:
 
 Arguments:
     path_file:   Absolute path to the folder containing the synthetic knowledge graphs to merge.
-    ontology:    Path to the ontology TTL file.
-"""
+    ontology:    Path to the ontology TTL file."""
 
 #from ast import arguments
-from utils_common import utils as utils_common
 import utils_merge.utils as utils_merge
+from utils_common import utils as utils_common
 
 ### Set up argument parser ###
 args = utils_common.setup_argument_parser([("path_file", "Graphs file path"),\

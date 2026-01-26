@@ -5,8 +5,7 @@
 # This software is distributed under the BSD 4-Clause "Original" or "Old" License,
 # see the "LICENSE" file for more details or <license-url
 
-'''
-Utils module for merging TTL (Turtle) files containing RDF graphs.
+''' Utils module for merging TTL (Turtle) files containing RDF graphs.
 
 This module provides utility functions for:
 - Building file and folder paths for merged graphs
@@ -27,8 +26,7 @@ Dependencies:
     - pathlib.Path: For cross-platform file path handling
     - collections.Counter: For counting node occurrences
     - rdflib: For RDF/Turtle format processing (URIRef, Namespace, BNode)
-    - utils_common: Common utilities module
-'''
+    - utils_common: Common utilities module '''
 
 import datetime
 import re
@@ -42,8 +40,7 @@ from rdflib import URIRef,Namespace,BNode
 from utils_common import utils as utils_common
 
 def build_merged_folder_paths_and_files(path_files):
-    ''' 
-    Create merged folder structure and return paths for processing TTL files.
+    ''' Create merged folder structure and return paths for processing TTL files.
     
     Creates necessary directories for:
     - Merged TTL files
@@ -61,12 +58,12 @@ def build_merged_folder_paths_and_files(path_files):
             - log_file_homonymes (Path): Homonym processing log file
             - log_file_check_ttl (Path): TTL validation log file  
             - path_merged (Path): Directory for merged files
-            - path_homonyme_treated (str): Directory for homonym-treated filescreate merged folder if not exists
-    '''
+            - path_homonyme_treated (str): Directory for homonym-treated filescreate merged folder
+            if not exists'''
 
     path_merged = f'{path_files}/merged'
     bad_path_result = f'{path_files}/Bad_Turtle_Syntax'
-    path_homonyme_treated=f'{Path(path_merged)}/llm_graphs_dup_treated'
+    path_homonyme_treated=f'{Path(path_merged)}/homonymes_treated'
     path_logs = f'{Path(path_files)}/logs'
     date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     log_file=f'{Path(path_files)}/logs/merge_graph_{date}.log'
@@ -101,8 +98,7 @@ def build_merged_folder_paths_and_files(path_files):
         Path(path_merged),path_homonyme_treated)
 
 def manage_prefix(path_merged):
-    '''
-    Remove homonymous prefixes from merged TTL files.
+    ''' Remove homonymous prefixes from merged TTL files.
     
     Processes all TTL files in the merged directory to:
     - Extract and deduplicate prefix declarations
@@ -113,8 +109,9 @@ def manage_prefix(path_merged):
         path_merged (str): Path to directory containing merged TTL files
         
     Note:
-        Modifies files in place by rewriting them with deduplicated prefixesremove homonyme prefix of the merged file
-    '''
+        Modifies files in place by rewriting them with deduplicated prefixesremove homonyme prefix
+        of the merged files.'''
+
     nodes_lines=[]
     prefix_lines=[]
     prefix_lines_unique=[]
@@ -151,8 +148,7 @@ def manage_prefix(path_merged):
         count = count + 1
 
 def find_homonymes_nodes(path,logger_homonymes,ontology):
-    '''
-    Find homonymous nodes across multiple TTL files.
+    ''' Find homonymous nodes across multiple TTL files.
     
     Analyzes all TTL files in the specified path to identify nodes that appear
     in multiple graphs, which may need renaming to avoid conflicts during merging.
@@ -167,9 +163,7 @@ def find_homonymes_nodes(path,logger_homonymes,ontology):
         
     Example:
         >>> homonymes = find_homonymes_nodes('/path/to/ttl/files', logger, onto)
-        >>> homonymes['NodeA']  # Returns number of files containing NodeA
-        3
-    '''
+        >>> homonymes['NodeA']  # Returns number of files containing NodeA '''
 
     # List all the ttl graph files in PATH except folder
     all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
@@ -234,8 +228,7 @@ def find_homonymes_nodes(path,logger_homonymes,ontology):
 
 def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occurence,\
     nbr_homonyme_max,logger_merge):
-    '''
-    Rename homonymous nodes and merge TTL files with varying density levels.
+    ''' Rename homonymous nodes and merge TTL files with varying density levels.
     
     Creates multiple versions of merged graphs by progressively reducing the number
     of homonymous nodes, allowing for graphs with different connection densities.
@@ -251,8 +244,7 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
         list: Names of newly created TTL files with homonym treatment
         
     Note:
-        Creates multiple merged files with suffix indicating homonym threshold
-    '''
+        Creates multiple merged files with suffix indicating homonym threshold '''
 
     path_files=path_merged.parent
 
@@ -269,7 +261,6 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
         os.makedirs(Path(f'{path_homonyme_treated}/{homo_max}'),exist_ok=True)
 
         occ_dup=homonymes_nodes_and_occurence.copy()
-        #print(occ_dup)
         nbr_file_treated=0
 
         for ttl_file in all_ttl_files :
@@ -289,7 +280,7 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
                 logger_merge.info("nbr file treated %s",nbr_file_treated)
 
 #######################################################################
-# case when a 
+# case when there are several ; in one line
                 for line in rawfile:
                     if '; ' in line : #split line statement on several lines
                         parts=line.split(';')
@@ -339,8 +330,7 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
 
 def rename_homonyme_by_line(infile,outfile,homo_max,occ_dup,dup_treated_list,logger_merge,
                             nbr_file_treated):
-    '''
-    Replace homonymous nodes line by line in TTL files.
+    ''' Replace homonymous nodes line by line in TTL files.
     
     Internal function that processes TTL content line by line, identifying and
     replacing homonymous nodes according to the specified threshold.
@@ -355,8 +345,7 @@ def rename_homonyme_by_line(infile,outfile,homo_max,occ_dup,dup_treated_list,log
         nbr_file_treated (int): Count of files processed so far
         
     Note:
-        This is an internal utility function called by rename_and_merge
-    '''
+        This is an internal utility function called by rename_and_merge '''
 
     for line in infile:
 
@@ -374,24 +363,6 @@ def rename_homonyme_by_line(infile,outfile,homo_max,occ_dup,dup_treated_list,log
 
             updated_line=line
             for key, value in occ_dup.items():
-            #    if '#' in line: #Case when there is a comment at the end of the line
-            #        after_hash=line.split('#',1)[1]
-            #        before_hash=line.split('#',1)[0]
-            #        if re.search(r'\b' + re.escape(key) + r'\b', after_hash) and \
-            #            not re.search(r'\b' + re.escape(key) + r'\b', before_hash) and (value>homo_max):
-            #            #replace only
-            #            updated_line = updated_line.replace\
-            #            (key,f'{key}_extra_node_{nbr_file_treated}')
-            #            logger_merge.info('dup %s %s',key,value)
-            #            logger_merge.info('updated_line %s',updated_line.strip())
-            #        if re.search(r'\b' + re.escape(key) + r'\b', before_hash) and (value>homo_max):
-            #            #replace and decrease occurence
-            #            updated_line = updated_line.replace\
-            #            (key,f'{key}_extra_node_{nbr_file_treated}')
-            #            logger_merge.info('dup %s %s',key,value)
-            #            logger_merge.info('updated_line %s',updated_line.strip())
-            #            dup_treated_list.append(key)
-            #            dup_treated=True
 
                 if re.search(r'\b' + re.escape(key) + r'\b', line)\
                   and (value>homo_max):
@@ -408,8 +379,7 @@ def rename_homonyme_by_line(infile,outfile,homo_max,occ_dup,dup_treated_list,log
                 outfile.write(line)
 
 def merge_graph(all_new_ttl_files,path_merged,homo_max):
-    '''
-    Merge multiple TTL files into a single combined graph file.
+    ''' Merge multiple TTL files into a single combined graph file.
     
     Combines all processed TTL files into one merged file, maintaining
     proper Turtle syntax and formatting.
@@ -423,8 +393,8 @@ def merge_graph(all_new_ttl_files,path_merged,homo_max):
         str: Path to the created merged file
         
     Note:
-        Creates a file named 'merged_graph_{homo_max}.ttl'
-    '''
+        Creates a file named 'merged_graph_{homo_max}.ttl' '''
+
     merged_file=f'{path_merged}/merged_graph_{homo_max}.ttl'
     with open(merged_file, 'w', encoding='utf-8') as m_file:
         for file in all_new_ttl_files: # Open each input file in read mode

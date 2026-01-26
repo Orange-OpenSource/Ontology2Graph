@@ -43,4 +43,7 @@ generate_ttl.py accordingly?
 - The script and utilities are licensed under BSD-4-Clause.
 
 ## License
-- Scripts and utilities are licensed under BSD-4-Clause license.
+
+BSD-4-Clause License - Copyright (c) Orange SA
+
+See the main LICENSE file for complete license terms.

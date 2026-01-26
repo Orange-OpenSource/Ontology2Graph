@@ -1,11 +1,10 @@
-'''compute nodes occurence in ttl files, requires files location and ontology
-location as arguments. To be use with file in llm_graphs_dup_treated folder'''
+
 
 import argparse
 import os
 from pathlib import Path
 import logging
-from utils_merge import find_duplicates_nodes,occurence_duplicate
+from merge_ttl_files.utils_merge import find_duplicates_nodes,occurence_duplicate
 
 parser = argparse.ArgumentParser()
 parser.add_argument("path")

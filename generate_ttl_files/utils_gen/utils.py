@@ -5,12 +5,10 @@
 # This software is distributed under the BSD 4-Clause "Original" or "Old" License,
 # see the "LICENSE" file for more details or <license-url>
 
-"""
-This script provides utility functions for generating, validating, and storing knowledge graphs 
-in Turtle (TTL) format using large language models (LLMs). It includes functions for querying
-LLM APIs, storing and filtering results, validating TTL syntax, managing model selection,
-and building file/folder paths and selecting prompt and ontology name. 
-"""
+""" This script provides utility functions for generating, validating, and storing knowledge
+graphs in Turtle (TTL) format using large language models (LLMs). It includes functions for 
+querying LLM APIs, storing and filtering results, validating TTL syntax, managing model selection,
+and building file/folder paths and selecting prompt and ontology name. """
 
 import os
 import json
@@ -34,8 +32,7 @@ def query_llm(ontology_file,prompt_file,model,prompt_type):
 
     Returns:
         openai.types.ChatCompletion | None: The response object from the LLM API if successful
-        , otherwise None.
-    """
+        , otherwise None."""
 
     ### Load prompts from a JSON file ###
     with open(prompt_file, 'r', encoding='utf-8') as file:
@@ -98,7 +95,7 @@ def storing_results(response,temp_file,file_result,logger,model):
         final.writelines(filtered_lines)
         final.close()
 
-    logger.info('########### GRAPH GENERATION INFO ###########')
+    logger.info('\n########### GRAPH GENERATION INFO ###########\n')
 
     if response is not None :
         if response.usage is not None:
@@ -119,8 +116,7 @@ def model_to_choose(model_nbr):
     Args:
         model_nbr (int) : The index of the model to select from the list.
     Returns:
-        model_name : The name of the selected model.
-    """
+        model_name : The name of the selected model."""
 
     path_gen=Path(f'{os.getcwd()}')
     model_file = f'{path_gen}/utils_gen/models/models.json'
@@ -144,8 +140,7 @@ def build_folder_paths_and_files(model):
     Returns:
         tuple: Paths for result_folder, invalid syntax folder, misformatted turtle folder,
             ontology file, prompt file, graph folder, temporary file, log file, 
-            and merged graph folder, in that order.
-    """
+            and merged graph folder, in that order."""
 
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     path_gen=Path(f'{os.getcwd()}')
@@ -181,15 +176,43 @@ def remove_file_in_folder(folder_path):
     """ Remove all files in a specify folder
 
     Args:
-        folder_path (str): The path to the folder from which files will be removed.
-    """
+        folder_path (str): The path to the folder from which files will be removed."""
+
     if Path(folder_path).is_dir() and Path(folder_path).exists():
         for files in Path(folder_path).iterdir():
             if files.is_file():
                 files.unlink()
 
-def format_ttl(folder_path,misformated_path,logger_gen):
-    '''format ttl files generate by LLM model to ensure the turtle syntax respect '''
+def format_ttl(folder_path, misformated_path, logger):
+    """Format TTL (Turtle) files in a directory using owl-cli tool.
+    
+    This function processes all TTL files in the specified folder, formatting them using the
+    owl-cli command line tool with specific formatting options. Successfully formatted files
+    replace the original files, while files that fail formatting are moved to a separate
+    misformatted directory for manual inspection.
+    
+    The formatting process includes:
+    - Setting line endings to LF (Linux format)
+    - Using UTF-8 encoding
+    - Applying space-based indentation
+    - Converting from TURTLE input to TURTLE output format
+    
+    Args:
+        folder_path (str): Path to the directory containing TTL files to be formatted.
+        misformated_path (str): Path to the directory where misformatted files will be moved.
+        logger_gen: Logger object for recording formatting operations and errors.
+    
+    Note:
+        - Requires owl-cli to be installed and available in the system PATH
+        - Files that cannot be formatted are renamed with "_MISFORMATED" suffix
+        - The function uses a 30-second timeout for each formatting operation
+        - Original files are replaced only when formatting is successful
+    
+    Raises:
+        FileNotFoundError: When owl-cli command is not found in the system PATH.
+        subprocess.TimeoutExpired: When formatting operation exceeds 30-second timeout.
+        Exception: For other unexpected errors during the formatting process.
+    """
     all_files = [f.name for f in Path(folder_path).iterdir() if f.is_file()]
 
     # format each ttl file with owl-cli #
@@ -206,24 +229,25 @@ def format_ttl(folder_path,misformated_path,logger_gen):
             formated_file_name]
 
         try:
+            logger.info('\n########### GRAPH GENERATION INFO ###########\n')
             # Use subprocess.run for simpler handling
             result = subprocess.run(format_ttl_command, capture_output=True, text=True, \
                 timeout=30, check=False)
 
             if result.returncode == 0:
                 os.replace(formated_file_name, file_to_format)
-                print(f"✓ Successfully formatted: {file}")
-                
+                logger.info(f"✓ Successfully formatted: {file}")
+
             else:
-                print(f"✗ Error formatting {file}:")
-                print(f"  Return code: {result.returncode}")
-                print(f"  Error output: {result.stderr}")
+                logger.error(f"✗ Error formatting {file}:")
+                logger.error(f"  Return code: {result.returncode}")
+                logger.error(f"  Error output: {result.stderr}")
                 misformated_file_name = f"{Path(file).stem}_MISFORMATED.ttl"
                 os.rename(file, f"{misformated_path}/{misformated_file_name}")
 
         except subprocess.TimeoutExpired:
-            print(f"✗ Timeout formatting {file}")
+            logger.error(f"✗ Timeout formatting {file}")
         except FileNotFoundError:
-            print("✗ owl command not found. Make sure owl-cli is installed and in PATH")
-        except Exception as e:
-            print(f"✗ Unexpected error formatting {file}: {e}")
+            logger.error("✗ owl command not found. Make sure owl-cli is installed and in PATH")
+        except (OSError, subprocess.SubprocessError) as e:
+            logger.error(f"✗ Unexpected error formatting {file}: {e}")

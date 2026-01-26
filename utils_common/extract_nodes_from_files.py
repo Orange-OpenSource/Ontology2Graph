@@ -1,5 +1,54 @@
-'''extract nodes from files
-to be check what is considered a node or not in rdlib graph'''
+
+#!/usr/bin/env python3
+# Software Name : Ontologie2Graph
+# SPDX-FileCopyrightText: Copyright (c) Orange SA
+# SPDX-License-Identifier: BSD-4-Clause
+#
+# This software is distributed under the BSD 4-Clause "Original" or "Old" License,
+# see the "LICENSE" file for more details or <license-url>
+
+"""
+Extract and Export Graph Nodes from TTL Files
+
+This script parses a Turtle (TTL) RDF file to extract meaningful graph nodes, 
+excluding metadata properties, and exports them to a CSV file for further analysis.
+
+The script performs the following operations:
+1. Parses a TTL file using RDFLib to extract RDF triples
+2. Filters out metadata predicates (labels, types, descriptions, etc.)
+3. Excludes datatype properties defined in the ontology
+4. Creates a directed graph using NetworkX with filtered relationships
+5. Exports the resulting nodes to a CSV file
+
+Usage:
+    python extract_nodes_from_files.py <ttl_file_path>
+
+Arguments:
+    ttl_file_path: Path to the Turtle (.ttl) file to process
+
+Output:
+    Creates a 'nodes.csv' file in the current working directory containing 
+    one node name per row.
+
+Filtered Predicates:
+    - label: Node labels and naming properties
+    - type: RDF type declarations
+    - inScheme: SKOS concept scheme relationships  
+    - description: Descriptive text properties
+    - comment: Comment annotations
+    - All datatype properties defined in the Noria ontology
+
+Dependencies:
+    - rdflib: For RDF/Turtle file parsing
+    - networkx: For graph structure creation and manipulation
+    - csv: For CSV file generation
+    - pathlib: For cross-platform path handling
+    - utils_common.utils: For ontology object retrieval
+
+Example:
+    python extract_nodes_from_files.py /path/to/graph.ttl
+    # Creates nodes.csv with extracted node names
+"""
 
 import sys
 from os import getcwd

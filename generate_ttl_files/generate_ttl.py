@@ -25,10 +25,8 @@ Arguments:
 '''
 
 import os
-import time
 import datetime
 from pathlib import Path
-from venv import logger
 from utils_gen import utils as utils_gen
 from utils_common import utils as utils_common
 
