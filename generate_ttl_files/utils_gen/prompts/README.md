@@ -1,10 +1,11 @@
 # Prompts Folder
 
-This folder is intended to store prompt files used in the project. Prompts are typically used to guide language models or other AI systems in generating specific outputs or behaviors.
+This folder contain a json file that references several prompts. Prompts are typically used to guide LLMs in generating specific outputs or behaviors.
+The file can be used as is or modified accordingly to your own need.
 
 ## Usage
-- Place all prompt files relevant to your project in this directory.
-- Any existing prompt files in this folder are provided as examples. You can use them as references when creating your own prompts.
+- The prompt's key must be set in generate:_ttl_py before launching.
+- Place all prompt relevant to your project in this directory.
 
 ## Example
 - Existing prompt files in this folder serve as templates or starting points for your own custom prompts.

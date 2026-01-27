@@ -62,10 +62,6 @@ from utils_common import utils as utils_common
 args = utils_common.setup_argument_parser([("path", "path where files are stored")\
                             ,("ontology", "ontology file path"),("reasonner","Pellet or HermiT")])
 
-#path_graph_file=args.path
-#ontology=args.ontology
-#reasonner=args.reasonner
-
 if args.reasonner not in ["Pellet", "HermiT"]:
     raise ValueError("Reasonner must be either 'Pellet' or 'HermiT'")
 

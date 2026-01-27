@@ -85,7 +85,7 @@ from utils_common import utils as utils_common
 
 ### set argument parser ###
 args = utils_common.setup_argument_parser([("path", "path where files are stored")\
-                                ,("ontology", "ontology file path"),("mode", "display mode")])
+                                ,("ontology", "ontology file "),("mode", "display mode")])
 
 if args.mode not in ["basic", "advanced"]:
     raise ValueError("Mode must be either 'basic' or 'advanced'")

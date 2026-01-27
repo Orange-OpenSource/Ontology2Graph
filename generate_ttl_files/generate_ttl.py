@@ -9,7 +9,10 @@
 This script generates knowledge graphs in turtle format based on an ontology schema and a prompt.
 Please read the following. 
     - You just have to pass the number of graph you want as an argument of this script.
-    - "model_nbr" and "prompt_type" must be set directly in this script before launching.
+    - "model_nbr" and "prompt_type" must be set directly in this script before launching
+    accordingly to "generate_ttl_files/utils_gen/models/models.json" and
+    "generate_ttl_files/utils_gen/prompts/prompts.json" files.
+    
     - You have to refer to utils_gen/models/models.json to set "model_nbr".
     - You have to refer to utils_gen/prompts/prompts.json to set "prompt_type".
     - The generated ttl files are stored in the results/synthetics_graphs folder.
