@@ -10,12 +10,18 @@ graphs in Turtle (TTL) format using large language models (LLMs). It includes fu
 querying LLM APIs, storing and filtering results, validating TTL syntax, managing model selection,
 and building file/folder paths and selecting prompt and ontology name. """
 
+import logging
 import os
 import json
 from pathlib import Path
 import datetime
 import subprocess
+import shutil
 from openai import OpenAI, OpenAIError
+import rdflib
+from owlready2 import get_ontology,sync_reasoner_hermit,sync_reasoner_pellet
+from owlready2 import OwlReadyInconsistentOntologyError,default_world
+from utils_common import utils as utils_common
 
 def query_llm(ontology_file,prompt_file,model,prompt_type):
     """ This function sends a prompt and an ontology schema to an LLM (via OpenAI-compatible API)
@@ -251,3 +257,137 @@ def format_ttl(folder_path, misformated_path, logger):
             logger.error("✗ owl command not found. Make sure owl-cli is installed and in PATH")
         except (OSError, subprocess.SubprocessError) as e:
             logger.error(f"✗ Unexpected error formatting {file}: {e}")
+
+def chek_skg(path,ontology_file,reasonner):
+    '''This function performs comprehensive consistency checking and reasoning validation on
+    knowledge graphs by combining them with their corresponding ontologies and applying
+    formal logical reasoning engines.
+
+    The tool supports two primary reasoning engines (HermiT and Pellet) to detect:
+    - Ontological inconsistencies in the knowledge graph
+    - Unsatisfiable classes that violate logical constraints
+    - Structural integrity issues in RDF/TTL graph files
+
+    Main Features:
+    - Single file or batch directory processing
+    - Ontology-graph concatenation for complete consistency checking
+    - Support for HermiT and Pellet reasoners
+    - Comprehensive logging of validation results
+    - Automatic cleanup of temporary files
+    - Detection of inconsistent classes equivalent to owl:Nothing
+
+    Usage:
+        python check_skg.py <graph_path> <ontology_file> <reasoner>
+
+    Arguments:
+        graph_path:    Path to a single TTL file or directory containing multiple TTL files
+        ontology_file: Path to the ontology TTL file used for consistency checking
+        reasoner:      Reasoning engine to use ("HermiT" or "Pellet")
+
+    Output:
+        - Creates a 'check_graph_log' directory in the graph path location
+        - Generates detailed log files with consistency check results
+        - Console output indicating discovered inconsistencies or validation success
+
+    Dependencies:
+        - rdflib: For RDF graph parsing and serialization
+        - owlready2: For ontology loading and reasoning engine integration
+        - pathlib: For cross-platform file path operations
+
+    Example:
+        python check_skg.py ./graphs/synthetic_graph.ttl ./ontology/schema.ttl HermiT
+        python check_skg.py ./graphs_directory/ ./ontology/schema.ttl Pellet'''
+
+    if reasonner not in ["Pellet", "HermiT"]:
+        raise ValueError("Reasonner must be either 'Pellet' or 'HermiT'")
+
+    ### Setup path and files ###
+    if Path(path).is_file():
+        path_check_log=Path(f'{Path(path).parent}/check_graph_log')
+        all_graph_to_check = [path]
+        path_graph_file=Path(path).parent
+    else :
+        path_check_log=Path(f'{path}/check_graph_log')
+        all_graph_to_check = [f for f in Path(path).iterdir() if f.is_file()]
+
+    if os.path.exists(path_check_log):
+        shutil.rmtree(path_check_log)
+
+    os.makedirs(path_check_log)
+
+    log_file=Path(f'{path_check_log}/check_graph.log')
+
+    ### set logger ###
+    logger_check = utils_common.setup_logger(log_file,'graph_kpi',logging.DEBUG)
+
+    ### Check each graph ###
+    concat = f'{Path(f'{os.getcwd()}')}/concat.ttl'
+    for graph_to_check in all_graph_to_check :
+        print(graph_to_check)
+
+        ### Concat ontology and graph in the same file ###
+        with open(concat, 'w', encoding='utf-8') as target_file:
+            for source_file in [ontology_file,graph_to_check]:
+                with open(source_file, 'r', encoding='utf-8') as file_source:
+                    for line in file_source:
+                        target_file.write(line)
+
+        ### Load concatenated graph with RDFLib ###
+        skgraph = rdflib.Graph()
+        skgraph.parse(f"file://{concat}", format="turtle")
+
+        ### Convert RDFLib graph to OWL/XML format ###
+        graph_xml = skgraph.serialize(format="xml")
+        encoded_graph = graph_xml.encode('utf-8')
+
+        ### Save the OWL/XML graph to a temporary file ###
+        with open(f'temp_graph_{Path(graph_to_check).name}', "wb") as temp_graph_owl:
+            temp_graph_owl.write(encoded_graph)
+
+        encoded_graph_to_check=get_ontology(f'file://temp_graph_{Path(graph_to_check).name}').load()
+
+        logger_check.info('######################################################################')
+        logger_check.info('Graph : %s ',Path(graph_to_check).name)
+
+        try:
+            with encoded_graph_to_check:
+                if reasonner=="HermiT":
+                    sync_reasoner_hermit(debug=0, keep_tmp_file=True,
+                                      ignore_unsupported_datatypes = True)
+                if reasonner=="Pellet":
+                    sync_reasoner_pellet(debug=0, keep_tmp_file=True)
+
+        except OwlReadyInconsistentOntologyError as onto_e:
+            print(f'\nOwlReadyInconsistentOntologyError detected by {reasonner} for '
+                  f'{Path(graph_to_check).name}')
+            logger_check.info('OwlReadyInconsistentOntologyError detected by %s \n',reasonner)
+            logger_check.info(onto_e)
+
+        except OverflowError as e: #system ressource limits reach
+            print(f"\nOverFlowError : {e}")
+            logger_check.info('OverFlowError : %s',e)
+
+        else :
+            print(f'\nNo inconsistent Ontology errors detected by {reasonner} for '
+                  f'{Path(graph_to_check).name}')
+            logger_check.info('No inconsistent Ontology errors found by %s ',reasonner)
+
+        ### List classes inferred equivalent to owl:Nothing (unsatisfiable classes) ###
+        unsat = list(default_world.inconsistent_classes())
+        if unsat:
+            print(f'inconsistent classes found by {reasonner} :\n')
+            for c in unsat:
+                print(" - \n", c)
+                logger_check.info('inconsistent classes found by %s',reasonner)
+                logger_check.info(' %s',c)
+        else:
+            print(f'No inconsistent classes found by {reasonner} for'
+                  f'{Path(graph_to_check).name}')
+            logger_check.info('No inconsistent classes found by %s \n',reasonner)
+
+        ### Remove CONCAT file ###
+        if Path(concat).is_file():
+            os.remove(Path(concat))
+        ### Remove temp_graph_owl ###
+        if Path(f'{Path(f'{os.getcwd()}')}/temp_graph_{Path(graph_to_check).name}').is_file():
+            os.remove(Path(f'{Path(f'{os.getcwd()}')}/temp_graph_{Path(graph_to_check).name}'))

@@ -5,8 +5,7 @@
 # This software is distributed under the BSD 4-Clause "Original" or "Old" License,
 # see the "LICENSE" file for more details or <license-url>
 
-'''
-This script generates knowledge graphs in turtle format based on an ontology schema and a prompt.
+''' This script generates knowledge graphs based on an ontology schema and a prompt.
 Please read the following. 
     - You just have to pass the number of graph you want as an argument of this script.
     - "model_nbr" and "prompt_type" must be set directly in this script before launching
@@ -24,8 +23,8 @@ Usage:
     python generate_ttl.py --nbrttl <number of ttl file to generate>
 
 Arguments:
-    nbrttl : Number of graph (ttl file to generate)    
-'''
+    nbrttl : Number of graph (ttl file to generate)'''
+
 import logging
 import os
 import datetime
