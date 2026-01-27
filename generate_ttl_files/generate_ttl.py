@@ -23,7 +23,7 @@ Usage:
 Arguments:
     nbrttl : Number of graph (ttl file to generate)    
 '''
-
+import logging
 import os
 import datetime
 from pathlib import Path
@@ -44,7 +44,7 @@ PATH_RESULT, BAD_PATH_RESULT, MISFORMATED_PATH, ONTOLOGY_FILE, PROMPT_FILE, PATH
 LOG_FILE, PATH_MERGED = utils_gen.build_folder_paths_and_files(model_name)
 
 ### Setup logger ###
-logger_gen= utils_common.setup_logger(LOG_FILE,'gen_log')
+logger_gen= utils_common.setup_logger(LOG_FILE,'gen_log',logging.INFO)
 
 NUMBER_OF_GRAPH = 0
 ONTO_NAME=Path(ONTOLOGY_FILE).stem
@@ -79,11 +79,11 @@ while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
     #time.sleep(60)
     print("Awake !")
 
+### re format TTL files if needed ###
+utils_gen.format_ttl(PATH_RESULT,MISFORMATED_PATH,logger_gen)
+
 ### Check Turtle syntax and log some info ###
 utils_common.check_ttl(PATH_RESULT,BAD_PATH_RESULT,logger_gen)
-
-### Clea TTL files if needed ###
-utils_gen.format_ttl(PATH_RESULT,MISFORMATED_PATH,logger_gen)
 
 ### remove old files in the merge folder ###
 utils_gen.remove_file_in_folder(PATH_MERGED)

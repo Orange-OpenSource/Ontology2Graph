@@ -77,6 +77,7 @@ Integration:
     - Visual inspection of merged graph structures
     - Performance monitoring of graph generation processes'''
 
+import logging
 from pathlib import Path
 from utils import utils_display as utils
 from utils import visu_graph as visu
@@ -98,7 +99,7 @@ log_html_folder=utils.create_new_log_html_folder(args.path)
 log_file=Path(f'{log_html_folder}/graph_kpi.log')
 
 ### set logger ###
-logger = utils_common.setup_logger(log_file,'graph_kpi')
+logger = utils_common.setup_logger(log_file,'graph_kpi',logging.INFO)
 
 ### display graphs and compute kpis ###
 if Path(args.path).is_file():
@@ -111,25 +112,19 @@ if Path(args.path).is_file():
 
     if args.mode=='basic':
         visu.visu_graph_basic(Digraph, absolute_file_name, log_html_folder)
-        #utils.log_kpis_basic(file_name, Digraph, CUMUL_NODES, CUMUL_DENSITY)
-        #utils.log_kpis(file_name, Digraph, CUMUL_NODES, CUMUL_DENSITY, args.mode, node_type_lists=None)
     elif args.mode=='advanced':
         visu.visu_graph_advanced(Digraph,absolute_file_name,log_html_folder,node_type_lists)
-        #utils.log_kpis_advanced(file_name,Digraph,CUMUL_NODES,CUMUL_DENSITY,node_type_lists)
-        #utils.log_kpis(file_name, Digraph, CUMUL_NODES, CUMUL_DENSITY, args.mode, node_type_lists)
 
 else :
     all_files = [str(f.resolve()) for f in Path(args.path).iterdir() if f.is_file()]
 
     for file in all_files :
+        Digraph, node_type_lists = utils.prepare_graph_to_display(file,log_html_folder,\
+            args.ontology,args.mode)
+        CUMUL_NODES,CUMUL_DENSITY = utils.log_kpis(file,Digraph,CUMUL_NODES,CUMUL_DENSITY,\
+                                                        args.mode,node_type_lists)
 
         if args.mode=='basic':
-            Digraph, _ = utils.prepare_graph_to_display(file,log_html_folder,args.ontology,args.mode)
             visu.visu_graph_basic(Digraph, file, log_html_folder)
-            CUMUL_NODES,CUMUL_DENSITY=utils.log_kpis(file,Digraph,CUMUL_NODES,CUMUL_DENSITY,args.mode,node_type_lists=None)
         elif args.mode=='advanced':
-            Digraph, node_type_lists = utils.prepare_graph_to_display(file,log_html_folder,\
-                                                                        args.ontology,args.mode)
             visu.visu_graph_advanced(Digraph, file, log_html_folder,node_type_lists)
-            CUMUL_NODES,CUMUL_DENSITY = utils.log_kpis(file,Digraph,CUMUL_NODES,CUMUL_DENSITY,\
-                                                        args.mode,node_type_lists)

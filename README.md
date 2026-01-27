@@ -1,85 +1,224 @@
-ont dasn # GenGraphLLM
+# GenGraphLLM: A Framework for Synthetic Knowledge Graph Generation Using Large Language Models
 
-GenGraphLLM is a set of python scripts that create synthetic Knowledge Graphs based on LLM queries. GenGraphLLM is also able to compute Knowledge Graph KPIs and display the Graph Generated.
+## Abstract
 
-**graphllm.py** script is dedicated to query LLM models throught the internal Orange portal [LLM PROXY Portail](https://portal.llmproxy.ai.orange/) in order to generate a knowledge graph in turtle (ttl) format based on an ontology ttl schema. A validation turtle syntax step is integrated in the graph generation process. Three differents prompts have been elaborated and are available in the 'prompts' folder. 
+GenGraphLLM is a comprehensive Python framework designed for the automated generation, analysis, and visualization of synthetic Knowledge Graphs through Large Language Model (LLM) integration. The system provides a complete computational pipeline that transforms ontological schemas into semantically coherent knowledge graphs with integrated quality assurance mechanisms.
 
-   * The First one (First_prompt.txt) just needs and ontologie ttl format.
-   * The Second one (Second_prompt.txt) needs ontologie ttl file and an extract of a knowledge graph based on this ontologie.
-   * The Third one (Third_prompt.txt) needs ontologie ttl file and a complete knowledge graph based on this ontologie.
+## Overview
 
-**graph_kpis_display.py** script compute some specific Knowledge Graphs KPIs and dysplay the graph in your brower
+Knowledge Graphs have emerged as fundamental structures for representing complex relationships in semantic data. This framework addresses the challenge of generating synthetic knowledge graphs at scale by leveraging the reasoning capabilities of Large Language Models while ensuring adherence to ontological constraints and semantic consistency.
 
-**utils.py** script is a collection of functions used by graph_kpis_display.py
+GenGraphLLM implements a modular architecture that supports:
+- Automated knowledge graph generation from ontological specifications
+- Comprehensive graph analysis and key performance indicator computation
+- Interactive visualization capabilities for structural analysis
+- Graph merging and consolidation algorithms
+- Quality control and validation mechanisms
 
-## Getting started
+## System Architecture
 
-### GenGraphLLM installation
+The framework is structured into four primary modules, each addressing specific aspects of the knowledge graph lifecycle:
 
-To install GenGraphLLM in your local environment, clone this repository, create and launch a virtual python environement.
+### Knowledge Graph Generation Module (`generate_ttl_files/`)
 
+The generation module serves as the core component for synthetic knowledge graph creation. It interfaces with various Large Language Models through standardized APIs to transform ontological schemas into RDF-compliant Turtle format graphs.
+
+**Key Components:**
+- `generate_ttl.py`: Primary generation engine implementing LLM-based graph synthesis
+- `utils_gen/utils.py`: Supporting utilities for model configuration and prompt management
+- Multi-model support architecture with configurable prompt strategies
+- Integrated TTL syntax validation pipeline
+
+### Visualization and Analysis Module (`display_graphs/`)
+
+This module provides comprehensive analytical capabilities for knowledge graph assessment and interactive visualization generation.
+
+**Key Components:**
+- `display_graphs.py`: Main visualization engine supporting multiple rendering modes
+- `utils/utils_display.py`: Analytical utilities for graph metrics computation
+- Interactive HTML generation using web-based visualization libraries
+- Key Performance Indicator (KPI) calculation for structural analysis
+- `utils/visu_graph.py`: visualization module for basic or advanced graphs representation
+
+### Graph Consolidation Module (`merge_ttl_files/`)
+
+The consolidation module implements algorithms for intelligent merging of multiple knowledge graphs while maintaining semantic consistency and managing duplicate entities.
+
+**Key Components:**
+- `merge_ttl.py`: Primary merging algorithm with homonyme nodes detection
+- `utils_merge/utils.py`: Specialized utilities for graph unification operations
+- RDF prefix normalization and namespace management
+- Post-merge validation and consistency checking
+
+### Common Utilities Module (`utils_common/`)
+
+Shared infrastructure components providing fundamental operations across all modules.
+
+**Key Components:**
+- `utils.py`: Specialized utilities used by others modules
+- Argument parsing and configuration management
+- Logging and monitoring infrastructure
+- File I/O operations and path management
+- TTL validation and error handling mechanisms
+
+### Quality Assurance Module (`check_skg/`)
+
+Dedicated components for knowledge graph quality control and consistency verification.
+
+**Key Components:**
+- `check_skg/check_skg.py`: Specialized utilities used by others modules
+
+######
+
+## Installation and Configuration
+
+### System Requirements
+
+- Python 3.8 or higher
+- External TTL validation tools
+- Network connectivity for LLM API access
+
+### Environment Setup
+
+1. **Virtual Environment Creation:**
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+2. **Dependency Installation:**
+   ```bash
+   pip install rdflib networkx pyvis openai pandas requests
+   ```
+
+3. **External Tool Installation:**
+   Install the [Turtle Validator](https://github.com/IDLabResearch/TurtleValidator) for syntax validation.
+
+4. **API Configuration:**
+   Configure LLM access credentials:
+   ```bash
+   export LLM_PROXY_KEY="your_api_key"
+   ```
+
+## Usage Documentation
+
+### Knowledge Graph Generation
+
+The generation process requires proper configuration of model parameters and prompt strategies:
+
+```bash
+cd generate_ttl_files
+python generate_ttl.py --nbrttl <number_of_graphs>
 ```
-python3 -m venv .
-source /bin/activate
+
+**Configuration Parameters:**
+- `model_nbr`: Specifies the target LLM (reference: `utils_gen/models/models.json`)
+- `prompt_type`: Defines the generation strategy (reference: `utils_gen/prompts/prompts.json`)
+
+Output files are stored in the `results/synthetic_graphs/` directory in TTL format.
+
+### Graph Visualization and Analysis
+
+The visualization module supports both basic structural rendering and advanced analytical visualization:
+
+```bash
+cd display_graphs
+python display_graphs.py <visualization_mode> <input_path> <ontology_path> <output_path>
 ```
 
-and intall all the packages listed in requirements.txt file
+**Parameters:**
+- `visualization_mode`: Either `basic` for structural visualization or `advanced` for analytical rendering
+- `input_path`: Path to individual TTL files or directories containing multiple graphs
+- `ontology_path`: Reference ontology file path
+- `output_path`: Destination directory for generated HTML visualizations
 
-```
-python3 -m pip install -r requirements.txt
-```
+### Graph Consolidation
 
-### Prerequisite to generate a synthetic Knowledge Graph
+Multiple knowledge graphs can be merged using the consolidation module:
 
-1. First, you need to create an account in [LLM PROXY Portail](https://portal.llmproxy.ai.orange/). Then once it is done you must setup a local environment variable called LLM_PROXY_KEY with the value of your LLM_PROXY key.
-2. Second you must install the following [turtle validator](https://github.com/IDLabResearch/TurtleValidator) in your environment. 
-3. You have to set several constants in graphllm.py
-
-    1. PATH_ONTOLOGY to choose the righ ontologie ttl file.
-    2. PROMPT_TYPE to choose between the 3 different prompts.
-    3. MODEL, as awaited by the LLM_Proxy_portal, to choose your LLM.
-    4. ONTO: the name of the ontology, as you want it just to mention it in the file result
-    5. PATH_RESULT to store the result depending on how you will use graphllm.py, just to generate one graph or to generate a series of graph.
-
-    For the second and the third prompt you have to do the following : 
-
-        - PATH_GRAPH constant must be set with the location of the knowledge graph 
-        - in graphllm.py :  replace f"""Follow the instruction : {PROMPT} and use the following schema
-                            {ONTOLOGY} to generate a new graph in turtle format"""
-                            by f"""Follow the instruction : {PROMPT} and use the following schema
-                            {ONTOLOGY} and {GRAPH} to generate a new graph in turtle format"""
-
-### Start conversion
-
-To launch the python script once for all, just type 'python3 graphllm.py'. Results are stored in {PATH_RESULT} in turtle format 
-
-### Produce KG at regular interval
-
-In order to produce Knowledge Graphs at regular intervals (Each five minutes for instance) you have to setup the crontab like this :
-
-```
-    #Define environment variable
-    LLM_PROXY_KEY= "YOUR LLM PROXY TOKEN"
-
-    */5 * * * * bash "PATH TO script_crontab.sh" >> result.log 2>&1
-```
-script_crontab.sh must be slighlty modified depending on the location of graphllm.py
-
-With this crontab settings graphllm.py will produce Knowledge Graphs at regular intervals and a result.log file with the following content : 
-
-```
-	2025-07-02_15-54-01 vertex_ai/gemini-2.0-flash 
-	Prompt tokens :  35448
-	Output response tokens 3812
-	Turtle validator Result: ('Validator finished with 0 warnings and 0 errors.\n', '')
-	2025-07-02_15-56-01 vertex_ai/gemini-2.0-flash
-	Prompt tokens :  35448
-	Output response tokens 1694
-	Turtle validator Result: ('Validator finished with 0 warnings and 0 errors.\n', '')
-	...
+```bash
+cd merge_ttl_files
+python merge_ttl.py --path_file <source_directory> --ontology <ontology_file>
 ```
 
-### Merge Knmowledge Graph 
+The consolidation process implements intelligent duplicate detection and semantic consistency preservation.
 
-TBD
+## Automation and Scalability
+
+### Scheduled Generation
+
+For automated knowledge graph generation at specified intervals, configure system scheduling:
+
+```bash
+# Crontab configuration for automated generation
+*/5 * * * * cd /path/to/gengraphllm/generate_ttl_files && python generate_ttl.py --nbrttl 1 >> ../logs/generation.log 2>&1
+```
+
+### Monitoring and Logging
+
+The system generates comprehensive logs containing:
+- Generation timestamps and model identifiers
+- Token utilization metrics
+- Validation results and error reports
+- Performance indicators
+
+## Technical Specifications
+
+### Core Dependencies
+
+- **rdflib**: RDF graph processing and SPARQL query execution
+- **networkx**: Graph algorithmic analysis and structural computation
+- **pyvis**: Interactive web-based graph visualization
+- **openai**: Large Language Model API integration
+- **pandas**: Data structure manipulation and analysis
+
+### Supported Formats
+
+- **Input**: TTL (Turtle) ontology files, JSON configuration files
+- **Output**: TTL knowledge graphs, HTML visualizations, CSV analytical reports
+- **Logging**: Structured text logs with configurable verbosity levels
+
+### Quality Assurance
+
+The framework implements multiple validation layers:
+- Syntactic TTL validation using external tools
+- Semantic consistency checking against source ontologies
+- Structural analysis for graph coherence assessment
+- Automated error detection and quarantine mechanisms
+
+## Performance Considerations
+
+### Scalability Factors
+
+- Graph size limitations dependent on available system memory
+- LLM API rate limiting considerations
+- Batch processing optimization for large-scale generation
+- Parallel processing support for visualization rendering
+
+### Optimization Strategies
+
+- Incremental generation for large knowledge graphs
+- Caching mechanisms for repeated ontology processing
+- Configurable validation levels for performance tuning
+- Memory-efficient graph merging algorithms
+
+## Research Applications
+
+This framework supports various research applications in:
+- Semantic data augmentation for machine learning datasets
+- Ontology validation and consistency testing
+- Knowledge graph structural analysis and comparison
+- Synthetic data generation for privacy-preserving research
+
+## License and Attribution
+
+This software is distributed under the BSD 4-Clause License. Refer to the [LICENSE](LICENSE) file for complete terms and conditions.
+
+## References and Documentation
+
+- [LLM Proxy Portal](https://portal.llmproxy.ai.orange/): API access for Large Language Models
+- [Turtle Validator](https://github.com/IDLabResearch/TurtleValidator): External validation tools
+- [RDFLib Documentation](https://rdflib.readthedocs.io/): RDF processing library reference
+
+For additional documentation and contribution guidelines, refer to [CONTRIBUTING.md](CONTRIBUTING.md).
 

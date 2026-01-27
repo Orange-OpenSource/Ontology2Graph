@@ -29,10 +29,10 @@ def setup_argument_parser(arguments):
     args = parser.parse_args()
     return args
 
-def setup_logger(log_file,logger_name):
+def setup_logger(log_file,logger_name,level):
     '''setup logger configuration'''
     logger = logging.getLogger(logger_name)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(level)
     if not any(isinstance(h, logging.FileHandler) and h.baseFilename == str(Path(log_file))\
         for h in logger.handlers):
         handler = logging.FileHandler(log_file)

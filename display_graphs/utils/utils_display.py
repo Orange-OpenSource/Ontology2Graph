@@ -203,8 +203,8 @@ def prepare_graph_to_display(file, log_html_folder, ontology, mode):
                 )
             else:  # basic mode
                 digraph.add_edge(
-                    str(short_subj), 
-                    str(short_obj), 
+                    str(short_subj),
+                    str(short_obj),
                     label=str(short_pred),
                     color='white'
                 )
@@ -299,170 +299,8 @@ def prepare_graph_to_display(file, log_html_folder, ontology, mode):
             list(trouble_ticket_nodes), list(change_request_nodes),
             list(application_nodes), list(network_resource_nodes),
             list(network_interface_nodes), list(network_link_nodes)]
-    
+
     return digraph, node_type_lists
-
-def log_kpis_advanced(file_name,digraph,cumul_nodes,cumul_density,node_type_lists):
-    """ Compute and log advanced Key Performance Indicators (KPIs) for a knowledge graph.
-    
-    This function calculates comprehensive graph metrics and logs detailed information
-    about graph structure, node categorization, connectivity, and relationships. It
-    provides advanced analytics including node type breakdowns and cumulative statistics
-    for monitoring graph growth and complexity.
-    
-    Args:
-        file_name (str): Name of the knowledge graph file being analyzed
-        digraph (networkx.DiGraph): The directed graph to analyze
-        cumul_nodes (int): Current cumulative count of nodes across multiple graphs
-        cumul_density (float): Current cumulative density across multiple graphs  
-        node_type_lists (list): List containing 6 sublists of categorized nodes:
-                               [trouble_ticket_nodes, change_request_nodes, 
-                                application_nodes, network_resource_nodes,
-                                network_interface_nodes, network_link_nodes]
-    
-    Returns:
-        tuple: (updated_cumul_nodes, updated_cumul_density)
-            - updated_cumul_nodes (int): New cumulative node count
-            - updated_cumul_density (float): New cumulative density
-    
-    Logged Metrics:
-        Basic Graph Statistics:
-        - Knowledge graph filename
-        - Total number of nodes and edges
-        - Cumulative node count across graphs
-        - Degree histogram distribution
-        - Number of self-loops
-        
-        Advanced KPIs:
-        - Graph density (current and cumulative)
-        - Average degree connectivity
-        
-        Detailed Structure:
-        - All edges with subject, predicate, object data
-        - Complete node list
-        
-        Node Type Categorization:
-        - Trouble ticket nodes count and list
-        - Change request nodes count and list  
-        - Application nodes count and list
-        - Network resource nodes count and list
-        - Network interface nodes count and list
-        - Network link nodes count and list
-    
-    Logging:
-        Uses 'graph_kpi' logger to output structured information with clear
-        section separators for easy parsing and analysis.
-    
-    Example:
-        >>> node_lists = [tt_nodes, cr_nodes, app_nodes, nr_nodes, ni_nodes, nl_nodes]
-        >>> cumul_n, cumul_d = log_kpis_advanced("graph.ttl", my_graph, 100, 0.5, node_lists)
-        >>> # Logs comprehensive KPIs and returns updated cumulative values"""
-
-    trouble_ticket_nodes, change_request_nodes, application_nodes,\
-          network_resource_nodes, network_interface_nodes, network_link_nodes = node_type_lists
-
-    logger = logging.getLogger('graph_kpi')
-
-    logger.info('##################################################')
-    logger.info('Knowledge Graph : %s',file_name)
-    logger.info('Number of Nodes : %s',digraph.number_of_nodes())
-    logger.info('Number of edges : %s',digraph.number_of_edges())
-    cumul_nodes = cumul_nodes + digraph.number_of_nodes()
-    logger.info('cumulative number of nodes : %s',cumul_nodes )
-    logger.info('degree_histogram : %s', degree_histogram(digraph))
-    logger.info('number of self loop : %s', number_of_selfloops(digraph))
-    logger.info('####  KPIs ####')
-    logger.info('DiGraph density : %s',density(digraph))
-    cumul_density = cumul_density + density(digraph)
-    logger.info('cumulative density : %s',cumul_density)
-    logger.info('Average degree connectivity : %s', average_degree_connectivity(digraph))
-    logger.info('#### Subject, Object, predicate ####')
-    for s, p, data in digraph.edges(data=True):
-        logger.info('%s,%s,%s',s,p,data)
-    logger.info('#### NODES #### :%s',len(digraph.nodes))
-    logger.info('%s',digraph.nodes)
-    logger.info('trouble tickets nodes :%s',trouble_ticket_nodes)
-    logger.info('change request nodes :%s',change_request_nodes)
-    logger.info('application nodes :%s',application_nodes)
-    logger.info('network resource nodes :%s',network_resource_nodes)
-    logger.info('network interface nodes :%s',network_interface_nodes)
-    logger.info('network link nodes :%s',network_link_nodes)
-    logger.info('##################################################\n')
-
-    return cumul_nodes, cumul_density
-
-def log_kpis_basic(file_name,digraph,cumul_nodes,cumul_density):
-    """ Compute and log basic Key Performance Indicators (KPIs) for a knowledge graph.
-    
-    This function calculates fundamental graph metrics and logs essential information
-    about graph structure and connectivity. It provides core analytics without node
-    type categorization, making it suitable for simple graph analysis and monitoring.
-    
-    Args:
-        file_name (str): Name of the knowledge graph file being analyzed
-        digraph (networkx.DiGraph): The directed graph to analyze
-        cumul_nodes (int): Current cumulative count of nodes across multiple graphs
-        cumul_density (float): Current cumulative density across multiple graphs
-    
-    Returns:
-        tuple: (updated_cumul_nodes, updated_cumul_density)
-            - updated_cumul_nodes (int): New cumulative node count
-            - updated_cumul_density (float): New cumulative density
-    
-    Logged Metrics:
-        Basic Graph Statistics:
-        - Knowledge graph filename
-        - Total number of nodes and edges  
-        - Cumulative node count across graphs
-        - Degree histogram distribution
-        - Number of self-loops
-        
-        Core KPIs:
-        - Graph density (current and cumulative)
-        - Average degree connectivity
-        
-        Detailed Structure:
-        - All edges with subject, predicate, object data
-        - Complete node list with count
-    
-    Logging:
-        Uses 'graph_kpi' logger to output structured information with clear
-        section separators. Output is less detailed than log_kpis_advanced
-        but covers essential graph metrics.
-    
-    Use Cases:
-        - Quick graph analysis
-        - Performance monitoring without categorization overhead
-        - Basic graph comparison and tracking
-        - When node type information is not needed
-    
-    Example:
-        >>> cumul_n, cumul_d = log_kpis_basic("simple_graph.ttl", my_graph, 50, 0.3)
-        >>> # Logs basic KPIs and returns updated cumulative values """
-
-    logger = logging.getLogger('graph_kpi')
-
-    logger.info('##################################################')
-    logger.info('Knowledge Graph : %s',file_name)
-    logger.info('Number of Nodes : %s',digraph.number_of_nodes())
-    logger.info('Number of edges : %s',digraph.number_of_edges())
-    cumul_nodes = cumul_nodes + digraph.number_of_nodes()
-    logger.info('cumulative number of nodes : %s',cumul_nodes )
-    logger.info('degree_histogram : %s', degree_histogram(digraph))
-    logger.info('number of self loop : %s', number_of_selfloops(digraph))
-    logger.info('####  KPIs ####')
-    logger.info('DiGraph density : %s',density(digraph))
-    cumul_density = cumul_density + density(digraph)
-    logger.info('cumulative density : %s',cumul_density)
-    logger.info('Average degree connectivity : %s', average_degree_connectivity(digraph))
-    logger.info('#### Subject, Object, predicate ####')
-    for s, p, data in digraph.edges(data=True):
-        logger.info('%s,%s,%s',s,p,data)
-    logger.info('#### NODES #### :%s',len(digraph.nodes))
-    logger.info('%s',digraph.nodes)
-    logger.info('##################################################\n')
-
-    return cumul_nodes, cumul_density
 
 def log_kpis(file_name, digraph, cumul_nodes, cumul_density, mode, node_type_lists=None):
     """
@@ -701,7 +539,7 @@ def prepare_graph_to_display_basic(file,log_html_folder,ontology):
         log_sorted.close()
 
     return digraph"""
-    
+
 def prepare_graph_to_display_advanced(file, log_html_folder, ontology):
     """set the graph and remove literal and other expression from the graph in order to keep only
     the real nodes and their relation to display, log some inforations
@@ -867,3 +705,165 @@ def prepare_graph_to_display_advanced(file, log_html_folder, ontology):
                         list(application_nodes), list(network_resource_nodes),\
                             list(network_interface_nodes), list(network_link_nodes)]
     return digraph, node_type_lists"""
+
+def log_kpis_advanced(file_name,digraph,cumul_nodes,cumul_density,node_type_lists):
+    """ Compute and log advanced Key Performance Indicators (KPIs) for a knowledge graph.
+    
+    This function calculates comprehensive graph metrics and logs detailed information
+    about graph structure, node categorization, connectivity, and relationships. It
+    provides advanced analytics including node type breakdowns and cumulative statistics
+    for monitoring graph growth and complexity.
+    
+    Args:
+        file_name (str): Name of the knowledge graph file being analyzed
+        digraph (networkx.DiGraph): The directed graph to analyze
+        cumul_nodes (int): Current cumulative count of nodes across multiple graphs
+        cumul_density (float): Current cumulative density across multiple graphs  
+        node_type_lists (list): List containing 6 sublists of categorized nodes:
+                               [trouble_ticket_nodes, change_request_nodes, 
+                                application_nodes, network_resource_nodes,
+                                network_interface_nodes, network_link_nodes]
+    
+    Returns:
+        tuple: (updated_cumul_nodes, updated_cumul_density)
+            - updated_cumul_nodes (int): New cumulative node count
+            - updated_cumul_density (float): New cumulative density
+    
+    Logged Metrics:
+        Basic Graph Statistics:
+        - Knowledge graph filename
+        - Total number of nodes and edges
+        - Cumulative node count across graphs
+        - Degree histogram distribution
+        - Number of self-loops
+        
+        Advanced KPIs:
+        - Graph density (current and cumulative)
+        - Average degree connectivity
+        
+        Detailed Structure:
+        - All edges with subject, predicate, object data
+        - Complete node list
+        
+        Node Type Categorization:
+        - Trouble ticket nodes count and list
+        - Change request nodes count and list  
+        - Application nodes count and list
+        - Network resource nodes count and list
+        - Network interface nodes count and list
+        - Network link nodes count and list
+    
+    Logging:
+        Uses 'graph_kpi' logger to output structured information with clear
+        section separators for easy parsing and analysis.
+    
+    Example:
+        >>> node_lists = [tt_nodes, cr_nodes, app_nodes, nr_nodes, ni_nodes, nl_nodes]
+        >>> cumul_n, cumul_d = log_kpis_advanced("graph.ttl", my_graph, 100, 0.5, node_lists)
+        >>> # Logs comprehensive KPIs and returns updated cumulative values
+
+    trouble_ticket_nodes, change_request_nodes, application_nodes,\
+          network_resource_nodes, network_interface_nodes, network_link_nodes = node_type_lists
+
+    logger = logging.getLogger('graph_kpi')
+
+    logger.info('##################################################')
+    logger.info('Knowledge Graph : %s',file_name)
+    logger.info('Number of Nodes : %s',digraph.number_of_nodes())
+    logger.info('Number of edges : %s',digraph.number_of_edges())
+    cumul_nodes = cumul_nodes + digraph.number_of_nodes()
+    logger.info('cumulative number of nodes : %s',cumul_nodes )
+    logger.info('degree_histogram : %s', degree_histogram(digraph))
+    logger.info('number of self loop : %s', number_of_selfloops(digraph))
+    logger.info('####  KPIs ####')
+    logger.info('DiGraph density : %s',density(digraph))
+    cumul_density = cumul_density + density(digraph)
+    logger.info('cumulative density : %s',cumul_density)
+    logger.info('Average degree connectivity : %s', average_degree_connectivity(digraph))
+    logger.info('#### Subject, Object, predicate ####')
+    for s, p, data in digraph.edges(data=True):
+        logger.info('%s,%s,%s',s,p,data)
+    logger.info('#### NODES #### :%s',len(digraph.nodes))
+    logger.info('%s',digraph.nodes)
+    logger.info('trouble tickets nodes :%s',trouble_ticket_nodes)
+    logger.info('change request nodes :%s',change_request_nodes)
+    logger.info('application nodes :%s',application_nodes)
+    logger.info('network resource nodes :%s',network_resource_nodes)
+    logger.info('network interface nodes :%s',network_interface_nodes)
+    logger.info('network link nodes :%s',network_link_nodes)
+    logger.info('##################################################\n')
+
+    return cumul_nodes, cumul_density"""
+
+def log_kpis_basic(file_name,digraph,cumul_nodes,cumul_density):
+    """ Compute and log basic Key Performance Indicators (KPIs) for a knowledge graph.
+    
+    This function calculates fundamental graph metrics and logs essential information
+    about graph structure and connectivity. It provides core analytics without node
+    type categorization, making it suitable for simple graph analysis and monitoring.
+    
+    Args:
+        file_name (str): Name of the knowledge graph file being analyzed
+        digraph (networkx.DiGraph): The directed graph to analyze
+        cumul_nodes (int): Current cumulative count of nodes across multiple graphs
+        cumul_density (float): Current cumulative density across multiple graphs
+    
+    Returns:
+        tuple: (updated_cumul_nodes, updated_cumul_density)
+            - updated_cumul_nodes (int): New cumulative node count
+            - updated_cumul_density (float): New cumulative density
+    
+    Logged Metrics:
+        Basic Graph Statistics:
+        - Knowledge graph filename
+        - Total number of nodes and edges  
+        - Cumulative node count across graphs
+        - Degree histogram distribution
+        - Number of self-loops
+        
+        Core KPIs:
+        - Graph density (current and cumulative)
+        - Average degree connectivity
+        
+        Detailed Structure:
+        - All edges with subject, predicate, object data
+        - Complete node list with count
+    
+    Logging:
+        Uses 'graph_kpi' logger to output structured information with clear
+        section separators. Output is less detailed than log_kpis_advanced
+        but covers essential graph metrics.
+    
+    Use Cases:
+        - Quick graph analysis
+        - Performance monitoring without categorization overhead
+        - Basic graph comparison and tracking
+        - When node type information is not needed
+    
+    Example:
+        >>> cumul_n, cumul_d = log_kpis_basic("simple_graph.ttl", my_graph, 50, 0.3)
+        >>> # Logs basic KPIs and returns updated cumulative values 
+
+    logger = logging.getLogger('graph_kpi')
+
+    logger.info('##################################################')
+    logger.info('Knowledge Graph : %s',file_name)
+    logger.info('Number of Nodes : %s',digraph.number_of_nodes())
+    logger.info('Number of edges : %s',digraph.number_of_edges())
+    cumul_nodes = cumul_nodes + digraph.number_of_nodes()
+    logger.info('cumulative number of nodes : %s',cumul_nodes )
+    logger.info('degree_histogram : %s', degree_histogram(digraph))
+    logger.info('number of self loop : %s', number_of_selfloops(digraph))
+    logger.info('####  KPIs ####')
+    logger.info('DiGraph density : %s',density(digraph))
+    cumul_density = cumul_density + density(digraph)
+    logger.info('cumulative density : %s',cumul_density)
+    logger.info('Average degree connectivity : %s', average_degree_connectivity(digraph))
+    logger.info('#### Subject, Object, predicate ####')
+    for s, p, data in digraph.edges(data=True):
+        logger.info('%s,%s,%s',s,p,data)
+    logger.info('#### NODES #### :%s',len(digraph.nodes))
+    logger.info('%s',digraph.nodes)
+    logger.info('##################################################\n')
+
+    return cumul_nodes, cumul_density"""
