@@ -29,11 +29,15 @@ import logging
 import os
 import datetime
 from pathlib import Path
-from utils_gen import utils as utils_gen
 from utils_common import utils as utils_common
+from utils_gen import utils as utils_gen
 
 ### set argument parser ###
-args = utils_common.setup_argument_parser([("nbrttl", "number of ttl file to generate")])
+args = utils_common.setup_argument_parser([("nbrttl", "number of ttl file to generate"),\
+                        ("reasoner","reasoner to use for consistency check (HermiT, Pellet)")])
+
+if args.reasoner not in ["Pellet", "HermiT"]:
+    raise ValueError("Reasonner must be either 'Pellet' or 'HermiT'")
 
 ### choose the model to use ####
 model_name = utils_gen.model_to_choose(model_nbr=7)
@@ -42,8 +46,8 @@ model_name = utils_gen.model_to_choose(model_nbr=7)
 PROMPT_TYPE="4_1_AI_enhance_manually"
 
 ### build folders & files paths ###
-PATH_RESULT, BAD_PATH_RESULT, MISFORMATED_PATH, ONTOLOGY_FILE, PROMPT_FILE, PATH_GRAPH, TEMP_FILE,\
-LOG_FILE, PATH_MERGED = utils_gen.build_folder_paths_and_files(model_name)
+PATH_RESULT, BAD_SYNTAX_PATH, MISFORMATED_PATH, INVALID_REASONER_PATH, ONTOLOGY_FILE, PROMPT_FILE,\
+PATH_GRAPH, TEMP_FILE,LOG_FILE, PATH_MERGED = utils_gen.build_folder_paths_and_files(model_name)
 
 ### Setup logger ###
 logger_gen= utils_common.setup_logger(LOG_FILE,'gen_log',logging.INFO)
@@ -52,13 +56,17 @@ NUMBER_OF_GRAPH = 0
 ONTO_NAME=Path(ONTOLOGY_FILE).stem
 NBR_TTL_INT = int(args.nbrttl)
 
-### remove old files in the result folder ###
+### remove old files ###
 utils_gen.remove_file_in_folder(PATH_RESULT)
-utils_gen.remove_file_in_folder(BAD_PATH_RESULT)
+utils_gen.remove_file_in_folder(BAD_SYNTAX_PATH)
+utils_gen.remove_file_in_folder(MISFORMATED_PATH)
+utils_gen.remove_file_in_folder(INVALID_REASONER_PATH)
+utils_gen.remove_file_in_folder(PATH_MERGED)
 
 os.system("clear")
 print('TTL FILE GENERATION IS IN PROGRESS')
 
+logger_gen.info('########### GRAPH GENERATION LOG ###########\n')
 ### Generate graphs ###
 while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
 
@@ -70,7 +78,7 @@ while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
     ### build file name for each graph ###
     date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     FILE_RESULT = f'{PATH_RESULT}/{PROMPT_TYPE}_{date_time}_{ONTO_NAME}.ttl'
-    BAD_FILE_RESULT = f'{BAD_PATH_RESULT}/{PROMPT_TYPE}_{date_time}_{ONTO_NAME}_BAD.ttl'
+    #BAD_FILE_RESULT = f'{BAD_PATH_RESULT}/{PROMPT_TYPE}_{date_time}_{ONTO_NAME}_BAD.ttl'
 
     ### Store results and logs some infos ###
     utils_gen.storing_results(response,TEMP_FILE,FILE_RESULT,logger_gen,model_name)
@@ -81,11 +89,15 @@ while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
     #time.sleep(60)
     print("Awake !")
 
-### re format TTL files if needed ###
-utils_gen.format_ttl(PATH_RESULT,MISFORMATED_PATH,logger_gen)
+### Reformat TTL files if needed ###
+utils_gen.check_graph_format(PATH_RESULT,MISFORMATED_PATH,logger_gen)
 
 ### Check Turtle syntax and log some info ###
-utils_common.check_ttl(PATH_RESULT,BAD_PATH_RESULT,logger_gen)
+utils_common.check_graph_syntax(PATH_RESULT,BAD_SYNTAX_PATH,logger_gen)
+
+### Check reasoning consistency and log some info ###
+utils_gen.check_graph_reasoner(PATH_RESULT,INVALID_REASONER_PATH,ONTOLOGY_FILE,args.reasoner,\
+                               logger_gen)
 
 ### remove old files in the merge folder ###
 utils_gen.remove_file_in_folder(PATH_MERGED)

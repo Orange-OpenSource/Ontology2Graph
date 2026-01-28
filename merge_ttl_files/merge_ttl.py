@@ -21,8 +21,9 @@ Arguments:
     ontology:    Path to the ontology TTL file."""
 
 #from ast import arguments
-import utils_merge.utils as utils_merge
+import logging
 from utils_common import utils as utils_common
+from merge_ttl_files.utils_merge import utils as utils_merge
 
 ### Set up argument parser ###
 args = utils_common.setup_argument_parser([("path_file", "Graphs file path"),\
@@ -35,10 +36,10 @@ bad_path_result,log_file,log_file_homonymes,log_file_check_ttl_merged,path_merge
     path_duplicate_treated = utils_merge.build_merged_folder_paths_and_files(path_files)
 
 ### Set up loggers ###
-logger_merge = utils_common.setup_logger(log_file,'merge_log')
-logger_homonymes = utils_common.setup_logger(log_file_homonymes,'homonymes_log')
+logger_merge = utils_common.setup_logger(log_file,'merge_log',logging.INFO)
+logger_homonymes = utils_common.setup_logger(log_file_homonymes,'homonymes_log',logging.INFO)
 logger_check_ttl_merged = utils_common.setup_logger(log_file_check_ttl_merged,\
-    'check_merged_ttl_log')
+    'check_merged_ttl_log',logging.INFO)
 
 ### Find homonymes nodes and compute max occurrence value ###
 homonymes_nodes_and_occurence = utils_merge.find_homonymes_nodes(path_files,logger_homonymes,\
@@ -59,4 +60,4 @@ utils_merge.rename_and_merge(path_duplicate_treated,path_merged,homonymes_nodes_
 utils_merge.manage_prefix(path_merged)
 
 ### check ttl files validity ###
-utils_common.check_ttl(path_merged,bad_path_result,logger_check_ttl_merged)
+utils_common.check_graph_syntax(path_merged,bad_path_result,logger_check_ttl_merged)

@@ -71,7 +71,7 @@ def retreive_onto_object(ontology,object_type):
 
     return object_clean
 
-def check_ttl(file_path,bad_file_path,logger):
+def check_graph_syntax(file_path,bad_syntax_path,logger):
     """Checks the syntax of all TTL files in a directory using an external Turtle validator.
     Moves files with syntax errors to a specified directory and logs the results.
 
@@ -90,7 +90,8 @@ def check_ttl(file_path,bad_file_path,logger):
     count = 0
     bad_file_number = 0
     file_list = [f.name for f in Path(file_path).iterdir() if f.is_file()]
-    logger.info('######## Turtle concistency check ########\n')
+    print(file_list)
+    logger.info('######## TURTLE SYNTAX CHECK LOG ########\n')
 
     with os.scandir(file_path) as entries:
         for entry in entries:
@@ -98,7 +99,7 @@ def check_ttl(file_path,bad_file_path,logger):
                 nbr_file += 1
 
     print("\nChecking TTL files syntax ...")
-    print('\nNumber of file to check : %s',nbr_file)
+    print('\nNumber of file to check : ',nbr_file)
 
     while count != nbr_file:
 
@@ -113,8 +114,8 @@ def check_ttl(file_path,bad_file_path,logger):
 
         if stdout!='Validator finished with 0 warnings and 0 errors.\n' :
         # move bad file in bad folder and Save logs
-            bad_file=f'{bad_file_path}/BAD_{file_name}'
-            os.makedirs(f'{bad_file_path}', exist_ok=True)
+            bad_file=f'{bad_syntax_path}/BAD_{file_name}'
+            os.makedirs(f'{bad_syntax_path}', exist_ok=True)
             shutil.move(file, bad_file)
             logger.info('Error detected in : %s', file_name)
             logger.info('Turtle validator Result: %s',stdout)
@@ -126,6 +127,9 @@ def check_ttl(file_path,bad_file_path,logger):
 
     if bad_file_number != 0:
         print(f'Number of bad files detected : {bad_file_number}')
+        print(f'Bad files moved to : {bad_syntax_path}\n')
+    else:
+        print('No bad file detected\n')
 
 #### old code below for reference ####
 

@@ -10,7 +10,6 @@ graphs in Turtle (TTL) format using large language models (LLMs). It includes fu
 querying LLM APIs, storing and filtering results, validating TTL syntax, managing model selection,
 and building file/folder paths and selecting prompt and ontology name. """
 
-import logging
 import os
 import json
 from pathlib import Path
@@ -21,7 +20,6 @@ from openai import OpenAI, OpenAIError
 import rdflib
 from owlready2 import get_ontology,sync_reasoner_hermit,sync_reasoner_pellet
 from owlready2 import OwlReadyInconsistentOntologyError,default_world
-from utils_common import utils as utils_common
 
 def query_llm(ontology_file,prompt_file,model,prompt_type):
     """ This function sends a prompt and an ontology schema to an LLM (via OpenAI-compatible API)
@@ -101,11 +99,9 @@ def storing_results(response,temp_file,file_result,logger,model):
         final.writelines(filtered_lines)
         final.close()
 
-    logger.info('\n########### GRAPH GENERATION INFO ###########\n')
-
     if response is not None :
         if response.usage is not None:
-            logger.info('FILE %s : has been generated', file_result)
+            logger.info('FILE %s : has been generated', Path(file_result).name)
             logger.info('Model used : %s',model)
             logger.info('Completion response tokens : %s',response.usage.completion_tokens)
             logger.info('Prompt tokens : %s',response.usage.prompt_tokens)
@@ -157,16 +153,19 @@ def build_folder_paths_and_files(model):
     path_graph=f'{path_gen}/graph'
     path_merged = f'{path_result}/merged'
 
-    bad_path_result = f'{path_result}/Invalid_Turtle_Syntax'
-    misformated_path = f'{path_result}/Misformatted_Turtle_file'
+    bad_syntax_path = f'{path_result}/Invalid_Turtle_Syntax'
+    notformated_path = f'{path_result}/Notformatted_Turtle_file'
+    invalid_reasoner_path = f'{path_result}/Invalid_Reasoner_Graphs'
+
     temp_file = f'{path_result}/temp.ttl'
     date_other_format = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     log_file=f'{Path(path_result)}/logs/generation_graph_{date_other_format}.log'
 
     os.makedirs(f'{path_result}/logs', exist_ok=True)
     os.makedirs(f'{path_merged}',exist_ok=True)
-    os.makedirs(f'{misformated_path}', exist_ok=True)
-    os.makedirs(f'{bad_path_result}', exist_ok=True)
+    os.makedirs(f'{notformated_path}', exist_ok=True)
+    os.makedirs(f'{bad_syntax_path}', exist_ok=True)
+    os.makedirs(f'{invalid_reasoner_path}', exist_ok=True)
 
     ### remove previous log files in logs ###
     for filename in os.listdir(Path(log_file).parent):
@@ -175,8 +174,8 @@ def build_folder_paths_and_files(model):
             if os.path.isfile(file_path):
                 os.remove(file_path)
 
-    return path_result, bad_path_result, misformated_path, ontologie_file, prompt_file,\
-        path_graph, temp_file, Path(log_file), path_merged
+    return path_result, bad_syntax_path, notformated_path, invalid_reasoner_path, ontologie_file,\
+        prompt_file, path_graph, temp_file, Path(log_file), path_merged
 
 def remove_file_in_folder(folder_path):
     """ Remove all files in a specify folder
@@ -189,7 +188,7 @@ def remove_file_in_folder(folder_path):
             if files.is_file():
                 files.unlink()
 
-def format_ttl(folder_path, misformated_path, logger):
+def check_graph_format(folder_path, notformated_path, logger):
     """Format TTL (Turtle) files in a directory using owl-cli tool.
     
     This function processes all TTL files in the specified folder, formatting them using the
@@ -221,13 +220,14 @@ def format_ttl(folder_path, misformated_path, logger):
     """
     all_files = [f.name for f in Path(folder_path).iterdir() if f.is_file()]
 
-    # format each ttl file with owl-cli #
+    print("\nChecking TTL file format : ...\n")
+    logger.info('########### GRAPH FORMATING LOG ###########\n')
+    ### format each ttl file with owl-cli ###
     for file in all_files :
         file_to_format= f"{folder_path}/{file}"
-
         formated_file_name = f"{folder_path}/{Path(file).stem}_FORMATED.ttl"
-        #print(f"\nFormated file name: {formated_file_name}")
 
+        logger.info('Reasoning format for file : %s',file)
         print(f"Checking format of {file}")
 
         format_ttl_command = ["owl","write","--endOfLine","lf","--encoding", "utf_8",\
@@ -235,99 +235,62 @@ def format_ttl(folder_path, misformated_path, logger):
             formated_file_name]
 
         try:
-            logger.info('\n########### GRAPH GENERATION INFO ###########\n')
-            # Use subprocess.run for simpler handling
+
             result = subprocess.run(format_ttl_command, capture_output=True, text=True, \
                 timeout=30, check=False)
 
             if result.returncode == 0:
-                os.replace(formated_file_name, file_to_format)
+                os.replace(file_to_format,formated_file_name)
                 logger.info(f"✓ Successfully formatted: {file}")
 
             else:
-                logger.error(f"✗ Error formatting {file}:")
+                logger.error(f"✗ Error formatting {file}")
                 logger.error(f"  Return code: {result.returncode}")
                 logger.error(f"  Error output: {result.stderr}")
-                misformated_file_name = f"{Path(file).stem}_MISFORMATED.ttl"
-                os.rename(file, f"{misformated_path}/{misformated_file_name}")
+                logger.info(f"Moving {file} to notformated folder {notformated_path}"
+                            f" for manual check.")
+                notformated_file_name = f"{Path(file).stem}_NOTFORMATED.ttl"
+                os.replace(file_to_format, f"{notformated_path}/{notformated_file_name}")
+                print(f"{notformated_path}/{notformated_file_name}")
 
         except subprocess.TimeoutExpired:
             logger.error(f"✗ Timeout formatting {file}")
+            print(f"Timeout expired while formatting {file}")
         except FileNotFoundError:
             logger.error("✗ owl command not found. Make sure owl-cli is installed and in PATH")
+            print("owl command not found. Make sure owl-cli is installed and in PATH")
         except (OSError, subprocess.SubprocessError) as e:
             logger.error(f"✗ Unexpected error formatting {file}: {e}")
+            print(f"Unexpected error formatting {file}: {e}")
+        logger.info('\n')
 
-def chek_skg(path,ontology_file,reasonner):
-    '''This function performs comprehensive consistency checking and reasoning validation on
-    knowledge graphs by combining them with their corresponding ontologies and applying
-    formal logical reasoning engines.
-
-    The tool supports two primary reasoning engines (HermiT and Pellet) to detect:
-    - Ontological inconsistencies in the knowledge graph
-    - Unsatisfiable classes that violate logical constraints
-    - Structural integrity issues in RDF/TTL graph files
-
-    Main Features:
-    - Single file or batch directory processing
-    - Ontology-graph concatenation for complete consistency checking
-    - Support for HermiT and Pellet reasoners
-    - Comprehensive logging of validation results
-    - Automatic cleanup of temporary files
-    - Detection of inconsistent classes equivalent to owl:Nothing
-
-    Usage:
-        python check_skg.py <graph_path> <ontology_file> <reasoner>
-
-    Arguments:
-        graph_path:    Path to a single TTL file or directory containing multiple TTL files
-        ontology_file: Path to the ontology TTL file used for consistency checking
-        reasoner:      Reasoning engine to use ("HermiT" or "Pellet")
-
-    Output:
-        - Creates a 'check_graph_log' directory in the graph path location
-        - Generates detailed log files with consistency check results
-        - Console output indicating discovered inconsistencies or validation success
-
-    Dependencies:
-        - rdflib: For RDF graph parsing and serialization
-        - owlready2: For ontology loading and reasoning engine integration
-        - pathlib: For cross-platform file path operations
-
-    Example:
-        python check_skg.py ./graphs/synthetic_graph.ttl ./ontology/schema.ttl HermiT
-        python check_skg.py ./graphs_directory/ ./ontology/schema.ttl Pellet'''
-
-    if reasonner not in ["Pellet", "HermiT"]:
-        raise ValueError("Reasonner must be either 'Pellet' or 'HermiT'")
+def check_graph_reasoner(folder_path, invalid_reasoner_path, ontology, reasoner, logger):
 
     ### Setup path and files ###
-    if Path(path).is_file():
-        path_check_log=Path(f'{Path(path).parent}/check_graph_log')
-        all_graph_to_check = [path]
-        path_graph_file=Path(path).parent
+    if Path(folder_path).is_file():
+        path_reasoner_log=Path(f'{Path(folder_path).parent}/reasoner_log')
+        all_graph_to_check = [folder_path]
+        #path_graph_file=Path(path).parent
     else :
-        path_check_log=Path(f'{path}/check_graph_log')
-        all_graph_to_check = [f for f in Path(path).iterdir() if f.is_file()]
+        path_reasoner_log=Path(f'{folder_path}/reasoner_log')
+        all_graph_to_check = [f for f in Path(folder_path).iterdir() if f.is_file()]
 
-    if os.path.exists(path_check_log):
-        shutil.rmtree(path_check_log)
+    if os.path.exists(path_reasoner_log):
+        shutil.rmtree(path_reasoner_log)
+    os.makedirs(path_reasoner_log)
 
-    os.makedirs(path_check_log)
-
-    log_file=Path(f'{path_check_log}/check_graph.log')
-
-    ### set logger ###
-    logger_check = utils_common.setup_logger(log_file,'graph_kpi',logging.DEBUG)
+    print("\nChecking TTL files reasoning consistency ...\n")
+    logger.info('########### CHECK GRAPH REASONER LOG ###########\n')
 
     ### Check each graph ###
     concat = f'{Path(f'{os.getcwd()}')}/concat.ttl'
     for graph_to_check in all_graph_to_check :
-        print(graph_to_check)
+        print(f'checking graph: {graph_to_check.name}')
+        logger.info('Checking file %s with reasoner %s\n', graph_to_check.name, reasoner )
 
         ### Concat ontology and graph in the same file ###
         with open(concat, 'w', encoding='utf-8') as target_file:
-            for source_file in [ontology_file,graph_to_check]:
+            for source_file in [ontology,graph_to_check]:
                 with open(source_file, 'r', encoding='utf-8') as file_source:
                     for line in file_source:
                         target_file.write(line)
@@ -335,6 +298,7 @@ def chek_skg(path,ontology_file,reasonner):
         ### Load concatenated graph with RDFLib ###
         skgraph = rdflib.Graph()
         skgraph.parse(f"file://{concat}", format="turtle")
+        print(f"file://{concat}")
 
         ### Convert RDFLib graph to OWL/XML format ###
         graph_xml = skgraph.serialize(format="xml")
@@ -345,45 +309,48 @@ def chek_skg(path,ontology_file,reasonner):
             temp_graph_owl.write(encoded_graph)
 
         encoded_graph_to_check=get_ontology(f'file://temp_graph_{Path(graph_to_check).name}').load()
-
-        logger_check.info('######################################################################')
-        logger_check.info('Graph : %s ',Path(graph_to_check).name)
+        print(f'file://temp_graph_{Path(graph_to_check).name}')
+        #logger_check.info('Graph : %s ',Path(graph_to_check).name)
 
         try:
             with encoded_graph_to_check:
-                if reasonner=="HermiT":
+                if reasoner=="HermiT":
                     sync_reasoner_hermit(debug=0, keep_tmp_file=True,
                                       ignore_unsupported_datatypes = True)
-                if reasonner=="Pellet":
+                if reasoner=="Pellet":
                     sync_reasoner_pellet(debug=0, keep_tmp_file=True)
 
         except OwlReadyInconsistentOntologyError as onto_e:
-            print(f'\nOwlReadyInconsistentOntologyError detected by {reasonner} for '
+            print(f'\nOwlReadyInconsistentOntologyError detected by {reasoner} for '
                   f'{Path(graph_to_check).name}')
-            logger_check.info('OwlReadyInconsistentOntologyError detected by %s \n',reasonner)
-            logger_check.info(onto_e)
+            logger.info('OwlReadyInconsistentOntologyError detected by %s \n',reasoner)
+            logger.info(onto_e)
+            os.rename(graph_to_check,f"{invalid_reasoner_path}/INVALID_{Path(graph_to_check).name}")
 
         except OverflowError as e: #system ressource limits reach
             print(f"\nOverFlowError : {e}")
-            logger_check.info('OverFlowError : %s',e)
+            logger.info('OverFlowError : ',e)
+            os.rename(graph_to_check,f"{invalid_reasoner_path}/INVALID_{Path(graph_to_check).name}")
 
         else :
-            print(f'\nNo inconsistent Ontology errors detected by {reasonner} for '
+            print(f'\nNo inconsistent Ontology errors detected by {reasoner} for '
                   f'{Path(graph_to_check).name}')
-            logger_check.info('No inconsistent Ontology errors found by %s ',reasonner)
+            logger.info('No inconsistent Ontology errors found by %s ',reasoner)
 
         ### List classes inferred equivalent to owl:Nothing (unsatisfiable classes) ###
         unsat = list(default_world.inconsistent_classes())
         if unsat:
-            print(f'inconsistent classes found by {reasonner} :\n')
+            print(f'inconsistent classes found by {reasoner} :\n')
             for c in unsat:
                 print(" - \n", c)
-                logger_check.info('inconsistent classes found by %s',reasonner)
-                logger_check.info(' %s',c)
+                logger.info('inconsistent classes found by %s',reasoner)
+                logger.info(' %s',c)
+                os.rename(graph_to_check, f"{invalid_reasoner_path}/'\
+                          f'INVALID_{Path(graph_to_check).name}")
         else:
-            print(f'No inconsistent classes found by {reasonner} for'
+            print(f'No inconsistent classes found by {reasoner} for'
                   f'{Path(graph_to_check).name}')
-            logger_check.info('No inconsistent classes found by %s \n',reasonner)
+            logger.info('No inconsistent classes found by %s \n',reasoner)
 
         ### Remove CONCAT file ###
         if Path(concat).is_file():
