@@ -25,7 +25,7 @@ The generation module serves as the core component for synthetic knowledge graph
 
 **Key Components:**
 - `generate_ttl.py`: Primary generation engine implementing LLM-based graph synthesis
-- `utils_gen/utils.py`: Supporting utilities for model configuration and prompt management
+- `utils_gen/utils.py`: Supporting utilities for model configuration, prompt management and graph vamlidation
 - Multi-model support architecture with configurable prompt strategies
 - Integrated TTL syntax validation & turtle formating pipeline
 

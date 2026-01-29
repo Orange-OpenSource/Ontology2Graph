@@ -90,7 +90,7 @@ def check_graph_syntax(file_path,bad_syntax_path,logger):
     count = 0
     bad_file_number = 0
     file_list = [f.name for f in Path(file_path).iterdir() if f.is_file()]
-    print(file_list)
+
     logger.info('######## TURTLE SYNTAX CHECK LOG ########\n')
 
     with os.scandir(file_path) as entries:
@@ -118,7 +118,8 @@ def check_graph_syntax(file_path,bad_syntax_path,logger):
             os.makedirs(f'{bad_syntax_path}', exist_ok=True)
             shutil.move(file, bad_file)
             logger.info('Error detected in : %s', file_name)
-            logger.info('Turtle validator Result: %s',stdout)
+            logger.info('Turtle validator Result: %s %s',stdout, stderr)
+            logger.info(f'file {file_name} moved to {bad_syntax_path}\n')
             bad_file_number += 1
         else:
             logger.info('No error detected in : %s\n', file_name)

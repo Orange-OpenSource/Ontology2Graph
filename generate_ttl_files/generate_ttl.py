@@ -29,8 +29,8 @@ import logging
 import os
 import datetime
 from pathlib import Path
-from utils_common import utils as utils_common
 from utils_gen import utils as utils_gen
+from utils_common import utils as utils_common
 
 ### set argument parser ###
 args = utils_common.setup_argument_parser([("nbrttl", "number of ttl file to generate"),\
@@ -64,7 +64,7 @@ utils_gen.remove_file_in_folder(INVALID_REASONER_PATH)
 utils_gen.remove_file_in_folder(PATH_MERGED)
 
 os.system("clear")
-print('TTL FILE GENERATION IS IN PROGRESS')
+print('#### TTL FILE GENERATION IS IN PROGRESS ####')
 
 logger_gen.info('########### GRAPH GENERATION LOG ###########\n')
 ### Generate graphs ###
