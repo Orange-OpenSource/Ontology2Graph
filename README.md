@@ -89,7 +89,7 @@ Dedicated components for knowledge graph quality control and consistency verific
 
 2. **Dependency Installation:**
    ```bash
-   pip install rdflib networkx pyvis openai pandas requests owlready2 
+   pip install rdflib networkx pyvis openai owlready2
    ```
 
 3. **External Tool Installation:**
