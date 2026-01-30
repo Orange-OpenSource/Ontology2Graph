@@ -126,7 +126,6 @@ def manage_prefix(path_merged):
     count = 0
     while count != nbr_file :
 
-        #path_merged_count=f'{path_merged}/'
         merged_file_list = [f.name for f in Path(f'{path_merged}').iterdir() if f.is_file()]
         merged_file=f'{path_merged}/{merged_file_list[count]}'
 
@@ -136,7 +135,7 @@ def manage_prefix(path_merged):
             nodes_lines= [lines for lines in lines if not lines.startswith('@')]
             outfile.close()
 
-    #remove homonyme prefix
+    ### remove homonyme prefix ###
         for item in prefix_lines:
             if item not in prefix_lines_unique:
                 prefix_lines_unique.append(item)
@@ -150,8 +149,8 @@ def manage_prefix(path_merged):
 def find_homonymes_nodes(path,logger_homonymes,ontology):
     ''' Find homonymous nodes across multiple TTL files.
     
-    Analyzes all TTL files in the specified path to identify nodes that appear
-    in multiple graphs, which may need renaming to avoid conflicts during merging.
+    Analyzes all TTL files in the specified path to identify nodes that appear in multiple
+     graphs. Counts the number of files in which each homonymous node appears.
     
     Args:
         path (str): Directory path containing TTL files to analyze
@@ -165,14 +164,13 @@ def find_homonymes_nodes(path,logger_homonymes,ontology):
         >>> homonymes = find_homonymes_nodes('/path/to/ttl/files', logger, onto)
         >>> homonymes['NodeA']  # Returns number of files containing NodeA '''
 
-    # List all the ttl graph files in PATH except folder
+    ### List all the ttl graph files in PATH except folder ###
     all_files = [f.name for f in Path(path).iterdir() if f.is_file()]
 
-    # Retreive DatatypeProperties from ontology
-    #dtp=utils_common.retreive_datatype_properties(ontology)
+    ### Retreive DatatypeProperties from ontology ###
     dtp=utils_common.retreive_onto_object(ontology,"DatatypeProperty")
 
-    # Rebuild complete file path (folder/file)
+    ### Rebuild complete file path (folder/file) ###
     for i, file in enumerate(all_files):
         all_files[i]= f'{path}/{file}'
 
@@ -195,7 +193,7 @@ def find_homonymes_nodes(path,logger_homonymes,ontology):
                 (pred != skos.inScheme) and (pred != rdfs.isDefinedBy) and pred not in dtp):
                 nx_graph.add_edge(str(subj), str(obj), label=str(pred))
 
-            #taken ito account blank nodes
+            ### taken ito account blank nodes ###
             if isinstance(subj, BNode) and (pred != rdf.type) and (pred != skos.inScheme):
                 for subjbn, predbn in g.subject_predicates(subj):
                     short_subjbn=Path(str(subjbn)).name
@@ -207,7 +205,8 @@ def find_homonymes_nodes(path,logger_homonymes,ontology):
         nodes_name=[os.path.basename(Path(n)) for n in list(nx_graph.nodes)]
         nodes_name_final=[s.split('#',1)[1] if '#' in s else s for s in nodes_name]
 
-        #remove duplicate to keep only the name of the nodes that appears at least once in the file
+        ### remove duplicate to keep only the name of the nodes that appears at least once 
+        ### in the file ###
         nodes_name_per_file=set(nodes_name_final)
 
         logger_homonymes.info('nodes in : %s \n',file)
@@ -215,7 +214,7 @@ def find_homonymes_nodes(path,logger_homonymes,ontology):
 
         all_nodes_of_all_graphs.append(nodes_name_per_file)
 
-    # Transform list of list into a simple list
+    ### Transform list of list into a simple list ###
     all_nodes_of_all_graphs_list=[item for sublist in all_nodes_of_all_graphs for item in sublist]
 
     logger_homonymes.info('All the nodes of all the graph : ')
@@ -231,7 +230,7 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
     ''' Rename homonymous nodes and merge TTL files with varying density levels.
     
     Creates multiple versions of merged graphs by progressively reducing the number
-    of homonymous nodes, allowing for graphs with different connection densities.
+    of homonymous nodes.
     
     Args:
         path_homonyme_treated (str): Output directory for processed files
