@@ -50,20 +50,6 @@ python merge_ttl.py --path_file <graphs_folder> --ontology <ontology_file>
 6. **Prefix Management**: Cleans up RDF namespace prefixes
 7. **Validation**: Validates merged TTL syntax and moves invalid files
 
-## Output Structure
-
-The merger creates the following output structure:
-```
-results/merged_graphs/
-├── merged/                    # Successfully merged TTL files
-├── Invalid_Turtle_Syntax/     # Files with syntax errors
-├── duplicate_treated/         # Intermediate files with renamed duplicates
-└── logs/                      # Process logs
-    ├── merge_log_[timestamp].log
-    ├── homonymes_log_[timestamp].log
-    └── check_merged_ttl_log_[timestamp].log
-```
-
 ## Key Functions
 
 ### Core Utilities (`utils_merge/utils.py`)
@@ -84,7 +70,7 @@ results/merged_graphs/
 
 ## Error Handling
 
-- **Syntax Errors**: Invalid TTL files are moved to `Invalid_Turtle_Syntax/`
+- **Syntax Errors**: Invalid TTL files are moved to `Invalid_Turtle_Syntax_for_merged_graphs/`
 - **Missing Files**: Graceful handling of missing input files
 - **Memory Management**: Efficient processing for large graph sets
 - **Timeout Protection**: Prevents hanging on problematic files

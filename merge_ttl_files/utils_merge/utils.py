@@ -58,8 +58,8 @@ def build_merged_folder_paths_and_files(path_files):
             - log_file_homonymes (Path): Homonym processing log file
             - log_file_check_ttl (Path): TTL validation log file  
             - path_merged (Path): Directory for merged files
-            - path_homonyme_treated (str): Directory for homonym-treated filescreate merged folder
-            if not exists'''
+            - path_homonyme_treated (str): Directory for homonym-treated files
+            - create merged folder if not exists'''
 
     path_merged = f'{path_files}/merged'
     bad_path_result = f'{path_files}/Invalid_Turtle_Syntax_for_merged_graphs'
@@ -100,8 +100,7 @@ def manage_prefix(path_merged):
         path_merged (str): Path to directory containing merged TTL files
         
     Note:
-        Modifies files in place by rewriting them with deduplicated prefixesremove homonyme prefix
-        of the merged files.'''
+        Modifies merged files in place by rewriting them with deduplicated prefixes'''
 
     nodes_lines=[]
     prefix_lines=[]
@@ -196,8 +195,8 @@ def find_homonymes_nodes(path,logger_homonymes,ontology):
         nodes_name=[os.path.basename(Path(n)) for n in list(nx_graph.nodes)]
         nodes_name_final=[s.split('#',1)[1] if '#' in s else s for s in nodes_name]
 
-        ### remove duplicate to keep only the name of the nodes that appears at least once
-        ### in the file ###
+        ### remove duplicate to keep only the name of the nodes that appears at least ###
+        ### once in a file ###
         nodes_name_per_file=set(nodes_name_final)
 
         logger_homonymes.info('nodes in : %s \n',file)

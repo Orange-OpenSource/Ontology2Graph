@@ -5,10 +5,10 @@
 # This software is distributed under the BSD 4-Clause "Original" or "Old" License,
 # see the "LICENSE" file for more details or <license-url>
 
-""" This script provides utility functions for generating, validating, and storing synthetics
+''' This script provides utility functions for generating, validating, and storing synthetics
 knowledge graphs in Turtle (TTL) format. It includes functions for querying LLM APIs, storing and
 filtering results, validating TTL syntax and ontological consistency, managing model selection,and
-building file/folder paths and selecting prompt and ontology name. """
+building file/folder paths and selecting prompt and ontology name. '''
 
 import os
 import shutil
@@ -22,7 +22,7 @@ from owlready2 import get_ontology,sync_reasoner_hermit,sync_reasoner_pellet
 from owlready2 import OwlReadyInconsistentOntologyError,default_world
 
 def query_llm(ontology_file,prompt_file,model,prompt_type):
-    """ This function sends a prompt and an ontology schema to an LLM (via OpenAI-compatible API)
+    ''' This function sends a prompt and an ontology schema to an LLM (via OpenAI-compatible API)
     and requests a graph generation using the specified model. The LLM is expected to return a 
     response containing the generated graph in Turtle format.
 
@@ -35,8 +35,8 @@ def query_llm(ontology_file,prompt_file,model,prompt_type):
         - "no_tokens_constraints" : (no constraints on the number of tokens to use in the response)
 
     Returns:
-        openai.types.ChatCompletion | None: The response object from the LLM API if successful
-        , otherwise None."""
+        openai.types.ChatCompletion : The response object from the LLM API if successful, \
+            otherwise None.'''
 
     ### Load prompts from a JSON file ###
     with open(prompt_file, 'r', encoding='utf-8') as file:
@@ -69,10 +69,10 @@ def query_llm(ontology_file,prompt_file,model,prompt_type):
     except OpenAIError as e:
         print(f"An error occured: {e}")
 
-    return response#, prompt_type
+    return response
 
 def storing_results(response,temp_file,file_result,logger,model):
-    """ Store the generated graph result from the LLM response, filter its content, and log 
+    ''' Store the generated graph result from the LLM response, filter its content, and log 
     generation details. This function writes the LLM's response content to a temporary file,
     removes lines starting with '`', writes the filtered content to the final result file, logs
     information about the generation process (including model and token usage), and removes the
@@ -83,13 +83,13 @@ def storing_results(response,temp_file,file_result,logger,model):
         temp_file (str): Path to the temporary file for initial content storage.
         file_result (str): Path to the final output file for the filtered graph.
         logger: Logger object for recording generation details.
-        model (str): The name of the LLM model used for generation."""
+        model (str): The name of the LLM model used for generation.'''
 
     with open(temp_file,'x',encoding='utf-8') as filetemp:
         filetemp.write(response.choices[0].message.content)
         filetemp.close()
 
-    #Remove lines started with '
+    ### Remove lines started with '`' ###
     with open(temp_file,'r',encoding='utf-8') as file:
         lines = file.readlines()
         filtered_lines = [lines for lines in lines if not lines.startswith('`')]
@@ -111,19 +111,19 @@ def storing_results(response,temp_file,file_result,logger,model):
     os.remove(temp_file)
 
 def model_to_choose(model_nbr):
-    """ Select a model name from the models.json file based on the provided index.
+    ''' Select a model name from the models.json file based on the provided index.
     This function reads the list of available model names from the models.json file and returns the
     model corresponding to the given index (model_nbr).
 
     Args:
         model_nbr (int) : The index of the model to select from the list.
     Returns:
-        model_name : The name of the selected model."""
+        model_name : The name of the selected model.'''
 
     path_gen=Path(f'{os.getcwd()}')
     model_file = f'{path_gen}/utils_gen/models/models.json'
 
-    # Load model name from a JSON file
+    ### Load model name from a JSON file ###
     with open(model_file, 'r', encoding='utf-8') as file:
         data = json.load(file)
         model_name=data["model"][str(model_nbr)]
@@ -131,18 +131,18 @@ def model_to_choose(model_nbr):
     return model_name
 
 def build_folder_paths_and_files(model):
-    """ Build and return paths for result folders, ontology, prompts, logs, and temporary files.
+    ''' Build and return paths for result folders, ontology, prompts, logs, and temporary files.
     This function constructs and creates (if necessary) the directory structure and file paths
-    required for generating or merging knowledge graphs. It organizes output, logs, ontology,
-    prompt files, and handles both generation and merging workflows.
+    required for generating graphs. It organizes output, logs, ontology, prompt files, and handles 
+    both generation and merging workflows.
 
     Args:
         model (str): The name of the model used for folder naming.
 
     Returns:
         tuple: Paths for result_folder, invalid syntax folder, misformatted turtle folder,
-            ontology file, prompt file, graph folder, temporary file, log file, 
-            and merged graph folder, in that order."""
+            invalid reasonner path,ontology file, prompt file, temporary file, log file, 
+            and merged graph folder, in that order.'''
 
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     path_gen=Path(f'{os.getcwd()}')
@@ -182,10 +182,10 @@ def build_folder_paths_and_files(model):
         prompt_file, temp_file, Path(log_file), path_merged
 
 def remove_file_in_folder(folder_path):
-    """ Remove all files in a specify folder
+    ''' Remove all files in a specify folder
 
     Args:
-        folder_path (str): The path to the folder from which files will be removed."""
+        folder_path (str): The path to the folder from which files will be removed.'''
 
     if Path(folder_path).is_dir() and Path(folder_path).exists():
         for files in Path(folder_path).iterdir():
@@ -193,7 +193,7 @@ def remove_file_in_folder(folder_path):
                 files.unlink()
 
 def check_graph_format(folder_path, notformated_path, logger):
-    """Format TTL (Turtle) files in a directory using owl-cli tool.
+    '''Format TTL (Turtle) files using owl-cli tool.
     
     This function processes all TTL files in the specified folder, formatting them using the
     owl-cli command line tool with specific formatting options. Successfully formatted files
@@ -220,8 +220,8 @@ def check_graph_format(folder_path, notformated_path, logger):
     Raises:
         FileNotFoundError: When owl-cli command is not found in the system PATH.
         subprocess.TimeoutExpired: When formatting operation exceeds 30-second timeout.
-        Exception: For other unexpected errors during the formatting process.
-    """
+        Exception: For other unexpected errors during the formatting process.'''
+
     all_files = [f.name for f in Path(folder_path).iterdir() if f.is_file()]
 
     print("\nChecking TTL file format : ...\n")
@@ -267,7 +267,7 @@ def check_graph_format(folder_path, notformated_path, logger):
             print(f"Unexpected error formatting {file}: {e}")
 
 def check_graph_reasoner(folder_path, invalid_reasoner_path, ontology, reasoner, logger):
-    """ Validates knowledge graphs for ontological consistency using formal reasoning engines.
+    ''' Validates knowledge graphs for ontological consistency using formal reasoning engines.
 
     This function performs comprehensive ontological consistency checking on TTL files by combining
     them with their corresponding ontology and applying formal logical reasoning engines
@@ -299,7 +299,7 @@ def check_graph_reasoner(folder_path, invalid_reasoner_path, ontology, reasoner,
         - Creates temporary OWL/XML files during processing (automatically cleaned up)
         - Moves invalid graphs to quarantine directory
         - Logs detailed validation results and error information
-        - Prints progress and results to console"""
+        - Prints progress and results to console'''
 
     all_graph_to_check = [f for f in Path(folder_path).iterdir() if f.is_file()]
 

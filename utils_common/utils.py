@@ -1,10 +1,24 @@
+# Software Name : Ontologie2Graph
+#
+# SPDX-FileCopyrightText: Copyright (c) Orange SA
+# SPDX-License-Identifier: BSD-4-Clause
+#
+# This software is distributed under the BSD 4-Clause "Original" or "Old" License,
+# see the "LICENSE" file for more details or <license-url>
 
-""" Common utility functions for gengraphllm
-Provides shared utility functions used across multiple scripts in the project,including:
-- Argument parser setup
-- File removal utilities
-- Logger configuration
-"""
+''' utils_common/utils.py
+
+This module provides common utility functions for argument parsing, logging setup, ontology object\
+retrieval, and TTL syntax validation. It is used throughout the GenGraphLLM framework to support\
+script configuration, logging, and basic ontology file operations.
+
+Main functionalities:
+- Argument parser setup for command-line scripts
+- Logger configuration for file-based logging
+- Ontology object extraction (classes, properties)
+- Syntax checking for Turtle files '''
+
+
 import argparse
 import logging
 import os
@@ -13,11 +27,11 @@ import shutil
 from pathlib import Path
 
 def setup_argument_parser(arguments):
-    """ Sets up an argument parser with the given description and arguments.
+    ''' Sets up an argument parser with the given description and arguments.
     Args:
         parser (argparse.ArgumentParser): The argument parser to set up.
-        arguments (list of tuples): Each tuple contains (name, help) for an argument.
-    """
+        arguments (list of tuples): Each tuple contains (name, help) for an argument.'''
+
     parser = argparse.ArgumentParser()
 
     for name, help_text in arguments:
@@ -30,33 +44,60 @@ def setup_argument_parser(arguments):
     return args
 
 def setup_logger(log_file,logger_name,level):
-    '''setup logger configuration'''
+
+    '''Set up and configure a logger for file-based logging.
+
+    This function creates or retrieves a logger with the specified name and logging level, and \
+    attaches a FileHandler to write logs to the given log_file. The log format includes timestamp,\
+    log level, and message. If a FileHandler for the log_file exists, it will not add another.
+
+        Args:
+            log_file (str or Path): Path to the log file where logs will be written.
+            logger_name (str): Name of the logger instance.
+            level (int): Logging level (e.g., logging.INFO, logging.DEBUG).
+
+        Returns:
+            logging.Logger: Configured logger instance.'''
+
     logger = logging.getLogger(logger_name)
     logger.setLevel(level)
-    if not any(isinstance(h, logging.FileHandler) and h.baseFilename == str(Path(log_file))\
+    if not any(isinstance(h, logging.FileHandler) and h.baseFilename == str(Path(log_file))
         for h in logger.handlers):
         handler = logging.FileHandler(log_file)
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)
         logger.addHandler(handler)
-    return logger
+        return logger
 
 def retreive_onto_object(ontology,object_type):
-    '''create a list of all the object declares in the ontology
-    object_type can be DatatypeProperty, ObjectProperty or Class'''
+
+    '''Extracts and returns a list of ontology objects of a specified type from a Turtle (.ttl)\
+    ontology file.
+
+    This function scans the ontology file for lines declaring objects of the given type \
+    (e.g., DatatypeProperty, ObjectProperty, or Class), cleans the object names, and returns\
+    them as a list of strings.
+
+    Args:
+        ontology (str or Path): Path to the ontology Turtle file to parse.
+        object_type (str): The type of ontology object to extract (e.g., "DatatypeProperty",\
+        "ObjectProperty", "Class").
+
+    Returns:
+        list: A list of cleaned object names declared in the ontology of the specified type.'''
 
     index_list=[]
     objects=[]
     object_clean=[]
 
-    #build index list of Object
+    ### build index list of Object ###
     with open(f'{ontology}', 'r',encoding='utf-8') as file:
         for index, line in enumerate(file, start=1):
             if f":{object_type} " in line :
                 index_list.append(index-1)
     file.close()
 
-    #retrieve Object based on index list
+    ### retrieve Object based on index list ###
     with open(f'{ontology}', 'r',encoding='utf-8') as file:
         for index, line in enumerate(file, start=1):
             if index in index_list:
@@ -64,7 +105,7 @@ def retreive_onto_object(ontology,object_type):
 
     file.close()
 
-    #clean Object
+    ### clean Object ###
     for obj in objects:
         obj=obj.replace('noria:',"")
         object_clean.append(obj)
@@ -72,7 +113,7 @@ def retreive_onto_object(ontology,object_type):
     return object_clean
 
 def check_graph_syntax(file_path,bad_syntax_path,logger):
-    """Checks the syntax of all TTL files in a directory using an external Turtle validator.
+    '''Checks the syntax of all TTL files in a directory using an external Turtle validator.
     Moves files with syntax errors to a specified directory and logs the results.
 
     Args:
@@ -84,7 +125,7 @@ def check_graph_syntax(file_path,bad_syntax_path,logger):
         - Iterates over all files in file_path.
         - Runs a Turtle syntax validator on each file.
         - If a file has errors, moves it to bad_file_path and log errors.
-        - Prints and logs the number of files checked and the number of bad files found."""
+        - Prints and logs the number of files checked and the number of bad files found.'''
 
     nbr_file = 0
     count = 0
@@ -113,7 +154,7 @@ def check_graph_syntax(file_path,bad_syntax_path,logger):
         logger.info('Graph : %s',file_name)
 
         if stdout!='Validator finished with 0 warnings and 0 errors.\n' :
-        # move bad file in bad folder and Save logs
+        ### move bad file in bad folder and Save logs ###
             bad_file=f'{bad_syntax_path}/BAD_{file_name}'
             os.makedirs(f'{bad_syntax_path}', exist_ok=True)
             shutil.move(file, bad_file)

@@ -5,7 +5,7 @@
 # This software is distributed under the BSD 4-Clause "Original" or "Old" License,
 # see the "LICENSE" file for more details or <license-url>
 
-""" This script merges multiple knowledge graphs (in Turtle format) into a single unified graph \
+''' This script merges multiple knowledge graphs (in Turtle format) into a single unified graph \
     using a specified ontology.
 
 Main Features:
@@ -14,7 +14,7 @@ appear,compute the max number of file in which an homonyme node appeared.
 2/ Merges the set of graphs, manages RDF prefixes, checks the validity of the resulting TTL file.
 3/ Decrease by one the max number of files in which an homonyme node appeared by renaming 
 homonymes nodes with an appended occurrence index to ensure uniqueness in order to create a
-new set of graphe .
+new set of graphs.
 4/ Repeat action 2 and 3 util no homonyme nodes remain.
 5/ Logs the merging process and removes previous log and result files for a clean run.
 
@@ -23,7 +23,7 @@ Usage:
 
 Arguments:
     path_file:   Absolute path to the folder containing the synthetics knowledges graphs to merge.
-    ontology:    Path to the ontology file."""
+    ontology:    Path to the ontology file.'''
 
 import logging
 from utils_common import utils as utils_common

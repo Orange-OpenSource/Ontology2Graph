@@ -7,11 +7,11 @@
 
 ''' This script generates knowledge graphs based on an ontology schema and a prompt.
 Please read the following. 
-    - You just have to pass the number of graph you want as an argument of this script.
+    - You just have to pass the number of graph you want and the reasoner to use as arguments\
+          of this script.
     - "model_nbr" and "prompt_type" must be set directly in this script before launching
     accordingly to "generate_ttl_files/utils_gen/models/models.json" and
     "generate_ttl_files/utils_gen/prompts/prompts.json" files.
-    
     - You have to refer to utils_gen/models/models.json to set "model_nbr".
     - You have to refer to utils_gen/prompts/prompts.json to set "prompt_type".
     - The generated ttl files are stored in the results/synthetics_graphs folder.
@@ -20,10 +20,12 @@ Please read the following.
     - This script must be launch from the generate_ttl_files folder where it is stored
 
 Usage:
-    python generate_ttl.py --nbrttl <number of ttl file to generate>
+    python generate_ttl.py --nbrttl <number of ttl file to generate> --reasoner <reasoner to use\
+          for consistency check (HermiT, Pellet)>
 
 Arguments:
-    nbrttl : Number of graph (ttl file to generate)'''
+    nbrttl : Number of graph (ttl file to generate)
+    reasoner : Reasoner to use for consistency check (HermiT, Pellet)'''
 
 import logging
 import os

@@ -7,8 +7,7 @@
 # This software is distributed under the BSD 4-Clause "Original" or "Old" License,
 # see the "LICENSE" file for more details or <license-url>
 
-"""
-TTL File Syntax Validator
+'''TTL File Syntax Validator
 
 This script validates the syntax of Turtle (TTL) RDF files in a specified directory using an 
 external TTL validator tool. It processes all TTL files in the given path andd reports validation
@@ -53,13 +52,13 @@ Example:
     # Turtle validator Result: (None, None)
     # 
     # /path/to/ttl/files/graph2.ttl
-    # Turtle validator Result: (None, 'Error: Invalid syntax at line 10') """
+    # Turtle validator Result: (None, 'Error: Invalid syntax at line 10') '''
 
 import argparse
 from pathlib import Path
 import subprocess
 
-# set argument parser #
+### set argument parser ####
 parser = argparse.ArgumentParser()
 parser.add_argument("PATH", help="Path where the files to validate are stored")
 args = parser.parse_args()
