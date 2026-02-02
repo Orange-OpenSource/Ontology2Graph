@@ -187,7 +187,7 @@ The framework implements multiple validation layers:
 
 - Graph size limitations dependent on available system memory
 - LLM API rate limiting considerations
-- Batch processing optimization for large-scale generation
+- Batch prohttps://infoportal-opensource.innov.intraorange/en/copyright-and-license-notices/cessing optimization for large-scale generation
 - Parallel processing support for visualization rendering
 
 ## Research Applications
@@ -211,3 +211,4 @@ This software is distributed under the BSD 4-Clause License. Refer to the [LICEN
 
 For additional documentation and contribution guidelines, refer to [CONTRIBUTING.md](CONTRIBUTING.md).
 
+https://infoportal-opensource.innov.intraorange/en/copyright-and-license-notices/
