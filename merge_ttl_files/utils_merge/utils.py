@@ -62,17 +62,12 @@ def build_merged_folder_paths_and_files(path_files):
             if not exists'''
 
     path_merged = f'{path_files}/merged'
-    bad_path_result = f'{path_files}/Bad_Turtle_Syntax'
+    bad_path_result = f'{path_files}/Invalid_Turtle_Syntax_for_merged_graphs'
     path_homonyme_treated=f'{Path(path_merged)}/homonymes_treated'
-    path_logs = f'{Path(path_files)}/logs'
     date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     log_file=f'{Path(path_files)}/logs/merge_graph_{date}.log'
     log_file_homonymes=f'{Path(path_files)}/logs/homonymes_graph_{date}.log'
     log_file_check_ttl=f'{Path(path_files)}/logs/check_merged_ttl_graph_{date}.log'
-
-    if os.path.exists(path_logs):
-        shutil.rmtree(path_logs)
-    os.makedirs(Path(path_logs))
 
     if os.path.exists(path_merged):
         shutil.rmtree(path_merged)
@@ -81,10 +76,6 @@ def build_merged_folder_paths_and_files(path_files):
     if os.path.exists(bad_path_result):
         shutil.rmtree(bad_path_result)
     os.makedirs(Path(bad_path_result))
-
-    if os.path.exists(path_homonyme_treated):
-        shutil.rmtree(path_homonyme_treated)
-    os.makedirs(path_homonyme_treated)
 
     ### remove previous log files homonyme in logs ###
     for filename in os.listdir(Path(log_file).parent):
@@ -205,7 +196,7 @@ def find_homonymes_nodes(path,logger_homonymes,ontology):
         nodes_name=[os.path.basename(Path(n)) for n in list(nx_graph.nodes)]
         nodes_name_final=[s.split('#',1)[1] if '#' in s else s for s in nodes_name]
 
-        ### remove duplicate to keep only the name of the nodes that appears at least once 
+        ### remove duplicate to keep only the name of the nodes that appears at least once
         ### in the file ###
         nodes_name_per_file=set(nodes_name_final)
 
@@ -249,13 +240,18 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
 
     all_ttl_files = [f.name for f in Path(path_files).iterdir() if f.is_file()]
     all_new_ttl_files = []
-    homo_max=0
+    homo_max=1 #useless to start at 0
 
-    print('\nTreatment in progress :\n')
+    os.system("clear")
+    print('Merging Treatment in progress :')
     print('At least one homonyme node appeared in : ', nbr_homonyme_max,' differents files \n')
 
     while homo_max != nbr_homonyme_max + 1:
-        print(f'Renaming Homonymes : Keep {homo_max} homonyme max in {homo_max} different files')
+
+        if homo_max == 1:
+            print('Renaming all the homonymes and merging')
+        else :
+            print(f'Keeping {homo_max} homonyme max in {homo_max} different files and merging' )
 
         os.makedirs(Path(f'{path_homonyme_treated}/{homo_max}'),exist_ok=True)
 
@@ -268,58 +264,31 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
             logger_merge.info('##################################################################')
             logger_merge.info('Target number of max homonyme in the set of files = %s',homo_max)
             logger_merge.info('Max number of homonyme in the set of files : %s',nbr_homonyme_max)
-            print(f'{ttl_file} treated')
             logger_merge.info('#### FILE ####: %s',  ttl_file)
 
-            with open(Path(path_files)/ttl_file,'r',encoding='utf-8') as rawfile,\
-                 open(f'{Path(path_homonyme_treated)}/{homo_max}/Treated_split'\
-                      f'{homo_max}_{ttl_file}','w',encoding='utf-8') as infile,\
+            with open(Path(path_files)/ttl_file,'r',encoding='utf-8') as infile,\
                  open(f'{Path(path_homonyme_treated)}/{homo_max}/Treated_'\
                       f'{homo_max}_{ttl_file}','w',encoding='utf-8') as outfile:
-                logger_merge.info("nbr file treated %s",nbr_file_treated)
-
-#######################################################################
-# case when there are several ; in one line
-                for line in rawfile:
-                    if '; ' in line : #split line statement on several lines
-                        parts=line.split(';')
-                        #print(parts)
-                        for part in parts:
-                            if part==parts[0]:
-                                infile.write(part + ';\n')
-                            elif part==parts[len(parts)-1]:
-                                infile.write('    '+ part + '\n')
-                            else:
-                                infile.write('    ' + part + ';\n')
-                    else :
-                        infile.write(line)
-########################################################################
-
-
-                ##check if homonyme exists in line and replace it
-                with open(f'{Path(path_homonyme_treated)}/{homo_max}/Treated_split'\
-                      f'{homo_max}_{ttl_file}','r',encoding='utf-8') as infile:
-                    rename_homonyme_by_line(infile,outfile,homo_max,occ_dup,\
+                rename_homonyme_by_line(infile,outfile,homo_max,occ_dup,\
                         dup_treated_list, logger_merge,nbr_file_treated)
 
-            # remove homonyme in dup_treated_list
+            ### remove homonyme in dup_treated_list ###
             unique_set=set(dup_treated_list)
             unique_dup_treated_list=list(unique_set)
 
-            # decrease occurence in occ_dup
+            ### decrease occurence in occ_dup ###
             for dup_treated in unique_dup_treated_list:
                 if dup_treated in occ_dup:
                     occ_dup[dup_treated]=occ_dup[dup_treated]-1
 
+            print(f'{ttl_file} treated')
             logger_merge.info('occ_dup after treatement %s',occ_dup)
             nbr_file_treated=nbr_file_treated+1
 
         all_new_ttl_files = [f for f in Path(f'{path_homonyme_treated}/{homo_max}')\
             .iterdir() if f.is_file()]
 
-        #print(occ_dup)
-
-        # merge files in an only one file
+        ### merge files in an only one ###
         merge_graph(all_new_ttl_files,path_merged,homo_max)
 
         homo_max = homo_max + 1
@@ -357,7 +326,7 @@ def rename_homonyme_by_line(infile,outfile,homo_max,occ_dup,dup_treated_list,log
             outfile.write(line)
         else :
 
-            if '#' in line: #remove comment start with # at the end of the line
+            if '#' in line: #remove comment start with '#' at the end of the line
                 line=line.split(' #',1)[0]
 
             updated_line=line

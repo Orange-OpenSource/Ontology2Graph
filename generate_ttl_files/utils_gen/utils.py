@@ -11,6 +11,7 @@ filtering results, validating TTL syntax and ontological consistency, managing m
 building file/folder paths and selecting prompt and ontology name. """
 
 import os
+import shutil
 import json
 from pathlib import Path
 import datetime
@@ -146,12 +147,16 @@ def build_folder_paths_and_files(model):
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     path_gen=Path(f'{os.getcwd()}')
 
-    path_result = f'{path_gen.parent}/results/synthetics_graphs/{date}/{model}'
     ontologie_file=f'{path_gen}/utils_gen/ontologies/Noria.ttl'
     prompt_file=f'{path_gen}/utils_gen/prompts/prompts.json'
-    path_graph=f'{path_gen}/graph'
-    path_merged = f'{path_result}/merged'
 
+    path_result = f'{path_gen.parent}/results/synthetics_graphs/{date}/{model}'
+
+    if os.path.exists(path_result):
+        shutil.rmtree(path_result)
+    os.makedirs(Path(path_result))
+
+    path_merged = f'{path_result}/merged'
     bad_syntax_path = f'{path_result}/Invalid_Turtle_Syntax'
     notformated_path = f'{path_result}/Notformatted_Turtle_file'
     invalid_reasoner_path = f'{path_result}/Invalid_Reasoner_Results'
@@ -174,7 +179,7 @@ def build_folder_paths_and_files(model):
                 os.remove(file_path)
 
     return path_result, bad_syntax_path, notformated_path, invalid_reasoner_path, ontologie_file,\
-        prompt_file, path_graph, temp_file, Path(log_file), path_merged
+        prompt_file, temp_file, Path(log_file), path_merged
 
 def remove_file_in_folder(folder_path):
     """ Remove all files in a specify folder
@@ -233,12 +238,11 @@ def check_graph_format(folder_path, notformated_path, logger):
             formated_file_name]
 
         try:
-
             result = subprocess.run(format_ttl_command, capture_output=True, text=True, \
                 timeout=30, check=False)
 
             if result.returncode == 0:
-                os.replace(file_to_format,formated_file_name)
+                os.replace(formated_file_name, file_to_format)
                 logger.info(f"✓ Successfully formatted: {file}")
                 print(f"{file} formatted successfully.")
 
@@ -261,7 +265,6 @@ def check_graph_format(folder_path, notformated_path, logger):
         except (OSError, subprocess.SubprocessError) as e:
             logger.error(f"✗ Unexpected error formatting {file}: {e}")
             print(f"Unexpected error formatting {file}: {e}")
-        #logger.info('\n')
 
 def check_graph_reasoner(folder_path, invalid_reasoner_path, ontology, reasoner, logger):
     """ Validates knowledge graphs for ontological consistency using formal reasoning engines.

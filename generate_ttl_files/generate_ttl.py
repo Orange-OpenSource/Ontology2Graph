@@ -29,8 +29,8 @@ import logging
 import os
 import datetime
 from pathlib import Path
-from utils_gen import utils as utils_gen
 from utils_common import utils as utils_common
+from utils_gen import utils as utils_gen
 
 ### set argument parser ###
 args = utils_common.setup_argument_parser([("nbrttl", "number of ttl file to generate"),\
@@ -47,7 +47,7 @@ PROMPT_TYPE="4_1_AI_enhance_manually"
 
 ### build folders & files paths ###
 PATH_RESULT, BAD_SYNTAX_PATH, MISFORMATED_PATH, INVALID_REASONER_PATH, ONTOLOGY_FILE, PROMPT_FILE,\
-PATH_GRAPH, TEMP_FILE,LOG_FILE, PATH_MERGED = utils_gen.build_folder_paths_and_files(model_name)
+      TEMP_FILE,LOG_FILE, PATH_MERGED = utils_gen.build_folder_paths_and_files(model_name)
 
 ### Setup logger ###
 logger_gen= utils_common.setup_logger(LOG_FILE,'gen_log',logging.INFO)
@@ -78,16 +78,14 @@ while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
     ### build file name for each graph ###
     date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     FILE_RESULT = f'{PATH_RESULT}/{PROMPT_TYPE}_{date_time}_{ONTO_NAME}.ttl'
-    #BAD_FILE_RESULT = f'{BAD_PATH_RESULT}/{PROMPT_TYPE}_{date_time}_{ONTO_NAME}_BAD.ttl'
 
     ### Store results and logs some infos ###
     utils_gen.storing_results(response,TEMP_FILE,FILE_RESULT,logger_gen,model_name)
 
     NUMBER_OF_GRAPH += 1
     print(f'\nNUMBER OF GRAPH GENERATED : {NUMBER_OF_GRAPH}\n')
-    print("Sleeping 60 sec to reset the context")
+    #print("Sleeping 60 sec to reset the context")
     #time.sleep(60)
-    print("Awake !")
 
 ### Reformat TTL files if needed ###
 utils_gen.check_graph_format(PATH_RESULT,MISFORMATED_PATH,logger_gen)

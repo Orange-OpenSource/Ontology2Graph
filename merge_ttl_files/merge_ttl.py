@@ -25,7 +25,6 @@ Arguments:
     path_file:   Absolute path to the folder containing the synthetics knowledges graphs to merge.
     ontology:    Path to the ontology file."""
 
-#from ast import arguments
 import logging
 from utils_common import utils as utils_common
 from merge_ttl_files.utils_merge import utils as utils_merge

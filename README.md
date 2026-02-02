@@ -25,7 +25,7 @@ The generation module serves as the core component for synthetic knowledge graph
 
 **Key Components:**
 - `generate_ttl.py`: Primary generation engine implementing LLM-based graph synthesis
-- `utils_gen/utils.py`: Supporting utilities for model configuration, prompt management and graph vamlidation
+- `utils_gen/utils.py`: Supporting utilities for model configuration, prompt management and graph validation
 - Multi-model support architecture with configurable prompt strategies
 - Integrated TTL syntax validation & turtle formating pipeline
 
@@ -60,15 +60,6 @@ Shared infrastructure components providing fundamental operations across all mod
 - Logging and monitoring infrastructure
 - File I/O operations and path management
 - TTL validation and error handling mechanisms
-
-### Quality Assurance Module (`check_skg/`)
-
-Dedicated components for knowledge graph quality control and consistency verification.
-
-**Key Components:**
-- `check_skg/check_skg.py`: Launchs reasonner on graphs to check their ontological consistency
-
-######
 
 ## Installation and Configuration
 

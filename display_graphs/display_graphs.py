@@ -79,9 +79,9 @@ Integration:
 
 import logging
 from pathlib import Path
+from utils_common import utils as utils_common
 from utils import utils_display as utils
 from utils import visu_graph as visu
-from utils_common import utils as utils_common
 
 ### set argument parser ###
 args = utils_common.setup_argument_parser([("path", "path where files are stored")\
