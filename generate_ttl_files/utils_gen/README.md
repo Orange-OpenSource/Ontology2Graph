@@ -171,7 +171,7 @@ Directory containing ontology schema files in TTL format.
 from utils_gen import utils
 
 # Configure model and paths
-model = utils.model_to_choose("1")  # Select GPT-4
+model = utils.model_to_choose("1")  
 paths = utils.build_folder_paths_and_files(model)
 
 # Generate knowledge graph

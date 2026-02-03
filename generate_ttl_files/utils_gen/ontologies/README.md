@@ -1,6 +1,6 @@
 # Ontologies Folder
 
-This folder store ontology files used in the project. Ontologies define the structure, relationships, and semantics of the data used by the system.
+This folder is intended to store ontologies files used in the project. Ontologies define the structure, relationships, and semantics of the data used by the system.
 
 ## Usage
 - Place all ontology files relevant to your project in this directory.

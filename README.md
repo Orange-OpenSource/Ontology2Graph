@@ -1,4 +1,4 @@
-# GenGraphLLM: A Framework for Synthetic Knowledge Graph Generation Using Large Language Models
+# GenGraphLLM: A Framework for Synthetic Knowledge Graph Generation Using Large Language Models.
 
 ## Abstract
 

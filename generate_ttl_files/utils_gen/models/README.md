@@ -1,6 +1,6 @@
 # Model Folder
 
-This folder contains a json file that references several Large Language Models (LLMs). The file can be used as is or modified accordingly to the specific API or service you use to call an LLM.
+This folder contains a json file for referencing several Large Language Models (LLMs) in order to be used by an API when calling a LLM
 
 ## Usage
 - The LLM's key must be set in generate_ttl.py before launching.
