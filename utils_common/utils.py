@@ -9,7 +9,7 @@
 ''' utils_common/utils.py
 
 This module provides common utility functions for argument parsing, logging setup, ontology object\
-retrieval, and TTL syntax validation. It is used throughout the GenGraphLLM framework to support\
+retrieval, and TTL syntax validation. It is used throughout the Ontology2Graph framework to support\
 script configuration, logging, and basic ontology file operations.
 
 Main functionalities:

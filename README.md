@@ -1,14 +1,14 @@
-# GenGraphLLM: A Framework for Synthetic Knowledge Graph Generation Using Large Language Models.
+# Ontology2Graph: A Framework for Synthetic Knowledge Graph Generation Using Large Language Models.
 
 ## Abstract
 
-GenGraphLLM is a comprehensive Python framework designed for the automated generation, analysis, and visualization of synthetic Knowledge Graphs through Large Language Model (LLM) integration. The system provides a complete computational pipeline that transforms ontological schemas into semantically coherent knowledge graphs with integrated quality assurance mechanisms.
+Ontology2Graph is a comprehensive Python framework designed for the automated generation, analysis, and visualization of synthetic Knowledge Graphs through Large Language Model (LLM) integration. The system provides a complete computational pipeline that transforms ontological schemas into semantically coherent knowledge graphs with integrated quality assurance mechanisms.
 
 ## Overview
 
 Knowledge Graphs have emerged as fundamental structures for representing complex relationships in semantic data. This framework addresses the challenge of generating synthetic knowledge graphs at scale by leveraging the reasoning capabilities of Large Language Models while ensuring adherence to ontological constraints and semantic consistency.
 
-GenGraphLLM implements a modular architecture that supports:
+Ontology2Graph implements a modular architecture that supports:
 - Automated knowledge graph generation from ontological specifications
 - Comprehensive graph analysis and key performance indicator computation
 - Interactive visualization capabilities for structural analysis
