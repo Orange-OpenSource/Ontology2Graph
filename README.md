@@ -199,7 +199,6 @@ This software is distributed under the BSD 4-Clause License. Refer to the [LICEN
 
 ## References and Documentation
 
-- [LLM Proxy Portal](https://portal.llmproxy.ai.orange/): API access for Large Language Models
 - [Turtle Validator](https://github.com/IDLabResearch/TurtleValidator): External validation tools
 - [Ontology engineering tool](https://github.com/atextor/owl-cli) for Turtle format rearrangement.
 - [RDFLib Documentation](https://rdflib.readthedocs.io/): RDF processing library reference
