@@ -6,8 +6,7 @@
 # This software is distributed under the BSD 4-Clause "Original" or "Old" License,
 # see the "LICENSE" file for more details or <license-url>
 
-"""
-Find Duplicate Nodes Across Multiple TTL Graph Files
+''' Find Duplicate Nodes Across Multiple TTL Graph Files
 
 This script analyzes a collection of TTL (Turtle) RDF files to identify nodes that appear in 
 multiple graphs, helping to understand node overlap and potential merge opportunities in knowledge
@@ -55,8 +54,7 @@ Dependencies:
 
 Example:
     python find_duplicates_nodes.py /path/to/ttl/files/ /path/to/ontology.ttl
-    # Output: DUPLICATES ['Person_1', 'Organization_2', 'Location_5'], 
-"""
+    # Output: DUPLICATES ['Person_1', 'Organization_2', 'Location_5'], '''
 
 import sys
 from pathlib import Path
@@ -69,12 +67,12 @@ arg = sys.argv[1:]
 PATH= arg[0]
 ONTOLOGY = arg[1]
 
-#List all the ttl graph files in PATH except folder
+### List all the ttl graph files in PATH except folder ###
 all_files = [f.name for f in Path(PATH).iterdir() if f.is_file()]
 
 DataTypeProperties=retreive_onto_object(ONTOLOGY,'DatatypeProperty')
 
-#rebuild complete file path (folder/file)
+### rebuild complete file path (folder/file) ###
 for i, file in enumerate(all_files):
     all_files[i]= PATH + file
 
@@ -106,7 +104,7 @@ for file in all_files :
     nodes=list(nx_graph.nodes)
     all_nodes.append(nodes)
 
-#transform list of list into a simple list
+### transform list of list into a simple list ###
 all_nodes_list = [item for sublist in all_nodes for item in sublist]
 
 counts=Counter(all_nodes_list)

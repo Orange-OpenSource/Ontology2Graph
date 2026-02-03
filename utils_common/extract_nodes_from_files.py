@@ -7,8 +7,7 @@
 # This software is distributed under the BSD 4-Clause "Original" or "Old" License,
 # see the "LICENSE" file for more details or <license-url>
 
-"""
-Extract and Export Graph Nodes from TTL Files
+''' Extract and Export Graph Nodes from TTL Files
 
 This script parses a Turtle (TTL) RDF file to extract meaningful graph nodes, 
 excluding metadata properties, and exports them to a CSV file for further analysis.
@@ -47,8 +46,8 @@ Dependencies:
 
 Example:
     python extract_nodes_from_files.py /path/to/graph.ttl
-    # Creates nodes.csv with extracted node names
-"""
+    # Creates nodes.csv with extracted node names'''
+
 
 import sys
 from os import getcwd

@@ -5,7 +5,7 @@
 # This software is distributed under the BSD 4-Clause "Original" or "Old" License,
 # see the "LICENSE" file for more details or <license-url
 
-""" Graph visualization utilities for creating interactive HTML displays.
+''' Graph visualization utilities for creating interactive HTML displays.
 
 This module provides two main approaches for visualizing NetworkX graphs as interactive
 HTML files using the pyvis library. It offers both basic and advanced visualization
@@ -41,7 +41,7 @@ Dependencies:
     - pyvis: For creating interactive network visualizations
     - networkx: Graph data structure (input)
     - webbrowser: For automatically opening HTML results
-    - pathlib: For file path handling"""
+    - pathlib: For file path handling'''
 
 import webbrowser
 import os
@@ -49,7 +49,7 @@ from pathlib import Path
 from pyvis.network import Network
 
 def visu_graph_advanced(graph,file,html_folder,node_type_lists):
-    """ Create an advanced interactive HTML visualization of a graph with enhanced styling
+    ''' Create an advanced interactive HTML visualization of a graph with enhanced styling
     and node categorization.
     
     This function generates a sophisticated pyvis network visualization with custom styling,
@@ -79,17 +79,7 @@ def visu_graph_advanced(graph,file,html_folder,node_type_lists):
         - Hover tooltips with node/edge information
         - Navigation buttons and keyboard controls
         - Physics configuration panel
-    
-    Node Types Supported:
-        - Trouble Ticket nodes
-        - Change Request nodes  
-        - Application nodes
-        - Network Resource nodes
-        - Network Interface nodes
-        - Network Link nodes
-        - Literal nodes (auto-detected)
-        - Entity nodes (default)
-    
+        
     Output:
         - Creates HTML file named after the input file in the specified folder
         - Automatically opens the visualization in the default web browser
@@ -98,19 +88,19 @@ def visu_graph_advanced(graph,file,html_folder,node_type_lists):
     Example:
         >>> node_lists = (tt_nodes, cr_nodes, app_nodes, nr_nodes, ni_nodes, nl_nodes)
         >>> visu_graph_advanced(my_graph, "ontology.ttl", "/output/html", node_lists)
-        # Creates /output/html/ontology.html and opens it in browser"""
+        # Creates /output/html/ontology.html and opens it in browser'''
 
     trouble_ticket_nodes, change_request_nodes, application_nodes,\
         network_resource_nodes, network_interface_nodes, network_link_nodes = node_type_lists
 
-    # Create network with responsive sizing
+    ### Create network with responsive sizing ###
     net = Network(height="95vh", width="100%", bgcolor="#1a1a1a",directed=True)
     net.barnes_hut()
 
-    # Convert NetworkX graph to pyvis first
+    ### Convert NetworkX graph to pyvis first ###
     net.from_nx(graph)
 
-    # Improved physics settings for better stability and readability
+    ### Improved physics settings for better stability and readability ###
     net.set_options(
         """{
         "physics": {
@@ -176,16 +166,16 @@ def visu_graph_advanced(graph,file,html_folder,node_type_lists):
         }"""
     )
 
-    # Color code edges: cyan for entity-to-entity, green for entity-to-literal
+    ### Color code edges: cyan for entity-to-entity, green for entity-to-literal ###
     edge_colors = {
         'entity_to_entity': '#00d4ff',  # Cyan for entity relationships
         'entity_to_literal': '#00cc66'   # Green for literal/datatype properties
     }
 
-    # Apply colors and styling to edges based on whether they connect to literals or entities
+    ### Apply colors and styling to edges based on whether they connect to literals or entities ###
     for edge in net.edges:
         edge_label = edge.get('label', '')
-        # Get edge data from original graph to determine type
+        ### Get edge data from original graph to determine type ###
         edge_type = 'entity_to_entity'  # default
         for u, v, data in graph.edges(data=True):
             if (edge.get('from') == u or edge.get('from') == str(u)) and \
@@ -194,33 +184,33 @@ def visu_graph_advanced(graph,file,html_folder,node_type_lists):
                 break
 
         edge['color'] = edge_colors.get(edge_type, '#888888')
-        # Tooltip shows relationship type and category
+        ### Tooltip shows relationship type and category ###
         edge['title'] = f"{edge_label} ({edge_type.replace('_', ' ')})"
 
-    # Calculate node sizes based on degree (connectivity)
+    ### Calculate node sizes based on degree (connectivity) ###
     if len(graph.nodes()) > 0:
         degrees = dict(graph.degree())
         max_degree = max(degrees.values()) if degrees else 1
         min_degree = min(degrees.values()) if degrees else 0
         degree_range = max_degree - min_degree if max_degree > min_degree else 1
 
-        # Identify literal nodes (nodes that are targets of entity_to_literal edges)
+        ### Identify literal nodes (nodes that are targets of entity_to_literal edges) ###
         literal_nodes = set()
         for u, v, data in graph.edges(data=True):
             if data.get('edge_type') == 'entity_to_literal':
                 literal_nodes.add(v)
 
-        # Apply node sizes and colors (blue for entities, green for literals)
+        ### Apply node sizes and colors (blue for entities, green for literals) ###
         for node in net.nodes:
             node_id = node['id']
             if node_id in degrees:
                 degree = degrees[node_id]
-                # Scale node size between 10 and 40 based on degree
+                ### Scale node size between 10 and 40 based on degree ###
                 node['size'] = 10 + (30 * (degree - min_degree) / degree_range)
 
-                # Check if this is a literal node
+                ### Check if this is a literal node ###
                 if node_id in literal_nodes:
-                    # Green color for literal nodes
+                    ### Green color for literal nodes ###
                     node['color'] = {
                         'border': '#ffffff',
                         'background': '#00cc66',
@@ -230,7 +220,7 @@ def visu_graph_advanced(graph,file,html_folder,node_type_lists):
                         }
                     }
                 else:
-                    # Blue color for entity nodes
+                    ### Blue color for entity nodes ###
                     node['color'] = {
                         'border': '#ffffff',
                         'background': '#0066cc',
@@ -247,14 +237,14 @@ def visu_graph_advanced(graph,file,html_folder,node_type_lists):
 
     net.save_graph(html_file)
 
-    # Add custom JavaScript for node selection and filtering
+    ### Add custom JavaScript for node selection and filtering ###
     with open(html_file, 'r', encoding='utf-8') as f:
         html_content = f.read()
 
     ete="entity to entity"
     etl="entity to literal"
 
-    # Insert custom JavaScript before closing body tag
+    ### Insert custom JavaScript before closing body tag ###
     custom_js = f"""
     <script type="text/javascript">
         // Track literal nodes
@@ -527,7 +517,7 @@ def visu_graph_advanced(graph,file,html_folder,node_type_lists):
     </script>
     """
 
-    # --- Combined Sidebar for all menus ---
+    ### --- Combined Sidebar for all menus --- ###
     combined_sidebar_js = f"""
     <script type=\"text/javascript\">
         var troubleTicketNodes = {trouble_ticket_nodes if trouble_ticket_nodes else []};
@@ -838,7 +828,7 @@ def visu_graph_advanced(graph,file,html_folder,node_type_lists):
     webbrowser.open(html_file,autoraise=True)
 
 def visu_graph_basic(graph,file,html_folder):
-    """ Create a basic interactive HTML visualization of a graph with standard styling.
+    ''' Create a basic interactive HTML visualization of a graph with standard styling.
     
     This function generates a simple pyvis network visualization with basic styling
     and standard physics simulation. It provides a quick and straightforward way to
@@ -858,13 +848,6 @@ def visu_graph_basic(graph,file,html_folder):
         - No interactive controls or filtering capabilities
         - Fast rendering suitable for simple graphs
     
-    Physics Settings:
-        - Barnes-Hut solver with moderate gravitational constant (-80000)
-        - Central gravity: 0.3
-        - Spring length: 200px
-        - Spring constant: 0.04
-        - Damping: 0.09
-    
     Output:
         - Creates an HTML file named after the input file in the specified folder
         - Automatically opens the visualization in the default web browser
@@ -878,11 +861,10 @@ def visu_graph_basic(graph,file,html_folder):
     
     Example:
         >>> visu_graph_basic(my_graph, "network.ttl", "/output/html")
-        # Creates /output/html/network.html and opens it in browser"""
+        # Creates /output/html/network.html and opens it in browser'''
 
     net = Network(height="1300px", width="100%", bgcolor="#222222",directed=True)
     net.barnes_hut()
-    #net.repulsion()
 
     net.set_options("""{
         "physics": {
@@ -911,12 +893,7 @@ def visu_graph_basic(graph,file,html_folder):
         }
         }""")
 
-    #net.set_options(options)
     net.from_nx(graph)
-    #net.show_buttons(filter_=['physics'])
-
-    #for edges in net.edges:
-    #    edges["color"]="green"
 
     os.makedirs(html_folder,exist_ok=True)
 
@@ -924,5 +901,4 @@ def visu_graph_basic(graph,file,html_folder):
 
     net.save_graph(html_file)
 
-    #webbrowser.open(f'file://///wsl.localhost/Ubuntu-24.04{html_file}',autoraise=True)
     webbrowser.open(html_file,autoraise=True)

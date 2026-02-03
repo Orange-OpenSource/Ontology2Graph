@@ -5,7 +5,7 @@
 # This software is distributed under the BSD 4-Clause "Original" or "Old" License,
 # see the "LICENSE" file for more details or <license-url
 
-""" Utilities for displaying and visualizing RDF/ontology graphs.
+''' Utilities for displaying and visualizing RDF/ontology graphs.
 
 This module provides comprehensive functionality for converting RDF graphs and ontologies
 into interactive HTML visualizations using NetworkX and pyvis. It supports both basic
@@ -32,7 +32,7 @@ Functions:
 
 The module is designed to work with RDF graphs in Turtle (.ttl) format and creates
 interactive HTML visualizations that can be opened in web browsers for exploration
-and analysis of ontological structures."""
+and analysis of ontological structures.'''
 
 import logging
 import os
@@ -46,7 +46,7 @@ import rdflib
 from utils_common import utils as utils_common
 
 def create_new_log_html_folder(path):
-    """    Create a new log_html folder for storing HTML visualization outputs and logs.
+    '''    Create a new log_html folder for storing HTML visualization outputs and logs.
     
     This function creates a fresh log_html directory, removing any existing one to ensure
     clean output generation. The folder location depends on whether the input path is a
@@ -70,7 +70,7 @@ def create_new_log_html_folder(path):
         >>> # Creates /path/to/log_html/
         
         >>> folder = create_new_log_html_folder("/path/to/directory")
-        >>> # Creates /path/to/directory/log_html/"""
+        >>> # Creates /path/to/directory/log_html/'''
 
     if Path(path).is_file():
         log_html_folder = Path(f'{str(Path(path).parent)}/log_html/')
@@ -85,7 +85,7 @@ def create_new_log_html_folder(path):
     return log_html_folder
 
 def prepare_graph_to_display(file, log_html_folder, ontology, mode):
-    """ Prepare a graph for display by processing RDF data with either basic or advanced mode.
+    ''' Prepare a graph for display by processing RDF data with either basic or advanced mode.
     
     This function merges the functionality of prepare_graph_to_display_advanced and 
     prepare_graph_to_display_basic, allowing selection between basic and advanced 
@@ -128,13 +128,13 @@ def prepare_graph_to_display(file, log_html_folder, ontology, mode):
         >>> graph = prepare_graph_to_display("data.ttl", "logs/", "onto.ttl", "basic")
         
         >>> # Advanced mode  
-        >>> graph,node_lists=prepare_graph_to_display("data.ttl","logs/","onto.ttl","advanced")"""
+        >>> graph,node_lists=prepare_graph_to_display("data.ttl","logs/","onto.ttl","advanced")'''
 
     rdf = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
     rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
     skos = Namespace("http://www.w3.org/2004/02/skos/core#")
 
-    # Initialize node type sets (always initialize to avoid unbound variable errors)
+    ### Initialize node type sets (always initialize to avoid unbound variable errors) ###
     trouble_ticket_nodes = set()
     change_request_nodes = set()
     application_nodes = set()
@@ -168,7 +168,7 @@ def prepare_graph_to_display(file, log_html_folder, ontology, mode):
             short_pred = short_pred.split('#', 1)[1]
         short_subj = Path(str(subj)).name
 
-        # Advanced mode: Node categorization by type
+        ### Advanced mode: Node categorization by type ###
         if mode == "advanced" and short_pred == "type":
             obj_type = Path(str(obj)).name
             if obj_type == "TroubleTicket":
@@ -184,7 +184,7 @@ def prepare_graph_to_display(file, log_html_folder, ontology, mode):
             elif obj_type == "NetworkLink":
                 network_link_nodes.add(str(short_subj))
 
-        # Entity-to-entity relationships
+        ### Entity-to-entity relationships ###
         if (
             isinstance(subj, URIRef)
             and isinstance(obj, URIRef)
@@ -201,7 +201,7 @@ def prepare_graph_to_display(file, log_html_folder, ontology, mode):
                     label=str(short_pred),
                     edge_type='entity_to_entity',
                 )
-            else:  # basic mode
+            else:
                 digraph.add_edge(
                     str(short_subj),
                     str(short_obj),
@@ -210,7 +210,7 @@ def prepare_graph_to_display(file, log_html_folder, ontology, mode):
                 )
             logger_file1.info('URIRef Subject : %s', subj)
 
-        # Entity-to-literal relationships (only in advanced mode)
+        ### Entity-to-literal relationships (only in advanced mode) ###
         if (
             mode == "advanced"
             and isinstance(subj, URIRef)
@@ -219,7 +219,7 @@ def prepare_graph_to_display(file, log_html_folder, ontology, mode):
             and (pred != skos.inScheme)
             and (pred != rdfs.isDefinedBy)
         ):
-            # Create a label for the literal value (truncate if too long)
+            ### Create a label for the literal value (truncate if too long) ###
             literal_str = str(obj)[:50] + ('...' if len(str(obj)) > 50 else '')
             literal_node = f"{literal_str}"
             digraph.add_edge(
@@ -230,7 +230,7 @@ def prepare_graph_to_display(file, log_html_folder, ontology, mode):
             )
             logger_file1.info('Literal Object : %s', obj)
 
-        # Blank nodes
+        ### Blank nodes ###
         if isinstance(subj, BNode) and (pred != rdf.type) and (pred != skos.inScheme):
             logger_file1.info('Blank Node Subject :%s', subj)
             for subjbn, predbn in g.subject_predicates(subj):
@@ -245,7 +245,7 @@ def prepare_graph_to_display(file, log_html_folder, ontology, mode):
                             label=str(short_predbn),
                             edge_type='entity_to_entity',
                         )
-                    else:  # basic mode
+                    else:  ### basic mode ###
                         digraph.add_edge(
                             short_subjbn,
                             short_obj,
@@ -267,7 +267,7 @@ def prepare_graph_to_display(file, log_html_folder, ontology, mode):
                     obj,
                 )
 
-        # Log literals in basic mode (without adding to graph)
+        ### Log literals in basic mode (without adding to graph) ###
         if mode == "basic" and isinstance(obj, Literal):
             logger_file1.info('Literal Object : %s', obj)
 
@@ -283,12 +283,12 @@ def prepare_graph_to_display(file, log_html_folder, ontology, mode):
             logger_file1.info('BNode Subject : %s', s)
     logger_file1.info('##################################################')
 
-    ## sort and remove duplicate lines ##
+    ### sort and remove duplicate lines ###
     with open(log_file, 'r', encoding='utf-8') as log:
         unique_lines = set(log.readlines())
         log.close()
 
-    sorted_lines = sorted(unique_lines)  # sort in alphabetical order
+    sorted_lines = sorted(unique_lines)  ### sort in alphabetical order ##
     os.remove(log_file)
 
     with open(log_file_sorted, 'a', encoding='utf-8') as log_sorted:
@@ -303,8 +303,7 @@ def prepare_graph_to_display(file, log_html_folder, ontology, mode):
     return digraph, node_type_lists
 
 def log_kpis(file_name, digraph, cumul_nodes, cumul_density, mode, node_type_lists=None):
-    """
-    Compute and log Key Performance Indicators (KPIs) for a knowledge graph with mode selection.
+    ''' Compute and log Key Performance Indicators (KPIs) for a knowledge graph with mode selection.
     
     This function merges the functionality of log_kpis_advanced and log_kpis_basic,
     allowing selection between basic and advanced logging modes. It calculates graph
@@ -317,10 +316,8 @@ def log_kpis(file_name, digraph, cumul_nodes, cumul_density, mode, node_type_lis
         cumul_density (float): Current cumulative density across multiple graphs
         mode (str): Logging mode, either "basic" or "advanced"
         node_type_lists (list, optional): Required for advanced mode. List containing
-                                        6 sublists of categorized nodes:
-                                        [trouble_ticket_nodes, change_request_nodes,
-                                         application_nodes, network_resource_nodes,
-                                         network_interface_nodes, network_link_nodes]
+        6 sublists of categorized nodes: [trouble_ticket_nodes, change_request_nodes,
+        application_nodes, network_resource_nodes, network_interface_nodes, network_link_nodes]
     
     Returns:
         tuple: (updated_cumul_nodes, updated_cumul_density)
@@ -352,8 +349,8 @@ def log_kpis(file_name, digraph, cumul_nodes, cumul_density, mode, node_type_lis
         
         >>> # Advanced mode
         >>> node_lists = [tt_nodes, cr_nodes, app_nodes, nr_nodes, ni_nodes, nl_nodes]
-        >>> cumul_n, cumul_d = log_kpis("graph.ttl", my_graph, 50, 0.3, "advanced", node_lists)
-    """
+        >>> cumul_n, cumul_d = log_kpis("graph.ttl", my_graph, 50, 0.3, "advanced", node_lists)'''
+
     if mode not in ["basic", "advanced"]:
         raise ValueError("Mode must be either 'basic' or 'advanced'")
 
@@ -362,7 +359,7 @@ def log_kpis(file_name, digraph, cumul_nodes, cumul_density, mode, node_type_lis
 
     logger = logging.getLogger('graph_kpi')
 
-    # Common logging for both modes
+    ### Common logging for both modes ###
     logger.info('##################################################')
     logger.info('Knowledge Graph : %s', file_name)
     logger.info('Number of Nodes : %s', digraph.number_of_nodes())
@@ -382,7 +379,7 @@ def log_kpis(file_name, digraph, cumul_nodes, cumul_density, mode, node_type_lis
     logger.info('#### NODES #### :%s', len(digraph.nodes))
     logger.info('%s', digraph.nodes)
 
-    # Advanced mode: additional node type categorization logging
+    ### Advanced mode: additional node type categorization logging ###
     if mode == "advanced" and node_type_lists is not None:
         (trouble_ticket_nodes, change_request_nodes, application_nodes,
          network_resource_nodes, network_interface_nodes, network_link_nodes) = node_type_lists

@@ -18,7 +18,6 @@ Main functionalities:
 - Ontology object extraction (classes, properties)
 - Syntax checking for Turtle files '''
 
-
 import argparse
 import logging
 import os
