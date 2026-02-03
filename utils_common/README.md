@@ -39,6 +39,7 @@ python validate_ttl.py <directory_path>
 - Scripts expect absolute or relative paths as arguments.
 
 ## License
+
 BSD-4-Clause License - Copyright (c) Orange SA
 
 See the main LICENSE file for complete license terms.
