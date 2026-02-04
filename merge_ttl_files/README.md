@@ -60,14 +60,6 @@ python merge_ttl.py --path_file <graphs_folder> --ontology <ontology_file>
 - `manage_prefix()`: Cleans RDF namespace prefixes
 - `merge_graph()`: Combines multiple TTL files into one
 
-## Dependencies
-
-- **Python 3.8+**
-- **rdflib**: RDF processing and Turtle format handling
-- **networkx**: Graph processing capabilities
-- **pathlib**: Cross-platform file path operations
-- **utils_common**: Shared utilities from parent project
-
 ## Error Handling
 
 - **Syntax Errors**: Invalid TTL files are moved to `Invalid_Turtle_Syntax_for_merged_graphs/`
