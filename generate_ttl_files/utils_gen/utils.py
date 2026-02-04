@@ -147,7 +147,7 @@ def build_folder_paths_and_files(model):
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     path_gen=Path(f'{os.getcwd()}')
 
-    ontologie_file=f'{path_gen}/utils_gen/ontologies/Noria.ttl'
+    ontologie_file=f'{path_gen}/utils_gen/ontologies/YOUR ONTOLOGIE FILE IN TURTLE FORMAT'
     prompt_file=f'{path_gen}/utils_gen/prompts/prompts.json'
 
     path_result = f'{path_gen.parent}/results/synthetics_graphs/{date}/{model}'
