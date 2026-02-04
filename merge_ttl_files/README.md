@@ -37,7 +37,7 @@ python merge_ttl.py --path_file <graphs_folder> --ontology <ontology_file>
 
 ### Arguments
 
-- `--path_file`: Absolute path to the folder containing synthetic knowledge graphs to merge
+- `--path_file`: Path to the folder containing synthetic knowledge graphs to merge
 - `--ontology`: Path to the ontology TTL file used as schema reference
 
 ## Process Workflow
