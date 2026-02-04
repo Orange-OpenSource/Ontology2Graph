@@ -13,23 +13,15 @@ This folder contains utilities and scripts for visualizing and interacting with 
 - `utils_display.py`: Core utility for rendering and interacting with knowledge graphs. Injects custom JavaScript and CSS for advanced controls.
 
 ## Usage
-1. Import and use the `visu_graph` function to visualize a NetworkX graph.
-2. The generated HTML file will open in your browser with interactive controls:
+The generated HTML file will open in your browser with interactive controls:
    - **Hide Literals**: Toggle literal nodes/edges.
    - **Hide Connected Nodes**: When a node is selected, hide/show its directly connected entity nodes (literals remain visible).
    - **Edge Types Legend**: Explains color coding for edges.
    - **Instructions Overlay**: Explains UI controls.
 
 ## Customization
-- Edit `utils_display.py` to adjust colors, legend, or UI controls as needed.
+- Edit `utils_display.py`, from `utils` folder, to adjust colors, legend, or UI controls as needed.
 - The HTML/JS/CSS is injected dynamically for flexibility.
-
-## Example
-```python
-from display_graphs.utils.utils_display import visu_graph
-# ... build your NetworkX graph ...
-visu_graph(graph, 'output_name', 'html_output_folder')
-```
 
 ## License
 
