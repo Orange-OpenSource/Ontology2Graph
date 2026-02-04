@@ -1,42 +1,68 @@
-# Utils Folder
+# Utils Common
 
-This folder contains utility scripts for processing and validating Turtle (.ttl) files and extracting graph data. Each script is designed to perform a specific task related to knowledge graph management.
+This folder contains common utility functions shared across the Ontology2Graph framework for argument parsing, logging setup, ontology processing, and file validation.
 
-## Contents
+## Files Overview
 
-- `extract_nodes_from_files.py`: Extracts node names from a Turtle file and saves them to a CSV file. Useful for analyzing graph structure and node lists.
-- `find_duplicates_nodes.py`: Scans all Turtle files in a directory to find duplicate nodes. Helps identify redundancy or errors in graph data.
-- `validate_ttl.py`: Validates all Turtle files in a specified directory using the `ttl` command-line validator. Prints validation results for each file.
-- `script_crontab.sh`: (If present) Shell script for scheduling or automating tasks related to the utils.
+### `utils.py`
+Core utility module providing common functionality used throughout the Ontology2Graph framework.
 
-## Usage
+**Main Features:**
+- Command-line argument parsing and configuration
+- File-based logger setup and management
+- Ontology object extraction and processing
+- TTL (Turtle) syntax validation and error handling
 
-### Extract Nodes
-```bash
-python extract_nodes_from_files.py <file.ttl>
-```
-- Outputs a CSV file listing all nodes found in the Turtle file.
+## Key Functions
 
-### Find Duplicate Nodes
-```bash
-python find_duplicates_nodes.py <directory_path>
-```
-- Scans all `.ttl` files in the directory and reports duplicate nodes.
+### Argument Parsing
+- **`setup_argument_parser(arguments)`**: Sets up command-line argument parsers with given descriptions and arguments
+  - Supports special handling for mode arguments (basic/advanced choices)
+  - Returns parsed arguments object
+  - Used by all main scripts for consistent CLI interface
 
-### Validate Turtle Files
-```bash
-python validate_ttl.py <directory_path>
-```
-- Runs the `ttl` validator on each `.ttl` file in the directory and prints results.
+### Logging Management
+- **`setup_logger(log_file, logger_name, level)`**: Creates and configures file-based loggers
+  - Prevents duplicate FileHandlers for the same log file
+  - Sets up formatted logging with timestamps and levels
+  - Returns configured logger instance
+  - Used throughout the framework for consistent logging
 
-## Requirements
-- Python 3.x
-- `rdflib`, `networkx` (for graph processing)
-- `ttl` command-line tool (for validation)
+### Ontology Processing
+- **`retreive_onto_object(ontology, object_type)`**: Extracts ontology objects from TTL files
+  - Scans ontology files for specific object types (DatatypeProperty, ObjectProperty, Class)
+  - Cleans object names by removing namespace prefixes
+  - Returns list of cleaned object names
+  - Supports ontology analysis and validation
 
-## Notes
-- Ensure all dependencies are installed in your Python environment.
-- Scripts expect absolute or relative paths as arguments.
+### File Validation
+- **`check_graph_syntax(file_path, bad_syntax_path, logger)`**: Validates TTL file syntax
+  - Uses external Turtle validator to check file syntax
+  - Automatically moves files with syntax errors to designated directory
+  - Provides detailed logging of validation results
+  - Reports statistics on checked and invalid files
+
+## Integration
+
+This utils_common module is used by:
+- **generate_ttl_files**: TTL generation and validation
+- **merge_ttl_files**: TTL merging operations and logging
+- **display_graphs**: Graph visualization setup and logging
+
+## Validation Support
+
+The module includes comprehensive TTL syntax validation:
+- **External validator integration**: Uses `ttl` command-line validator
+- **Error isolation**: Moves invalid files to separate directory
+- **Detailed logging**: Records all validation results and errors
+- **Statistics reporting**: Provides counts of checked and invalid files
+
+## Error Handling
+
+- Graceful handling of missing files and directories
+- Automatic creation of error directories when needed
+- Comprehensive logging of all operations and errors
+- Prevention of duplicate log handlers
 
 ## License
 
