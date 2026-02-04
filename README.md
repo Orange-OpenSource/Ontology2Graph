@@ -2,7 +2,7 @@
 
 ## Abstract
 
-Ontology2Graph is a comprehensive Python framework designed for the automated generation, analysis, and visualization of synthetic Knowledge Graphs through Large Language Model (LLM) integration. The system provides a complete computational pipeline that transforms ontological schemas into semantically coherent knowledge graphs with integrated quality assurance mechanisms.
+Ontology2Graph is a comprehensive Python framework designed to generate synthetic Knowledge Graphs thanks to Large Language Model (LLM). The system provides a complete computational pipeline that transforms ontological schemas into semantically coherent knowledge graphs with integrated quality assurance mechanisms.
 
 ## Overview
 
@@ -17,7 +17,7 @@ Ontology2Graph implements a modular architecture that supports:
 
 ## System Architecture
 
-The framework is structured into four primary modules, each addressing specific aspects of the knowledge graph lifecycle:
+The framework is structured into four primary modules:
 
 ### Knowledge Graph Generation Module (`generate_ttl_files/`)
 
@@ -86,7 +86,7 @@ Shared infrastructure components providing fundamental operations across all mod
    ```
    or 
    ```bash
-   python3 -m pip install -r requirement.txt
+   python3 -m pip install -r requirements.txt
    ```
 
 3. **External Tool Installation:**
@@ -204,5 +204,3 @@ This software is distributed under the BSD 4-Clause License. Refer to the [LICEN
 - [RDFLib Documentation](https://rdflib.readthedocs.io/): RDF processing library reference
 
 For additional documentation and contribution guidelines, refer to [CONTRIBUTING.md](CONTRIBUTING.md).
-
-https://infoportal-opensource.innov.intraorange/en/copyright-and-license-notices/
