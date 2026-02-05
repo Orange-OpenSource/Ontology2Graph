@@ -6,6 +6,12 @@ This folder contains scripts and utilities for generating synthetic knowledge gr
 - **generate_ttl.py**: Main script to generate one or more Turtle files using a large language model(LLM) and a given ontology. Run this script from the `generate_ttl_files` directory.
 - **utils_gen/utils.py**: Utility functions for querying the LLM, storing results, checking Turtle syntax, and managing files/folders.
 
+**Key Components:**
+- `generate_ttl.py`: Primary generation engine implementing LLM-based graph synthesis
+- `utils_gen/utils.py`: Supporting utilities for model configuration, prompt management and graph validation
+- Multi-model support architecture with configurable prompt strategies
+- Integrated TTL syntax validation & turtle formating pipeline
+
 ## Features
 - Automated generation of Turtle files using LLM, prompt and ontology.
 - Configurable number of graphs to generate via the `--nbrttl` command-line argument.
@@ -15,24 +21,7 @@ This folder contains scripts and utilities for generating synthetic knowledge gr
 - Syntax validation for generated Turtle files.
 - Support for removing old files before new generation.
 
-## Usage
-1. If you use an API, set your LLM API key in an environment variable called `LLM_API_KEY`.
-2. Place your ontology in the appropriate folders (default: `utils_gen/ontologies/`).
-3. Modify `utils_gen/prompts/prompts.json` with your own prompt and set `PROMPT_TYPE` in 
-generate_ttl.py accordingly.
-4. Modify `utils_gen/prompts/models.json` with the model name you want to use with your API.
-5. Choose your system prompt in `query_llm` if allowed by your API.
-6. Run the script from the `generate_ttl_files` directory:
-   ```bash
-      python generate_ttl.py --nbrttl <number_of_ttl_files_to_generate> --reasoner <reasoner>
-   ```
-7. Generated Turtle files will be stored in a dynamically created `results/synthetics_graphs/<date>/<model>/` folder.
-8. Log files will be created in the corresponding `logs/` subfolder.
-
-## Notes
-- Edit `generate_ttl.py` to set the model number (`model_nbr` variable) and other configuration as needed.
-- Make sure to run the script from the `generate_ttl_files` directory for correct path resolution.
-- The script and utilities are licensed under BSD-4-Clause.
+Each TTL file generated is automatically checking by [Ontology engineering tool](https://github.com/atextor/owl-cli) for Turtle format rearrangement and [Turtle Validator](https://github.com/IDLabResearch/TurtleValidator) for syntax validation. Validated files are stored in the `results/synthetic_graphs/` directory in TTL format.
 
 ## License
 

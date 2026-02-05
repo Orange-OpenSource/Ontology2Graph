@@ -96,7 +96,7 @@ Shared infrastructure components providing fundamental operations across all mod
 4. **API Configuration:**
    Configure LLM access credentials:
    ```bash
-   export LLM_PROXY_KEY="your_api_key"
+   export LLM_API_KEY="your_api_key"
    ```
 
 ## Usage Documentation
