@@ -72,7 +72,7 @@ logger_gen.info('########### GRAPH GENERATION LOG ###########\n', exc_info=True)
 ### Generate graphs ###
 while NUMBER_OF_GRAPH != int(NBR_TTL_INT):
 
-    ### query llm ##
+    ### query llm ###
     response=utils_gen.query_llm(ONTOLOGY_FILE,PROMPT_FILE,model_name,PROMPT_TYPE)
 
     logger_gen.info('Graph generation with prompt type : %s',{PROMPT_TYPE})

@@ -1,4 +1,4 @@
-# Utils Common
+# Common Utilities Module
 
 This folder contains common utility functions and scripts used throughout the GenGraphLLM framework for argument parsing, logging setup, ontology processing, file validation, and graph analysis operations.
 

@@ -1,4 +1,4 @@
-# Display_graphs
+# Visualization and Analysis Module
 
 This folder contains utilities and scripts for visualizing and interacting with knowledge graphs previously built.
 

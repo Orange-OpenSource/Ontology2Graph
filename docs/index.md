@@ -2,11 +2,15 @@
 
 ## Abstract
 
-Ontology2Graph is a comprehensive Python framework designed to generate synthetic Knowledge Graphs thanks to Large Language Model (LLM). The system provides a complete computational pipeline that transforms ontological schemas into semantically coherent knowledge graphs with integrated quality assurance mechanisms.
+<p style="text-align: justify;">
+Ontology2Graph is a comprehensive Python framework designed to generate synthetic Knowledge Graphs thanks to Large Language Model (LLM). A synthetic knowledge graph is an artificially generated or simulated knowledge graph that mimics the structure and properties of real-world knowledge graphs. It is typically created for purposes such as testing, research, or training machine learning models, without relying on actual data. These graphs contain nodes (entities) and edges (relationships) that follow specific patterns or distributions, allowing users to study or develop algorithms in a controlled environment.  The system provides a complete computational pipeline that transforms ontological schemas into semantically coherent knowledge graphs with integrated quality assurance mechanisms.
+</p>
 
 ## Overview
 
+<p style="text-align: justify;">
 Knowledge Graphs have emerged as fundamental structures for representing complex relationships in semantic data. This framework addresses the challenge of generating synthetic knowledge graphs at scale by leveraging the reasoning capabilities of Large Language Models while ensuring adherence to ontological constraints and semantic consistency.
+</p>
 
 Ontology2Graph implements a modular architecture that supports:
 
@@ -45,10 +49,6 @@ This framework supports various research applications in:
 - Ontology validation and consistency testing
 - Knowledge graph structural analysis and comparison
 - Synthetic data generation for privacy-preserving research
-
-## License and Attribution
-
-This software is distributed under the BSD 4-Clause License. Refer to the [LICENSE](LICENSE) file for complete terms and conditions.
 
 ## References and Documentation
 
