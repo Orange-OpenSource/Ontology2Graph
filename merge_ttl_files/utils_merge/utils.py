@@ -239,20 +239,21 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
 
     all_ttl_files = [f.name for f in Path(path_files).iterdir() if f.is_file()]
     all_new_ttl_files = []
-    homo_max=1 #useless to start at 0
+    max_occ_for_file_to_merge=1 #useless to start at 0
 
     os.system("clear")
     print('Merging Treatment in progress :')
     print('At least one homonyme node appeared in : ', nbr_homonyme_max,' differents files \n')
 
-    while homo_max != nbr_homonyme_max + 1:
+    while max_occ_for_file_to_merge != nbr_homonyme_max + 1:
 
-        if homo_max == 1:
+        if max_occ_for_file_to_merge == 1:
             print('Renaming all the homonymes and merging')
         else :
-            print(f'Keeping {homo_max} homonyme max in {homo_max} different files and merging' )
+            print(f'Keeping {max_occ_for_file_to_merge} homonyme max in {max_occ_for_file_to_merge}\
+                different files and merging' )
 
-        os.makedirs(Path(f'{path_homonyme_treated}/{homo_max}'),exist_ok=True)
+        os.makedirs(Path(f'{path_homonyme_treated}/{max_occ_for_file_to_merge}'),exist_ok=True)
 
         occ_dup=homonymes_nodes_and_occurence.copy()
         nbr_file_treated=0
@@ -261,15 +262,16 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
             dup_treated_list=[]
 
             logger_merge.info('##################################################################')
-            logger_merge.info('Target number of max homonyme in the set of files = %s',homo_max)
+            logger_merge.info('Target number of max homonyme in the set of files = %s',\
+                max_occ_for_file_to_merge)
             logger_merge.info('Max number of homonyme in the set of files : %s',nbr_homonyme_max)
             logger_merge.info('#### FILE ####: %s',  ttl_file)
 
             with open(Path(path_files)/ttl_file,'r',encoding='utf-8') as infile,\
-                 open(f'{Path(path_homonyme_treated)}/{homo_max}/Treated_'\
-                      f'{homo_max}_{ttl_file}','w',encoding='utf-8') as outfile:
-                rename_homonyme_by_line(infile,outfile,homo_max,occ_dup,\
-                        dup_treated_list, logger_merge,nbr_file_treated)
+                 open(f'{Path(path_homonyme_treated)}/{max_occ_for_file_to_merge}/Treated_'\
+                      f'{max_occ_for_file_to_merge}_{ttl_file}','w',encoding='utf-8') as outfile:
+                rename_homonyme_by_line(infile,outfile,max_occ_for_file_to_merge,occ_dup,\
+                        dup_treated_list,logger_merge,nbr_file_treated)
 
             ### remove homonyme in dup_treated_list ###
             unique_set=set(dup_treated_list)
@@ -284,13 +286,13 @@ def rename_and_merge(path_homonyme_treated,path_merged,homonymes_nodes_and_occur
             logger_merge.info('occ_dup after treatement %s',occ_dup)
             nbr_file_treated=nbr_file_treated+1
 
-        all_new_ttl_files = [f for f in Path(f'{path_homonyme_treated}/{homo_max}')\
+        all_new_ttl_files=[f for f in Path(f'{path_homonyme_treated}/{max_occ_for_file_to_merge}')\
             .iterdir() if f.is_file()]
 
         ### merge files in an only one ###
-        merge_graph(all_new_ttl_files,path_merged,homo_max)
+        merge_graph(all_new_ttl_files,path_merged,max_occ_for_file_to_merge)
 
-        homo_max = homo_max + 1
+        max_occ_for_file_to_merge = max_occ_for_file_to_merge + 1
     return all_new_ttl_files
 
 ### Functions used internally in utils.py ###

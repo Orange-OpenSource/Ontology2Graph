@@ -15,7 +15,7 @@ appear,compute the max number of file in which an homonyme node appeared.
 3/ Decrease by one the max number of files in which an homonyme node appeared by renaming 
 homonymes nodes with an appended occurrence index to ensure uniqueness in order to create a
 new set of graphs.
-4/ Repeat action 2 and 3 util no homonyme nodes remain.
+4/ Repeat action 2 and 3 until no homonyme nodes remain.
 5/ Logs the merging process and removes previous log and result files for a clean run.
 
 Usage:
@@ -54,8 +54,6 @@ MAX_HOMONYME_NAME = max(homonymes_nodes_and_occurence, key=lambda x: \
     homonymes_nodes_and_occurence.get(x, 0)) if homonymes_nodes_and_occurence else None
 MAX_HOMONYME_VALUE = homonymes_nodes_and_occurence[MAX_HOMONYME_NAME] if MAX_HOMONYME_NAME else \
     None
-
-homonymes_nodes_list = list(homonymes_nodes_and_occurence.keys())
 
 utils_merge.rename_and_merge(path_duplicate_treated,path_merged,homonymes_nodes_and_occurence,\
     MAX_HOMONYME_VALUE,logger_merge)
