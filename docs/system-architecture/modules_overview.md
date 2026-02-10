@@ -27,15 +27,12 @@ Shared infrastructure components providing fundamental operations across all mod
 ```mermaid
 graph TD
     A[Prompt generation] --> C[Knowledge graph generation module]:::highlight
-    B[Ontology] --> C
-    toto[model name] --> C
+    B[Ontology] --> A
+    BB[Model choosen] --> C:::highliht
+    BBB[Number of graphs to generate] --> C
     C --> D[Graph consolidation module]:::highlight
     D --> E[Visualisation module]:::highlight
     C --> E
     classDef highlight fill:#f9d423,stroke:#333,stroke-width:4px;
 ```
 </div>
-
-
-
-

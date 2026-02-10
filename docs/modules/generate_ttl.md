@@ -37,9 +37,10 @@ The knowledge graph generation module queries a LLM to build a graph in Turtle f
 <div style="text-align: center;">
 ```mermaid
 graph TD
+    B[Ontology] --> A
     A[Prompt generation] --> D[Query LLM]:::highlight
-    B[Ontology] --> D
     C[model choosen] --> D
+    CC[number of graphs to generate] --> D
 
     D -->|Turtle graph produced| DD[ Store results in folder ]:::highlight
 
