@@ -1,6 +1,6 @@
 # Knowledge Graph Generation Module
 <p style="text-align: justify;">
-The knowledge graph generation module queries a LLM to build a graph in Turtle format based on a specific provided Ontology. The prompt must be written beforhand accordingly with the ontology domain. 
+The knowledge graph generation module queries a LLM to build a graph in Turtle format based on a specific provided Ontology. The prompt must be written beforehand accordingly with the ontology domain. 
 </p>
 
 ## Main Components
@@ -21,7 +21,7 @@ The knowledge graph generation module queries a LLM to build a graph in Turtle f
 
 - **Automated Generation:** Automated generation of Turtle files using LLM, prompt and ontology.
 - **Configurable Output:** Configurable number of graphs to generate via the `--nbrttl` command-line argument.
-- **Ontology Reasoner Selection:** The `--reasoner` argument specifies which ontology reasoner to use for consistency checking of the generated Turtle files. Valid values are `Pellet` or `HermiT` (case-sensitive). The reasoner will be used to check for logical inconsistencies in the generated graphs. If not set correctly, the script will raise an error.
+- **Ontology Reasoner Selection:** The `--reasoner` argument specifies which ontology reasoner to use for ontological compliancy checking of the generated Turtle files. Valid values are `Pellet` or `HermiT` (case-sensitive). The reasoner will be used to check for logical inconsistencies in the generated graphs. If not set correctly, the script will raise an error.
 - **Logging:** Logging of generation process and LLM usage statistics.
 - **Folder & File Management:** Automatic folder and file creation for results, logs, and temporary files.
 - **Validation Tools:** Each TTL file generated is automatically checked by the following tools:

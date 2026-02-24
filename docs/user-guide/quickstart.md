@@ -11,7 +11,7 @@ Before launching the graphes generation process you must follow these steps
     - `model_nbr`: Specifies the target LLM (reference: `utils_gen/models/models.json`)
     - `prompt_type`: Defines the generation strategy (reference: `utils_gen/prompts/prompts.json`)
 
-2. Place your ontology in the appropriate folders (`utils_gen/ontologies/`).
+2. Place your ontology in the appropriate folders (`utils_gen/ontologies/`) and modify the ontologie_file variable in utils_gen/utils.py/build_folder_paths_and_files function accordingly.
 3. Modify `utils_gen/prompts/prompts.json` with your own prompt and set `PROMPT_TYPE` in generate_ttl.py accordingly.
 5. If you are using an API to call your LLM you have to 
     - Store your api key in an environment variable called LLM_API_KEY
@@ -25,19 +25,20 @@ Once it is done you can launch the generation process
 
 ```bash
 cd generate_ttl_files
-python generate_ttl.py --nbrttl <number_of_graphs> --reasoner <reasoner>
+python3 generate_ttl.py --nbrttl <number_of_graphs> --reasoner <reasoner>
 ```
 
 **Command Line Parameters :**
 
 - `number_of_graph`: The number of graphs you want to generate.
-- `reasoner` : The reasonner to use for consistency checking (Pellet or HermiT)
+- `reasoner` : The reasonner (Pellet or HermiT) to use for ontological compliancy checking.
 
 5. Generated Turtle files will be stored in a dynamically created `results/synthetics_graphs/<date>/<model>/` folder.
 6. Log files will be created in the corresponding `logs/` subfolder.
 
 **Notes**
 
+- Syntax, format and ontological compliancy are automatically checked when a graph is generated. Wrong graphs are automatically discarded and stored in specific folders.
 - Make sure to run the script from the `generate_ttl_files` directory for correct path resolution.
 - If you use a local LLM, `query_llm` function must be rewritten
 
@@ -47,7 +48,7 @@ Multiple knowledge graphs can be merged using the consolidation module:
 
 ```bash
 cd merge_ttl_files
-python merge_ttl.py --path_file <input_path> --ontology <ontology_file>
+python3 merge_ttl.py --path_file <input_path> --ontology <ontology_file>
 ```
 
 **Command Line Parameters :**

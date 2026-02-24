@@ -1,8 +1,9 @@
 ### System Requirements
 
-- Python 3.8 or higher  
-- External TTL validation tool  
+- Python 3.12 or higher  
+- External TTL syntax validation tool  
 - External TTL formating tool  
+- Automtic reasoner (owlready2)
 - Network connectivity for LLM API access
 
 ### Core Python Dependencies
@@ -23,7 +24,7 @@ source venv/bin/activate
 ```
 
 2. **Dependency Installation:**  
-   Python 3.7+,  
+
    Required packages: `requests`, `rdflib`, `openai`, `networkx`, `owlready2`; `pyvis`. Install them manually:
    ```bash
    python3 -m pip install requests rdflib openai networkx owlready2 pyvis
