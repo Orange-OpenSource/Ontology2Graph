@@ -145,17 +145,19 @@ python display_graphs.py --path <input_path> --ontology <ontology> --mode <visua
 - `input_path`: Path to individual TTL files or directories containing multiple graphs
 - `ontology`: Reference ontology file path
 - `visualization_mode`: Either `basic` for structural visualization or `advanced` for analytical rendering  
+  
 
 **Basic view, click on it to expand:**
-
 <div style="display: flex; justify-content: space-around; align-items: center; gap: 20px;">
     <div style="text-align: center;">
-         <figcaption><strong>Advanced mode visualization</strong></figcaption>
-         <img src="docs/graphs/graph_advanced.png" width="300" height=200>
-    </div>
-    <div style="text-align: center;">
-         <figcaption><strong>Basic mode visualization</strong></figcaption>
          <img src="docs/graphs/graph_basic.png" width="300" height="200">
+    </div>
+</div>
+
+**Advanced view, click on it to expand**
+<div style="display: flex; justify-content: space-around; align-items: center; gap: 20px;">
+    <div style="text-align: center;">
+         <img src="docs/graphs/graph_advanced.png" width="300" height=200>
     </div>
 </div>
 
