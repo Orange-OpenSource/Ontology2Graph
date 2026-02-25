@@ -148,11 +148,11 @@ python display_graphs.py --path <input_path> --ontology <ontology> --mode <visua
 
 <div style="display: flex; justify-content: space-around; align-items: center; gap: 20px;">
     <div style="text-align: center;">
-        <img src="docs/graphs/graph_advanced.png" style="width: 230px; height: 190px; object-fit: cover">
+        <img src="docs/graphs/graph_advanced.png" style="width: 230px; height: 190px">
         <figcaption><strong>Advanced mode visualization</strong></figcaption>
     </div>
     <div style="text-align: center;">
-        <img src="docs/graphs/graph_basic.png" style="width: 230px; height: 190px; object-fit: cover">
+        <img src="docs/graphs/graph_basic.png" style="width: 230px; height: 190px">
         <figcaption><strong>Basic mode visualization</strong></figcaption>
     </div>
 </div>
