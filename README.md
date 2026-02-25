@@ -160,8 +160,11 @@ python display_graphs.py --path <input_path> --ontology <ontology> --mode <visua
 
 **Or click on the following file to hav a more interactive view**
 
-[Basic_view](docs/graphs/prompt_4_1_2025-10-21_11-40-36_Noria_basic.html )
-[Advanced_view](docs/graphs/prompt_4_1_2025-10-21_11-40-36_Noria_advanced.html )
+[Basic_view](docs/graphs/prompt_4_1_2025-10-21_11-40-36_Noria_basic.html)
+
+[Advanced_view](docs/graphs/prompt_4_1_2025-10-21_11-40-36_Noria_advanced.html)
+
+<a href="docs/graphs/prompt_4_1_2025-10-21_11-40-36_Noria_basic.html" target="_blank">basic</a>
 
 ### Monitoring and Logging
 
