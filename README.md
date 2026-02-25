@@ -147,14 +147,14 @@ python display_graphs.py --path <input_path> --ontology <ontology> --mode <visua
 - `visualization_mode`: Either `basic` for structural visualization or `advanced` for analytical rendering  
 
 **Basic view, click on it to expand:**
-<div style="text-align: center;transform: scale(0.5);">
+<div style="text-align: center;width: 200px; height: 150px;">
    <img src="docs/graphs/graph_basic.png"><br>
    <br>
 </div>
   
 
 **Advanced view, click on it to expand:**
-<div style="text-align: center;transform: scale(0.5);">
+<div style="text-align: center;width: 200px; height: 150px;">
    <img src="docs/graphs/graph_advanced.png"><br>
 </div>
 
