@@ -49,3 +49,9 @@ Two differents log files track different aspects
 - Edit **utils_display.py**, from **utils** folder, to adjust colors, legend, or UI controls as needed.
 - The HTML/JS/CSS is injected dynamically for flexibility.
 
+## Graphs View example
+
+[Basic View](../graphs/prompt_4_1_2025-10-21_11-40-36_Noria_basic.html)
+
+[Advanced view](../graphs/prompt_4_1_2025-10-21_11-40-36_Noria_advanced.html)
+
