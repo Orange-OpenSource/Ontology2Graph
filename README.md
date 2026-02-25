@@ -148,8 +148,11 @@ python display_graphs.py --path <input_path> --ontology <ontology> --mode <visua
 
 <!--div style="display: flex; justify-content: center;">-->
 
+
+
+
 <div style="text-align: center;">
-   <img src="docs/graphs/graph_advanced.png" width="200" height="100">
+   <img src="docs/graphs/graph_advanced.png"> <!-- width="200" height="100">-->
    <figcaption><strong>Advanced mode visualization</strong></figcaption>
 </div>
 
