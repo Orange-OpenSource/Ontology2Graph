@@ -40,6 +40,8 @@ Ontology2Graph is built and maintained by contributors from Orange SA.
     **Ontology2Graph Developper**
     
     Developped [Ontology2Graph](https://github.com/Orange-OpenSource/ontology2graph){target="_blank" rel="noopener"} following advices and guidances from Advisors and Reveiwer.
+
+    [:fontawesome-brands-github: GitHub](https://github.com/PhilippeDo)
     
 
 </div>
