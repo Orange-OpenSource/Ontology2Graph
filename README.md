@@ -155,7 +155,7 @@ python display_graphs.py --path <input_path> --ontology <ontology> --mode <visua
 </div>
 
 **Advanced view, click on it to expand**
-<div style="display: flex; justify-content: space-around; align-items: center; gap: 20px;">
+<div style="display: flex;">
     <div style="text-align: center;">
          <img src="docs/graphs/graph_advanced.png" width="300" height="200">
     </div>
