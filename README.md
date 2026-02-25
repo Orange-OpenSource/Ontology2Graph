@@ -147,24 +147,14 @@ python display_graphs.py --path <input_path> --ontology <ontology> --mode <visua
 - `visualization_mode`: Either `basic` for structural visualization or `advanced` for analytical rendering
 
 **Basic view, click on it to expand**
-
 <div style="text-align: center;">
-   <img src="docs/graphs/graph_basic.png">
+   <img src="docs/graphs/graph_basic.png"><br>
 </div>
 
 **Advanced view, click on it to expand**
-
 <div style="text-align: center;">
-   <img src="docs/graphs/graph_advanced.png">
+   <img src="docs/graphs/graph_advanced.png"><br>
 </div>
-
-**Or click on the following file to hav a more interactive view**
-
-[Basic_view](docs/graphs/prompt_4_1_2025-10-21_11-40-36_Noria_basic.html)
-
-[Advanced_view](docs/graphs/prompt_4_1_2025-10-21_11-40-36_Noria_advanced.html)
-
-<a href="docs/graphs/prompt_4_1_2025-10-21_11-40-36_Noria_basic.html" target="_blank">basic</a>
 
 ### Monitoring and Logging
 
