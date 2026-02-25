@@ -148,12 +148,12 @@ python display_graphs.py --path <input_path> --ontology <ontology> --mode <visua
 
 <table>
   <tr>
-    <td align="left">
-      <img src="docs/graphs/graph_advanced.png" width="300" height="180">
+    <td align="center">
+      <img src="docs/graphs/graph_advanced.png" width="300" height="180"><br>
       <strong>Advanced mode visualization</strong>
     </td>
-    <td align="right">
-      <img src="docs/graphs/graph_basic.png" width="300" height="180">
+    <td align="center">
+      <img src="docs/graphs/graph_basic.png" width="300" height="180"><br>
       <strong>Basic mode visualization</strong>
     </td>
   </tr>
