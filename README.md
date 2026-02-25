@@ -149,9 +149,10 @@ python display_graphs.py --path <input_path> --ontology <ontology> --mode <visua
 **Basic view, click on it to expand:**
 <div style="text-align: center;">
    <img src="docs/graphs/graph_basic.png"><br>
+   <br>
 </div>
   
-  
+
 **Advanced view, click on it to expand:**
 <div style="text-align: center;">
    <img src="docs/graphs/graph_advanced.png"><br>
