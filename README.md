@@ -152,7 +152,7 @@ python display_graphs.py --path <input_path> --ontology <ontology> --mode <visua
         <figcaption><strong>Advanced mode visualization</strong></figcaption>
     </div>
     <div style="text-align: center;">
-        <img src="docs/graphs/graph_basic.png" style="width: 230px; height: 190px">
+        <img src="docs/graphs/graph_basic.png" width="130" height="90">
         <figcaption><strong>Basic mode visualization</strong></figcaption>
     </div>
 </div>
