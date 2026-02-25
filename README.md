@@ -146,7 +146,22 @@ python display_graphs.py --path <input_path> --ontology <ontology> --mode <visua
 - `ontology`: Reference ontology file path
 - `visualization_mode`: Either `basic` for structural visualization or `advanced` for analytical rendering
 
-<img src="docs/graphs/graph_advanced.png" alt="Alt text" width="300" height="200">
+<!--<figure>
+   <img src="docs/graphs/graph_advanced.png" width="500" height="400">
+   <figcaption>Advanced mode visualization</figcaption>
+</figure>
+-->
+
+<div style="display: flex; justify-content: space-around; align-items: center; gap: 20px;">
+    <div style="text-align: center;">
+        <img src="docs/graphs/graph_advanced.png" width="500" height="400">
+        <figcaption>Advanced mode visualization</figcaption>
+    </div>
+    <div style="text-align: center;">
+        <img src="docs/graphs/graph_advanced.png" width="300" height="400">
+        <figcaption>Basic mode visualization</figcaption>
+    </div>
+</div>
 
 ### Monitoring and Logging
 
