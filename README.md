@@ -153,11 +153,12 @@ python display_graphs.py --path <input_path> --ontology <ontology> --mode <visua
          <img src="docs/graphs/graph_basic.png" width="300" height="200">
     </div>
 </div>
+  
 
 **Advanced view, click on it to expand**
 <div style="display: flex; justify-content: space-around; align-items: center; gap: 20px;">
     <div style="text-align: center;">
-         <img src="docs/graphs/graph_advanced.png" width="300" height=200>
+         <img src="docs/graphs/graph_advanced.png" width="300" height="200">
     </div>
 </div>
 
