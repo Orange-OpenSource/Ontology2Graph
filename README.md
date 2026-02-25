@@ -146,24 +146,22 @@ python display_graphs.py --path <input_path> --ontology <ontology> --mode <visua
 - `ontology`: Reference ontology file path
 - `visualization_mode`: Either `basic` for structural visualization or `advanced` for analytical rendering
 
-<!--div style="display: flex; justify-content: center;">-->
-
-
-
+**Basic view, click on it to expand**
 
 <div style="text-align: center;">
-   <img src="docs/graphs/graph_advanced.png"> <!-- width="200" height="100">-->
-   <figcaption><strong>Advanced mode visualization</strong></figcaption>
+   <img src="docs/graphs/graph_basic.png">
 </div>
 
+**Advanced view, click on it to expand**
 
 <div style="text-align: center;">
-   <img src="docs/graphs/graph_basic.png" width="200" height="45">
-   <figcaption><strong>Basic mode visualization</strong></figcaption>
+   <img src="docs/graphs/graph_advanced.png">
 </div>
 
-<!--</div>-->
+**Or click on the following file to hav a more interactive view**
 
+[Basic_view](docs/graphs/prompt_4_1_2025-10-21_11-40-36_Noria_basic.html )
+[Advanced_view](docs/graphs/prompt_4_1_2025-10-21_11-40-36_Noria_advanced.html )
 
 ### Monitoring and Logging
 
