@@ -17,4 +17,4 @@ This folder contains common utility functions and scripts used throughout the On
 - Argument parsing and configuration management
 - Logger setup and management
 - Ontology object extraction and processing
-- TTL (Turtle) syntax validation and error handling, require [Turtle Validator](https://github.com/IDLabResearch/TurtleValidator) tool accessible in system PATH
+- TTL (Turtle) syntax validation and error handling, require [Turtle Validator :fontawesome-solid-external-link-alt:](https://github.com/IDLabResearch/TurtleValidator){:target="_blank" rel="noopener"} tool accessible in system PATH

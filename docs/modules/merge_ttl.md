@@ -30,7 +30,7 @@ The graph consolidation module processes sets of synthetic knowledge graphs in t
 - **Comprehensive Logging**: Detailed logging for merge operations, homonym detection, and validation
 
 
-Merged files are automatically checked by [Turtle Validator](https://github.com/IDLabResearch/TurtleValidator) for syntax validation. Each validated file is stored in a "merged" folder beside the LLM generated graphs.
+Merged files are automatically checked by [Turtle Validator :fontawesome-solid-external-link-alt:](https://github.com/IDLabResearch/TurtleValidator){:target="_blank" rel="noopener"} for syntax validation. Each validated file is stored in a "merged" folder beside the LLM generated graphs.
 
 ## Process Workflow
 

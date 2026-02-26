@@ -34,5 +34,5 @@ source venv/bin/activate
    python3 -m pip install -r requirements.txt
    ```  
 3. **External Tool Installation:**  
-Install the [Turtle Validator](https://github.com/IDLabResearch/TurtleValidator) for syntax validation and the [Ontology engineering tool](https://github.com/atextor/owl-cli) for Turtle format rearrangement.
+Install the [Turtle Validator :fontawesome-solid-external-link-alt:](https://github.com/IDLabResearch/TurtleValidator){:target="_blank" rel="noopener"} for syntax validation and the [Ontology engineering tool :fontawesome-solid-external-link-alt:](https://github.com/atextor/owl-cli){:target="_blank" rel="noopener"} for Turtle format rearrangement.
 

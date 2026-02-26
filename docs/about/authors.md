@@ -50,5 +50,5 @@ Ontology2Graph is built and maintained by contributors from Orange SA.
 
 ## Acknowledgments
 
-- **[Orange SA](https://opensource.orange.com/){target="_blank" rel="noopener"}** for sponsoring the development of Ontology2Graph and making it possible to open-source the project
+- **[Orange SA :fontawesome-solid-external-link-alt:](https://opensource.orange.com/){target="_blank" rel="noopener"}** for sponsoring the development of Ontology2Graph and making it possible to open-source the project
 

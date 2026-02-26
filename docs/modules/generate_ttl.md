@@ -25,9 +25,9 @@ The knowledge graph generation module queries a LLM to build a graph in Turtle f
 - **Logging:** Logging of generation process and LLM usage statistics.
 - **Folder & File Management:** Automatic folder and file creation for results, logs, and temporary files.
 - **Validation Tools:** Each TTL file generated is automatically checked by the following tools:
-    - [Ontology engineering tool](https://github.com/atextor/owl-cli) for Turtle format rearrangement
-    - [Turtle Validator](https://github.com/IDLabResearch/TurtleValidator) for syntax validation
-    - [Owlready2](https://owlready2.readthedocs.io/en/v0.50/) for reasoning consistency checking
+    - [Ontology engineering tool :fontawesome-solid-external-link-alt:](https://github.com/atextor/owl-cli){:target="_blank" rel="noopener"} for Turtle format rearrangement
+    - [Turtle Validator :fontawesome-solid-external-link-alt:](https://github.com/IDLabResearch/TurtleValidator){:target="_blank" rel="noopener"} for syntax validation
+    - [Owlready2 :fontawesome-solid-external-link-alt:](https://owlready2.readthedocs.io/en/v0.50/){:target="_blank" rel="noopener"} for reasoning consistency checking
 - **Validated Output:** Validated files are stored in the **results/synthetic_graphs/`<`date`>`/`<`model`>`** folder
 - **Cleanup Support:** Support for removing old files before new generation.
 

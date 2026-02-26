@@ -57,10 +57,13 @@ This framework supports various research applications in:
 - Knowledge graph structural analysis and comparison
 - Synthetic data generation for privacy-preserving research
 
-## References and Documentation
 
-- [Turtle Validator](https://github.com/IDLabResearch/TurtleValidator): External validation tool
-- [Ontology engineering tool](https://github.com/atextor/owl-cli) for Turtle format rearrangement
-- [RDFLib Documentation](https://rdflib.readthedocs.io/): RDF processing library reference
+## Reference and Documentation
+
+- [Turtle Validator :fontawesome-solid-external-link-alt:](https://github.com/IDLabResearch/TurtleValidator){:target="_blank" rel="noopener"} : External validation tool
+
+- [Ontology engineering tool :fontawesome-solid-external-link-alt:](https://github.com/atextor/owl-cli){:target="_blank" rel="noopener"} for Turtle format rearrangement
+
+- [RDFLib documentation :fontawesome-solid-external-link-alt:](https://rdflib.readthedocs.io/){:target="_blank" rel="noopener"}: RDF processing library reference
 
 
