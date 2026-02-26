@@ -51,7 +51,7 @@ Two differents log files track different aspects
 
 ## Graphs View example
 
-[Basic View](../graphs/prompt_4_1_2025-10-21_11-40-36_Noria_basic.html)
+[Basic View](../graphs/prompt_4_1_2025-10-21_11-40-36_Noria_basic.html){:target="_blank"}
 
-[Advanced view](../graphs/prompt_4_1_2025-10-21_11-40-36_Noria_advanced.html)
+[Advanced view](../graphs/prompt_4_1_2025-10-21_11-40-36_Noria_advanced.html){:target="_blank"}
 

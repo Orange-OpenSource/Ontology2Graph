@@ -37,10 +37,14 @@ The knowledge graph generation module queries a LLM to build a graph in Turtle f
 <div style="text-align: center;">
 ```mermaid
 graph TD
-    B[Ontology] --> A
-    A[Prompt generation] --> D[Query LLM]:::highlight
+    AA[Generation module]:::highlight
+    AA --> D
+
+    B[Ontology] --> D
+    A[Prompt] --> D[Query LLM]:::highlight
     C[model choosen] --> D
-    CC[number of graphs to generate] --> D
+    CC[number of graphs to generate] --> AA
+    AAA[Reasoner] --> AA
 
     D -->|Turtle graph produced| DD[ Store results in folder ]:::highlight
 
@@ -54,8 +58,9 @@ graph TD
     F --> H{Check Graph consistency reasoning}:::highlight
     F --> |Bad syntax|I[Move bad file in invalid syntax folder]
 
+    H --> |Good reasoning|K[Valid Graphs]
     H --> |Wrong reasoning|J[Move Bad file in invalid reasoning folder]
-
+    
     classDef smallNode font-size:15px,padding:1px;
     class E smallNode;
     classDef highlight fill:#f9d423,stroke:#333,stroke-width:4px;
