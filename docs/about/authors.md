@@ -27,7 +27,7 @@ Ontology2Graph is built and maintained by contributors from Orange SA.
     
     ---
     
-    **Advisor and Reveiwer**
+    **Advisor and Reviewer**
     
     Researcher at Orange Innovation's DATA-AI entity specializing in knowledge engineering and dependability. Managed the working group "Ontology generation" in orange, supervised the development of Ontology2Graph and provided guidance and insights throughout the development process.
     
