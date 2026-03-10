@@ -1,0 +1,167 @@
+# ------------------------------------------------- BUILD ------------------------------------------------ #
+[build-system]
+requires = ["hatchling>=1.26", "hatch-vcs>=0.5"]
+build-backend = "hatchling.build"
+
+# ------------------------------------------- PROJECT METADATA ------------------------------------------- #
+[project]
+name = "ontology2graph"
+dynamic = ["version"]
+description = "Ontology2graph: Synthetic Knowledge Graph generation assisted by AI"
+readme = "README.md"
+license = { file = "LICENSE.txt" }
+
+authors = [
+    { name = "Philippe Dooze", email = "philippe.dooze@orange;com" },
+    { name = "Lionel Tailhardat", email = "lionel.tailhardat@orange.com" },
+    { name = "Ovidiu Pascal", email = "ovidiu.pascal@orange.com" },
+]
+
+maintainers = [
+    { name = "Philippe Dooze", email = "philippe.dooze@orange.com" },
+    { name = "Lionel Tailhardat", email = "lionel.tailhardat@orange.com" },
+    { name = "Ovidiu Pascal", email = "ovidiu.pascal@orange.com" },
+]
+
+requires-python = ">=3.10"
+
+dependencies = [
+    "numpy>=1.24.0",
+    "Owlready2>=0.41",
+    "rdflib>=6.2.0",
+    "pyyaml",
+    "tqdm",
+    "typer>=0.20.0",
+    "psutil>=7.1.3",
+]
+
+keywords = [
+    "Knowledge Graph",
+    "Ontology",
+    "Schema",
+    "Semantic Web",
+    "Synthetic Data Generator",
+    "RDF",
+    "OWL",
+    "RDFS",
+    "Linked Data",
+    "Graph Generation",
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD 4-Clause",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/Orange-OpenSource/Ontology2Graph"
+Repository = "https://github.com/Orange-OpenSource/Ontology2Graph.git"
+Issues = "https://github.com/Orange-OpenSource/Ontology2Graph/issues"
+
+# ------------------------------------------- CLI ENTRY POINTS ------------------------------------------- #
+[project.scripts]
+pygraft = "ontology2graph.cli:app"
+
+
+# ---------------------------------------- DEV & DOCS DEPENDENCIES --------------------------------------- #
+[dependency-groups] # UV
+dev = [
+    "pytest",
+    "ruff",
+    "codespell",
+    "pyright",
+    "prek>=0.2.19",
+    "basedpyright>=1.34.0",
+    "build>=1.4.0",
+]
+
+docs = [
+    "mkdocs>=1.6.1",
+    "mkdocs-git-revision-date-localized-plugin>=1.5.0",
+    "mkdocs-material[imaging]>=9.7.1",
+    "mkdocstrings[python]>=1.0.0",
+]
+
+
+[project.optional-dependencies]     # Pip & Poetry (TODO: automate but for now manual update)
+dev = [
+    "pytest",
+    "ruff",
+    "codespell",
+    "pyright",
+    "prek>=0.2.19",
+    "basedpyright>=1.34.0",
+    "build>=1.4.0",
+]
+
+docs = [
+    "mkdocs>=1.6.1",
+    "mkdocs-git-revision-date-localized-plugin>=1.5.0",
+    "mkdocs-material[imaging]>=9.7.1",
+    "mkdocstrings[python]>=1.0.0",
+]
+
+
+# ------------------------------------------ VERSIONING ------------------------------------------ #
+# Use Git tags (VCS) as the authoritative source for the project version
+[tool.hatch.version]
+source = "vcs"
+
+# --------------------------------------- BUILD CONFIG (HATCHLING) -------------------------------- #
+
+[tool.hatch.build]
+# Global defaults for all targets (wheel + sdist)
+
+exclude = [
+    # --- virtual environments ---
+    ".venv/**",
+    ".env/**",
+    # --- IDEs / editors ---
+    ".idea/**",
+    ".vscode/**",
+    # --- OS junk ---
+    ".DS_Store",
+    "Thumbs.db",
+    "Desktop.ini",
+    # --- editor temp files ---
+    "*.swp",
+    "*.swo",
+    # --- tooling caches ---
+    ".mypy_cache/**",
+    ".ruff_cache/**",
+    ".pytest_cache/**",
+    # --- coverage artifacts ---
+    ".coverage",
+    "htmlcov/**",
+]
+
+[tool.hatch.build.targets.wheel]
+# What gets installed
+# packages = ["ontology2graph"]
+
+[tool.hatch.build.targets.sdist]
+# What source release contains
+include = [
+    # Directories
+    "docs/**",
+    "display_graphs",
+    "generate_ttl_files",	
+    "merge_ttl_files",
+    "utils_common"
+    # Root files
+    "CONTRIBUTING.md",
+    "LICENSE.txt",
+    "mkdocs.yml",
+    "pyproject.toml",
+    "README.md",
+    "requirements.txt",
+]
