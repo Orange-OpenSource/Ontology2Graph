@@ -1,0 +1,110 @@
+# ============================================================================
+# DOCUMENTATION DEPLOYMENT WORKFLOW
+# ============================================================================
+# This workflow builds your MkDocs site and deploys it to GitHub Pages.
+# It uses the modern "artifact" approach.
+# ============================================================================
+
+name: Docs
+
+# ============================================================================
+# TRIGGERS: When does this workflow run?
+# ============================================================================
+on:
+  push:
+    branches: [master]    # Runs automatically when you push to master
+  workflow_dispatch:      # Adds a "Run workflow" button in GitHub Actions UI
+                          # (useful for manual rebuilds without pushing code)
+
+# ============================================================================
+# PERMISSIONS: What can this workflow do?
+# ============================================================================
+permissions:
+  contents: read          # Can read your repo files
+  pages: write            # Can publish to GitHub Pages
+  id-token: write         # Required for secure Pages deployment
+
+# ============================================================================
+# CONCURRENCY: Prevent deployment conflicts
+# ============================================================================
+concurrency:
+  group: pages              # Only one Pages deployment can run at a time
+  cancel-in-progress: true  # If you push again while building, cancel the old one
+
+# ============================================================================
+# JOBS: The actual work
+# ============================================================================
+jobs:
+
+  # --------------------------------------------------------------------------
+  # JOB 1: Build the documentation
+  # --------------------------------------------------------------------------
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Download your repo code
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Gets full git history (not just latest commit)
+                          # Required for git-revision-date-localized plugin
+                          # to show "last updated" dates on pages
+
+      # Step 2: Install Python
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: 'pip'            # Cache downloaded packages between runs
+          cache-dependency-path: | # Rebuild cache if these change
+            pyproject.toml
+
+      # Step 3: Install system libraries for social card image generation
+      # The mkdocs-material[imaging] feature needs these to render PNG cards
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libcairo2-dev \
+            libfreetype6-dev \
+            libffi-dev \
+            libjpeg-dev \
+            libpng-dev \
+            zlib1g-dev
+
+      # Step 4: Install MkDocs and plugins
+      - name: Install Python dependencies
+        run: |
+          pip install \
+            "mkdocs>=1.6.1" \
+            "mkdocs-material[imaging]>=9.7.1" \
+            "mkdocs-git-revision-date-localized-plugin>=1.5.0" \
+            "mkdocstrings[python]>=1.0.0"
+
+      # Step 5: Build the static site
+      # --strict flag makes warnings into errors (catches broken links, etc.)
+      - name: Build docs
+        run: mkdocs build --strict
+
+      # Step 6: Package the built site for deployment
+      # The "site" folder is where MkDocs outputs the HTML
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  # --------------------------------------------------------------------------
+  # JOB 2: Deploy to GitHub Pages
+  # --------------------------------------------------------------------------
+  deploy:
+    needs: build          # Waits for build job to finish successfully
+    runs-on: ubuntu-latest
+
+    # Links this deployment to the github-pages environment
+    # (shows up in your repo's "Environments" section)
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # Takes the artifact from build job and publishes it to Pages
+      - id: deployment
+        uses: actions/deploy-pages@v4
