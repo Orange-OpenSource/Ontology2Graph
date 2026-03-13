@@ -208,10 +208,6 @@ This framework supports various research applications in:
 - Knowledge graph structural analysis and comparison
 - Synthetic data generation for privacy-preserving research
 
-## License and Attribution
-
-This software is distributed under the BSD 4-Clause License. Refer to the [LICENSE](LICENSE) file for complete terms and conditions.
-
 ## References and Documentation
 
 - [Turtle Validator](https://github.com/IDLabResearch/TurtleValidator): External validation tools
@@ -219,3 +215,8 @@ This software is distributed under the BSD 4-Clause License. Refer to the [LICEN
 - [RDFLib Documentation](https://rdflib.readthedocs.io/): RDF processing library reference
 
 For additional documentation and contribution guidelines, refer to [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License and Attribution
+
+This software is distributed under the BSD 4-Clause License; refer to the [LICENSE](LICENSE.txt) file for complete terms and conditions.
+Additionally, see the [CONTRIBUTORS](CONTRIBUTORS.txt) file for the list of maintainers and contributors.
