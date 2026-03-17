@@ -24,15 +24,15 @@ source venv/bin/activate
 ```
 
 2. **Dependency Installation:**  
-
-   Required packages: `requests`, `rdflib`, `openai`, `networkx`, `owlready2`; `pyvis`. Install them manually:
-   ```bash
-   python3 -m pip install requests rdflib openai networkx owlready2 pyvis
-   ```
-   or 
-   ```bash
-   python3 -m pip install -r requirements.txt
-   ```  
+Required packages: `requests`, `rdflib`, `openai`, `networkx`, `owlready2`; `pyvis`. Install them manually:
+```bash
+python3 -m pip install requests rdflib openai networkx owlready2 pyvis
+```
+or 
+```bash
+python3 -m pip install -r requirements.txt
+```  
 3. **External Tool Installation:**  
 Install the [Turtle Validator :fontawesome-solid-external-link-alt:](https://github.com/IDLabResearch/TurtleValidator){:target="_blank" rel="noopener"} for syntax validation and the [Ontology engineering tool :fontawesome-solid-external-link-alt:](https://github.com/atextor/owl-cli){:target="_blank" rel="noopener"} for Turtle format rearrangement.
+
 

@@ -5,7 +5,7 @@ description: Generate synthetic knowledge graph with LLM.
 
 # Ontology2Graph 
 
-**A Framework for Synthetic Knowledge Graph Generation sing Large Language Models.**
+**A Framework for Synthetic Knowledge Graph Generation using Large Language Models.**
 
 ## Abstract
 
