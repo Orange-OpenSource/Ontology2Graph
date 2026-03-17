@@ -210,6 +210,7 @@ This framework supports various research applications in:
 
 ## References and Documentation
 
+- See the [official documentation](https://orange-opensource.github.io/Ontology2Graph/){:target="_blank" rel="noopener"} for details
 - [Turtle Validator](https://github.com/IDLabResearch/TurtleValidator): External validation tools
 - [Ontology engineering tool](https://github.com/atextor/owl-cli) for Turtle format rearrangement.
 - [RDFLib Documentation](https://rdflib.readthedocs.io/): RDF processing library reference
