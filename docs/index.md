@@ -60,6 +60,8 @@ This framework supports various research applications in:
 
 ## Reference and Documentation
 
+- See the [official documentation:fontawesome-solid-external-link-alt:](https://orange-opensource.github.io/Ontology2Graph/){:target="_blank" rel="noopener"} for details
+
 - [Turtle Validator :fontawesome-solid-external-link-alt:](https://github.com/IDLabResearch/TurtleValidator){:target="_blank" rel="noopener"} : External validation tool
 
 - [Ontology engineering tool :fontawesome-solid-external-link-alt:](https://github.com/atextor/owl-cli){:target="_blank" rel="noopener"} for Turtle format rearrangement
