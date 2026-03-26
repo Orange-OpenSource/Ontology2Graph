@@ -2,7 +2,7 @@
 
 ## Abstract
 
-Ontology2Graph is a comprehensive Python framework designed to generate synthetic Knowledge Graphs thanks to Large Language Model (LLM). The system provides a complete computational pipeline that transforms ontological schemas into semantically coherent knowledge graphs with integrated quality assurance mechanisms.
+Ontology2Graph is a comprehensive Python framework designed to generate synthetics Knowledges Graphs thanks to Large Language Model (LLM). The system provides a complete computational pipeline that transforms ontological schemas into semantically coherent knowledge graphs with integrated quality assurance mechanisms.
 
 ## Overview
 
